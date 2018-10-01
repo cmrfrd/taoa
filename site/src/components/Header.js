@@ -7,15 +7,15 @@ const Header = (props) => (
             <div className="inner">
                 <h1>Alexander Comerford</h1>
                 <p> I'm a data scientist living in Brooklyn NY<br />
-                    I turn data into knowledge and information
+                    I turn data into knowledge and information.
                 </p>
             </div>
             <div>
 	        <ul className="icons">
-                    <li><a href="#" className="icon fa-twitter"><span className="label">Twitter</span></a></li>
-                    <li><a href="#" className="icon fa-linkedin"><span className="label">Facebook</span></a></li>
-                    <li><a href="#" className="icon fa-instagram"><span className="label">Instagram</span></a></li>
-                    <li><a href="#" className="icon fa-github"><span className="label">GitHub</span></a></li>
+                    <li><a href="https://twitter.com/4l3x_c0m3rf0rd" className="icon fa-twitter"><span className="label">Twitter</span></a></li>
+                    <li><a href="https://www.linkedin.com/in/ajcomerford/" className="icon fa-linkedin"><span className="label">Facebook</span></a></li>
+                    <li><a href="https://www.instagram.com/cmrfrd/" className="icon fa-instagram"><span className="label">Instagram</span></a></li>
+                    <li><a href="https://github.com/cmrfrd" className="icon fa-github"><span className="label">GitHub</span></a></li>
                 </ul>
             </div>
         </div>

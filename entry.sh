@@ -1,38 +1,32 @@
 #!/bin/sh
 set -e
 
-export GATSBY_DIR="/site"
+export GATSBY_DIR="/cmrfrd.github.io/site"
 export PATH="$PATH:/usr/local/bin/gatsby"
 
 if [ ! -e "$GATSBY_DIR/node_modules/" ]
 then
     echo "Node modules is empty. Running npm install..."
+    cd $GATSBY_DIR  
     npm install
 fi
 
 # Decide what to do
 if  [ "$1" == "develop" ]
 then
-  rm -rf $GATSBY_DIR/public
-  cd $GATSBY_DIR  
+#  rm -rf $GATSBY_DIR/public
+  cd $GATSBY_DIR
   gatsby develop --host 0.0.0.0
-
 elif  [ "$1" == "build" ]
 then
   rm -rf $GATSBY_DIR/public
   gatsby build
-
 elif  [ "$1" == "stage" ]
 then
-  rm -rf $GATSBY_DIR/public
-  cd $GATSBY_DIR  
+#  rm -rf $GATSBY_DIR/public
+  cd $GATSBY_DIR
   gatsby build
   gatsby serve --port 8000
-
 else
-  exec $@
-
+  sh -c "$@"
 fi
-
-
-
