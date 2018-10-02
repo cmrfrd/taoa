@@ -6,9 +6,7 @@ const Header = (props) => (
         <div className="content">
             <div className="inner">
                 <h1>Alexander Comerford</h1>
-                <p> I'm a data scientist living in Brooklyn NY<br />
-                    I turn data into knowledge and information.
-                </p>
+	            <p>I am a data scientist with a background in nanoscale engineering<br/>I enjoy machine learning, data visualisations, parallel computing, physics, chemistry, and all things data science.</p>
             </div>
             <div>
 	        <ul className="icons">
@@ -20,21 +18,13 @@ const Header = (props) => (
             </div>
         </div>
 
-        {/*<nav>
+        {/*
+	// For blog stuff in the future
+        <nav>
         <ul>
         <li><a href="javascript:;" onClick={() => {props.onOpenArticle('Blog')}}>Blog</a></li>
         </ul>
         </nav>*/}
-
-        {/*<nav>
-        <ul>
-        <li><a href="javascript:;" onClick={() => {props.onOpenArticle('intro')}}>Intro</a></li>
-        <li><a href="javascript:;" onClick={() => {props.onOpenArticle('work')}}>Work</a></li>
-        <li><a href="javascript:;" onClick={() => {props.onOpenArticle('about')}}>About</a></li>
-        <li><a href="javascript:;" onClick={() => {props.onOpenArticle('contact')}}>Contact</a></li>
-        </ul>
-        </nav>*/}
-
     </header>
 )
 

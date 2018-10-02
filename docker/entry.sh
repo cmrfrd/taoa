@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-export GATSBY_DIR="/cmrfrd.github.io/site"
+export GATSBY_DIR="/site"
 export PATH="$PATH:/usr/local/bin/gatsby"
 
 if [ ! -e "$GATSBY_DIR/node_modules/" ]
