@@ -6,7 +6,7 @@ const Header = (props) => (
         <div className="content">
             <div className="inner">
                 <h1>Alexander Comerford</h1>
-	            <p>I am a data scientist with a background in nanoscale engineering<br/>I enjoy machine learning, data visualisations, parallel computing, physics, chemistry, and all things data science.</p>
+	            <p>I am a data scientist with a background in nanoscale engineering<br/><br/>I enjoy machine learning, data visualisations, parallel computing, <br/>physics, chemistry, and all things data science.</p>
             </div>
             <div>
 	        <ul className="icons">
