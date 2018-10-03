@@ -10,7 +10,7 @@ const Header = (props) => (
 I am a data scientist with a background in nanoscale engineering.
 	        </p>
 	        <p>
-I enjoy machine learning, data visualisations, parallel computing,<br/>
+I enjoy machine learning, statistics, data visualizations, parallel computing,<br/>
 physics, chemistry, and all things data science.
 	        </p>
             </div>
