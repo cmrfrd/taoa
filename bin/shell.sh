@@ -1,3 +1,4 @@
+#!/bin/bash
 IMAGE=cmrfrd.site
 docker run \
        -v $(pwd):/site:z \

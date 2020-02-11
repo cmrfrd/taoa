@@ -1,3 +1,4 @@
+#!/bin/bash
 IMAGE=cmrfrd.site
 EMAIL=alexanderjcomerford@gmail.com
 SSHKEY=$1
