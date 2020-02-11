@@ -1,21 +1,20 @@
-FROM node:9.5-alpine
+FROM node:10.16-alpine
 
+## Install deps
 RUN apk update && \
-    apk add --update --repository http://dl-3.alpinelinux.org/alpine/edge/testing vips-tools vips-dev fftw-dev gcc g++ make libc6-compat && \
-    apk add git && \
-    apk add python && \
-    apk add openssh && \
-    rm -rf /var/cache/apk/*
+  apk add \
+  --update \
+  --no-cache \
+  --repository http://dl-3.alpinelinux.org/alpine/edge/community \
+  --repository http://dl-3.alpinelinux.org/alpine/edge/main \
+  --repository http://dl-3.alpinelinux.org/alpine/edge/testing \
+  vips-dev vips-tools && \
+  apk add fftw-dev gcc g++ make libc6-compat python && \
+  apk add git && \
+  rm -rf /var/cache/apk/*
+RUN npm install --global yarn prettier gatsby
 
-RUN npm install --global gatsby \
-    			 gh-pages \
-			 eslint \
-			 yarn \
-			 prettier \
-			 gatsby-plugin-offline \
-			 gatsby-plugin-nprogress \
-			 gatsby-plugin-google-analytics --no-optional gatsby@2.0
-
-COPY ./entry.sh /
+## Setup entrypoint
+COPY ./docker/entry.sh /
 RUN chmod +x /entry.sh
 ENTRYPOINT ["/entry.sh"]
