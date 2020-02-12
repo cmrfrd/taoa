@@ -3,6 +3,7 @@ IMAGE=cmrfrd.site
 docker run \
        -v $(pwd):/site:z \
        -v ~/.ssh:/.ssh:z \
+       --net host \
        --rm \
        --name deploy \
        -w /site \
