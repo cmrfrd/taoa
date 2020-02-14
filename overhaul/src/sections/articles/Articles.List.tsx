@@ -26,102 +26,102 @@ import { GridLayoutContext } from './Articles.List.Context';
  */
 
 interface ArticlesListProps {
-  articles: IArticle[];
-  alwaysShowAllDetails?: boolean;
+    articles: IArticle[];
+    alwaysShowAllDetails?: boolean;
 }
 
 interface ArticlesListItemProps {
-  article: IArticle;
-  narrow?: boolean;
+    article: IArticle;
+    narrow?: boolean;
 }
 
 const ArticlesList: React.FC<ArticlesListProps> = ({
-  articles,
-  alwaysShowAllDetails,
+    articles,
+    alwaysShowAllDetails,
 }) => {
-  if (!articles) return null;
+    if (!articles) return null;
 
-  const hasOnlyOneArticle = articles.length === 1;
-  const { gridLayout = 'tiles', hasSetGridLayout, getGridLayout } = useContext(
-    GridLayoutContext,
-  );
+    const hasOnlyOneArticle = articles.length === 1;
+    const { gridLayout = 'tiles', hasSetGridLayout, getGridLayout } = useContext(
+        GridLayoutContext,
+    );
 
-  /**
-   * We're taking the flat array of articles [{}, {}, {}...]
-   * and turning it into an array of pairs of articles [[{}, {}], [{}, {}], [{}, {}]...]
-   * This makes it simpler to create the grid we want
-   */
-  const articlePairs = articles.reduce((result, value, index, array) => {
-    if (index % 2 === 0) {
-      result.push(array.slice(index, index + 2));
-    }
-    return result;
-  }, []);
+    /**
+     * We're taking the flat array of articles [{}, {}, {}...]
+     * and turning it into an array of pairs of articles [[{}, {}], [{}, {}], [{}, {}]...]
+     * This makes it simpler to create the grid we want
+     */
+    const articlePairs = articles.reduce((result, value, index, array) => {
+        if (index % 2 === 0) {
+            result.push(array.slice(index, index + 2));
+        }
+        return result;
+    }, []);
 
-  useEffect(() => getGridLayout(), []);
+    useEffect(() => getGridLayout(), []);
 
-  return (
-    <ArticlesListContainer
-      style={{ opacity: hasSetGridLayout ? 1 : 0 }}
-      alwaysShowAllDetails={alwaysShowAllDetails}
-    >
-      {articlePairs.map((ap, index) => {
-        const isEven = index % 2 !== 0;
-        const isOdd = index % 2 !== 1;
+    return (
+        <ArticlesListContainer
+            style={{ opacity: hasSetGridLayout ? 1 : 0 }}
+            alwaysShowAllDetails={alwaysShowAllDetails}
+        >
+            {articlePairs.map((ap, index) => {
+                const isEven = index % 2 !== 0;
+                const isOdd = index % 2 !== 1;
 
-        return (
-          <List
-            key={index}
-            gridLayout={gridLayout}
-            hasOnlyOneArticle={hasOnlyOneArticle}
-            reverse={isEven}
-          >
-            <ListItem article={ap[0]} narrow={isEven} />
-            <ListItem article={ap[1]} narrow={isOdd} />
-          </List>
-        );
-      })}
-    </ArticlesListContainer>
-  );
+                return (
+                    <List
+                        key={index}
+                        gridLayout={gridLayout}
+                        hasOnlyOneArticle={hasOnlyOneArticle}
+                        reverse={isEven}
+                    >
+                        <ListItem article={ap[0]} narrow={isEven} />
+                        <ListItem article={ap[1]} narrow={isOdd} />
+                    </List>
+                );
+            })}
+        </ArticlesListContainer>
+    );
 };
 
 export default ArticlesList;
 
 const ListItem: React.FC<ArticlesListItemProps> = ({ article, narrow }) => {
-  if (!article) return null;
+    if (!article) return null;
 
-  const { gridLayout } = useContext(GridLayoutContext);
-  const hasOverflow = narrow && article.title.length > 35;
-  const imageSource = narrow ? article.hero.narrow : article.hero.regular;
-  const hasHeroImage =
-    imageSource &&
-    Object.keys(imageSource).length !== 0 &&
-    imageSource.constructor === Object;
+    const { gridLayout } = useContext(GridLayoutContext);
+    const hasOverflow = narrow && article.title.length > 35;
+    const imageSource = narrow ? article.hero.narrow : article.hero.regular;
+    const hasHeroImage =
+        imageSource &&
+        Object.keys(imageSource).length !== 0 &&
+        imageSource.constructor === Object;
 
-  return (
-    <ArticleLink to={article.slug} data-a11y="false">
-      <Item gridLayout={gridLayout}>
-        <ImageContainer narrow={narrow} gridLayout={gridLayout}>
-          {hasHeroImage ? <Image src={imageSource} /> : <ImagePlaceholder />}
-        </ImageContainer>
-        <div>
-          <Title dark hasOverflow={hasOverflow} gridLayout={gridLayout}>
-            {article.title}
-          </Title>
-          <Excerpt
-            narrow={narrow}
-            hasOverflow={hasOverflow}
-            gridLayout={gridLayout}
-          >
-            {article.excerpt}
-          </Excerpt>
-          <MetaData>
-            {article.date} · {article.timeToRead} min read
+    return (
+        <ArticleLink to={article.slug} data-a11y="false">
+            <Item gridLayout={gridLayout}>
+                <ImageContainer narrow={narrow} gridLayout={gridLayout}>
+                    {hasHeroImage ? <Image src={imageSource} /> : <ImagePlaceholder />}
+                </ImageContainer>
+                <div>
+                    <Title dark hasOverflow={hasOverflow} gridLayout={gridLayout}>
+                        {article.title}
+                    </Title>
+                    <Excerpt
+                        narrow={narrow}
+                        hasOverflow={hasOverflow}
+                        gridLayout={gridLayout}
+                    >
+                        {article.excerpt}
+                    </Excerpt>
+                    <MetaData>
+                        {article.date} · {article.timeToRead} min read
           </MetaData>
-        </div>
-      </Item>
-    </ArticleLink>
-  );
+                </div>
+            </Item>
+        </ArticleLink>
+    );
 };
 
 const wide = '1fr';
@@ -153,6 +153,7 @@ const showDetails = css`
 
 const ArticlesListContainer = styled.div<{ alwaysShowAllDetails?: boolean }>`
   transition: opacity 0.25s;
+  padding-top: 20px;
   ${p => p.alwaysShowAllDetails && showDetails}
 `;
 
@@ -160,8 +161,8 @@ const listTile = p => css`
   position: relative;
   display: grid;
   grid-template-columns: ${p.reverse
-    ? `${narrow} ${wide}`
-    : `${wide} ${narrow}`};
+        ? `${narrow} ${wide}`
+        : `${wide} ${narrow}`};
   grid-template-rows: 2;
   column-gap: 30px;
 
@@ -175,7 +176,7 @@ const listTile = p => css`
 
   ${mediaqueries.tablet`
     grid-template-columns: 1fr;
-    
+
     &:not(:last-child) {
       margin-bottom: 0;
     }
@@ -238,9 +239,9 @@ const listRow = p => css`
 `;
 
 const List = styled.div<{
-  reverse: boolean;
-  gridLayout: string;
-  hasOnlyOneArticle: boolean;
+    reverse: boolean;
+    gridLayout: string;
+    hasOnlyOneArticle: boolean;
 }>`
   ${p => (p.gridLayout === 'tiles' ? listTile : listRow)}
 `;
@@ -280,7 +281,7 @@ const Title = styled(Headings.h2)`
   font-size: 21px;
   font-family: ${p => p.theme.fonts.serif};
   margin-bottom: ${p =>
-    p.hasOverflow && p.gridLayout === 'tiles' ? '35px' : '10px'};
+        p.hasOverflow && p.gridLayout === 'tiles' ? '35px' : '10px'};
   transition: color 0.3s ease-in-out;
   ${limitToTwoLines};
 
@@ -289,11 +290,11 @@ const Title = styled(Headings.h2)`
   `}
 
   ${mediaqueries.tablet`
-    font-size: 24px;  
+    font-size: 24px;
   `}
 
   ${mediaqueries.phablet`
-    font-size: 22px;  
+    font-size: 22px;
     padding: 30px 20px 0;
     margin-bottom: 10px;
     -webkit-line-clamp: 3;
@@ -301,9 +302,9 @@ const Title = styled(Headings.h2)`
 `;
 
 const Excerpt = styled.p<{
-  hasOverflow: boolean;
-  narrow: boolean;
-  gridLayout: string;
+    hasOverflow: boolean;
+    narrow: boolean;
+    gridLayout: string;
 }>`
   ${limitToTwoLines};
   font-size: 16px;

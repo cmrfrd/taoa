@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "@emotion/styled";
 import { Link, navigate, graphql, useStaticQuery } from "gatsby";
 import { useColorMode } from "theme-ui";
+import { useScrollPosition } from '@n8tb1t/use-scroll-position';
 
 import Section from "@components/Section";
 import Logo from "@components/Logo";
@@ -14,6 +15,8 @@ import {
     getBreakpointFromTheme,
 } from "@utils";
 
+import { GridLayoutContext } from '../../sections/articles/Articles.List.Context';
+
 const siteQuery = graphql`
     {
         sitePlugin(name: { glob: "**/**" }) {
@@ -24,6 +27,49 @@ const siteQuery = graphql`
         }
     }
 `;
+
+const GridRowToggle: React.FC<{}> = (enable = true) => {
+
+    const [gridMode, setGridMode] = useState(true);
+    const { gridLayout = 'tiles', hasSetGridLayout, setGridLayout } = useContext(
+        GridLayoutContext,
+    );
+    const tilesIsActive = hasSetGridLayout && gridLayout === 'tiles';
+
+    /* Only toggle if the component is enabled */
+    function toggleGridRow(event) {
+        if (enable) setGridMode(!gridMode);
+    }
+
+    return (
+        <IconWrapper
+            onClick={toggleGridRow}
+            data-a11y="false"
+        >
+            {tilesIsActive ? (
+                <GridButton
+                    onClick={() => setGridLayout('rows')}
+                    active={true}
+                    data-a11y="false"
+                    title="Show articles in Row grid"
+                    aria-label="Show articles in Row grid"
+                >
+                    <Icons.Rows />
+                </GridButton>
+            ) : (
+                    <GridButton
+                        onClick={() => setGridLayout('tiles')}
+                        active={true}
+                        data-a11y="false"
+                        title="Show articles in Tile grid"
+                        aria-label="Show articles in Tile grid"
+                    >
+                        <Icons.Tiles />
+                    </GridButton>
+                )}
+        </IconWrapper>
+    );
+};
 
 const DarkModeToggle: React.FC<{}> = () => {
     const [colorMode, setColorMode] = useColorMode();
@@ -43,7 +89,6 @@ const DarkModeToggle: React.FC<{}> = () => {
             title={isDark ? "Activate light mode" : "Activate dark mode"}
         >
             <MoonOrSun isDark={isDark} />
-            <MoonMask isDark={isDark} />
         </IconWrapper>
     );
 };
@@ -81,6 +126,25 @@ const SharePageButton: React.FC<{}> = () => {
     );
 };
 
+
+const useHideOnScrolled = () => {
+    const [hidden, setHidden] = useState(false);
+
+    const handleScroll = () => {
+        const top = window.pageYOffset || document.documentElement.scrollTop;
+        /* setHidden(top !== 0); */
+    };
+
+    useEffect(() => {
+        window.addEventListener("scroll", handleScroll);
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, []);
+
+    return hidden;
+};
+
 const NavigationHeader: React.FC<{}> = () => {
     const [showBackArrow, setShowBackArrow] = useState<boolean>(false);
     const [previousPath, setPreviousPath] = useState<string>("/");
@@ -89,6 +153,8 @@ const NavigationHeader: React.FC<{}> = () => {
     const [colorMode] = useColorMode();
     const fill = colorMode === "dark" ? "#fff" : "#000";
     const { rootPath, basePath } = sitePlugin.pluginOptions;
+
+    const stickyHeader = useHideOnScrolled();
 
     useEffect(() => {
         const { width } = getWindowDimensions();
@@ -105,8 +171,13 @@ const NavigationHeader: React.FC<{}> = () => {
         setPreviousPath(prev);
     }, []);
 
+    const { gridLayout = 'tiles', hasSetGridLayout, setGridLayout } = useContext(
+        GridLayoutContext,
+    );
+    const tilesIsActive = hasSetGridLayout && gridLayout === 'tiles';
+
     return (
-        <Section>
+        <Section style={{ "position": stickyHeader ? "fixed" : "relative" }}>
             <NavContainer>
                 <LogoLink
                     to={'/'}
@@ -134,13 +205,14 @@ const NavigationHeader: React.FC<{}> = () => {
                         </button>
                     ) : (
                             <>
+                                <GridRowToggle />
                                 <SharePageButton />
                                 <DarkModeToggle />
                             </>
                         )}
                 </NavControls>
             </NavContainer>
-            <Horizontal />
+            {/* <Horizontal /> */}
         </Section>
     );
 };
@@ -153,7 +225,7 @@ const Horizontal = styled.div`
     border-bottom: 1px solid ${p => p.theme.colors.horizontalNav};
 
     ${mediaqueries.tablet`
-margin: 60px auto;
+margin: 20px auto;
 `}
 
     ${mediaqueries.phablet`
@@ -178,21 +250,13 @@ display: none;
 `}
 `;
 
-const NavContainer = styled.div`
-    position: relative;
-    z-index: 100;
-    padding-top: 100px;
-    display: flex;
-    justify-content: space-between;
-
-    ${mediaqueries.desktop_medium`
-padding-top: 50px;
-`};
-
-  @media screen and (max-height: 800px) {
-    padding-top: 50px;
-  }
-`;
+const NavContainer = styled.div(({
+    position: "relative",
+    zIndex: "100",
+    paddingTop: "20px",
+    display: "flex",
+    justifyContent: "space-between",
+}));
 
 const LogoLink = styled(Link) <{ back: string }>`
   position: relative;
@@ -224,13 +288,13 @@ left: 0
 `;
 
 const NavControls = styled.div`
-  position: relative;
-  display: flex;
-  align-items: center;
+    position: relative;
+    display: flex;
+    align-items: center;
 
-  ${mediaqueries.phablet`
-    right: -5px;
-  `}
+    ${mediaqueries.phablet`
+right: -5px;
+`}
 `;
 
 const ToolTip = styled.div<{ isDark: boolean; hasCopied: boolean }>`
@@ -293,7 +357,6 @@ const IconWrapper = styled.button<{ isDark: boolean }>`
     transform: scale(0.708);
     margin-left: 10px;
 
-
     &:hover {
       opacity: 0.5;
     }
@@ -314,6 +377,8 @@ const MoonOrSun = styled.div<{ isDark: boolean }>`
   overflow: ${p => (p.isDark ? "visible" : "hidden")};
 
   &::before {
+    outline: 0;
+    border: 0;
     content: "";
     position: absolute;
     right: -9px;
@@ -325,7 +390,8 @@ const MoonOrSun = styled.div<{ isDark: boolean }>`
     transform: translate(${p => (p.isDark ? "14px, -14px" : "0, 0")});
     opacity: ${p => (p.isDark ? 0 : 1)};
     transition: transform 0.45s ease;
-  }
+    background: radial-gradient(ellipse farthest-corner at 33% 100%, ${p => p.theme.colors.secondary} 50%, ${p => p.theme.colors.secondary} 50%);
+    }
 
   &::after {
     content: "";
@@ -348,31 +414,60 @@ const MoonOrSun = styled.div<{ isDark: boolean }>`
     transition: all 0.35s ease;
 
     ${p => mediaqueries.tablet`
-      transform: scale(${p.isDark ? 0.92 : 0});
-    `}
+transform: scale(${p.isDark ? 0.92 : 0});
+`}
   }
 `;
 
-const MoonMask = styled.div<{ isDark: boolean }>`
-  position: absolute;
-  right: -1px;
-  top: -8px;
-  height: 24px;
-  width: 24px;
-  border-radius: 50%;
-  border: 0;
-  background: ${p => p.theme.colors.background};
-  transform: translate(${p => (p.isDark ? "14px, -14px" : "0, 0")});
-  opacity: ${p => (p.isDark ? 0 : 1)};
-  transition: ${p => p.theme.colorModeTransition}, transform 0.45s ease;
+const Hidden = styled.span`
+    position: absolute;
+    display: inline-block;
+    opacity: 0;
+    width: 0px;
+    height: 0px;
+    visibility: hidden;
+    overflow: hidden;
 `;
 
-const Hidden = styled.span`
-  position: absolute;
-  display: inline-block;
-  opacity: 0;
-  width: 0px;
-  height: 0px;
-  visibility: hidden;
-  overflow: hidden;
+const GridButton = styled.button<{ active: boolean }>`
+  outline: 0;
+  border: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  width: 36px;
+  border-radius: 50%;
+  background: transparent;
+  transition: background 0.25s;
+
+  &:not(:last-child) {
+    margin-right: 30px;
+  }
+
+  &:hover {
+    background: ${p => p.theme.colors.hover};
+  }
+
+  &[data-a11y='true']:focus::after {
+    content: '';
+    position: absolute;
+    left: -10%;
+    top: -10%;
+    width: 120%;
+    height: 120%;
+    border: 2px solid ${p => p.theme.colors.accent};
+    background: rgba(255, 255, 255, 0.01);
+    border-radius: 50%;
+  }
+
+  svg {
+    opacity: ${p => (p.active ? 1 : 0.25)};
+    transition: opacity 0.2s;
+
+    path {
+      fill: ${p => p.theme.colors.primary};
+    }
+  }
 `;

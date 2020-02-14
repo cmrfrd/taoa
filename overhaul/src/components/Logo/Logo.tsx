@@ -6,10 +6,12 @@ import Headings from '@components/Headings';
 import mediaqueries from "@styles/media";
 import { Icon } from '@types';
 
+const LogoText: string = "TAOA";
+
 const Logo: Icon = ({ fill = "white" }) => {
     return (
         <LogoContainer>
-            <LogoFont>TAOA</LogoFont>
+            <LogoFont>{LogoText}</LogoFont>
         </LogoContainer>
     );
 };
@@ -34,22 +36,27 @@ const LogoContainer = styled.div`
 
 const LogoFont = styled.h1`
     font-family: ${p => p.theme.fonts.serif};
-    transition: color 0.3s ease-in-out;
+    transition: color 0.2s ease-in-out, background 0.2s ease-in-out;
     color: ${p => p.theme.colors.background};
     background: ${p => p.theme.colors.invbackground};
     padding: 3px 10px 3px 10px;
 
     font-style: normal;
     font-weight: 600;
-    font-size: 52px;
+    font-size: 48px;
+
+    &:hover {
+    color: ${p => p.theme.colors.invbackground};
+    background: ${p => p.theme.colors.background};
+    }
 
     ${mediaqueries.desktop`
 verticle-align: middle;
-      font-size: 38px
-    `}
+font-size: 38px
+`}
 
     ${mediaqueries.tablet`
-      verticle-align: middle;
+verticle-align: middle;
       font-size: 30px
     `}
 

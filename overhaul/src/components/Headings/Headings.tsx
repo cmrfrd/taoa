@@ -11,7 +11,7 @@ import mediaqueries from "@styles/media";
 const commonStyles = p => css`
   font-weight: bold;
   color: ${p.theme.colors.primary};
-  font-family: ${p.theme.fonts.serif};
+  font-family: ${p.theme.fonts.monospace};
 `;
 
 const h1 = styled.h1`
@@ -78,7 +78,7 @@ const h4 = styled.h4`
 `;
 
 const h5 = styled.h5`
-  word-break: keep-all;  
+  word-break: keep-all;
   font-size: 18px;
   line-height: 1.45;
   ${commonStyles};
@@ -100,10 +100,10 @@ const h6 = styled.h6`
 `;
 
 export default {
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
 };
