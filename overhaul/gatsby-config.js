@@ -7,14 +7,14 @@ module.exports = {
     siteUrl: `https://theartofabstraction.com`,
     description: ``,
     hero: {
-      welcome: `Welcome to <u>The Art of Abstraction</u>&nbsp`,
-      heading: `An engineering blog dedicated to first principles, and hidden structures`,
+      welcome: `Welcome to <b><u>The Art of Abstraction</u></b>&nbsp`,
+      heading: `An <b>engineering blog</b> about first principles and exploring new possibilities`,
       maxWidth: 900,
     },
     social: [
       {
         name: `twitter`,
-        url: ``,
+        url: `blu`,
       },
       {
         name: `github`,
@@ -22,11 +22,11 @@ module.exports = {
       },
       {
         name: `instagram`,
-        url: ``,
+        url: `doo`,
       },
       {
         name: `linkedin`,
-        url: ``,
+        url: `poo`,
       },
     ],
   },
@@ -109,6 +109,17 @@ module.exports = {
       resolve: `gatsby-plugin-emotion`,
       options: {
         displayName: process.env.NODE_ENV === `development`,
+      },
+    },
+    {
+      resolve: `gatsby-plugin-prefetch-google-fonts`,
+      options: {
+        fonts: [
+          {
+            family: `Heebo`,
+            variants: [`400`, `500`, `600`, `700`]
+          },
+        ],
       },
     },
   ],
