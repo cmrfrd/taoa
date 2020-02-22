@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
+import { css } from '@emotion/core';
 import styled from "@emotion/styled";
 import { Link, navigate, graphql, useStaticQuery } from "gatsby";
 import { useColorMode } from "theme-ui";
-import { useScrollPosition } from '@n8tb1t/use-scroll-position';
 
 import Section from "@components/Section";
 import Logo from "@components/Logo";
@@ -28,13 +28,13 @@ const siteQuery = graphql`
     }
 `;
 
-const GridRowToggle: React.FC<{}> = (enable = true) => {
+const GridRowToggle: React.FC<{}> = (enable = true, active = true) => {
 
     const [gridMode, setGridMode] = useState(true);
     const { gridLayout = 'tiles', hasSetGridLayout, setGridLayout } = useContext(
         GridLayoutContext,
     );
-    const tilesIsActive = hasSetGridLayout && gridLayout === 'tiles';
+    const rowsIsActive = hasSetGridLayout && gridLayout === 'tiles';
 
     /* Only toggle if the component is enabled */
     function toggleGridRow(event) {
@@ -42,14 +42,12 @@ const GridRowToggle: React.FC<{}> = (enable = true) => {
     }
 
     return (
-        <IconWrapper
-            onClick={toggleGridRow}
-            data-a11y="false"
+        <IconWrapper isDark={false}
         >
-            {tilesIsActive ? (
+            {rowsIsActive ? (
                 <GridButton
                     onClick={() => setGridLayout('rows')}
-                    active={true}
+                    active={active}
                     data-a11y="false"
                     title="Show articles in Row grid"
                     aria-label="Show articles in Row grid"
@@ -59,7 +57,7 @@ const GridRowToggle: React.FC<{}> = (enable = true) => {
             ) : (
                     <GridButton
                         onClick={() => setGridLayout('tiles')}
-                        active={true}
+                        active={active}
                         data-a11y="false"
                         title="Show articles in Tile grid"
                         aria-label="Show articles in Tile grid"
@@ -126,14 +124,23 @@ const SharePageButton: React.FC<{}> = () => {
     );
 };
 
-
-const useHideOnScrolled = () => {
-    const [hidden, setHidden] = useState(false);
+/**
+ *  useHideOnScrolled is a function to hold the state
+ *  of where the scroll bar is located on the page.
+ *
+ *  When the scroll bar is close to '0' the state is set to true
+ */
+const useStickyOnScrolled = () => {
+    const [sticky, setSticky] = useState(false);
 
     const handleScroll = () => {
         const top = window.pageYOffset || document.documentElement.scrollTop;
-        /* setHidden(top !== 0); */
+        setSticky(top > 5);
     };
+
+    useEffect(() => {
+        console.log(sticky);
+    }, [sticky]);
 
     useEffect(() => {
         window.addEventListener("scroll", handleScroll);
@@ -142,7 +149,7 @@ const useHideOnScrolled = () => {
         };
     }, []);
 
-    return hidden;
+    return sticky;
 };
 
 const NavigationHeader: React.FC<{}> = () => {
@@ -154,31 +161,44 @@ const NavigationHeader: React.FC<{}> = () => {
     const fill = colorMode === "dark" ? "#fff" : "#000";
     const { rootPath, basePath } = sitePlugin.pluginOptions;
 
-    const stickyHeader = useHideOnScrolled();
-
+    /* Don't see the effect right now. Seems useless */
     useEffect(() => {
-        const { width } = getWindowDimensions();
-        const phablet = getBreakpointFromTheme("phablet");
+        /* const { width } = getWindowDimensions();
+         * const phablet = getBreakpointFromTheme("phablet");
 
-        const prev = localStorage.getItem("previousPath");
-        const previousPathWasHomepage =
-            prev === (rootPath || basePath) || (prev && prev.includes("/page/"));
-        const isNotPaginated = !location.pathname.includes("/page/");
+         * const prev = localStorage.getItem("previousPath");
+         * const previousPathWasHomepage =
+         *     prev === (rootPath || basePath) || (prev && prev.includes("/page/"));
+         * const isNotPaginated = !location.pathname.includes("/page/");
 
-        setShowBackArrow(
-            previousPathWasHomepage && isNotPaginated && width <= phablet,
-        );
-        setPreviousPath(prev);
+         * setShowBackArrow(
+         *     previousPathWasHomepage && isNotPaginated && width <= phablet,
+         * );
+         * setPreviousPath(prev); */
     }, []);
 
     const { gridLayout = 'tiles', hasSetGridLayout, setGridLayout } = useContext(
         GridLayoutContext,
     );
     const tilesIsActive = hasSetGridLayout && gridLayout === 'tiles';
+    const stickyHeader = useStickyOnScrolled();
+
+    const section_main = css`
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+    `
+    const extra = css`
+        background: red;
+    `
+
+    const nav_main = css`
+    `
 
     return (
-        <Section style={{ "position": stickyHeader ? "fixed" : "relative" }}>
-            <NavContainer>
+        <Section css={stickyHeader ? [section_main, extra] : [section_main]}>
+            <NavContainer css={stickyHeader ? [nav_main] : [nav_main]}>
                 <LogoLink
                     to={'/'}
                     data-a11y="false"
@@ -251,9 +271,9 @@ display: none;
 `;
 
 const NavContainer = styled.div(({
-    position: "relative",
     zIndex: "100",
     paddingTop: "20px",
+    paddingBottom: "20px",
     display: "flex",
     justifyContent: "space-between",
 }));
@@ -353,14 +373,14 @@ const IconWrapper = styled.button<{ isDark: boolean }>`
   }
 
   ${mediaqueries.tablet`
-    display: inline-flex;
-    transform: scale(0.708);
-    margin-left: 10px;
+display: inline-flex;
+transform: scale(0.708);
+margin-left: 10px;
 
-    &:hover {
-      opacity: 0.5;
-    }
-  `}
+                                 &:hover {
+                                     opacity: 0.5;
+                                 }
+`}
 `;
 
 // This is based off a codepen! Much appreciated to: https://codepen.io/aaroniker/pen/KGpXZo
