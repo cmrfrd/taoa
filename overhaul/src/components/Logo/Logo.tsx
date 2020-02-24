@@ -1,17 +1,32 @@
 import React from "react";
 import styled from "@emotion/styled";
 import { css } from '@emotion/core';
+import { useColorMode } from "theme-ui";
 
 import Headings from '@components/Headings';
+import useStickyOnScrolled from "@components/UseStickyScroll";
+
 import mediaqueries from "@styles/media";
+
 import { Icon } from '@types';
 
-const LogoText: string = "TAOA";
+import { theme } from "@utils";
 
-const Logo: Icon = ({ fill = "white" }) => {
+const LogoText: string = "T·A·O·A";
+
+const Logo: Icon = () => {
+    const [colorMode] = useColorMode();
+    const stickyHeader = useStickyOnScrolled();
+    const tcolors = colorMode === "dark" ? theme.colors.modes.dark : theme.colors;
+
+    const logoHov = css`
+        &:hover{
+            background: ${stickyHeader ? tcolors.tintBackground : tcolors.background};
+        }
+    `
     return (
         <LogoContainer>
-            <LogoFont>{LogoText}</LogoFont>
+            <LogoFont css={logoHov}>{LogoText}</LogoFont>
         </LogoContainer>
     );
 };
@@ -24,40 +39,40 @@ const LogoContainer = styled.div`
     }
 
     ${mediaqueries.tablet`
-        .Logo__Desktop {
-           display: none;
-        }
+                            .Logo__Desktop {
+                                display: none;
+                            }
 
-        .Logo__Mobile{
-           display: block;
-        }
+                        .Logo__Mobile{
+                        display: block;
+                    }
     `}
 `;
 
 const LogoFont = styled.h1`
-    font-family: ${p => p.theme.fonts.serif};
+    font-family: ${p => p.theme.fonts.heebo};
     transition: color 0.2s ease-in-out, background 0.2s ease-in-out;
     color: ${p => p.theme.colors.background};
     background: ${p => p.theme.colors.invbackground};
-    padding: 3px 10px 3px 10px;
+    padding: 5px 10px 3px 10px;
 
     font-style: normal;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 48px;
 
     &:hover {
     color: ${p => p.theme.colors.invbackground};
-    background: ${p => p.theme.colors.background};
+    background: ${p => (p.stickyHeader ? p.theme.colors.tintBackground : p.theme.colors.background)};
     }
 
     ${mediaqueries.desktop`
-verticle-align: middle;
-font-size: 38px
-`}
+    verticle-align: middle;
+    font-size: 38px
+    `}
 
     ${mediaqueries.tablet`
-verticle-align: middle;
-      font-size: 30px
+    verticle-align: middle;
+    font-size: 30px
     `}
 
     ${mediaqueries.phablet`
