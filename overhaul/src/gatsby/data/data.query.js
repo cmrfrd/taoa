@@ -64,12 +64,22 @@ module.exports.local = {
       }
     }
   }`,
+  about: `{
+    about: aboutYaml {
+      name
+      about {
+        title
+        about
+      }
+    }
+  }`,
   authors: `{
     authors: allAuthor {
       edges {
         node {
           id
           name
+          bio
           featured
           social {
             url

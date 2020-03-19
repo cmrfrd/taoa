@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 
 import Section from '@components/Section';
 import Bio from '@components/Bio';
+import Name from '@components/Name';
 import Icons from '@icons';
 import mediaqueries from '@styles/media';
 import { IAuthor } from '@types';
@@ -49,6 +50,7 @@ const ArticlesHero: React.FC<IAuthor> = ({ authors }) => {
         <Section relative id="Articles__Hero">
             <HeadingContainer style={{ maxWidth: `${hero.maxWidth}px` }}>
                 <HeroWelcome dangerouslySetInnerHTML={{ __html: hero.welcome }} />
+                <Name.h1 />
                 <HeroHeading dangerouslySetInnerHTML={{ __html: hero.heading }} />
             </HeadingContainer>
             <Horizontal />
@@ -103,17 +105,15 @@ display: none;
 
 const HeadingContainer = styled.div`
     margin: 100px auto;
-    padding-top: 50px;
-    padding-bottom: 70px;
+    padding-top: 100px;
+    padding-bottom: 20px;
     position: relative;
 
     ${mediaqueries.desktop`
-margin: 70px auto;
-width: 80%;
+width: 95%;
 `}
 
     ${mediaqueries.tablet`
-margin: 50px auto;
 width: 100%;
 `}
 `;
@@ -121,8 +121,9 @@ width: 100%;
 const HeroHeading = styled.h2`
     font-style: normal;
     font-weight: 500;
-    font-size: 36px;
+    font-size: 40px;
     line-height: 1.15;
+    margin-top: 20px;
     color: ${p => p.theme.colors.primary};
 
     a {
@@ -130,41 +131,40 @@ const HeroHeading = styled.h2`
     }
 
     ${mediaqueries.desktop`
-font-size: 26px
+font-size: 32px
 `}
 
     ${mediaqueries.phablet`
-font-size: 20px;
+font-size: 26px;
 `}
 
     ${mediaqueries.phone`
-font-size: 14px;
+font-size: 20px;
 `}
 `;
 
 const HeroWelcome = styled.h1`
     font-style: normal;
-    font-weight: 600;
-    font-size: 46px;
+    font-weight: 500;
+    font-size: 40px;
     line-height: 1.15;
-    margin-bottom: 30px;
     color: ${p => p.theme.colors.primary};
-    font-family: ${p => p.theme.fonts.monospace};
+    font-family: ${p => p.theme.fonts.astigmatic};
 
     a {
     color: ${p => p.theme.colors.accent};
     }
 
     ${mediaqueries.desktop`
-font-size: 36px
+font-size: 32px
 `}
 
     ${mediaqueries.phablet`
-font-size: 30px;
+font-size: 26px;
 `}
 
     ${mediaqueries.phone`
-font-size: 18px;
+font-size: 20px;
 `}
 `;
 

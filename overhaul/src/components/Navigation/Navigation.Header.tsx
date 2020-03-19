@@ -4,8 +4,11 @@ import styled from "@emotion/styled";
 import { Link, navigate, graphql, useStaticQuery } from "gatsby";
 import { useColorMode } from "theme-ui";
 
+import Headings from '@components/Headings';
+import Paragraph from '@components/Paragraph';
 import Section from "@components/Section";
 import Logo from "@components/Logo";
+import useStickyOnScrolled from "@components/UseStickyScroll";
 
 import Icons from "@icons";
 import mediaqueries from "@styles/media";
@@ -13,6 +16,7 @@ import {
     copyToClipboard,
     getWindowDimensions,
     getBreakpointFromTheme,
+    theme
 } from "@utils";
 
 import { GridLayoutContext } from '../../sections/articles/Articles.List.Context';
@@ -28,7 +32,8 @@ const siteQuery = graphql`
     }
 `;
 
-const GridRowToggle: React.FC<{}> = (enable = true, active = true) => {
+const GridRowToggle: React.FC<{}> = (props) => {
+    console.log('asdf', props);
 
     const [gridMode, setGridMode] = useState(true);
     const { gridLayout = 'tiles', hasSetGridLayout, setGridLayout } = useContext(
@@ -38,7 +43,7 @@ const GridRowToggle: React.FC<{}> = (enable = true, active = true) => {
 
     /* Only toggle if the component is enabled */
     function toggleGridRow(event) {
-        if (enable) setGridMode(!gridMode);
+        if (props.enable.enableGridRow) setGridMode(!gridMode);
     }
 
     return (
@@ -47,7 +52,7 @@ const GridRowToggle: React.FC<{}> = (enable = true, active = true) => {
             {rowsIsActive ? (
                 <GridButton
                     onClick={() => setGridLayout('rows')}
-                    active={active}
+                    active={props.active.enableGridRow}
                     data-a11y="false"
                     title="Show articles in Row grid"
                     aria-label="Show articles in Row grid"
@@ -57,7 +62,7 @@ const GridRowToggle: React.FC<{}> = (enable = true, active = true) => {
             ) : (
                     <GridButton
                         onClick={() => setGridLayout('tiles')}
-                        active={active}
+                        active={props.active.enableGridRow}
                         data-a11y="false"
                         title="Show articles in Tile grid"
                         aria-label="Show articles in Tile grid"
@@ -124,41 +129,15 @@ const SharePageButton: React.FC<{}> = () => {
     );
 };
 
-/**
- *  useHideOnScrolled is a function to hold the state
- *  of where the scroll bar is located on the page.
- *
- *  When the scroll bar is close to '0' the state is set to true
- */
-const useStickyOnScrolled = () => {
-    const [sticky, setSticky] = useState(false);
 
-    const handleScroll = () => {
-        const top = window.pageYOffset || document.documentElement.scrollTop;
-        setSticky(top > 5);
-    };
-
-    useEffect(() => {
-        console.log(sticky);
-    }, [sticky]);
-
-    useEffect(() => {
-        window.addEventListener("scroll", handleScroll);
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        };
-    }, []);
-
-    return sticky;
-};
-
-const NavigationHeader: React.FC<{}> = () => {
+const NavigationHeader: React.FC<{}> = (enableGridRow: bool) => {
     const [showBackArrow, setShowBackArrow] = useState<boolean>(false);
     const [previousPath, setPreviousPath] = useState<string>("/");
     const { sitePlugin } = useStaticQuery(siteQuery);
 
     const [colorMode] = useColorMode();
     const fill = colorMode === "dark" ? "#fff" : "#000";
+    const tcolors = colorMode === "dark" ? theme.colors.modes.dark : theme.colors;
     const { rootPath, basePath } = sitePlugin.pluginOptions;
 
     /* Don't see the effect right now. Seems useless */
@@ -183,57 +162,70 @@ const NavigationHeader: React.FC<{}> = () => {
     const tilesIsActive = hasSetGridLayout && gridLayout === 'tiles';
     const stickyHeader = useStickyOnScrolled();
 
-    const section_main = css`
+    const sectionMain = css`
+        width: 100%;
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
+        opacity: 1;
+        z-index: 100;
+        padding-top: 25px;
+        padding-bottom: 25px;
+        transition: all 0.25s var(--ease-in-out-quad);
+        background-color: ${tcolors.background};
     `
-    const extra = css`
-        background: red;
-    `
-
-    const nav_main = css`
+    const sectionSticky = css`
+        padding-top: 15px;
+        padding-bottom: 15px;
+        box-shadow: 3px 5px 2px 0px ${tcolors.tintHover};
+        background-color: ${tcolors.tintBackground};
     `
 
     return (
-        <Section css={stickyHeader ? [section_main, extra] : [section_main]}>
-            <NavContainer css={stickyHeader ? [nav_main] : [nav_main]}>
-                <LogoLink
-                    to={'/'}
-                    data-a11y="false"
-                    title="Navigate back to the homepage"
-                    aria-label="Navigate back to the homepage"
-                    back={showBackArrow ? "true" : "false"}
-                >
-                    {showBackArrow && (
-                        <BackArrowIconContainer>
-                            <Icons.ChevronLeft fill={fill} />
-                        </BackArrowIconContainer>
-                    )}
-                    <Logo fill={fill} />
-                    <Hidden>Navigate back to the homepage</Hidden>
-                </LogoLink>
-                <NavControls>
-                    {showBackArrow ? (
-                        <button
-                            onClick={() => navigate(previousPath)}
-                            title="Navigate back to the homepage"
-                            aria-label="Navigate back to the homepage"
-                        >
-                            <Icons.Ex fill={fill} />
-                        </button>
-                    ) : (
-                            <>
-                                <GridRowToggle />
-                                <SharePageButton />
-                                <DarkModeToggle />
-                            </>
+        <div css={stickyHeader ? [sectionMain, sectionSticky] : [sectionMain]}>
+            <Section>
+                <NavContainer>
+                    <LogoLink
+                        to={'/'}
+                        data-a11y="false"
+                        title="Navigate back to the homepage"
+                        aria-label="Navigate back to the homepage"
+                        back={showBackArrow ? "true" : "false"}
+                    >
+                        {showBackArrow && (
+                            <BackArrowIconContainer>
+                                <Icons.ChevronLeft fill={fill} />
+                            </BackArrowIconContainer>
                         )}
-                </NavControls>
-            </NavContainer>
-            {/* <Horizontal /> */}
-        </Section>
+                        <Logo fill={fill} />
+                        <Hidden>Navigate back to the homepage</Hidden>
+                    </LogoLink>
+                    <NavLinks>
+                        <NavLink to={'/about'}>
+                            <NavLinkText>About</NavLinkText>
+                        </NavLink>
+                    </NavLinks>
+                    <NavControls>
+                        {showBackArrow ? (
+                            <button
+                                onClick={() => navigate(previousPath)}
+                                title="Navigate back to the homepage"
+                                aria-label="Navigate back to the homepage"
+                            >
+                                <Icons.Ex fill={fill} />
+                            </button>
+                        ) : (
+                                <>
+                                    <GridRowToggle enable={enableGridRow} active={enableGridRow} />
+                                    <SharePageButton />
+                                    <DarkModeToggle />
+                                </>
+                            )}
+                    </NavControls>
+                </NavContainer>
+            </Section>
+        </div>
     );
 };
 
@@ -272,8 +264,6 @@ display: none;
 
 const NavContainer = styled.div(({
     zIndex: "100",
-    paddingTop: "20px",
-    paddingBottom: "20px",
     display: "flex",
     justifyContent: "space-between",
 }));
@@ -307,18 +297,61 @@ left: 0
   }
 `;
 
-const NavControls = styled.div`
+const NavLinks = styled.div`
     position: relative;
     display: flex;
-    align-items: center;
+    align: left;
+    margin-right: auto;
+    margin-left: 3%;
 
     ${mediaqueries.phablet`
 right: -5px;
 `}
 `;
 
+const NavControls = styled.div`
+    position: relative;
+    display: flex;
+    align-items: center;
+`;
+
+const NavLink = styled(Link)`
+  position: relative;
+  display: flex;
+  align-items: center;
+  left: 0;
+`;
+
+const NavLinkText = styled(Headings.h4)`
+  font-family: ${p => p.theme.fonts.serif};
+  transition: ${p => p.theme.colorModeTransition};
+
+               &::before {
+                   content: "";
+                   position: absolute;
+                   width: 100%;
+                   height: 2px;
+                   bottom: 25%;
+                   left: 0;
+                   background-color: ${p => p.theme.colors.primary};
+                   visibility: visible;
+                   -webkit-transform: scaleX(1);
+                   transform: scaleX(1);
+                   -webkit-transition: all 0.25s ease-in-out 0s;
+                   transition: all 0.25s ease-in-out 0s;
+               }
+
+               &:hover:before {
+                   color: ${p => p.theme.colors.grey};
+                   visibility: hidden;
+                   -webkit-transform: scaleX(0);
+                   transform: scaleX(0);
+               }
+`;
+
+
 const ToolTip = styled.div<{ isDark: boolean; hasCopied: boolean }>`
-  position: absolute;
+position: absolute;
   padding: 4px 13px;
   background: ${p => (p.isDark ? "#000" : "rgba(0,0,0,0.1)")};
   color: ${p => (p.isDark ? "#fff" : "#000")};
@@ -356,6 +389,19 @@ const IconWrapper = styled.button<{ isDark: boolean }>`
   transition: opacity 0.3s ease;
   margin-left: 30px;
 
+  ${mediaqueries.phone`
+margin-left: 5px;
+`}
+
+  ${mediaqueries.tablet`
+margin-left: 5px;
+display: inline-flex;
+transform: scale(0.708);
+                                 &:hover {
+                                     opacity: 0.5;
+                                 }
+`}
+
   &:hover {
     opacity: 1;
   }
@@ -372,15 +418,6 @@ const IconWrapper = styled.button<{ isDark: boolean }>`
     border-radius: 5px;
   }
 
-  ${mediaqueries.tablet`
-display: inline-flex;
-transform: scale(0.708);
-margin-left: 10px;
-
-                                 &:hover {
-                                     opacity: 0.5;
-                                 }
-`}
 `;
 
 // This is based off a codepen! Much appreciated to: https://codepen.io/aaroniker/pen/KGpXZo

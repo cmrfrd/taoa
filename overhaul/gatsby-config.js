@@ -2,13 +2,14 @@
 
 module.exports = {
   siteMetadata: {
+    siteName: `The Art of Abstraction`,
     title: `Welcome | The Art of Abstraction`,
     name: `Alexander Comerford`,
     siteUrl: `https://theartofabstraction.com`,
     description: ``,
     hero: {
-      welcome: `Welcome to <b><u>The Art of Abstraction</u></b>&nbsp`,
-      heading: `An <b>engineering blog</b> about first principles and exploring new possibilities`,
+      welcome: `Welcome to`,
+      heading: `An <b>engineering blog</b> about first principles and creating new systems`,
       maxWidth: 900,
     },
     social: [
@@ -51,6 +52,20 @@ module.exports = {
       options: {
         path: "content/authors",
         name: "content/authors",
+      },
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: "content/about",
+        name: "content/about",
+      },
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: "content/pages",
+        name: "content/pages",
       },
     },
     {

@@ -13,6 +13,7 @@ const templates = {
   articles: path.resolve(templatesDirectory, 'articles.template.tsx'),
   article: path.resolve(templatesDirectory, 'article.template.tsx'),
   author: path.resolve(templatesDirectory, 'author.template.tsx'),
+  about: path.resolve(templatesDirectory, 'about.template.tsx'),
 };
 
 const query = require('../data/data.query');
@@ -66,6 +67,7 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
     log('Querying Authors & Articles source:', 'Local');
     const localAuthors = await graphql(query.local.authors);
     const localArticles = await graphql(query.local.articles);
+    const localAbout = await graphql(query.local.about);
 
     log('Authors edges', "Mapping");
     dataSources.local.authors = localAuthors.data.authors.edges.map(
@@ -76,6 +78,10 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
     dataSources.local.articles = localArticles.data.articles.edges.map(
       normalize.local.articles,
     );
+
+    log('About edge');
+    about = localAbout.data.about;
+
   } catch (error) {
     console.error(error);
   }
@@ -182,4 +188,45 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
       },
     });
   });
+
+
+  log('Creating', 'about page');
+
+  // Creating the about page
+  createPage({
+    path: '/about',
+    component: templates.about,
+    context: {
+      about: about,
+      authors: authors,
+      basePath,
+      slug: '/about',
+      id: '123',
+    },
+  });
+
+  // REFERENCE: DO NOT USE
+  // authors.forEach(author => {
+  //   const articlesTheAuthorHasWritten = articlesThatArentSecret.filter(
+  //     article =>
+  //       article.author.toLowerCase().includes(author.name.toLowerCase()),
+  //   );
+  //   const path = slugify(author.slug, authorsPath);
+
+  //   createPaginatedPages({
+  //     edges: articlesTheAuthorHasWritten,
+  //     pathPrefix: author.slug,
+  //     createPage,
+  //     pageLength,
+  //     pageTemplate: templates.author,
+  //     buildPath: buildPaginatedPath,
+  //     context: {
+  //       author,
+  //       originalPath: path,
+  //       skip: pageLength,
+  //       limit: pageLength,
+  //     },
+  //   });
+  // });
+
 };

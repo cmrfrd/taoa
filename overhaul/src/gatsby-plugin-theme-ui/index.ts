@@ -21,7 +21,7 @@ const fonts = {
 };
 
 const colorModeTransition =
-    'background 0.25s var(--ease-in-out-quad), color 0.25s var(--ease-in-out-quad)';
+    'all 0.25s var(--ease-in-out-quad), background 0.25s var(--ease-in-out-quad), color 0.25s var(--ease-in-out-quad)';
 
 export default merge({
     initialColorMode: 'light',

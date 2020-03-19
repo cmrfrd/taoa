@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Global } from '@emotion/core';
+import React, { useEffect, useState } from 'react';
+import { Global, css } from '@emotion/core';
 import styled from '@emotion/styled';
 import { useColorMode } from 'theme-ui';
 
@@ -14,7 +14,7 @@ import { globalStyles } from '@styles';
  * and the main structure of each page. Within Layout we have the <Container />
  * which hides a lot of the mess we need to create our Desktop and Mobile experiences.
  */
-const Layout: React.FC<{}> = ({ children }) => {
+const Layout: React.FC<{}> = ({ children, enableGridRow = false }) => {
     const [colorMode] = useColorMode();
 
     useEffect(() => {
@@ -26,7 +26,7 @@ const Layout: React.FC<{}> = ({ children }) => {
             <Container>
                 <HeaderTexture />
                 <Global styles={globalStyles} />
-                <NavigationHeader />
+                <NavigationHeader enableGridRow={enableGridRow} />
                 {children}
                 <NavigationFooter />
             </Container>
@@ -44,17 +44,18 @@ const Container = styled.div`
 `;
 
 /* const HeaderGradient = styled.div`
- *     position: absolute;
- *     top: 0;
- *     left: 0;
- *     width: 100%;
- *     height: 100px;
- *     z-index: 0;
- *     pointer-events: none;
- *     background: ${p => p.theme.colors.gradient};
- *     transition: ${p => p.theme.colorModeTransition};
+ * position: absolute;
+ * top: 0;
+ * left: 0;
+ * width: 100 %;
+ * height: 100px;
+ * z - index: 0;
+ * pointer - events: none;
+ * background: ${ p => p.theme.colors.gradient };
+ * transition: ${ p => p.theme.colorModeTransition };
  * `;
  *  */
+
 const HeaderTexture = styled.div(p => ({
     position: "absolute",
     top: 0,

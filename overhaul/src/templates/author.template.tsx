@@ -11,30 +11,30 @@ import AuthorArticles from "../sections/author/Author.Articles";
 
 import { Template } from "@types";
 
-const ArticlesPage: Template = ({ location, pageContext }) => {
-  const author = pageContext.additionalContext.author;
-  const articles = pageContext.group;
+const AuthorsPage: Template = ({ location, pageContext }) => {
+    const author = pageContext.additionalContext.author;
+    const articles = pageContext.group;
 
-  return (
-    <Layout>
-      <SEO
-        pathname={location.pathname}
-        title={author.name}
-        description={author.bio}
-      />
-      <Section narrow>
-        <AuthorHero author={author} />
-        <AuthorArticles articles={articles} />
-        <AuthorPaginator>
-          <Paginator {...pageContext} />
-        </AuthorPaginator>
-      </Section>
-      <AuthorsGradient />
-    </Layout>
-  );
+    return (
+        <Layout>
+            <SEO
+                pathname={location.pathname}
+                title={author.name}
+                description={author.bio}
+            />
+            <Section narrow>
+                <AuthorHero author={author} />
+                {/* <AuthorArticles articles={articles} />
+                    <AuthorPaginator>
+                    <Paginator {...pageContext} />
+                    </AuthorPaginator> */}
+            </Section>
+            <AuthorsGradient />
+        </Layout>
+    );
 }
 
-export default ArticlesPage;
+export default AuthorsPage;
 
 const AuthorsGradient = styled.div`
   position: absolute;

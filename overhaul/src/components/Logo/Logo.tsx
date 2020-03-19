@@ -51,14 +51,14 @@ const LogoContainer = styled.div`
 
 const LogoFont = styled.h1`
     font-family: ${p => p.theme.fonts.heebo};
-    transition: color 0.2s ease-in-out, background 0.2s ease-in-out;
+    transition: ${p => p.theme.colorModeTransition};
     color: ${p => p.theme.colors.background};
     background: ${p => p.theme.colors.invbackground};
     padding: 5px 10px 3px 10px;
 
     font-style: normal;
     font-weight: 500;
-    font-size: 48px;
+    font-size: 44px;
 
     &:hover {
     color: ${p => p.theme.colors.invbackground};
@@ -66,22 +66,24 @@ const LogoFont = styled.h1`
     }
 
     ${mediaqueries.desktop`
-    verticle-align: middle;
-    font-size: 38px
-    `}
+verticle-align: middle;
+font-size: 34px
+`}
 
     ${mediaqueries.tablet`
-    verticle-align: middle;
-    font-size: 30px
-    `}
+verticle-align: middle;
+font-size: 26px
+`}
 
     ${mediaqueries.phablet`
-      font-size: 26px
-      verticle-align: middle;
-      -webkit-line-clamp: 3;
-    `}
+font-size: 22px
+verticle-align: middle;
+                -webkit-line-clamp: 3;
+padding: 3px 7px 1px 7px;
+`}
 
     ${mediaqueries.phone`
-      font-size: 22px
-    `}
+font-size: 18px
+padding: 3px 7px 1px 7px;
+`}
 `;

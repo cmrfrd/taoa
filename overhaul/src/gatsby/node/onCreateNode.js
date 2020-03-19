@@ -9,6 +9,7 @@ module.exports = ({ node, actions, getNode, createNodeId }) => {
 
   const { createNode, createNodeField, createParentChildLink } = actions;
   const contentPath = 'content/posts';
+  const pagesPath = 'content/pages';
   const basePath = '/';
   const articlePermalinkFormat = ':slug';
 
@@ -46,11 +47,12 @@ module.exports = ({ node, actions, getNode, createNodeId }) => {
     return `/${arguments_.join('/')}`.replace(/\/\/+/g, '/');
   }
 
-  // ///////////////////////////////////////////////////////
+  // Nodes for authors ///////////////////////////////////////////////////////
 
   if (node.internal.type === `AuthorsYaml`) {
     const slug = node.slug ? `/${node.slug}` : slugify(node.name);
 
+    console.log(node);
     const fieldData = {
       ...node,
       slug: generateSlug(basePath, 'authors', slug),
@@ -78,6 +80,39 @@ module.exports = ({ node, actions, getNode, createNodeId }) => {
     return;
   }
 
+  if (node.internal.type === `AboutYaml`) {
+    const slug = node.slug ? `/${node.slug}` : slugify(node.name);
+
+    console.log("about", node);
+    const fieldData = {
+      ...node,
+      slug: generateSlug(basePath, 'about', slug),
+    };
+
+    createNode({
+      ...fieldData,
+      // Required fields.
+      id: createNodeId(`${node.id} >>> about`),
+      parent: node.id,
+      children: [],
+      internal: {
+        type: `About`,
+        contentDigest: crypto
+          .createHash(`md5`)
+          .update(JSON.stringify(fieldData))
+          .digest(`hex`),
+        content: JSON.stringify(fieldData),
+        description: `About`,
+      },
+    });
+
+    createParentChildLink({ parent: fileNode, child: node });
+
+    return;
+  }
+
+  // Nodes for articles ///////////////////////////////////////////////////////
+
   if (node.internal.type === `Mdx` && source === contentPath) {
     const fieldData = {
       author: node.frontmatter.author,
@@ -95,23 +130,6 @@ module.exports = ({ node, actions, getNode, createNodeId }) => {
       subscription: node.frontmatter.subscription !== false,
       canonical_url: node.frontmatter.canonical_url,
     };
-
-    console.log({
-      ...fieldData,
-      // Required fields.
-      id: createNodeId(`${node.id} >>> Article`),
-      parent: node.id,
-      children: [],
-      internal: {
-        type: `Article`,
-        contentDigest: crypto
-          .createHash(`md5`)
-          .update(JSON.stringify(fieldData))
-          .digest(`hex`),
-        content: JSON.stringify(fieldData),
-        description: `Article Posts`,
-      },
-    });
 
     createNode({
       ...fieldData,
