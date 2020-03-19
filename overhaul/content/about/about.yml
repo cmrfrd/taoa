@@ -1,0 +1,10 @@
+name: "about"
+about:
+  title:
+    - "What is "
+    - "?"
+  about: |
+    The Art of Abstraction was started in an effort to become an exhibition for
+    provacative ideas and insightful projects in engineering and science.
+    The central theme of every post is to educate and demonstate the various
+    methods of abstracting complexity .
