@@ -48,6 +48,7 @@ const h2 = styled.h2`
 
   ${mediaqueries.phablet`
     font-size: 22px;
+    padding: 0 20px;
   `};
 `;
 
@@ -72,8 +73,8 @@ const h4 = styled.h4`
   line-height: 1.45;
   ${commonStyles};
 
-  ${mediaqueries.phablet`
-    font-size: 16px;
+  ${mediaqueries.desktop`
+    font-size: 10px;
   `};
 `;
 
