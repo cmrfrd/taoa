@@ -23,8 +23,11 @@ const base = p => css`
   color: ${p.theme.colors.invTintBackground};
   text-decoration: underline;
   margin-top: 20px;
+  overflow: auto;
   display: inline;
-`
+  ${mediaqueries.tablet`padding: 0 0px;`};
+  ${mediaqueries.phablet`padding: 0 0px;`};
+  `
 
 const h1 = () => {
     const name = useStaticQuery(nameQuery).site.siteMetadata.siteName;
