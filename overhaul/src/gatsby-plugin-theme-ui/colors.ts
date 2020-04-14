@@ -4,6 +4,7 @@ export default {
     prism,
 
     primary: "#000",
+    invPrimary: "#fff",
     secondary: "#73737D",
     grey: "#73737D",
     background: "#fafafa",
@@ -27,9 +28,10 @@ export default {
     inputBackground: "rgba(0, 0, 0, 0.05)",
     modes: {
         dark: {
-            grey: "#73737D",
             primary: "#fff",
+            invPrimary: "#000",
             secondary: "#fff",
+            grey: "#73737D",
             accent: "#E9DAAC",
             background: "#15161c",
             tintBackground: "#1d2028",
