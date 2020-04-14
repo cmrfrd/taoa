@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useContext } from "react";
-import { css } from '@emotion/core';
+import React, { useState, useEffect, useContext, useRef } from "react";
+import { css, keyframes } from '@emotion/core';
 import styled from "@emotion/styled";
 import { Link, navigate, graphql, useStaticQuery } from "gatsby";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { useColorMode } from "theme-ui";
 
 import Headings from '@components/Headings';
@@ -21,19 +22,12 @@ import {
 
 import { GridLayoutContext } from '../../sections/articles/Articles.List.Context';
 
-const siteQuery = graphql`
-    {
-        sitePlugin(name: { glob: "**/**" }) {
-            pluginOptions {
-                rootPath
-                basePath
-            }
-        }
-    }
-`;
+import ArrowIcon from './Navigation.Arrow';
 
-const GridRowToggle: React.FC<{}> = (props) => {
-    console.log('asdf', props);
+/* GridRowToggle is a component that toggles between two
+ * layouts of articles
+ */
+const GridRowToggle: React.FC<{}> = (props: any) => {
 
     const [gridMode, setGridMode] = useState(true);
     const { gridLayout = 'tiles', hasSetGridLayout, setGridLayout } = useContext(
@@ -52,7 +46,7 @@ const GridRowToggle: React.FC<{}> = (props) => {
             {rowsIsActive ? (
                 <GridButton
                     onClick={() => setGridLayout('rows')}
-                    active={props.active.enableGridRow}
+                    active={props.active}
                     data-a11y="false"
                     title="Show articles in Row grid"
                     aria-label="Show articles in Row grid"
@@ -62,7 +56,7 @@ const GridRowToggle: React.FC<{}> = (props) => {
             ) : (
                     <GridButton
                         onClick={() => setGridLayout('tiles')}
-                        active={props.active.enableGridRow}
+                        active={props.active}
                         data-a11y="false"
                         title="Show articles in Tile grid"
                         aria-label="Show articles in Tile grid"
@@ -129,32 +123,82 @@ const SharePageButton: React.FC<{}> = () => {
     );
 };
 
+const NavigationHeader: React.FC<{}> = (props: any) => {
 
-const NavigationHeader: React.FC<{}> = (enableGridRow: bool) => {
-    const [showBackArrow, setShowBackArrow] = useState<boolean>(false);
-    const [previousPath, setPreviousPath] = useState<string>("/");
-    const { sitePlugin } = useStaticQuery(siteQuery);
+    /* initial paramaters for the nav header */
+    const { enableGridRow, initialArrowUp } = props;
+
+    /* When in mobile view sets the inital direction of the menu arrow */
+    const [arrowUp, setArrowUp] = useState<boolean>(initialArrowUp);
+
+    /* Check if the app is mobile or desktop */
+    const { width } = getWindowDimensions();
+    const breakpoint = getBreakpointFromTheme("phablet");
+    const [showArrow, setShowArrow] = useState<boolean>(width <= breakpoint);
 
     const [colorMode] = useColorMode();
     const fill = colorMode === "dark" ? "#fff" : "#000";
     const tcolors = colorMode === "dark" ? theme.colors.modes.dark : theme.colors;
-    const { rootPath, basePath } = sitePlugin.pluginOptions;
 
-    /* Don't see the effect right now. Seems useless */
+    /* Function to handle turning the UI from a desktop view to
+     * a mobile view.
+     *
+     * This is done via theme-ui breakpoints
+     */
+    const handleWindowResize = () => {
+        const { width } = getWindowDimensions();
+        const breakpoint = getBreakpointFromTheme("phablet");
+        const willShowArrow = width <= breakpoint;
+
+        // When the arrow is removed, set it to the up position
+        if (!willShowArrow) {
+            setArrowUp(false)
+        }
+
+        setShowArrow(willShowArrow);
+    };
+
+    /* React hook to call function that will
+     * handle mobile vs desktop view
+     */
     useEffect(() => {
-        /* const { width } = getWindowDimensions();
-         * const phablet = getBreakpointFromTheme("phablet");
-
-         * const prev = localStorage.getItem("previousPath");
-         * const previousPathWasHomepage =
-         *     prev === (rootPath || basePath) || (prev && prev.includes("/page/"));
-         * const isNotPaginated = !location.pathname.includes("/page/");
-
-         * setShowBackArrow(
-         *     previousPathWasHomepage && isNotPaginated && width <= phablet,
-         * );
-         * setPreviousPath(prev); */
+        window.addEventListener("resize", handleWindowResize);
+        return () => {
+            window.removeEventListener("resize", handleWindowResize);
+        };
     }, []);
+
+
+    /* These are the React refs that keep track of
+     * the components when clicked will minimize the menu
+     */
+    const arrowRef = useRef(null);
+    const menuRef = useRef(null);
+    const logoRef = useRef(null);
+
+    useEffect(() => {
+        const menuf = (e) => {
+            if (
+                (menuRef.current && !menuRef.current.contains(event.target)) &&
+                (logoRef.current && !logoRef.current.contains(event.target))
+            ) {
+                setArrowUp(false);
+            };
+        }
+
+        window.addEventListener("mousedown", menuf);
+        return () => {
+            window.removeEventListener("mousedown", menuf);
+        };
+    }, [menuRef, arrowRef]);
+
+    const variants: Variants = {
+        open: { opacity: 1, y: "0%", visibility: "visible", pointerEvents: "auto" },
+        closed: { opacity: 0, y: "-50%", visibility: "hidden", pointerEvents: "none" },
+    }
+    const transition = {
+        duration: 0.3
+    }
 
     const { gridLayout = 'tiles', hasSetGridLayout, setGridLayout } = useContext(
         GridLayoutContext,
@@ -176,8 +220,12 @@ const NavigationHeader: React.FC<{}> = (enableGridRow: bool) => {
         background-color: ${tcolors.background};
     `
     const sectionSticky = css`
-        padding-top: 15px;
-        padding-bottom: 15px;
+        padding-top: 12px;
+        padding-bottom: 12px;
+        ${mediaqueries.phablet`
+    padding-top: 10px;
+    padding-bottom: 10px;
+    `};
         box-shadow: 3px 5px 2px 0px ${tcolors.tintHover};
         background-color: ${tcolors.tintBackground};
     `
@@ -191,38 +239,71 @@ const NavigationHeader: React.FC<{}> = (enableGridRow: bool) => {
                         data-a11y="false"
                         title="Navigate back to the homepage"
                         aria-label="Navigate back to the homepage"
-                        back={showBackArrow ? "true" : "false"}
+                        ref={logoRef}
+                        state={{ arrowUp: arrowUp }}
                     >
-                        {showBackArrow && (
-                            <BackArrowIconContainer>
-                                <Icons.ChevronLeft fill={fill} />
-                            </BackArrowIconContainer>
-                        )}
                         <Logo fill={fill} />
                         <Hidden>Navigate back to the homepage</Hidden>
                     </LogoLink>
-                    <NavLinks>
-                        <NavLink to={'/about'}>
-                            <NavLinkText>About</NavLinkText>
-                        </NavLink>
-                    </NavLinks>
-                    <NavControls>
-                        {showBackArrow ? (
-                            <button
-                                onClick={() => navigate(previousPath)}
-                                title="Navigate back to the homepage"
-                                aria-label="Navigate back to the homepage"
+                    {showArrow ? (
+                        <div ref={menuRef}>
+                            <ArrowIconContainer
+                                data-a11y="false"
+                                title="Hide/Display menu"
+                                aria-label="Hide/Display menu"
+                                ref={arrowRef}
+                                onClick={() => { setArrowUp(!arrowUp) }}
                             >
-                                <Icons.Ex fill={fill} />
-                            </button>
-                        ) : (
-                                <>
-                                    <GridRowToggle enable={enableGridRow} active={enableGridRow} />
-                                    <SharePageButton />
-                                    <DarkModeToggle />
-                                </>
-                            )}
-                    </NavControls>
+                                <ArrowIcon isOpen={arrowUp} />
+                            </ArrowIconContainer>
+                            <AnimatePresence>
+                                {arrowUp && (
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                    >
+                                        <MenuContainer arrowUp={arrowUp}>
+                                            <MenuNav>
+                                                <NavLinks showArrow={showArrow}>
+                                                    <NavLink to={'/'} arrow={showArrow} state={{ arrowUp: arrowUp }}>
+                                                        <NavLinkText>Home</NavLinkText>
+                                                    </NavLink>
+                                                    <NavLink to={'/about'} arrow={showArrow} state={{ arrowUp: arrowUp }}>
+                                                        <NavLinkText>About</NavLinkText>
+                                                    </NavLink>
+                                                </NavLinks>
+                                                <NavControls>
+                                                    <>
+                                                        <SharePageButton />
+                                                        <DarkModeToggle />
+                                                        <GridRowToggle enable={enableGridRow} active={enableGridRow} />
+                                                    </>
+                                                </NavControls>
+                                            </MenuNav>
+                                        </MenuContainer>
+                                    </motion.div>)}
+                            </AnimatePresence>
+                        </div>
+                    ) : (
+                            <>
+                                <NavLinks showArrow={showArrow}>
+                                    <NavLink to={'/'} arrow={showArrow} state={{ arrowUp: arrowUp }}>
+                                        <NavLinkText>Home</NavLinkText>
+                                    </NavLink>
+                                    <NavLink to={'/about'} arrow={showArrow} state={{ arrowUp: arrowUp }}>
+                                        <NavLinkText>About</NavLinkText>
+                                    </NavLink>
+                                </NavLinks>
+                                <NavControls>
+                                    <>
+                                        <GridRowToggle enable={enableGridRow} active={enableGridRow} />
+                                        <SharePageButton />
+                                        <DarkModeToggle />
+                                    </>
+                                </NavControls>
+                            </>
+                        )}
                 </NavContainer>
             </Section>
         </div>
@@ -262,6 +343,47 @@ display: none;
 `}
 `;
 
+const ArrowIconContainer = styled.div`
+    position: relative;
+    display: flex;
+`;
+
+const MenuContainer = styled.div<{ arrowUp: boolean }>`
+    top: 80px;
+    right: calc((40px + 20px + 2rem) - (1rem + 60px));
+    width: calc(2 * (1rem + 60px));
+
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`
+
+const fadeIn = keyframes`
+  from { opacity: 0; }
+  to { opacity: 1; }
+`;
+
+const fadeOut = keyframes`
+  from { opacity: 0; }
+  to { opacity: 1; }
+`;
+
+const open = css`
+    animation: fadeIn 0.3s ease-out forwards;
+`;
+const closed = css`
+    animation: fadeOut 0.3s ease-out forwards;
+`;
+
+const MenuNav = styled.nav`
+    background-color: ${p => p.theme.colors.tintBackground};
+    border-radius: 5px;
+    box-shadow: 3px 4px 3px 0px ${p => p.theme.colors.tintHover};
+    padding-bottom: 5px;
+    transition: all 0.3s ease-out;
+`;
+
 const NavContainer = styled.div(({
     zIndex: "100",
     display: "flex",
@@ -269,7 +391,7 @@ const NavContainer = styled.div(({
 }));
 
 const LogoLink = styled(Link) <{ back: string }>`
-  position: relative;
+position: relative;
   display: flex;
   align-items: center;
   left: ${p => (p.back === "true" ? "-54px" : 0)};
@@ -297,15 +419,16 @@ left: 0
   }
 `;
 
-const NavLinks = styled.div`
+const NavLinks = styled.div<{ showArrow: boolean }>`
     position: relative;
     display: flex;
-    align: left;
+    align: ${p => (p.showArrow ? "none" : "left")};
+    flex-direction: ${p => (p.showArrow ? "column" : "row")};
     margin-right: auto;
-    margin-left: 3%;
 
     ${mediaqueries.phablet`
-right: -5px;
+margin-left: 0%;
+right: -1px;
 `}
 `;
 
@@ -315,16 +438,35 @@ const NavControls = styled.div`
     align-items: center;
 `;
 
-const NavLink = styled(Link)`
+const NavLink = styled(Link) <{ arrow: boolean }>`
   position: relative;
   display: flex;
   align-items: center;
-  left: 0;
+  margin-right: auto;
+  padding-bottom: ${p => (p.arrow ? "6px" : "0px")};
+  padding-top: ${p => (p.arrow ? "5px" : "0px")};
+margin-left: ${p => (p.arrow ? "auto" : "30px")};
+  ${mediaqueries.tablet`
+margin-left: ${p => (p.arrow ? "auto" : "20px")};
+`};
 `;
 
-const NavLinkText = styled(Headings.h4)`
+const NavLinkText = styled(Headings.h3)`
   font-family: ${p => p.theme.fonts.serif};
   transition: ${p => p.theme.colorModeTransition};
+
+  ${mediaqueries.desktop_large`
+font-size: 24px;
+`};
+  ${mediaqueries.desktop`
+font-size: 22px;
+`};
+  ${mediaqueries.tablet`
+font-size: 20px;
+`};
+  ${mediaqueries.phablet`
+font-size: 18px;
+`};
 
                &::before {
                    content: "";
@@ -381,8 +523,8 @@ const IconWrapper = styled.button<{ isDark: boolean }>`
   opacity: 0.5;
   position: relative;
   border-radius: 5px;
-  width: 40px;
-  height: 25px;
+  width: 45px;
+  height: 35px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -390,11 +532,11 @@ const IconWrapper = styled.button<{ isDark: boolean }>`
   margin-left: 30px;
 
   ${mediaqueries.phone`
-margin-left: 5px;
+margin-left: 2px;
 `}
 
   ${mediaqueries.tablet`
-margin-left: 5px;
+margin-left: 2px;
 display: inline-flex;
 transform: scale(0.708);
                                  &:hover {
