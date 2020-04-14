@@ -1,10 +1,21 @@
 name: "about"
 about:
   title:
-    - "What is "
-    - "?"
-  about: |
-    The Art of Abstraction was started in an effort to become an exhibition for
-    provacative ideas and insightful projects in engineering and science.
-    The central theme of every post is to educate and demonstate the various
-    methods of abstracting complexity .
+    author: |
+      About the author
+    authors: |
+      About the authors
+    about:
+      - |
+        What is
+      - |
+        ?
+  about:
+    - |
+      The Art of Abstraction is a tech blog. It was started with the purpose to become an exhibition for
+      provocative ideas and insightful projects in subfields of engineering and science. The central
+      theme of every post is to educate and demonstrate the various methods of how to abstract complexity.
+    - |
+      Every post is made to provide value to experts and beginners alike. Whether coming from a tech
+      background or not, the metaphors in each post are meant to evoke a sense of freedom and delight
+      towards the intricate.
