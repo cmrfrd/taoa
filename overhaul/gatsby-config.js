@@ -9,7 +9,7 @@ module.exports = {
     description: ``,
     hero: {
       welcome: `Welcome to`,
-      heading: `An <b>engineering blog</b> about first principles and creating new systems`,
+      heading: `A tech blog about first principles, system design, and computation`,
       maxWidth: 900,
     },
     social: [
@@ -23,15 +23,17 @@ module.exports = {
       },
       {
         name: `instagram`,
-        url: `doo`,
+        url: `https://www.instagram.com/cmrfrd/`,
       },
       {
         name: `linkedin`,
-        url: `poo`,
+        url: `https://www.linkedin.com/in/ajcomerford`,
       },
     ],
   },
   plugins: [
+    `gatsby-plugin-page-transitions`,
+    `gatsby-plugin-sass`,
     `gatsby-plugin-typescript`,
     `gatsby-image`,
     `gatsby-plugin-react-helmet`,
