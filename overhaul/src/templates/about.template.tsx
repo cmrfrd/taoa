@@ -14,21 +14,30 @@ import Headings from "@components/Headings";
 import Name from "@components/Name";
 import Paragraph from "@components/Paragraph";
 
+import mediaqueries from "@styles/media";
+
 const AboutPage: Template = ({ location, pageContext }) => {
     const authors = pageContext.authors;
-    const about = pageContext.about;
+    const about = pageContext.about.about;
 
     return (
-        <Layout>
+        <Layout location={location}>
             <Section narrow>
                 <AuthorContainer>
-                    <Headings.h2>
-                        {about.about.title[0]}
+                    <AboutHeading>
+                        {about.title.about[0]}
                         <Name.h2 />
-                        {about.about.title[1]}
-                    </Headings.h2>
-                    <AboutParagraph>{about.about.about}</AboutParagraph>
-                    <AuthorHero author={authors[0]} />
+                        {about.title.about[1]}
+                    </AboutHeading>
+                    {about.about.map((para, i) => {
+                        return <AboutParagraph>{para}</AboutParagraph>
+                    })}
+                    <AuthorHeading>
+                        {authors.length > 1 ? about.title.authors : about.title.author}
+                    </AuthorHeading>
+                    {authors.map((a, i) => {
+                        return <AuthorHero author={a} />
+                    })}
                 </AuthorContainer>
             </Section>
             <AboutGradient />
@@ -43,10 +52,11 @@ const AuthorContainer = styled.div`
     bottom: 0;
     left: 0;
     width: 100%;
-    padding-top: 200px;
+    padding: 200px 30px 0;
     background: ${p => p.theme.colors.background};
     transition: ${p => p.theme.colorModeTransition};
 `;
+
 
 const AboutGradient = styled.div`
     position: absolute;
@@ -60,6 +70,41 @@ const AboutGradient = styled.div`
     transition: ${p => p.theme.colorModeTransition};
 `;
 
+const AboutHeading = styled(Headings.h2)`
+margin: 25px 0 25px;
+max-width: inherit;
+
+${mediaqueries.desktop`
+max-width: inherit;
+`}
+${mediaqueries.tablet`
+margin: 25px 0 25px;
+`};
+${mediaqueries.phablet`
+padding: 0 0px;
+`};
+`;
+
 const AboutParagraph = styled(Paragraph)`
-    margin:30px 0px;
+margin: 25px 0 25px;
+max-width: inherit;
+
+${mediaqueries.desktop`
+max-width: inherit;
+`}
+${mediaqueries.tablet`
+margin: 25px 0 25px;
+`};
+${mediaqueries.phablet`
+padding: 0 0px;
+`};
+`;
+
+const AuthorHeading = styled(Headings.h2)`
+${mediaqueries.phablet`
+padding: 0 0px;
+`};
+${mediaqueries.phone`
+text-align: center;
+`};
 `;
