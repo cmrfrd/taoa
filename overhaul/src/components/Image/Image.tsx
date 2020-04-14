@@ -5,6 +5,8 @@ import GatsbyImg from "gatsby-image";
 
 import { IImg } from "@types";
 
+import Caption from "@components/Caption";
+
 /**
  * To soften the blur-up we get from the default configuration of gatbsy image
  * we're adding a CSS blur to the image. This makes it smoother!
@@ -31,39 +33,46 @@ const StyledGatsbyImag = styled(GatsbyImg)`
  * todo : lazyload the default img tag
  */
 const Image: React.FC<IImg> = ({ src, alt, ...props }) => {
-  // We're going to build our final component's props dynamically.
-  // So create a nice default set of props that are relevant to Gatsby and non Gatsby images
-  const imgProps = {
-    alt,
-    ...props,
-  };
+    // We're going to build our final component's props dynamically.
+    // So create a nice default set of props that are relevant to Gatsby and non Gatsby images
+    const imgProps = {
+        alt,
+        ...props,
+    };
 
-  // TODO : Find where you have src null returns
-  if (!src) return null;
+    // TODO : Find where you have src null returns
+    if (!src) return null;
 
-  // Create a bool to tell us if the src is a string (vanilla img) or object (Gatsby)
-  const isGatsby = typeof src !== "string";
+    // Create a bool to tell us if the src is a string (vanilla img) or object (Gatsby)
+    const isGatsby = typeof src !== "string";
 
-  // Now we need to calculate the prop that will set the src of the image.
-  // This will either be src (for strings), fixed or fluid. Defaults to src
-  const keyForSrc =
-    // If src is an object with a width and height then we want fixed={src}
-    (isGatsby && src.width && src.height && "fixed") ||
-    // The only other Gatsby option would be fluid
-    (isGatsby && "fluid") ||
-    // Otherwise src is a string so set a vanilla src prop
-    "src";
+    // Now we need to calculate the prop that will set the src of the image.
+    // This will either be src (for strings), fixed or fluid. Defaults to src
+    const keyForSrc =
+        // If src is an object with a width and height then we want fixed={src}
+        (isGatsby && src.width && src.height && "fixed") ||
+        // The only other Gatsby option would be fluid
+        (isGatsby && "fluid") ||
+        // Otherwise src is a string so set a vanilla src prop
+        "src";
 
-  // todo : throw an exception if it is neither src nor fixed nor fluid
+    // todo : throw an exception if it is neither src nor fixed nor fluid
 
-  // Now set either src, fixed or fluid to the src prop
-  imgProps[keyForSrc] = src;
+    // Now set either src, fixed or fluid to the src prop
+    imgProps[keyForSrc] = src;
 
-  // We don't want to CSS blur tracedSVG images! Only regular blur-ups.
-  const Component = src.tracedSVG ? GatsbyImg : StyledGatsbyImag;
+    // We don't want to CSS blur tracedSVG images! Only regular blur-ups.
+    const Component = src.tracedSVG ? GatsbyImg : StyledGatsbyImag;
 
-  // Retrun either the GatsbyImg component or a regular img tag with the spread props
-  return isGatsby ? <Component {...imgProps} /> : <img {...imgProps} />;
+    // Retrun either the GatsbyImg component or a regular img tag with the spread props
+    return (isGatsby ?
+        (imgProps.title ?
+            (<div><Component {...imgProps} /><Caption>{imgProps.title}</Caption></div>) :
+            (<Component {...imgProps} />)) :
+        (imgProps.title ?
+            (<div><img {...imgProps} /><Caption>{imgProps.title}</Caption></div>) :
+            (<img {...imgProps} />)
+        ));
 };
 
 export default Image;

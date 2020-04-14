@@ -1,45 +1,49 @@
-import React from "react";
-import ImageWithZoom from "react-medium-image-zoom";
-import { useThemeUI } from "theme-ui";
+import React, { useCallback, useState } from 'react';
+import { Controlled as ControlledZoom } from 'react-medium-image-zoom';
+import { useThemeUI } from 'theme-ui';
 
-function handleImageZoomBackground(background: string) {
-  const images = Array.from(document.getElementsByClassName("Image__Zoom"));
+import Caption from "@components/Caption";
 
-  images.map(img => {
-    if (
-      img.previousElementSibling &&
-      img.previousElementSibling.tagName === "DIV"
-    ) {
-      img.previousElementSibling.style.background = background;
-    }
-  });
-}
+import 'react-medium-image-zoom/dist/styles.css';
 
-const ImageZoom: React.FC<{}> = (props) => {
-  const { theme } = useThemeUI();
+const ImageZoom: React.FC<{}> = props => {
+    const [isZoomed, setIsZoomed] = useState(false);
+    const { theme } = useThemeUI();
+    const { title } = props;
 
-  const image = {
-    ...props,
-    className: "Image__Zoom",
-    style: {
-      display: "block",
-      margin: "0 auto",
-      width: "100%",
-    },
-  };
-
-  return (
-    <ImageWithZoom
-      image={image}
-      zoomImage={image}
-      onZoom={() => handleImageZoomBackground(theme.colors.background)}
-      defaultStyles={{
-        zoomImage: {
-          borderRadius: "5px",
+    const image = {
+        ...props,
+        className: 'Image__Zoom',
+        style: {
+            display: 'block',
+            margin: '0 auto',
+            width: '100%',
+            borderRadius: isZoomed ? '5px' : '0px',
         },
-      }}
-    />
-  );
+    };
+
+    const handleZoomChange = useCallback(shouldZoom => {
+        setIsZoomed(shouldZoom);
+    }, []);
+
+    return (
+        <>
+            <ControlledZoom
+                isZoomed={isZoomed}
+                onZoomChange={handleZoomChange}
+                zoomMargin={40}
+                overlayBgColorEnd={theme.colors.background}
+            >
+                <img
+                    className={image.className}
+                    src={image.src}
+                    alt={image.alt}
+                    style={image.style}
+                />
+            </ControlledZoom>
+            <Caption>{title}</Caption>
+        </>
+    );
 };
 
 export default ImageZoom;
