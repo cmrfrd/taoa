@@ -8,8 +8,10 @@ import { css } from "@emotion/core";
 import { useColorMode } from "theme-ui";
 
 import Anchor from "@components/Anchor";
+import Button from "@components/Button";
 import Blockquote from "@components/Blockquote";
 import Code from "@components/Code";
+import ConfettiButton from "@components/ConfettiButton";
 import Headings from "@components/Headings";
 import HorizontalRule from "@components/HorizontalRule";
 import Lists from "@components/Lists";
@@ -22,70 +24,72 @@ import mediaqueries from "@styles/media";
 import { toKebabCase } from "@utils";
 
 const components = {
-  img: ImageZoom,
-  a: Anchor,
-  blockquote: Blockquote,
-  h1: Headings.h2, // h1 reserved article title
-  h2: Headings.h2,
-  h3: Headings.h3,
-  h4: Headings.h4,
-  h5: Headings.h5,
-  h6: Headings.h6,
-  hr: HorizontalRule,
-  ul: Lists.ul,
-  ol: Lists.ol,
-  p: Paragraph,
-  code: Code.Prism,
-  pre: Code.Pre,
-  table: Tables.Table,
-  thead: Tables.Head,
-  th: Tables.HeadCell,
-  td: Tables.Cell,
-  figcaption: Figcaption,
+    img: ImageZoom,
+    a: Anchor,
+    blockquote: Blockquote,
+    h1: Headings.h2, // h1 reserved article title
+    h2: Headings.h2,
+    h3: Headings.h3,
+    h4: Headings.h4,
+    h5: Headings.h5,
+    h6: Headings.h6,
+    hr: HorizontalRule,
+    ul: Lists.ul,
+    ol: Lists.ol,
+    p: Paragraph,
+    code: Code.Prism,
+    pre: Code.Pre,
+    table: Tables.Table,
+    thead: Tables.Head,
+    th: Tables.HeadCell,
+    td: Tables.Cell,
+    figcaption: Figcaption,
+    Button,
+    ConfettiButton
 };
 
 interface MDXProps {
-  content: React.ReactNode;
+    content: React.ReactNode;
 }
 
 const MDX: React.FC<MDXProps> = ({ content, children, ...props }) => {
-  const [colorMode] = useColorMode();
+    const [colorMode] = useColorMode();
 
-  return (
-    <MDXProvider components={components}>
-      <MDXBody>
-        <MDXRenderer isDark={colorMode === "dark"} {...props}>
-          {content}
-        </MDXRenderer>
-        {children}
-      </MDXBody>
-    </MDXProvider>
-  );
+    return (
+        <MDXProvider components={components}>
+            <MDXBody>
+                <MDXRenderer isDark={colorMode === "dark"} {...props}>
+                    {content}
+                </MDXRenderer>
+                {children}
+            </MDXBody>
+        </MDXProvider>
+    );
 };
 
 export default MDX;
 
 const IMAGE_WIDTHS = {
-  regular: "680px",
-  large: "1004px",
-  full: "100vw"
+    regular: "680px",
+    large: "1004px",
+    full: "100vw"
 };
 
 const ARTICLE_WIDTH = css`
   width: 100%;
-  max-width: 680px;
+  max-width: 780px;
 
   ${mediaqueries.desktop`
-    max-width: 507px;
-  `}
+max-width: 607px;
+`}
 
   ${mediaqueries.tablet`
-    max-width: 486px;
-  `};
+max-width: 586px;
+`};
 
   ${mediaqueries.phablet`
-    padding: 0 20px;
-  `};
+padding: 0 20px;
+`};
 `;
 
 const HeadingsCSS = css`
@@ -105,8 +109,8 @@ const HeadingsCSS = css`
     margin: 25px auto 18px;
 
     ${mediaqueries.tablet`
-      margin: 30px auto 18px;
-    `};
+margin: 30px auto 18px;
+`};
   }
 
   h3,
@@ -142,7 +146,7 @@ const PrismCSS = p => css`
 
       ${Object.keys(p.theme.colors.prism)
         .map(key => {
-          return `.${toKebabCase(key)}{color:${p.theme.colors.prism[key]};}`;
+            return `.${toKebabCase(key)}{color:${p.theme.colors.prism[key]};}`;
         })
         .reduce((curr, next) => curr + next, ``)};
 
@@ -158,9 +162,9 @@ const PrismCSS = p => css`
       color: #dcd9e6;
 
       ${mediaqueries.tablet`
-        opacity: 0;
-        width: 0;
-      `};
+opacity: 0;
+width: 0;
+`};
     }
 
     .token-line.highlight-line {
@@ -170,9 +174,9 @@ const PrismCSS = p => css`
       border-left: 3px solid ${p.theme.colors.prism.highlightBorder};
 
       ${mediaqueries.tablet`
-        margin: 0 -20px;
-        padding: 0 20px;
-      `};
+margin: 0 -20px;
+padding: 0 20px;
+`};
     }
 
     .operator + .maybe-class-name {
@@ -184,28 +188,28 @@ const PrismCSS = p => css`
     }
 
     ${mediaqueries.desktop`
-      left: -26px;
-    `};
+left: -26px;
+`};
 
     ${mediaqueries.tablet`
-      max-width: 526px;
-      padding: 20px 20px;
-      left: 0;
-    `};
+max-width: 526px;
+padding: 20px 20px;
+left: 0;
+`};
 
     ${mediaqueries.phablet`
-      text-size-adjust: none;
-      border-radius: 0;
-      margin: 0 auto 25px;
-      padding: 25px 20px;
-      overflow: initial;
-      width: unset;
-      max-width: unset;
-      float: left;
-      min-width: 100%;
-      overflow: initial;
-      position: relative;
-    `};
+text-size-adjust: none;
+border-radius: 0;
+margin: 0 auto 25px;
+padding: 25px 20px;
+overflow: initial;
+width: unset;
+max-width: unset;
+float: left;
+min-width: 100%;
+overflow: initial;
+position: relative;
+`};
   }
 `;
 
@@ -224,8 +228,8 @@ const ImageCSS = css`
     border-radius: 5px;
 
     ${mediaqueries.tablet`
-      margin: 10px auto 45px;
-    `};
+margin: 10px auto 45px;
+`};
   }
 
   div.Image__Small {
@@ -240,21 +244,21 @@ const ImageCSS = css`
     max-width: 680px;
 
     ${mediaqueries.tablet`
-      margin: 10px auto 45px;
-    `};
+margin: 10px auto 45px;
+`};
 
     ${mediaqueries.desktop`
-      max-width: 507px;
-    `}
+max-width: 507px;
+`}
 
     ${mediaqueries.tablet`
-      max-width: 486px;
-      margin: 0 auto 25px;
-    `};
+max-width: 486px;
+margin: 0 auto 25px;
+`};
 
     ${mediaqueries.phablet`
-      padding: 0 20px;
-    `};
+padding: 0 20px;
+`};
   }
 
   .Image__Container {
@@ -272,22 +276,22 @@ const ImageCSS = css`
     max-width: ${IMAGE_WIDTHS.large};
 
     ${mediaqueries.desktop_medium`
-      left: -34px;
-    `};
+left: -34px;
+`};
 
     ${mediaqueries.desktop`
-      left: -26px;
-    `};
+left: -26px;
+`};
 
     ${mediaqueries.tablet`
-      border-radius: 0;
-      left: 0;
-      margin: 0 auto 25px;
+border-radius: 0;
+left: 0;
+margin: 0 auto 25px;
 
-      img {
-        border-radius: 0;
-      }
-    `};
+img {
+    border-radius: 0;
+}
+`};
   }
 
   div.Image__Large {
@@ -302,13 +306,13 @@ const ImageCSS = css`
     }
 
     ${mediaqueries.desktop`
-      left: -53px;
-    `};
+left: -53px;
+`};
 
     ${mediaqueries.tablet`
-      left: 0;
-      margin: 0 auto 25px;
-    `};
+left: 0;
+margin: 0 auto 25px;
+`};
   }
 `;
 
@@ -319,13 +323,13 @@ const ImageCSS = css`
  * the MDXBody.
  */
 const MDXBody = styled.div`
-  position: relative;
-  z-index: 10;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
 
-  ${HeadingsCSS}
-  ${PrismCSS}
-  ${ImageCSS}
+    ${HeadingsCSS}
+    ${PrismCSS}
+    ${ImageCSS}
 `;
