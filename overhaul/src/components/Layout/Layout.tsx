@@ -9,13 +9,31 @@ import ArticlesContextProvider from '../../sections/articles/Articles.List.Conte
 
 import { globalStyles } from '@styles';
 
+import { Router, Link, Redirect, Location } from "@reach/router";
+
+import { motion, AnimatePresence, Variants } from "framer-motion";
+import { TransitionGroup, CSSTransition, Transition } from "react-transition-group";
+import PageTransition from 'gatsby-plugin-page-transitions'
+const pageTransitionEvent = 'gatsby-plugin-page-transition::exit';
+
 /**
  * <Layout /> needs to wrap every page as it provides styles, navigation,
  * and the main structure of each page. Within Layout we have the <Container />
  * which hides a lot of the mess we need to create our Desktop and Mobile experiences.
  */
-const Layout: React.FC<{}> = ({ children, enableGridRow = false }) => {
+
+const defaultStyle = {
+    transition: 'all 250ms cubic-bezier(0.47, 0, 0.75, 0.72)',
+};
+const transitionStyles = {
+    entering: { opacity: 0 },
+    entered: { opacity: 1 },
+    exiting: { opacity: 0 },
+};
+
+const Layout: React.FC<{}> = ({ children, location, enableGridRow = false }) => {
     const [colorMode] = useColorMode();
+    const [arrowUp, setArrowUp] = useState<boolean>(false);
 
     useEffect(() => {
         parent.postMessage({ theme: colorMode }, '*');
@@ -26,9 +44,24 @@ const Layout: React.FC<{}> = ({ children, enableGridRow = false }) => {
             <Container>
                 <HeaderTexture />
                 <Global styles={globalStyles} />
-                <NavigationHeader enableGridRow={enableGridRow} />
-                {children}
-                <NavigationFooter />
+                <NavigationHeader
+                    enableGridRow={enableGridRow}
+                    initialArrowUp={location.state ? location.state.arrowUp : false} />
+                <PageTransition transitionTime={250}>
+                    <Transition timeout={250}>
+                        {(state) => {
+                            return (
+                                <div style={{
+                                    ...defaultStyle,
+                                    ...transitionStyles[state]
+                                }}>
+                                    {children}
+                                    <NavigationFooter />
+                                </div>
+                            )
+                        }}
+                    </Transition>
+                </PageTransition>
             </Container>
         </ArticlesContextProvider>
     );
@@ -41,20 +74,8 @@ const Container = styled.div`
     background: ${p => p.theme.colors.background};
     transition: ${p => p.theme.colorModeTransition};
     min-height: 100vh;
+    overflow: hidden;
 `;
-
-/* const HeaderGradient = styled.div`
- * position: absolute;
- * top: 0;
- * left: 0;
- * width: 100 %;
- * height: 100px;
- * z - index: 0;
- * pointer - events: none;
- * background: ${ p => p.theme.colors.gradient };
- * transition: ${ p => p.theme.colorModeTransition };
- * `;
- *  */
 
 const HeaderTexture = styled.div(p => ({
     position: "absolute",
