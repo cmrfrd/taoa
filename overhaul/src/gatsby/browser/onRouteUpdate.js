@@ -23,9 +23,12 @@ function handleAccessibilityFocus() {
   });
 }
 
-module.exports = ({ prevLocation }) => {
+module.exports = ({ location, prevLocation }) => {
   handleAccessibilityFocus();
 
+  if (location) {
+    localStorage.setItem('path', location.pathname);
+  }
   if (prevLocation) {
     localStorage.setItem('previousPath', prevLocation.pathname);
   }

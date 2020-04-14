@@ -32,7 +32,6 @@ module.exports.local = {
           canonical_url
           secret
           slug
-          title
           subscription
           canonical_url
           id
@@ -68,7 +67,11 @@ module.exports.local = {
     about: aboutYaml {
       name
       about {
-        title
+        title {
+          author
+          authors
+          about
+        }
         about
       }
     }

@@ -35,8 +35,6 @@ module.exports = ({ node, actions, getNode, createNodeId }) => {
       }
       throw new Error(`
           We could not find the value for: "${key}".
-          Please verify the articlePermalinkFormat format in theme options.
-          https://github.com/narative/gatsby-theme-novela#theme-options
         `);
     });
 
@@ -52,7 +50,6 @@ module.exports = ({ node, actions, getNode, createNodeId }) => {
   if (node.internal.type === `AuthorsYaml`) {
     const slug = node.slug ? `/${node.slug}` : slugify(node.name);
 
-    console.log(node);
     const fieldData = {
       ...node,
       slug: generateSlug(basePath, 'authors', slug),
@@ -83,7 +80,6 @@ module.exports = ({ node, actions, getNode, createNodeId }) => {
   if (node.internal.type === `AboutYaml`) {
     const slug = node.slug ? `/${node.slug}` : slugify(node.name);
 
-    console.log("about", node);
     const fieldData = {
       ...node,
       slug: generateSlug(basePath, 'about', slug),
