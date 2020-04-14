@@ -42,6 +42,7 @@ export interface IAbout {
     about: {
         title: string;
         about: string;
+        author: string;
     };
 }
 
