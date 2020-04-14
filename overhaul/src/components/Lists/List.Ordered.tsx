@@ -12,14 +12,14 @@ const OrderedList = styled.ol`
   font-size: 18px;
 
   width: 100%;
-  max-width: 680px;
+  max-width: 780px;
 
   ${mediaqueries.desktop`
-    max-width: 507px;
+    max-width: 607px;
   `}
 
   ${mediaqueries.tablet`
-    max-width: 486px;
+    max-width: 586px;
     padding-left: 0px;
   `};
 
@@ -63,7 +63,7 @@ const OrderedList = styled.ol`
     font-weight: 600;
     position: absolute;
     left: -3rem;
-    top: -0.3rem;
+    top: -0.1rem;
     font-size: 2rem;
 
     ${mediaqueries.tablet`
