@@ -76,7 +76,7 @@ display: none;
 `;
 
 const SubheadingContainer = styled.div`
-    display: flex;
+display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 100px;
@@ -150,6 +150,7 @@ const HeroWelcome = styled.h1`
     line-height: 1.15;
     color: ${p => p.theme.colors.primary};
     font-family: ${p => p.theme.fonts.astigmatic};
+    margin-bottom: 20px;
 
     a {
     color: ${p => p.theme.colors.accent};

@@ -117,7 +117,7 @@ const ListItem: React.FC<ArticlesListItemProps> = ({ article, narrow }) => {
                     </Excerpt>
                     <MetaData>
                         {article.date} · {article.timeToRead} min read
-          </MetaData>
+                    </MetaData>
                 </div>
             </Item>
         </ArticleLink>
@@ -125,7 +125,7 @@ const ListItem: React.FC<ArticlesListItemProps> = ({ article, narrow }) => {
 };
 
 const wide = '1fr';
-const narrow = '457px';
+const narrow = '527px';
 
 const limitToTwoLines = css`
   text-overflow: ellipsis;
@@ -160,9 +160,7 @@ const ArticlesListContainer = styled.div<{ alwaysShowAllDetails?: boolean }>`
 const listTile = p => css`
   position: relative;
   display: grid;
-  grid-template-columns: ${p.reverse
-        ? `${narrow} ${wide}`
-        : `${wide} ${narrow}`};
+  grid-template-columns: ${narrow} ${narrow};
   grid-template-rows: 2;
   column-gap: 30px;
 
@@ -171,11 +169,11 @@ const listTile = p => css`
   }
 
   ${mediaqueries.desktop_medium`
-    grid-template-columns: 1fr 1fr;
-  `}
+grid-template-columns: 1fr 1fr;
+`}
 
   ${mediaqueries.tablet`
-    grid-template-columns: 1fr;
+grid-template-columns: 1fr;
 
     &:not(:last-child) {
       margin-bottom: 0;
@@ -217,19 +215,19 @@ const listItemTile = p => css`
   position: relative;
 
   ${mediaqueries.tablet`
-    margin-bottom: 60px;
-  `}
+margin-bottom: 60px;
+`}
 
   @media (max-width: 540px) {
     background: ${p.theme.colors.card};
   }
 
   ${mediaqueries.phablet`
-    margin-bottom: 40px;
-    box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.2);
-    border-bottom-right-radius: 5px;
-    border-bottom-left-radius: 5px;
-  `}
+margin-bottom: 40px;
+box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.2);
+border-bottom-right-radius: 5px;
+border-bottom-left-radius: 5px;
+`}
 `;
 
 // If only 1 article, dont create 2 rows.
@@ -243,6 +241,7 @@ const List = styled.div<{
     gridLayout: string;
     hasOnlyOneArticle: boolean;
 }>`
+  justify-content: ${p => (p.gridLayout === 'tiles' ? "space-between" : "none")};
   ${p => (p.gridLayout === 'tiles' ? listTile : listRow)}
 `;
 
@@ -252,7 +251,7 @@ const Item = styled.div<{ gridLayout: string }>`
 
 const ImageContainer = styled.div<{ narrow: boolean; gridLayout: string }>`
   position: relative;
-  height: ${p => (p.gridLayout === 'tiles' ? '280px' : '220px')};
+  height: ${p => (p.gridLayout === 'tiles' ? '200px' : '200px')};
   box-shadow: 0 30px 60px -10px rgba(0, 0, 0, ${p => (p.narrow ? 0.22 : 0.3)}),
     0 18px 36px -18px rgba(0, 0, 0, ${p => (p.narrow ? 0.25 : 0.33)});
   margin-bottom: ${p => (p.gridLayout === 'tiles' ? '30px' : 0)};
@@ -264,17 +263,17 @@ const ImageContainer = styled.div<{ narrow: boolean; gridLayout: string }>`
   }
 
   ${mediaqueries.tablet`
-    height: 200px;
-    margin-bottom: 35px;
-  `}
+height: 200px;
+margin-bottom: 35px;
+`}
 
   ${mediaqueries.phablet`
-    overflow: hidden;
-    margin-bottom: 0;
-    box-shadow: none;
-    border-top-right-radius: 5px;
-    border-top-left-radius: 5px;
-  `}
+overflow: hidden;
+margin-bottom: 0;
+box-shadow: none;
+border-top-right-radius: 5px;
+border-top-left-radius: 5px;
+`}
 `;
 
 const Title = styled(Headings.h2)`
@@ -286,19 +285,19 @@ const Title = styled(Headings.h2)`
   ${limitToTwoLines};
 
   ${mediaqueries.desktop`
-    margin-bottom: 15px;
-  `}
+margin-bottom: 15px;
+`}
 
   ${mediaqueries.tablet`
-    font-size: 24px;
-  `}
+font-size: 24px;
+`}
 
   ${mediaqueries.phablet`
-    font-size: 22px;
-    padding: 30px 20px 0;
-    margin-bottom: 10px;
-    -webkit-line-clamp: 3;
-  `}
+font-size: 22px;
+padding: 30px 20px 0;
+margin-bottom: 10px;
+             -webkit-line-clamp: 3;
+`}
 `;
 
 const Excerpt = styled.p<{
@@ -314,31 +313,31 @@ const Excerpt = styled.p<{
   max-width: ${p => (p.narrow ? '415px' : '515px')};
 
   ${mediaqueries.desktop`
-    display: -webkit-box;
-  `}
+display: -webkit-box;
+`}
 
   ${mediaqueries.phablet`
-    margin-bottom; 15px;
-  `}
+margin-bottom; 15px;
+`}
 
   ${mediaqueries.phablet`
-    max-width: 100%;
-    padding:  0 20px;
-    margin-bottom: 20px;
-    -webkit-line-clamp: 3;
-  `}
+max-width: 100%;
+padding:  0 20px;
+margin-bottom: 20px;
+                        -webkit-line-clamp: 3;
+`}
 `;
 
 const MetaData = styled.div`
-  font-weight: 600;
-  font-size: 16px;
-  color: ${p => p.theme.colors.grey};
-  opacity: 0.33;
+    font-weight: 600;
+    font-size: 16px;
+    color: ${p => p.theme.colors.grey};
+    opacity: 0.33;
 
-  ${mediaqueries.phablet`
-    max-width: 100%;
-    padding:  0 20px 30px;
-  `}
+    ${mediaqueries.phablet`
+max-width: 100%;
+padding:  0 20px 30px;
+`}
 `;
 
 const ArticleLink = styled(Link)`
@@ -377,7 +376,7 @@ const ArticleLink = styled(Link)`
   }
 
   ${mediaqueries.phablet`
-    &:hover ${ImageContainer} {
+                   &:hover ${ImageContainer} {
       transform: none;
       box-shadow: initial;
     }
