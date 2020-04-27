@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "module": "es6",
+    "target": "es6",
+    "baseUrl": ".",
+    "paths": {
+      "@*": ["src/*"]
+    }
+  },
+  "include": ["./src/**/*"],
+  "exclude": ["dist", "./node_modules/**/*"]
+}

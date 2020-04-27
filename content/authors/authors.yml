@@ -1,0 +1,16 @@
+- name: Alexander Comerford
+  bio: |
+    Alex is a Data Scientist and the primary author of The Art of Abstraction.
+    His primary focuses are generative modeling, software infrastructure, and
+    programming language theory. When he's not at a computer, Alex loves to juggle,
+    play with puzzle toys, and read philosophy.
+  avatar: ./avatars/Alex.png
+  social:
+    - url: https://unsplash.com
+    - url: https://stackoverflow.com
+    - url: https://github.com
+    - url: https://github.com
+    - url: https://github.com
+  featured: true
+
+# You're welcome to join :)

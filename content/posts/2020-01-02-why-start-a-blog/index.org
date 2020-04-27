@@ -1,0 +1,205 @@
+#+OPTIONS: toc:nil
+
+#+begin_export md
+---
+title: Why start a blog?
+author: Alexander Comerford
+date: 2020-02-17
+hero: ./images/cover.jpg
+excerpt: What is this blog, and why does it exist?
+---
+#+end_export
+
+#+begin_src emacs-lisp :exports none
+(org-babel-do-load-languages
+  'org-babel-load-languages
+  '((shell . t)
+    (python . t))))
+#+end_src
+
+#+RESULTS:
+
+#+BEGIN_SRC emacs-lisp :exports none
+  (defun save-to-mdx ()
+    (interactive)
+    (let ((export-filename (concat
+                            (file-name-sans-extension
+                             (file-name-nondirectory buffer-file-name)) ".mdx")))
+      (message export-filename)
+      (org-export-to-file 'gfm export-filename)))
+
+  (defun export-on-save ()
+    (interactive)
+    (if (memq 'save-to-mdx after-save-hook)
+        (progn
+          (remove-hook 'after-save-hook 'shook t)
+            (message "Disabled"))
+      (add-hook 'after-save-hook 'shook nil t)
+      (message "Enabled")))
+
+  (export-on-save)
+#+END_SRC
+
+#+RESULTS:
+: Enabled
+
+* Motivation
+
+  There are many motivations for starting a blog. Mine are pretty simple. The first is to learn strange new eccentric ideas, and the second is to
+  teach people about them! I've been reading and learning from tech blogs by people like [[https://jvns.ca][Julia Evans]], [[https://bost.ocks.org/mike/][Mike Bostock]], or [[https://koaning.io][Vincent Warmerdam]] for the
+  past several years. They have consistently inspired and filled me with a new sense of awe for what it means to be a blogger, educator, and
+  technologist.
+
+  I felt it was time to start a blog of my own, about topics I care about, with a theme I find fun and interesting.
+
+  In this first post I want to go over this blog's overarching theme, and some of the tooling behind this blog's creation.
+
+* The Art of Abstraction
+
+  /"First you learn the value of abstraction, then you learn the cost of abstraction, then you're ready to engineer."/ -- Kent Beck
+
+  Abstractions are tools used to simplify complex ideas. They are a medium to ease our minds from tasks at hand so we don't need to
+  fully digest an underlying concept, just the high level idea. An example of this is how to drive a car. We don't need to understand
+  alternators or car engines, just how to turn the steering wheel and push on the gas pedal to go the direction we want.
+
+  A steering wheel is just the tip of the iceberg as there are countless other abstractions that researchers and engineers spend their whole
+  careers assembling and arguing over.
+
+  Abstractions are thrown out, re-evaluated, superseded, then thrown out again all as part of a process, not an end destination. At
+  the end of the day abstractions are speculative in their value and have numerous interpretations.
+
+  The idea of how people choose the right abstractions to represent the essence of some underlying process fascinates me. This led
+  me to choose the title, and overarching theme, _*The Art of Abstraction*_ for this blog. This message boiled down into a simple
+  phrase serves as the best bedrock I can think of for how to link new and interesting topics under a single narrative.
+
+* Why you should care about blogs
+
+  If your on the internet nowadays, odds are you are consuming some form of written content.
+
+  If you are consuming written content, you are almost definitely reading it in a /blog/ like format
+  with listed articles, authors, and different narratives. Blogs from their mid-90s inception have matured to
+  one of the oldest forms of content distribution on the web.
+
+  Prominent newspaper/magazine companies have transitioned to posting content in a /blog/, tech companies
+  describe their latest innovations in a /blog/, and even regular people post their latest happenings on
+  their /blog/. This format has formed a cultural niche for itself, allowing people to carve out
+  their own corner(s) of the internet.
+
+  With so many corners all over the internet, each with their own backstories and insight, there is a massive library
+  of reference material for anyone to learn from. Whether you want to learn about [[https://www.bonappetit.com/story/price-of-taco-truck-taco][pricing tacos]] or
+  [[https://distill.pub/2019/computing-receptive-fields/][innovations in CNNs]] it's all out there.
+
+* Elevating stories with interactivity
+
+  Most stories presented in a blog lend themselves to text and images, but there are series of amazing untold stories that would have an elevated
+  and profound impact if told interactively.
+
+  Blog posts from places like [[https://distill.pub/][distill.pub]], [[https://blog.tensorflow.org/][TensorFlow blog]], or [[https://projects.fivethirtyeight.com/super-tuesday/][fivethirtyeight]] include interactive portions where users can literally click and play with
+  a post and watch how information changes. Experiences like these bring out the kid in me who played flash games to pass the time in the computer
+  room in school and is a nostalgic and fun experience I want all blog readers to feel.
+
+  Not every story should or can be expressed with interactivity, but in order to have that option, code needs to be written to support it.
+
+  One of *_The Art of Abstraction_*'s goals is to illustrate and explain eccentric ideas. Such ideas, which are outside the norm, tend to need
+  illustration and interactivity to be most informative and impactful. Therefore, the capability to be interactive was highly prioritized when
+  choosing the right tools for making posts.
+
+  #+begin_export md
+  <ConfettiButton
+    settings={{
+      type: 'confetti',
+      fakingRequest: false,
+      angle: 90,
+      decay: 0.91,
+      spread: 100,
+      startVelocity: 30,
+      elementCount: 50,
+      elementSize: 10,
+      lifetime: 100,
+      zIndex: 10,
+      springAnimation: false
+      }}
+    text="Interactivity!"
+    />
+  #+end_export
+
+* The stack for portability
+
+  I chose to build this blog with a static site generator instead of using a blogging platform for the predominant reason of portability. Hosting services and CMSs
+  come and go, but as long as a project can migrate from one hosting service to another, it stands a chance to survive for the long haul. Static site generators
+  shine in this regard because migrating a static site is a simple
+
+  If you want to build a blog, you need to choose the right giants to stand on and the right [[https://en.wikipedia.org/wiki/Solution_stack][stack]] for you. There are [[https://github.com/topics/blog-engine][hundreds]] of blogging engines and static
+  site generators to choose from. Each of them have their own unique utility or are catered towards a specific developer community. When finding the right one
+  for this site I didn't do any particular ranking analysis to choose the right tools and the stack. Instead I wanted to simply explore what tools were out there,
+  and what would "/fit/" with my particular workflow. After playing with 10 or so of these types of frameworks I came to a few conclusions that helped me select
+  the tools for the job.
+
+  1. *Don't avoid JavaScript, embrace it*
+
+     It seems that every programming language has their own tools to generate websites. This is amazing! I'm so glad that developers can build the website
+     of their dreams in their favorite language. I on the other hand have come to the conclusion that at the end of the day, website builders /transpile/
+     to the basic web elements (HTML/CSS/JS), and almost every modern website utilizes the power of Javascript to make their sites dynamic and fun. So why
+     avoid writing JavaScript in the first place? It's a [[https://octoverse.github.com/#top-languages-over-time][popular language]] and probably a great tool to have in your arsenal.
+
+  2. *Markup converters are your friends*
+
+     Every developer has their favorite way of writing text to a file. Whether that be markdown, latex, or straight HTML.
+     What's better than a really cool markup language? Really cool markup converters! Tools like [[https://pandoc.org/index.html][pandoc]] that convert your
+     favorite markup language to the format you actually need. The right converter is a must if your won't on budge on switching
+     from your favorite tool to write in.
+
+  3. *It's the quality that counts*
+
+     Qualities of software like age or number of GitHub stars is a controversial topic. Some people believe older software should be used
+     because it's stable and well-known. The other side believes in using newer software because all the cool kids use it, it's actively
+     maintained, and it's new and shiny.
+
+     There are a myriad of other reasons to choose the right tools. I believe it's important to check
+     your own reasoning and not to be swayed by shiny toys, or to choose software just because everyone else is using it. Don't be a lemming.
+
+** The tools for the job
+
+  #+CAPTION: The Art of Abstraction's picture stack
+  [[./images/stack.png]]
+
+  1. [[https://www.gatsbyjs.org/][*Gatsby*]]
+
+     /"Gatsby is a free and open source framework based on React that helps developers build blazing fast websites and apps"/ -- gatsbyjs.org
+
+     Modern front-end development is *overwhelming* and *hard*. In order to have a website /feel/ and /behave/ like modern web apps, there are
+     many boxes that need to be checked. Gatsby as a framework is the best shortcut I've found for doing /modern/ web development.
+
+     With the goal of embracing JavaScript, and being faced with the difficulty of front-end development, Gatsby feels like a breath of fresh
+     air.
+
+  2. [[https://mdxjs.com/][*MDX*]]
+
+     /"MDX is an authorable format that lets you seamlessly write JSX in your Markdown documents. You can import components, such as interactive charts or alerts, and embed them within your content. This makes writing long-form content with components a blast."/ -- mdxjs.com
+
+     Markdown is an extremely effective document writing format. The syntax is pretty straight forward, it's easy to write, easy to read,
+     and integrates well with a plethora of other tools. While searching for blogging tools I came across MDX and was purely amazed. After
+     reading the description on the front page, I knew it was the choice for writing interactive content in a familiar format.
+
+     As an added bonus, MDX is a [[https://www.gatsbyjs.org/packages/gatsby-plugin-mdx/][plugin in Gatsby]].
+
+  3. [[https://orgmode.org/][*Emacs org-mode*]]
+
+     /"Org mode is for keeping notes, maintaining TODO lists, planning projects, and authoring documents with a fast and effective plain-text system."/ -- orgmode.org
+
+     After using Emacs and ~org-mode~ for the past few years for professional and personal work, I've officially drank the Emacs kool-aid. It works
+     extremely well for my workflow and it's the best highly integrated mess I've ever used.
+
+     Additionally, from a portability standpoint, ~org-mode~ can also export to a [[https://orgmode.org/manual/Exporting.html][huge]] number of formats, including markdown.
+
+     ~The flow: org-mode -> MDX -> Gatsby~
+
+* In search of awe
+
+  Humans love to tell stories, and if you believe in [[https://rationalwiki.org/wiki/Littlewood%27s_law][Littlewood's Law]], there are rare experiences worth talking about. I believe there are amazing
+  untold stories about topics in engineering and math that are worth talking about to the world at large. In future posts I hope to fill readers
+  with a sense of awe for our crazy technical and largely invisible world.
+
+  Thanks for reading!
+
+  (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧
