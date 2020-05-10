@@ -104,6 +104,19 @@ module.exports = {
     `gatsby-transformer-yaml`,
     `gatsby-plugin-theme-ui`,
     {
+      resolve: `gatsby-plugin-manifest`,
+      options: {
+        name: 'The Art of Abstraction',
+        short_name: 'T·A·O·A',
+        start_url: '/',
+        display: 'standalone',
+        icon: 'content/favicons/favicon-32x32.png',
+        theme_color: '#ffffff',
+        background_color: '#ffffff',
+        display: 'standalone'
+      }
+    },
+    {
       resolve: `gatsby-transformer-remark`,
       options: {
         // In your gatsby-transformer-remark plugin array
