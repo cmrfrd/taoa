@@ -1,6 +1,10 @@
 import React from 'react';
 import { Theme } from 'theme-ui';
 
+export interface IStringMap {
+  [key: string]: string | number | boolean;
+}
+
 export interface ITAOAFonts {
   [K: string]: string;
 }
@@ -15,6 +19,8 @@ export interface ITAOAThemeUIContext {
   colorMode?: string;
   setColorMode?: React.Dispatch<React.SetStateAction<string>>;
   stickyHeader?: boolean;
+  active?: boolean;
+  showArrow?: boolean;
 }
 
 export interface IPaginator {
