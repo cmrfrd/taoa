@@ -1,20 +1,19 @@
-FROM node:10.16-alpine
+FROM node:14-alpine
 
 ## Install deps
-RUN apk update && \
+RUN apk -U upgrade -a && \
+  apk update && \
   apk add \
   --update \
   --no-cache \
+  --repository http://dl-cdn.alpinelinux.org/alpine/edge/main \
   --repository http://dl-3.alpinelinux.org/alpine/edge/community \
   --repository http://dl-3.alpinelinux.org/alpine/edge/main \
   --repository http://dl-3.alpinelinux.org/alpine/edge/testing \
   vips-dev vips-tools && \
   apk add fftw-dev gcc g++ make libc6-compat python && \
   apk add git && \
-  rm -rf /var/cache/apk/*
-RUN npm install --global yarn prettier gatsby
-
-RUN apk add \
+  apk add \
   bash \
   libx11-dev \
   libxi \
@@ -27,7 +26,9 @@ RUN apk add \
   libjpeg-turbo-dev \
   libpng-dev \
   make \
-  nasm
+  nasm && \
+  rm -rf /var/cache/apk/*
+RUN npm install --global prettier gatsby
 
 
 ## Setup entrypoint
