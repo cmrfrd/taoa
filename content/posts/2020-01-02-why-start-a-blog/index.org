@@ -74,7 +74,7 @@ excerpt: What is this blog, and why does it exist?
 
 * Why you should care about blogs
 
-  If your on the internet nowadays, odds are you are consuming some form of written content.
+  If you're on the internet nowadays, odds are you are consuming some form of written content.
 
   If you are consuming written content, you are almost definitely reading it in a /blog/ like format
   with listed articles, authors, and different narratives. Blogs from their mid-90s inception have matured to
