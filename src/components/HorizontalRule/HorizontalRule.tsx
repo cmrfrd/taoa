@@ -1,5 +1,5 @@
 import { mediaquery } from '@styles/media';
-import { TAOAThemeUIContext } from '@types';
+import { ITAOAThemeUIContext } from '@types';
 
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
@@ -7,7 +7,7 @@ import styled from '@emotion/styled';
 /* This component is a simple horizontal line
  * to divide one section from another
  */
-const HorizontalRule = styled.hr((p: TAOAThemeUIContext) =>
+const HorizontalRule = styled.hr((p: ITAOAThemeUIContext) =>
   css({
     position: 'relative',
     width: '100%',

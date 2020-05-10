@@ -1,5 +1,5 @@
 import { mediaquery } from '@styles/media';
-import { TAOAThemeUIContext } from '@types';
+import { ITAOAThemeUIContext } from '@types';
 
 import styled from '@emotion/styled';
 import { Theme } from 'theme-ui';
@@ -9,13 +9,13 @@ import { Theme } from 'theme-ui';
  * <Heading.h1>Lorem Ipsum</Heading.h1>
  */
 
-const commonStyles = (p: TAOAThemeUIContext): Theme => ({
+const commonStyles = (p: ITAOAThemeUIContext): Theme => ({
   fontWeight: 'bold',
   color: p.theme.colors.primary,
   fontFamily: p.theme.fonts.monospace
 });
 
-const h1 = styled.h1((p: TAOAThemeUIContext) => ({
+const h1 = styled.h1((p: ITAOAThemeUIContext) => ({
   ...commonStyles(p),
 
   wordBreak: 'keep-all',
@@ -33,7 +33,7 @@ const h1 = styled.h1((p: TAOAThemeUIContext) => ({
   }
 }));
 
-const h2 = styled.h2((p: TAOAThemeUIContext) => ({
+const h2 = styled.h2((p: ITAOAThemeUIContext) => ({
   ...commonStyles(p),
 
   wordBreak: 'keep-all',
@@ -55,7 +55,7 @@ const h2 = styled.h2((p: TAOAThemeUIContext) => ({
   }
 }));
 
-const h3 = styled.h3((p: TAOAThemeUIContext) => ({
+const h3 = styled.h3((p: ITAOAThemeUIContext) => ({
   ...commonStyles(p),
 
   wordBreak: 'keep-all',
@@ -71,7 +71,7 @@ const h3 = styled.h3((p: TAOAThemeUIContext) => ({
   }
 }));
 
-const h4 = styled.h4((p: TAOAThemeUIContext) => ({
+const h4 = styled.h4((p: ITAOAThemeUIContext) => ({
   ...commonStyles(p),
 
   wordBreak: 'keep-all',
@@ -87,7 +87,7 @@ const h4 = styled.h4((p: TAOAThemeUIContext) => ({
   }
 }));
 
-const h5 = styled.h5((p: TAOAThemeUIContext) => ({
+const h5 = styled.h5((p: ITAOAThemeUIContext) => ({
   ...commonStyles(p),
   wordBreak: 'keep-all',
   fontSize: '18px',
@@ -98,7 +98,7 @@ const h5 = styled.h5((p: TAOAThemeUIContext) => ({
   }
 }));
 
-const h6 = styled.h6((p: TAOAThemeUIContext) => ({
+const h6 = styled.h6((p: ITAOAThemeUIContext) => ({
   ...commonStyles(p),
 
   wordBreak: 'keep-all',

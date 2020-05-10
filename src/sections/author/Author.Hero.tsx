@@ -1,51 +1,51 @@
-import React from "react";
-import styled from "@emotion/styled";
+import React from 'react';
+import styled from '@emotion/styled';
 
-import Image from "@components/Image";
+import Image from '@components/Image';
 
-import Paragraph from "@components/Paragraph";
+import Paragraph from '@components/Paragraph';
 
-import mediaqueries from "@styles/media";
-import { IAuthor } from "@types";
+import mediaqueries, { mediaquery } from '@styles/media';
+import { IAuthor } from '@types';
 
-import SocialLinks from "@components/SocialLinks";
+import SocialLinks from '@components/SocialLinks';
 
 interface AuthorHeroProps {
-    author: IAuthor;
+  author: IAuthor;
 }
 
 const AuthorHero: React.FC<AuthorHeroProps> = ({ author }) => {
-    return (
-        <Hero>
-            <HeroDiv>
-                <HeroHeadings>
-                    <HeroImage>
-                        <RoundedImage src={author.avatar.large} />
-                    </HeroImage>
-                    <Heading>{author.name}</Heading>
-                </HeroHeadings>
-                <AuthorParagraph>{author.bio}</AuthorParagraph>
-            </HeroDiv>
-            {/* <Social>
+  return (
+    <Hero>
+      <HeroDiv>
+        <HeroHeadings>
+          <HeroImage>
+            <RoundedImage src={author.avatar.large} />
+          </HeroImage>
+          <Heading>{author.name}</Heading>
+        </HeroHeadings>
+        <AuthorParagraph>{author.bio}</AuthorParagraph>
+      </HeroDiv>
+      {/* <Social>
                 <SocialLinks links={author.social} />
                 </Social> */}
-        </Hero>
-    );
+    </Hero>
+  );
 };
 
 export default AuthorHero;
 
 const Hero = styled.div`
-    position: relative;
-    z-index: 1;
-    margin: 35px auto 110px;
-    display: flex;
-    flex-direction: row;
+  position: relative;
+  z-index: 1;
+  margin: 35px auto 110px;
+  display: flex;
+  flex-direction: row;
 
-    ${mediaqueries.phablet`
+  ${mediaqueries.phablet`
 flex-direction: row;
 `}
-    ${mediaqueries.phone`
+  ${mediaqueries.phone`
 flex-direction: column;
 align-items: center;
 justify-content: center;
@@ -85,14 +85,16 @@ const RoundedImage = styled(Image)`
 `;
 
 const HeroDiv = styled.div`
+  max-width: 'inherit';
 `;
 
 const HeroHeadings = styled.div`
-    margin-bottom: 25px;
-    display: flex;
-    flex-direction: row;
+  max-width: 'inherit';
+  margin-bottom: 25px;
+  display: flex;
+  flex-direction: row;
 
-    ${mediaqueries.phone`
+  ${mediaqueries.phone`
 flex-direction: column;
 align-items: center;
 justify-content: center;
@@ -122,46 +124,46 @@ text-align: center;
 `}
   ${mediaqueries.desktop`
 font-size: 30px;
-margin: auto 40px;
+margin: auto 30px;
 text-align: center;
 `}
 `;
 
 const Subheading = styled.p`
-    margin: 0 auto;
-    max-width: 500px;
-    color: ${p => p.theme.colors.grey};
-    font-size: 18px;
-    font-family: ${p => p.theme.fonts.sansSerif};
-    line-height: 1.4;
-    text-align: left;
+  margin: 0 auto;
+  max-width: 500px;
+  color: ${p => p.theme.colors.grey};
+  font-size: 18px;
+  font-family: ${p => p.theme.fonts.sansSerif};
+  line-height: 1.4;
+  text-align: left;
 
-    ${mediaqueries.phablet`
+  ${mediaqueries.phablet`
 font-size: 14px;
 `}
 `;
 
 const Social = styled.div`
-    display: flex;
-    align-items: center;
-    margin-top: 35px;
+  display: flex;
+  align-items: center;
+  margin-top: 35px;
 
-    ${mediaqueries.phablet`
+  ${mediaqueries.phablet`
 font-size: 14px;
 `}
 `;
 
-const AuthorParagraph = styled(Paragraph)`
-margin: 25px 0 25px;
-max-width: inherit;
+const AuthorParagraph = styled(Paragraph)({
+  margin: '25px 0 25px',
+  maxWidth: 'inherit',
 
-${mediaqueries.desktop`
-max-width: inherit;
-`}
-${mediaqueries.tablet`
-margin: 25px 0 25px;
-`};
-${mediaqueries.phablet`
-padding: 0 0px;
-`};
-`;
+  [mediaquery.desktop()]: {
+    maxWidth: 'inherit'
+  },
+  [mediaquery.tablet()]: {
+    margin: '25px 0 25px'
+  },
+  [mediaquery.phablet()]: {
+    padding: '0 0px'
+  }
+});

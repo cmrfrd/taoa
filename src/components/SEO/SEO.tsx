@@ -17,11 +17,11 @@
  *
  */
 
+import { graphql, useStaticQuery } from 'gatsby';
 import React from 'react';
 import Helmet from 'react-helmet';
-import { graphql, useStaticQuery } from 'gatsby';
 
-interface HelmetProps {
+interface IHelmetProps {
   title: string;
   description?: string;
   pathname: string;
@@ -63,11 +63,11 @@ const themeUIDarkModeWorkaroundScript = [
         }
       } catch (e) {}
     })();
-  `,
-  },
+  `
+  }
 ];
 
-const SEO: React.FC<HelmetProps> = ({
+const SEO: React.FC<IHelmetProps> = ({
   title,
   description,
   children,
@@ -75,14 +75,13 @@ const SEO: React.FC<HelmetProps> = ({
   image,
   published,
   timeToRead,
-  canonicalUrl,
-}) => {
+  canonicalUrl
+}: IHelmetProps) => {
   const results = useStaticQuery(seoQuery);
   const site = results.allSite.edges[0].node.siteMetadata;
-  const twitter = site.social.find(option => option.name === 'twitter') || {};
+  const twitter = site.social.find((option: object) => option.name === 'twitter') || {};
 
-  const fullURL = (path: string) =>
-    path ? `${site.siteUrl}${path}` : site.siteUrl;
+  const fullURL = (path: string): string => (path ? `${site.siteUrl}${path}` : site.siteUrl);
 
   // If no image is provided lets looks for a default novela static image
   image = image ? image : '/preview.jpg';
@@ -91,15 +90,15 @@ const SEO: React.FC<HelmetProps> = ({
     { charset: 'utf-8' },
     {
       'http-equiv': 'X-UA-Compatible',
-      content: 'IE=edge',
+      content: 'IE=edge'
     },
     {
       name: 'viewport',
-      content: 'width=device-width, initial-scale=1',
+      content: 'width=device-width, initial-scale=1'
     },
     {
       name: 'theme-color',
-      content: '#fff',
+      content: '#fff'
     },
     { itemprop: 'name', content: title || site.title },
     { itemprop: 'description', content: description || site.description },
@@ -113,14 +112,14 @@ const SEO: React.FC<HelmetProps> = ({
     { name: 'twitter:creator', content: twitter.url },
     {
       name: 'twitter:image',
-      content: fullURL(image),
+      content: fullURL(image)
     },
 
     { property: 'og:title', content: title || site.title },
     { property: 'og:url', content: url },
     { property: 'og:image', content: fullURL(image) },
     { property: 'og:description', content: description || site.description },
-    { property: 'og:site_name', content: site.name },
+    { property: 'og:site_name', content: site.name }
   ];
 
   if (published) {

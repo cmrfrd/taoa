@@ -1,49 +1,35 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
-import { css, keyframes } from '@emotion/core';
-import styled from '@emotion/styled';
-import { Link, navigate, graphql, useStaticQuery } from 'gatsby';
-import { motion, AnimatePresence, Variants } from 'framer-motion';
-import { useColorMode } from 'theme-ui';
+import { GridLayoutContext } from '../../sections/articles/Articles.List.Context';
+import ArrowIcon from './Navigation.Arrow';
 
 import Headings from '@components/Headings';
-import Paragraph from '@components/Paragraph';
-import Section from '@components/Section';
 import Logo from '@components/Logo';
+import Section from '@components/Section';
 import useStickyOnScrolled from '@components/UseStickyScroll';
-
 import Icons from '@icons';
 import mediaqueries, { mediaquery } from '@styles/media';
-import {
-  copyToClipboard,
-  getWindowDimensions,
-  getBreakpointFromTheme,
-  theme
-} from '@utils';
+import { ITAOAThemeUIContext } from '@types';
+import { copyToClipboard, getWindowDimensions, getBreakpointFromTheme, theme } from '@utils';
 
-import { GridLayoutContext } from '../../sections/articles/Articles.List.Context';
-
-import ArrowIcon from './Navigation.Arrow';
+import { css } from '@emotion/core';
+import styled from '@emotion/styled';
+import * as CSS from 'csstype';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'gatsby';
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import { useColorMode } from 'theme-ui';
 
 /* GridRowToggle is a component that toggles between two
  * layouts of articles
  */
 const GridRowToggle: React.FC<{}> = (props: any) => {
-  const [gridMode, setGridMode] = useState(true);
-  const { gridLayout = 'tiles', hasSetGridLayout, setGridLayout } = useContext(
-    GridLayoutContext
-  );
+  const { gridLayout = 'tiles', hasSetGridLayout, setGridLayout } = useContext(GridLayoutContext);
   const rowsIsActive = hasSetGridLayout && gridLayout === 'tiles';
-
-  /* Only toggle if the component is enabled */
-  function toggleGridRow(event) {
-    if (props.enable.enableGridRow) setGridMode(!gridMode);
-  }
 
   return (
     <IconWrapper isDark={false}>
       {rowsIsActive ? (
         <GridButton
-          onClick={() => setGridLayout('rows')}
+          onClick={(): void => setGridLayout('rows')}
           active={props.active}
           data-a11y={false}
           title="Show articles in Row grid"
@@ -53,7 +39,7 @@ const GridRowToggle: React.FC<{}> = (props: any) => {
         </GridButton>
       ) : (
         <GridButton
-          onClick={() => setGridLayout('tiles')}
+          onClick={(): void => setGridLayout('tiles')}
           active={props.active}
           data-a11y={false}
           title="Show articles in Tile grid"
@@ -74,7 +60,7 @@ const DarkModeToggle: React.FC<{}> = () => {
   const isDark = colorMode === `dark`;
 
   /* Toggle function to switch from light and dark */
-  function toggleColorMode(event) {
+  function toggleColorMode(event: EventTarget): void {
     event.preventDefault();
     setColorMode(isDark ? `light` : `dark`);
   }
@@ -101,7 +87,7 @@ const SharePageButton: React.FC<{}> = () => {
   const isDark = colorMode === `dark`;
   const fill = isDark ? '#fff' : '#000';
 
-  function copyToClipboardOnClick() {
+  function copyToClipboardOnClick(): void {
     if (hasCopied) return;
 
     copyToClipboard(window.location.href);
@@ -152,7 +138,7 @@ const NavigationHeader: React.FC<{}> = (props: any) => {
    *
    * This is done via theme-ui breakpoints
    */
-  const handleWindowResize = () => {
+  const handleWindowResize = (): void => {
     const { width } = getWindowDimensions();
     const breakpoint = getBreakpointFromTheme('phablet');
     const willShowArrow = width <= breakpoint;
@@ -168,9 +154,9 @@ const NavigationHeader: React.FC<{}> = (props: any) => {
   /* React hook to call function that will
    * handle mobile vs desktop view
    */
-  useEffect(() => {
+  useEffect((): (() => void) => {
     window.addEventListener('resize', handleWindowResize);
-    return () => {
+    return (): void => {
       window.removeEventListener('resize', handleWindowResize);
     };
   }, []);
@@ -183,22 +169,18 @@ const NavigationHeader: React.FC<{}> = (props: any) => {
 
   /* Listener to minimize the menu on mouse click outside the menu */
   useEffect(() => {
-    const menuf = (e) => {
+    const menuf = (event: React.MouseEvent<HTMLElement>): void => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setArrowUp(false);
       }
     };
 
     window.addEventListener('mousedown', menuf);
-    return () => {
+    return (): void => {
       window.removeEventListener('mousedown', menuf);
     };
   }, [menuRef, arrowRef]);
 
-  const { gridLayout = 'tiles', hasSetGridLayout, setGridLayout } = useContext(
-    GridLayoutContext
-  );
-  const tilesIsActive = hasSetGridLayout && gridLayout === 'tiles';
   const stickyHeader = useStickyOnScrolled();
 
   const sectionMain = css({
@@ -209,8 +191,8 @@ const NavigationHeader: React.FC<{}> = (props: any) => {
     right: '0',
     opacity: '1',
     zIndex: '100',
-    paddingTop: '25px',
-    paddingBottom: '25px',
+    paddingTop: '20px',
+    paddingBottom: '20px',
     transition: theme.colorModeTransition,
     backgroundColor: tcolors.background
   });
@@ -218,26 +200,34 @@ const NavigationHeader: React.FC<{}> = (props: any) => {
   const sectionSticky = css({
     paddingTop: '12px',
     paddingBottom: '12px',
-    [mediaquery.phablet()]: {
+    boxShadow: `3px 5px 2px 0px ${tcolors.tintHover}`,
+    backgroundColor: tcolors.tintBackground,
+    [mediaquery.desktop()]: {
       paddingTop: '10px',
       paddingBottom: '10px'
     },
-    boxShadow: `3px 5px 2px 0px ${tcolors.tintHover}`,
-    backgroundColor: tcolors.tintBackground
+    [mediaquery.tablet()]: {
+      paddingTop: '8px',
+      paddingBottom: '8px'
+    },
+    [mediaquery.phablet()]: {
+      paddingTop: '8px',
+      paddingBottom: '8px'
+    }
   });
 
   const arrowMenuMotion = {
     initial: {
       opacity: 0,
-      y: 0
+      y: -10
     },
     animate: {
       opacity: 1,
-      y: 30
+      y: 10
     },
     exit: {
       opacity: 0,
-      y: 0
+      y: -10
     },
     transition: {
       duration: 0.2
@@ -264,7 +254,7 @@ const NavigationHeader: React.FC<{}> = (props: any) => {
                 title="Hide/Display menu"
                 aria-label="Hide/Display menu"
                 ref={arrowRef}
-                onClick={() => {
+                onClick={(): void => {
                   setArrowUp(!arrowUp);
                 }}
               >
@@ -274,6 +264,7 @@ const NavigationHeader: React.FC<{}> = (props: any) => {
                 {arrowUp && (
                   <motion.div {...arrowMenuMotion}>
                     <MenuContainer arrowUp={arrowUp}>
+                      <Caret />
                       <MenuNav>
                         <NavLinks showArrow={showArrow}>
                           <NavLink
@@ -310,10 +301,7 @@ const NavigationHeader: React.FC<{}> = (props: any) => {
                         <Horizontal />
                         <NavControls>
                           <>
-                            <GridRowToggle
-                              enable={enableGridRow}
-                              active={enableGridRow}
-                            />
+                            <GridRowToggle enable={enableGridRow} active={enableGridRow} />
                             <SharePageButton />
                             <DarkModeToggle />
                           </>
@@ -360,10 +348,7 @@ const NavigationHeader: React.FC<{}> = (props: any) => {
               </NavLinks>
               <NavControls>
                 <>
-                  <GridRowToggle
-                    enable={enableGridRow}
-                    active={enableGridRow}
-                  />
+                  <GridRowToggle enable={enableGridRow} active={enableGridRow} />
                   <SharePageButton />
                   <DarkModeToggle />
                 </>
@@ -378,73 +363,52 @@ const NavigationHeader: React.FC<{}> = (props: any) => {
 
 export default NavigationHeader;
 
-const Horizontal = styled.div`
-  position: relative;
-  margin: 5px 15px 50px;
-  border-bottom: 1px solid ${(p) => p.theme.colors.horizontalNav};
+const Caret = styled.div((p: ITAOAThemeUIContext) => ({
+  width: 0,
+  height: 0,
+  border: '10px solid transparent',
+  borderWidth: '10px',
+  borderStyle: 'solid',
+  borderBottomColor: p.theme.colors.tintBackground as CSS.ColorProperty,
+  transition: p.theme.colorModeTransition,
+  zIndex: 9,
+  position: 'relative',
+  top: '1px'
+}));
 
-  ${mediaqueries.tablet`
-margin: 10px 15px 5px;
-`}
-`;
+const Horizontal = styled.div((p: ITAOAThemeUIContext) => ({
+  position: 'relative',
+  margin: '5px 15px 50px',
+  borderBottom: `1px solid ${p.theme.colors.horizontalNav}`,
 
-const BackArrowIconContainer = styled.div`
-  transition: 0.2s transform var(--ease-out-quad);
-  opacity: 0;
-  padding-right: 30px;
-  animation: fadein 0.3s linear forwards;
-
-  @keyframes fadein {
-    to {
-      opacity: 1;
-    }
+  [mediaquery.tablet()]: {
+    margin: '10px 15px 5px'
   }
+}));
 
-  ${mediaqueries.desktop_medium`
-display: none;
-`}
-`;
+const ArrowIconContainer = styled.div(() => ({
+  position: 'relative',
+  display: 'flex'
+}));
 
-const ArrowIconContainer = styled.div`
-  position: relative;
-  display: flex;
-`;
+const MenuContainer = styled.div(() => ({
+  top: '0px',
+  right: 'calc((40px + 2rem) - (1rem + 60px))',
+  width: 'calc(2 * (1rem + 60px))',
 
-const MenuContainer = styled.div<{ arrowUp: boolean }>`
-  top: 0px;
-  right: calc((40px + 2rem) - (1rem + 60px));
-  width: calc(2 * (1rem + 60px));
+  position: 'absolute',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center'
+}));
 
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const fadeIn = keyframes`
-  from { opacity: 0; }
-  to { opacity: 1; }
-`;
-
-const fadeOut = keyframes`
-  from { opacity: 0; }
-  to { opacity: 1; }
-`;
-
-const open = css`
-  animation: fadeIn 0.3s ease-out forwards;
-`;
-const closed = css`
-  animation: fadeOut 0.3s ease-out forwards;
-`;
-
-const MenuNav = styled.nav`
-  background-color: ${(p) => p.theme.colors.tintBackground};
-  border-radius: 5px;
-  box-shadow: 3px 4px 3px 0px ${(p) => p.theme.colors.tintHover};
-  padding-bottom: 5px;
-  transition: all 0.3s ease-out;
-`;
+const MenuNav = styled.nav((p: ITAOAThemeUIContext) => ({
+  backgroundColor: p.theme.colors.tintBackground as CSS.ColorProperty,
+  borderRadius: '5px',
+  boxShadow: `3px 4px 3px 0px ${p.theme.colors.tintHover}`,
+  paddingBottom: '5px',
+  transition: p.theme.colorModeTransition
+}));
 
 const NavContainer = styled.div({
   zIndex: '100',
@@ -452,92 +416,89 @@ const NavContainer = styled.div({
   justifyContent: 'space-between'
 });
 
-const LogoLink = styled(Link)<{ back: string }>`
-  position: relative;
-  display: flex;
-  align-items: center;
-  left: ${(p) => (p.back === 'true' ? '-54px' : 0)};
+const LogoLink = styled(Link)<{ back: string }>((p: ITAOAThemeUIContext) => ({
+  position: 'relative',
+  display: 'flex',
+  alignItems: 'center',
+  left: p.back === 'true' ? '-54px' : 0,
 
-  ${mediaqueries.desktop_medium`
-left: 0
-`}
+  [mediaquery.desktop_medium()]: {
+    left: 0
+  },
 
-  &[data-a11y="true"]:focus::after {
-    content: '';
-    position: absolute;
-    left: -10%;
-    top: -30%;
-    width: 120%;
-    height: 160%;
-    border: 2px solid ${(p) => p.theme.colors.accent};
-    background: rgba(255, 255, 255, 0.01);
-    border-radius: 5px;
+  '&[data-a11y="true"]:focus::after': {
+    content: '',
+    position: 'absolute',
+    left: '-10%',
+    top: '-30%',
+    width: '120%',
+    height: '160%',
+    border: `2px solid ${p.theme.colors.accent}`,
+    background: 'rgba(255, 255, 255, 0.01)',
+    borderRadius: '5px'
+  },
+
+  '&:hover': {}
+}));
+
+const NavLinks = styled.div((p: ITAOAThemeUIContext) => ({
+  position: 'relative',
+  display: 'flex',
+  align: p.showArrow ? 'none' : 'left',
+  flexDirection: p.showArrow ? 'column' : 'row',
+  marginRight: 'auto',
+
+  [mediaquery.phablet()]: {
+    marginLeft: '0%',
+    right: '-1px'
   }
+}));
 
-  &:hover {
-    ${BackArrowIconContainer} {
-      transform: translateX(-3px);
-    }
+const NavControls = styled.div(() => ({
+  position: 'relative',
+  display: 'flex',
+  alignItems: 'center'
+}));
+
+const NavLink = styled(Link)<{ arrow: boolean }>((p: ITAOAThemeUIContext) => ({
+  position: 'relative',
+  display: 'flex',
+  alignItems: 'center',
+  marginRight: 'auto',
+  paddingBottom: p.arrow ? '6px' : '0px',
+  paddingTop: p.arrow ? '5px' : '0px',
+  marginLeft: p.arrow ? 'auto' : '30px',
+  [mediaquery.tablet()]: {
+    marginLeft: p.arrow ? 'auto' : '13px'
   }
-`;
+}));
 
-const NavLinks = styled.div<{ showArrow: boolean }>`
-  position: relative;
-  display: flex;
-  align: ${(p) => (p.showArrow ? 'none' : 'left')};
-  flex-direction: ${(p) => (p.showArrow ? 'column' : 'row')};
-  margin-right: auto;
-
-  ${mediaqueries.tablet`
-`}
-
-  ${mediaqueries.phablet`
-margin-left: 0%;
-right: -1px;
-`}
-`;
-
-const NavControls = styled.div`
-  position: relative;
-  display: flex;
-  align-items: center;
-`;
-
-const NavLink = styled(Link)<{ arrow: boolean }>`
-  position: relative;
-  display: flex;
-  align-items: center;
-  margin-right: auto;
-  padding-bottom: ${(p) => (p.arrow ? '6px' : '0px')};
-  padding-top: ${(p) => (p.arrow ? '5px' : '0px')};
-  margin-left: ${(p) => (p.arrow ? 'auto' : '25px')};
-`;
-
-const NavLinkText = styled(Headings.h3)`
-  font-family: ${(p) => p.theme.fonts.serif};
-  transition: ${(p) => p.theme.colorModeTransition};
+const NavLinkText = styled(Headings.h3)(
+  (p: ITAOAThemeUIContext) => `
+  font-family: ${p.theme.fonts.serif};
+  transition: ${p.theme.colorModeTransition};
 
   ${mediaqueries.desktop_large`
-font-size: 24px;
-`};
+    font-size: 20px;
+    `};
   ${mediaqueries.desktop`
-font-size: 22px;
-`};
+    font-size: 21px;
+    `};
   ${mediaqueries.tablet`
-font-size: 18px;
-`};
+    font-size: 16px;
+    `};
   ${mediaqueries.phablet`
-font-size: 18px;
-`};
+    font-size: 16px;
+    `};
 
   &::before {
     content: '';
     position: absolute;
     width: 100%;
-    height: 2px;
+    height: 3px;
     bottom: 25%;
     left: 0;
-    background-color: ${(p) => p.theme.colors.primary};
+    background-color: ${p.theme.colors.primary};
     visibility: visible;
     -webkit-transform: scaleX(1);
     transform: scaleX(1);
@@ -546,94 +507,139 @@ font-size: 18px;
   }
 
   &:hover:before {
-    color: ${(p) => p.theme.colors.grey};
-    visibility: hidden;
+    height: 3px;
+    color: ${p.theme.colors.grey};
+    visibility: none;
     -webkit-transform: scaleX(0);
     transform: scaleX(0);
   }
-`;
+    `
+);
 
-const ToolTip = styled.div<{ isDark: boolean; hasCopied: boolean }>`
-  position: absolute;
-  padding: 4px 13px;
-  background: ${(p) => (p.isDark ? '#000' : 'rgba(0,0,0,0.1)')};
-  color: ${(p) => (p.isDark ? '#fff' : '#000')};
-  border-radius: 5px;
-  font-size: 14px;
-  top: -35px;
-  opacity: ${(p) => (p.hasCopied ? 1 : 0)};
-  transform: ${(p) => (p.hasCopied ? 'translateY(-3px)' : 'none')};
-  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+const ToolTip = styled.div<{ isDark: boolean; hasCopied: boolean }>((p: ITAOAThemeUIContext) => ({
+  position: 'absolute',
+  padding: '4px 13px',
+  background: p.isDark ? '#000' : 'rgba(0,0,0,0.1)',
+  color: p.isDark ? '#fff' : '#000',
+  borderRadius: '5px',
+  fontSize: '14px',
+  top: '-35px',
+  opacity: p.hasCopied ? 1 : 0,
+  transform: p.hasCopied ? 'translateY(-3px)' : 'none',
+  transition: p.theme.colorModeTransition,
 
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -6px;
-    margin: 0 auto;
-    width: 0;
-    height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 6px solid ${(p) => (p.isDark ? '#000' : 'rgba(0,0,0,0.1)')};
+  '&::after': {
+    content: '',
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: '-6px',
+    margin: '0 auto',
+    width: 0,
+    height: 0,
+    borderLeft: '6px solid transparent',
+    borderRight: '6px solid transparent',
+    borderTop: `6px solid ${p.isDark ? '#000' : 'rgba(0,0,0,0.1)'}`
   }
-`;
+}));
 
-const IconWrapper = styled.button<{ isDark: boolean }>`
-  opacity: 0.5;
-  position: relative;
-  border-radius: 5px;
-  width: 45px;
-  height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: opacity 0.3s ease;
-  margin-left: 30px;
+const IconWrapper = styled.button<{ isDark: boolean }>((p: ITAOAThemeUIContext) => ({
+  opacity: 0.5,
+  position: 'relative',
+  borderRadius: '5px',
+  width: '45px',
+  height: '35px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  transition: 'opacity 0.3s ease',
+  marginLeft: '30px',
 
-  ${mediaqueries.phone`
-margin-left: 2px;
-`}
+  [mediaquery.phone()]: {
+    marginLeft: '2px'
+  },
 
-  ${mediaqueries.tablet`
-margin-left: 2px;
-display: inline-flex;
-transform: scale(0.708);
-                                 &:hover {
-                                     opacity: 0.5;
-                                 }
-`}
+  [mediaquery.tablet()]: {
+    marginLeft: '2px',
+    display: 'inline-flex',
+    transform: 'scale(0.708)',
+    '&:hover': {
+      opacity: 0.5
+    }
+  },
 
-  &:hover {
-    opacity: 1;
+  '&:hover': {
+    opacity: 1
+  },
+
+  "&[data-a11y='true']:focus::after": {
+    content: '',
+    position: 'absolute',
+    left: 0,
+    top: '-30%',
+    width: '100%',
+    height: '160%',
+    border: `2px solid ${p.theme.colors.accent}`,
+    background: 'rgba(255, 255, 255, 0.01)',
+    borderRadius: '5px'
   }
+}));
 
-  &[data-a11y='true']:focus::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: -30%;
-    width: 100%;
-    height: 160%;
-    border: 2px solid ${(p) => p.theme.colors.accent};
-    background: rgba(255, 255, 255, 0.01);
-    border-radius: 5px;
+const GridButton = styled.button((p: ITAOAThemeUIContext) => ({
+  outline: 0,
+  border: 0,
+  position: 'relative',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  height: '36px',
+  width: '36px',
+  borderRadius: '50%',
+  background: 'transparent',
+  transition: 'background 0.25s',
+
+  '&:not(:last-child)': {
+    marginRight: '30px'
+  },
+
+  '&:hover': {
+    background: p.theme.colors.hover as CSS.ColorProperty
+  },
+
+  "&[data-a11y='true']:focus::after": {
+    content: '',
+    position: 'absolute',
+    left: '-10%',
+    top: '-10%',
+    width: '120%',
+    height: '120%',
+    border: '2px solid p.theme.colors.accent',
+    background: 'rgba(255, 255, 255, 0.01)',
+    borderRadius: '50%'
+  },
+
+  svg: {
+    opacity: p.active ? 1 : 0.25,
+    transition: 'opacity 0.2s',
+
+    path: {
+      fill: p.theme.colors.primary
+    }
   }
-`;
+}));
 
 // This is based off a codepen! Much appreciated to: https://codepen.io/aaroniker/pen/KGpXZo
-const MoonOrSun = styled.div<{ isDark: boolean }>`
+const MoonOrSun = styled.div<{ isDark: boolean }>(
+  (p: ITAOAThemeUIContext) => `
   position: relative;
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  border: ${(p) => (p.isDark ? '4px' : '2px')} solid
-    ${(p) => p.theme.colors.primary};
-  background: ${(p) => p.theme.colors.primary};
-  transform: scale(${(p) => (p.isDark ? 0.55 : 1)});
+  border: ${p.isDark ? '4px' : '2px'} solid ${p.theme.colors.primary};
+  background: ${p.theme.colors.primary};
+  transform: scale(${p.isDark ? 0.55 : 1});
   transition: all 0.45s ease;
-  overflow: ${(p) => (p.isDark ? 'visible' : 'hidden')};
+  overflow: ${p.isDark ? 'visible' : 'hidden'};
 
   &::before {
     outline: 0;
@@ -644,15 +650,15 @@ const MoonOrSun = styled.div<{ isDark: boolean }>`
     top: -9px;
     height: 24px;
     width: 24px;
-    border: 2px solid ${(p) => p.theme.colors.primary};
+    border: 2px solid ${p.theme.colors.primary};
     border-radius: 50%;
-    transform: translate(${(p) => (p.isDark ? '14px, -14px' : '0, 0')});
-    opacity: ${(p) => (p.isDark ? 0 : 1)};
+    transform: translate(${p.isDark ? '14px, -14px' : '0, 0'});
+    opacity: ${p.isDark ? 0 : 1};
     transition: transform 0.45s ease;
     background: radial-gradient(
       ellipse farthest-corner at 33% 100%,
-      ${(p) => p.theme.colors.secondary} 50%,
-      ${(p) => p.theme.colors.secondary} 50%
+      ${p.theme.colors.secondary} 50%,
+      ${p.theme.colors.secondary} 50%
     );
   }
 
@@ -665,72 +671,70 @@ const MoonOrSun = styled.div<{ isDark: boolean }>`
     position: absolute;
     top: 50%;
     left: 50%;
-    box-shadow: 0 -23px 0 ${(p) => p.theme.colors.primary},
-      0 23px 0 ${(p) => p.theme.colors.primary},
-      23px 0 0 ${(p) => p.theme.colors.primary},
-      -23px 0 0 ${(p) => p.theme.colors.primary},
-      15px 15px 0 ${(p) => p.theme.colors.primary},
-      -15px 15px 0 ${(p) => p.theme.colors.primary},
-      15px -15px 0 ${(p) => p.theme.colors.primary},
-      -15px -15px 0 ${(p) => p.theme.colors.primary};
-    transform: scale(${(p) => (p.isDark ? 1 : 0)});
+    box-shadow: 0 -23px 0 ${p.theme.colors.primary}, 0 23px 0 ${p.theme.colors.primary},
+      23px 0 0 ${p.theme.colors.primary}, -23px 0 0 ${p.theme.colors.primary},
+      15px 15px 0 ${p.theme.colors.primary}, -15px 15px 0 ${p.theme.colors.primary},
+      15px -15px 0 ${p.theme.colors.primary}, -15px -15px 0 ${p.theme.colors.primary};
+    transform: scale(${p.isDark ? 1 : 0});
     transition: all 0.35s ease;
 
-    ${(p) => mediaqueries.tablet`
-transform: scale(${p.isDark ? 0.92 : 0});
-`}
+    ${mediaqueries.tablet`
+        transform: scale(${p.isDark ? 0.92 : 0});
+        `}
   }
-`;
+        `
+);
 
-const Hidden = styled.span`
-  position: absolute;
-  display: inline-block;
-  opacity: 0;
-  width: 0px;
-  height: 0px;
-  visibility: hidden;
-  overflow: hidden;
-`;
-
-const GridButton = styled.button<{ active: boolean }>`
-  outline: 0;
-  border: 0;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 36px;
-  width: 36px;
-  border-radius: 50%;
-  background: transparent;
-  transition: background 0.25s;
-
-  &:not(:last-child) {
-    margin-right: 30px;
-  }
-
-  &:hover {
-    background: ${(p) => p.theme.colors.hover};
-  }
-
-  &[data-a11y='true']:focus::after {
-    content: '';
-    position: absolute;
-    left: -10%;
-    top: -10%;
-    width: 120%;
-    height: 120%;
-    border: 2px solid ${(p) => p.theme.colors.accent};
-    background: rgba(255, 255, 255, 0.01);
-    border-radius: 50%;
-  }
-
-  svg {
-    opacity: ${(p) => (p.active ? 1 : 0.25)};
-    transition: opacity 0.2s;
-
-    path {
-      fill: ${(p) => p.theme.colors.primary};
-    }
-  }
-`;
+/* const MoonOrSun = styled.div<{ isDark: boolean }>((p: ITAOAThemeUIContext) => ({
+ *     position: 'relative',
+ *     width: '24px',
+ *     height: '24px',
+ *     borderRadius: '50%',
+ *     border: `${p.isDark ? '4px' : '2px'} solid ${p.theme.colors.primary}`,
+ *     background: `${p.theme.colors.primary}`,
+ *     transform: `scale(${p.isDark ? 0.55 : 1})`,
+ *     transition: 'all 0.45s ease',
+ *     overflow: `${p.isDark ? 'visible' : 'hidden'}`,
+ *
+ *     '&::before': {
+ *         outline: 0,
+ *         border: 0,
+ *         content: '',
+ *         position: 'absolute',
+ *         right: '-9px',
+ *         top: '-9px',
+ *         height: '24px',
+ *         width: '24px',
+ *         border: `2px solid ${p.theme.colors.primary}`,
+ *         borderRadius: '50%',
+ *         transform: `translate(${p.isDark ? '14px, -14px' : '0, 0'})`,
+ *         opacity: `${p.isDark ? 0 : 1}`,
+ *         transition: 'transform 0.45s ease',
+ *         background: `radial-gradient(
+ *                      ellipse farthest-corner at 33% 100%,
+ *                      ${p.theme.colors.secondary} 50%,
+ *                      ${p.theme.colors.secondary} 50%
+ *                  )`
+ *     },
+ *
+ *     '&::after': {
+ *         content: '',
+ *         width: '8px',
+ *         height: '8px',
+ *         borderRadius: '50%',
+ *         margin: '-4px 0 0 -4px',
+ *         position: 'absolute',
+ *         top: '50%',
+ *         left: '50%',
+ *         boxShadow: `0 -23px 0 ${p.theme.colors.primary}, 0 23px 0 ${p.theme.colors.primary},
+ *                              23px 0 0 ${p.theme.colors.primary}, -23px 0 0 ${p.theme.colors.primary},
+ *                              15px 15px 0 ${p.theme.colors.primary}, -15px 15px 0 ${p.theme.colors.primary},
+ *                              15px -15px 0 ${p.theme.colors.primary}, -15px -15px 0 ${p.theme.colors.primary}`,
+ *         transform: `scale(${p.isDark ? 1 : 0})`,
+ *         transition: 'all 0.35s ease',
+ *
+ *         [mediaquery.tablet()]: {
+ *             transform: `scale(${p.isDark ? 0.92 : 0})`
+ *         }
+ *     }
+ * })); */

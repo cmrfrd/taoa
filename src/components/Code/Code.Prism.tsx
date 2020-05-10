@@ -1,7 +1,7 @@
 import Icons from '@icons';
-import mediaqueries from '@styles/media';
+import mediaquery from '@styles/media';
 import { ITAOAThemeUIContext } from '@types';
-import { copyToClipboard } from '@utils/index';
+import { copyToClipboard } from '@utils';
 
 import styled from '@emotion/styled';
 import Highlight, { defaultProps, Language } from 'prism-react-renderer';
@@ -139,12 +139,17 @@ export default CodePrism;
 
 const CopyButton = styled.button((p: ITAOAThemeUIContext) => ({
   position: 'absolute',
-  right: '22px',
-  top: '24px',
   padding: '8px 12px 7px',
   borderRadius: '5px',
   color: '#6f7177',
   transition: 'background 0.3s ease',
+  right: '22px',
+  top: '24px',
+
+  [mediaquery.phablet()]: {
+    right: '12px',
+    top: '14px'
+  },
 
   '&:hover': {
     background: 'rgba(255, 255, 255, 0.07)'
@@ -177,11 +182,11 @@ const Container = styled.div((p: ITAOAThemeUIContext) => ({
     fontFamily: `${p.theme.fonts.monospace} !important`
   },
 
-  [mediaqueries.desktop()]: {
+  [mediaquery.desktop()]: {
     left: '-26px'
   },
 
-  [mediaqueries.tablet()]: {
+  [mediaquery.tablet()]: {
     maxWidth: '526px',
     left: 0,
 
@@ -190,7 +195,7 @@ const Container = styled.div((p: ITAOAThemeUIContext) => ({
     }
   },
 
-  [mediaqueries.phablet()]: {
+  [mediaquery.phablet()]: {
     borderRadius: 0,
     margin: '0 auto 25px',
     overflow: 'initial',

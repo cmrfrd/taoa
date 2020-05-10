@@ -1,33 +1,36 @@
-import styled from "@emotion/styled";
+import { mediaquery } from '@styles/media';
+import { ITAOAThemeUIContext } from '@types';
 
-import mediaqueries from "@styles/media";
+import styled from '@emotion/styled';
 
 const Section = styled.section<{
-    narrow?: boolean,
-}>`
-  width: 100%;
-  max-width: 1220px;
-  margin: 0 auto;
-  padding: 0 4rem;
+  narrow?: boolean;
+}>((p: ITAOAThemeUIContext) => ({
+  width: '100%',
+  maxWidth: '1220px',
+  margin: '0 auto',
+  padding: '0 4rem',
 
-  ${mediaqueries.desktop`
-max-width: 850px;
-`};
+  [mediaquery.desktop()]: {
+    maxWidth: '850px'
+  },
+  [mediaquery.phablet()]: {
+    maxWidth: '100%'
+  },
 
-  ${p =>
-        p.narrow
-            ? mediaqueries.tablet`
-padding: 0 1rem;
-max-width: 527px;
-        `
-            : mediaqueries.tablet`
-          padding: 0 2rem;
-          max-width: 567px;
-        `}
-
-  ${mediaqueries.phablet`
-    max-width: 100%;
-  `};
-`;
+  ...(p.narrow
+    ? {
+        [mediaquery.tablet()]: {
+          padding: '0 1rem',
+          maxWidth: '527px'
+        }
+      }
+    : {
+        [mediaquery.tablet()]: {
+          padding: '0 2rem',
+          maxWidth: '567px'
+        }
+      })
+}));
 
 export default Section;

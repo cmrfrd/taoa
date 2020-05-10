@@ -1,10 +1,10 @@
-import { TAOAThemeUIContext } from '@types';
+import { ITAOAThemeUIContext } from '@types';
 
 import styled from '@emotion/styled';
 import * as CSS from 'csstype';
 
 /** Figcaption */
-const Figcaption = styled.figcaption((p: TAOAThemeUIContext) => ({
+const Figcaption = styled.figcaption((p: ITAOAThemeUIContext) => ({
   color: p.theme.colors.grey as CSS.ColorProperty,
   fontSize: '14px',
   textAlign: 'center',

@@ -63,7 +63,7 @@ $easing: cubic-bezier(0,1.24,.68,.92);
 $total_width: 80px;
 $bar_deg: 35deg;
 $bar_width: 20px;
-$bar_height: 4px;
+$bar_height: 5px;
 $duration: 0.4s;
 
 $tri_height: sin($bar_deg) * $bar_width;
@@ -90,7 +90,7 @@ $tri_width: $tri_height / tan($bar_deg);
   float: right;
   border-radius: 1px;
   &:after {
-    content:'""';
+    content:'';
     width: $bar_width;
     height: $bar_height;
     display: block;
@@ -113,7 +113,7 @@ $tri_width: $tri_height / tan($bar_deg);
   float: right;
   border-radius: 1px;
   &:after {
-    content:'""';
+    content:'';
     width: $bar_width;
     height: $bar_height;
     display: block;

@@ -10,17 +10,15 @@ import { ImageZoom } from '@components/Image';
 import Lists from '@components/Lists';
 import Paragraph from '@components/Paragraph';
 import Tables from '@components/Tables';
-import mediaqueries, { mediaquery } from '@styles/media';
-import { toKebabCase } from '@utils';
+import { mediaquery } from '@styles/media';
 import { ITAOAThemeUIContext } from '@types';
 
-import { css } from '@emotion/core';
 import styled from '@emotion/styled';
 import { MDXProvider } from '@mdx-js/react';
+import * as CSS from 'csstype';
 import { MDXRenderer } from 'gatsby-plugin-mdx';
 import React from 'react';
 import { useColorMode } from 'theme-ui';
-import * as CSS from 'csstype';
 
 type ComponentType =
   | 'img'
@@ -80,6 +78,10 @@ interface IMDXProps {
   content: React.ReactNode;
 }
 
+interface IStringMap {
+  [key: string]: string | number | boolean;
+}
+
 const MDX: React.FC<IMDXProps> = ({ content, children, ...props }: IMDXProps) => {
   const [colorMode] = useColorMode();
 
@@ -97,13 +99,13 @@ const MDX: React.FC<IMDXProps> = ({ content, children, ...props }: IMDXProps) =>
 
 export default MDX;
 
-const IMAGE_WIDTHS = {
+const IMAGE_WIDTHS = (): IStringMap => ({
   regular: '680px',
   large: '1004px',
   full: '100vw'
-};
+});
 
-const ARTICLE_WIDTH = css({
+const ARTICLE_WIDTH = (): IStringMap => ({
   width: '100%',
   maxWidth: '780px',
 
@@ -120,10 +122,10 @@ const ARTICLE_WIDTH = css({
   }
 });
 
-const HeadingsCSS = css({
+const HeadingsCSS = (): IStringMap => ({
   'h1, h2, h3, h4, h5, h6': {
     margin: '0 auto',
-    ...ARTICLE_WIDTH
+    ...ARTICLE_WIDTH()
   },
 
   'h1, h1 *, h2, h2 *': {
@@ -139,192 +141,194 @@ const HeadingsCSS = css({
   }
 });
 
-const PrismCSS = css(`
-    .prism-code {
-        overflow: auto;
-        width: 100%;
-        max-width: 744px;
-        margin: 0 auto;
-        padding: 32px;
-        font-size: 13px;
-        margin: 15px auto 50px;
-        border-radius: 5px;
-        font-family: ${p => p.theme.fonts.monospace};
-        background: ${p => p.theme.colors.prism.background};
+const PrismCSS = (p: ITAOAThemeUIContext): IStringMap => ({
+  '.prism-code': {
+    overflow: 'auto',
+    width: '100%',
+    maxWidth: '744px',
+    margin: '0 auto',
+    padding: '32px',
+    fontSize: '13px',
+    margin: '15px auto 50px',
+    borderRadius: '5px',
+    fontFamily: p.theme.fonts.monospace,
+    background: p.theme.colors.prism.background as CSS.ColorProperty,
 
-        .token-line {
-            border-left: 3px solid transparent;
+    '.token-line': {
+      borderLeft: '3px solid transparent',
 
-            ${Object.keys(p.theme.colors.prism)
-              .map(key => {
-                return `.${toKebabCase(key)}{color:${p.theme.colors.prism[key]};}`;
-              })
-              .reduce((curr, next) => curr + next, ``)};
-
-            & > span {
+      ...Object.keys(p.theme.colors.prism)
+        .map((key: string) => {
+          return {
+            [`.${key}`]: {
+              color: p.theme.colors.prism[key] as CSS.ColorProperty
             }
-        }
+          };
+        })
+        .reduce((curr: IStringMap, next: IStringMap) => ({ ...curr, ...next }), ``),
 
-        .number-line {
-            display: inline-block;
-            width: 32px;
-            user-select: none;
-            opacity: 0.3;
-            color: #dcd9e6;
+      '& > span': {}
+    },
 
-            ${mediaqueries.tablet`
-opacity: 0;
-width: 0;
-            `};
-        }
+    '.number-line': {
+      display: 'inline-block',
+      width: '32px',
+      userSelect: 'none',
+      opacity: 0.3,
+      color: '#dcd9e6',
 
-        .token-line.highlight-line {
-            margin: 0 -32px;
-            padding: 0 32px;
-            background: ${p.theme.colors.prism.highlight};
-            border-left: 3px solid ${p.theme.colors.prism.highlightBorder};
+      [mediaquery.tablet()]: {
+        opacity: 0,
+        width: 0
+      }
+    },
 
-            ${mediaqueries.tablet`
-margin: 0 -20px;
-padding: 0 20px;
-            `};
-        }
+    '.token-line.highlight-line': {
+      margin: '0 -32px',
+      padding: '0 32px',
+      background: p.theme.colors.prism.highlight as CSS.ColorProperty,
+      borderLeft: `3px solid p.theme.colors.prism.highlightBorder`,
 
-        .operator + .maybe-class-name {
-            color: #ffcf74 !important;
-        }
+      [mediaquery.tablet()]: {
+        margin: '0 -20px',
+        padding: '0 20px'
+      }
+    },
 
-        .plain ~ .operator {
-            color: #5fa8aa !important;
-        }
+    '.operator + .maybe-class-name': {
+      color: '#ffcf74 !important'
+    },
 
-        ${mediaqueries.desktop`
-left: -26px;
-        `};
+    '.plain ~ .operator': {
+      color: '#5fa8aa !important'
+    },
 
-        ${mediaqueries.tablet`
-max-width: 526px;
-padding: 20px 20px;
-left: 0;
-        `};
+    [mediaquery.desktop()]: {
+      left: '0px'
+    },
 
-        ${mediaqueries.phablet`
-            text-size-adjust: none;
-            border-radius: 0;
-            margin: 0 auto 25px;
-            padding: 25px 20px;
-            overflow: initial;
-            width: unset;
-            max-width: unset;
-            float: left;
-            min-width: 100%;
-            overflow: initial;
-position: relative;
-    `};
-`);
+    [mediaquery.tablet()]: {
+      maxWidth: '526px',
+      padding: '20px 20px',
+      left: 0
+    },
 
-const ImageCSS = css`
-  .gatsby-resp-image-background-image {
-    display: none !important;
-  }
-
-  img {
-    display: inline-block;
-    position: relative;
-    max-width: 100%;
-    height: auto;
-    z-index: 0;
-    margin: 15px auto 50px;
-    border-radius: 5px;
-
-    ${mediaqueries.tablet`
-margin: 10px auto 45px;
-`};
-  }
-
-  div.Image__Small {
-    display: inline-block;
-    position: relative;
-    max-width: 100%;
-    height: auto;
-    z-index: 0;
-    margin: 15px auto 50px;
-    border-radius: 5px;
-    width: 100%;
-    max-width: 680px;
-
-    ${mediaqueries.tablet`
-margin: 10px auto 45px;
-`};
-
-    ${mediaqueries.desktop`
-max-width: 507px;
-`}
-
-    ${mediaqueries.tablet`
-max-width: 486px;
-margin: 0 auto 25px;
-`};
-
-    ${mediaqueries.phablet`
-padding: 0 20px;
-`};
-  }
-
-  .Image__Container {
-    text-align: center;
-  }
-
-  img.Image__With-Shadow {
-    box-shadow: 0px 15px 60px rgba(0, 0, 0, 0.15);
-  }
-
-  div.Image__Medium {
-    position: relative;
-    margin: 15px auto 50px;
-    width: 100%;
-    max-width: ${IMAGE_WIDTHS.large};
-
-    ${mediaqueries.desktop_medium`
-left: -34px;
-`};
-
-    ${mediaqueries.desktop`
-left: -26px;
-`};
-
-    ${mediaqueries.tablet`
-border-radius: 0;
-left: 0;
-margin: 0 auto 25px;
-
-img {
-    border-radius: 0;
-}
-`};
-  }
-
-  div.Image__Large {
-    position: relative;
-    left: -68px;
-    width: ${IMAGE_WIDTHS.full};
-    margin: 25px auto 60px;
-    pointer-events: none;
-
-    img {
-      border-radius: 0;
+    [mediaquery.phablet()]: {
+      textSizeAdjust: 'none',
+      borderRadius: 0,
+      margin: '0 auto 25px',
+      padding: '25px 20px',
+      width: 'unset',
+      maxWidth: 'unset',
+      float: 'left',
+      minWidth: '100%',
+      overflow: 'initial',
+      position: 'relative'
     }
-
-    ${mediaqueries.desktop`
-left: -53px;
-`};
-
-    ${mediaqueries.tablet`
-left: 0;
-margin: 0 auto 25px;
-`};
   }
-`;
+});
+
+const ImageCSS = (): IStringMap => ({
+  '.gatsby-resp-image-background-image': {
+    display: 'none !important'
+  },
+
+  img: {
+    display: 'inline-block',
+    position: 'relative',
+    maxWidth: '100%',
+    height: 'auto',
+    zIndex: 0,
+    margin: '15px auto 50px',
+    borderRadius: '5px',
+
+    [mediaquery.tablet()]: {
+      margin: '10px auto 45px'
+    }
+  },
+
+  'div.Image__Small': {
+    display: 'inline-block',
+    position: 'relative',
+    height: 'auto',
+    zIndex: 0,
+    margin: '15px auto 50px',
+    borderRadius: '5px',
+    width: '100%',
+    maxWidth: '680px',
+
+    [mediaquery.tablet()]: {
+      margin: '10px auto 45px'
+    },
+
+    [mediaquery.desktop()]: {
+      maxWidth: '507px'
+    },
+
+    [mediaquery.tablet()]: {
+      maxWidth: '486px',
+      margin: '0 auto 25px'
+    },
+
+    [mediaquery.phablet()]: {
+      padding: '0 20px'
+    }
+  },
+
+  '.Image__Container': {
+    textAlign: 'center'
+  },
+
+  'img.Image__With-Shadow': {
+    boxShadow: '0px 15px 60px rgba(0, 0, 0, 0.15)'
+  },
+
+  'div.Image__Medium': {
+    position: 'relative',
+    margin: '15px auto 50px',
+    width: '100%',
+    maxWidth: IMAGE_WIDTHS().large,
+
+    [mediaquery.desktop_medium()]: {
+      left: '-34px'
+    },
+
+    [mediaquery.desktop()]: {
+      left: '-26px'
+    },
+
+    [mediaquery.tablet()]: {
+      borderRadius: 0,
+      left: 0,
+      margin: '0 auto 25px',
+
+      img: {
+        borderRadius: 0
+      }
+    }
+  },
+
+  'div.Image__Large': {
+    position: 'relative',
+    left: '-68px',
+    width: IMAGE_WIDTHS().full,
+    margin: '25px auto 60px',
+    pointerEvents: 'none',
+
+    img: {
+      borderRadius: 0
+    },
+
+    [mediaquery.desktop()]: {
+      left: '-53px'
+    },
+
+    [mediaquery.tablet()]: {
+      left: 0,
+      margin: '0 auto 25px'
+    }
+  }
+});
 
 /**
  * MDXBody
@@ -332,14 +336,17 @@ margin: 0 auto 25px;
  * body type feel. We're also applying all the Prism selecotors and styles within
  * the MDXBody.
  */
-const MDXBody = styled.div`
-    position: relative;
-    z-index: 10;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
+const MDXBody = styled.div(
+  (p: ITAOAThemeUIContext): IStringMap => ({
+    position: 'relative',
+    zIndex: 10,
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'column',
 
-    ${HeadingsCSS}
-    ${PrismCSS}
-    ${ImageCSS}
-`;
+    ...HeadingsCSS(),
+    ...ImageCSS(),
+
+    ...PrismCSS(p)
+  })
+);

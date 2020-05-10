@@ -1,24 +1,12 @@
 import Icons from '@icons';
-import mediaqueries from '@styles/media';
+import { ITAOAThemeUIContext } from '@types';
 import { theme } from '@utils';
 
 import styled from '@emotion/styled';
+import * as CSS from 'csstype';
+import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useColorMode } from 'theme-ui';
-import _ from 'lodash';
-
-const remove = (arr: any, item: any) => {
-  const newArr = [...arr];
-  newArr.splice(
-    newArr.findIndex(i => i === item),
-    1
-  );
-  return newArr;
-};
-
-const add = (arr: any, item: any) => {
-  return [...arr, item];
-};
 
 const Search: React.FC<{}> = (props: any) => {
   const { elements, searchResults, setSearchResults, placeholder, filter, sort } = props;
@@ -27,12 +15,12 @@ const Search: React.FC<{}> = (props: any) => {
   const tcolors = colorMode === 'dark' ? theme.colors.modes.dark : theme.colors;
 
   const [searchTerm, setSearchTerm] = useState('');
-  const handleChange = event => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setSearchTerm(event.target.value);
   };
 
   useEffect(() => {
-    const results = elements.filter(e => filter(e, searchTerm)).sort(sort);
+    const results = elements.filter((e: any) => filter(e, searchTerm)).sort(sort);
 
     if (_.isEqual(results.sort(), searchResults.sort())) return;
 
@@ -54,31 +42,31 @@ const Search: React.FC<{}> = (props: any) => {
 
 export default Search;
 
-const InputContainer = styled.div`
-  position: relative;
-  display: inline-block;
-  padding-top: 20px;
-  padding-bottom: 20px;
-  width: 100%;
-  svg {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 1rem;
+const InputContainer = styled.div(() => ({
+  position: 'relative',
+  display: 'inline-block',
+  paddingTop: '20px',
+  paddingBottom: '20px',
+  width: '100%',
+  svg: {
+    position: 'absolute',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    right: '1rem'
   }
-`;
+}));
 
-const Input = styled.input`
-  outline: 0;
-  border-width: 0 0 2px;
-  border-color: ${p => p.theme.colors.invbackground};
-  color: ${p => p.theme.colors.invbackground};
-  background: transparent;
-  height: 30px;
-  padding: 0.5rem;
-  width: 100%;
-`;
+const Input = styled.input((p: ITAOAThemeUIContext) => ({
+  outline: 0,
+  borderWidth: '0 0 2px',
+  borderColor: p.theme.colors.invbackground as CSS.ColorProperty,
+  color: p.theme.colors.invbackground as CSS.ColorProperty,
+  background: 'transparent',
+  height: '30px',
+  padding: '0.5rem',
+  width: '100%'
+}));
 
-const IconContainer = styled.div`
-  padding-bottom: 4px;
-`;
+const IconContainer = styled.div(() => ({
+  paddingBottom: '4px'
+}));
