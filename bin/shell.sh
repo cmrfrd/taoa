@@ -5,7 +5,6 @@ docker run \
        -v ~/.ssh:/.ssh:z \
        --net host \
        --rm \
-       --name deploy \
        -w /site \
        -it cmrfrd.site \
        '
