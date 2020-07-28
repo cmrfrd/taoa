@@ -18,10 +18,15 @@ import { Link } from 'gatsby';
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useColorMode } from 'theme-ui';
 
+interface IGridRowToggle {
+  active: boolean;
+}
+
 /* GridRowToggle is a component that toggles between two
  * layouts of articles
  */
-const GridRowToggle: React.FC<{}> = (props: any) => {
+const GridRowToggle: React.FC<IGridRowToggle> = (props: IGridRowToggle) => {
+  const { active } = props;
   const { gridLayout = 'tiles', hasSetGridLayout, setGridLayout } = useContext(GridLayoutContext);
   const rowsIsActive = hasSetGridLayout && gridLayout === 'tiles';
 
@@ -30,7 +35,7 @@ const GridRowToggle: React.FC<{}> = (props: any) => {
       {rowsIsActive ? (
         <GridButton
           onClick={(): void => setGridLayout('rows')}
-          active={props.active}
+          active={active}
           data-a11y={false}
           title="Show articles in Row grid"
           aria-label="Show articles in Row grid"
@@ -40,7 +45,7 @@ const GridRowToggle: React.FC<{}> = (props: any) => {
       ) : (
         <GridButton
           onClick={(): void => setGridLayout('tiles')}
-          active={props.active}
+          active={active}
           data-a11y={false}
           title="Show articles in Tile grid"
           aria-label="Show articles in Tile grid"
@@ -60,7 +65,7 @@ const DarkModeToggle: React.FC<{}> = () => {
   const isDark = colorMode === `dark`;
 
   /* Toggle function to switch from light and dark */
-  function toggleColorMode(event: EventTarget): void {
+  function toggleColorMode(event: React.MouseEvent<HTMLElement>): void {
     event.preventDefault();
     setColorMode(isDark ? `light` : `dark`);
   }
@@ -114,10 +119,15 @@ const SharePageButton: React.FC<{}> = () => {
   );
 };
 
+interface INavigationHeader {
+  enableGridRow: boolean;
+  initialArrowUp: boolean;
+}
+
 /* NavigationHeader contained the associated links and widgets to control
  * navigation, color, and layout
  */
-const NavigationHeader: React.FC<{}> = (props: any) => {
+const NavigationHeader: React.FC<INavigationHeader> = (props: INavigationHeader) => {
   /* initial paramaters for the nav header */
   const { enableGridRow, initialArrowUp } = props;
 
@@ -127,10 +137,9 @@ const NavigationHeader: React.FC<{}> = (props: any) => {
   /* Check if the app is mobile or desktop */
   const { width } = getWindowDimensions();
   const breakpoint = getBreakpointFromTheme('phablet');
-  const [showArrow, setShowArrow] = useState<boolean>(width <= breakpoint);
+  const [showArrow, setShowArrow] = useState<number>(+(width <= breakpoint));
 
   const [colorMode] = useColorMode();
-  const fill = colorMode === 'dark' ? '#fff' : '#000';
   const tcolors = colorMode === 'dark' ? theme.colors.modes.dark : theme.colors;
 
   /* Function to handle turning the UI from a desktop view to
@@ -148,7 +157,7 @@ const NavigationHeader: React.FC<{}> = (props: any) => {
       setArrowUp(false);
     }
 
-    setShowArrow(willShowArrow);
+    setShowArrow(+willShowArrow);
   };
 
   /* React hook to call function that will
@@ -168,8 +177,8 @@ const NavigationHeader: React.FC<{}> = (props: any) => {
   const menuRef = useRef(null);
 
   /* Listener to minimize the menu on mouse click outside the menu */
-  useEffect(() => {
-    const menuf = (event: React.MouseEvent<HTMLElement>): void => {
+  useEffect((): (() => void) => {
+    const menuf: { (event: MouseEvent): void } = (event: MouseEvent): void => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setArrowUp(false);
       }
@@ -186,11 +195,11 @@ const NavigationHeader: React.FC<{}> = (props: any) => {
   const sectionMain = css({
     width: '100%',
     position: 'fixed',
-    top: '0',
-    left: '0',
-    right: '0',
-    opacity: '1',
-    zIndex: '100',
+    top: 0,
+    left: 0,
+    right: 0,
+    opacity: 1,
+    zIndex: 100,
     paddingTop: '20px',
     paddingBottom: '20px',
     transition: theme.colorModeTransition,
@@ -245,7 +254,7 @@ const NavigationHeader: React.FC<{}> = (props: any) => {
             aria-label="Navigate back to the homepage"
             state={{ arrowUp: arrowUp }}
           >
-            <Logo fill={fill} />
+            <Logo />
           </LogoLink>
           {showArrow ? (
             <div ref={menuRef}>
@@ -263,10 +272,10 @@ const NavigationHeader: React.FC<{}> = (props: any) => {
               <AnimatePresence initial={false}>
                 {arrowUp && (
                   <motion.div {...arrowMenuMotion}>
-                    <MenuContainer arrowUp={arrowUp}>
+                    <MenuContainer>
                       <Caret />
                       <MenuNav>
-                        <NavLinks showArrow={showArrow}>
+                        <NavLinks arrow={showArrow}>
                           <NavLink
                             to={'/'}
                             arrow={showArrow}
@@ -275,7 +284,7 @@ const NavigationHeader: React.FC<{}> = (props: any) => {
                             title="Navigate back to the homepage"
                             aria-label="Navigate back to the homepage"
                           >
-                            <NavLinkText>Home</NavLinkText>
+                            <NavLinkText arrow={showArrow}>Home</NavLinkText>
                           </NavLink>
                           <NavLink
                             to={'/about'}
@@ -285,7 +294,7 @@ const NavigationHeader: React.FC<{}> = (props: any) => {
                             title="Navigate to the about page"
                             aria-label="Navigate to the about page"
                           >
-                            <NavLinkText>About</NavLinkText>
+                            <NavLinkText arrow={showArrow}>About</NavLinkText>
                           </NavLink>
                           <NavLink
                             to={'/articles'}
@@ -295,13 +304,13 @@ const NavigationHeader: React.FC<{}> = (props: any) => {
                             title="Navigate to the articles page"
                             aria-label="Navigate to the articles page"
                           >
-                            <NavLinkText>Articles</NavLinkText>
+                            <NavLinkText arrow={showArrow}>Articles</NavLinkText>
                           </NavLink>
                         </NavLinks>
                         <Horizontal />
                         <NavControls>
                           <>
-                            <GridRowToggle enable={enableGridRow} active={enableGridRow} />
+                            <GridRowToggle active={enableGridRow} />
                             <SharePageButton />
                             <DarkModeToggle />
                           </>
@@ -314,7 +323,7 @@ const NavigationHeader: React.FC<{}> = (props: any) => {
             </div>
           ) : (
             <>
-              <NavLinks showArrow={showArrow}>
+              <NavLinks arrow={showArrow}>
                 <NavLink
                   to={'/'}
                   arrow={showArrow}
@@ -323,7 +332,7 @@ const NavigationHeader: React.FC<{}> = (props: any) => {
                   title="Navigate back to the homepage"
                   aria-label="Navigate back to the homepage"
                 >
-                  <NavLinkText>Home</NavLinkText>
+                  <NavLinkText arrow={showArrow}>Home</NavLinkText>
                 </NavLink>
                 <NavLink
                   to={'/about'}
@@ -333,7 +342,7 @@ const NavigationHeader: React.FC<{}> = (props: any) => {
                   title="Navigate to the about page"
                   aria-label="Navigate to the about page"
                 >
-                  <NavLinkText>About</NavLinkText>
+                  <NavLinkText arrow={showArrow}>About</NavLinkText>
                 </NavLink>
                 <NavLink
                   to={'/articles'}
@@ -343,12 +352,12 @@ const NavigationHeader: React.FC<{}> = (props: any) => {
                   title="Navigate to the articles page"
                   aria-label="Navigate to the articles page"
                 >
-                  <NavLinkText>Articles</NavLinkText>
+                  <NavLinkText arrow={showArrow}>Articles</NavLinkText>
                 </NavLink>
               </NavLinks>
               <NavControls>
                 <>
-                  <GridRowToggle enable={enableGridRow} active={enableGridRow} />
+                  <GridRowToggle active={enableGridRow} />
                   <SharePageButton />
                   <DarkModeToggle />
                 </>
@@ -391,7 +400,7 @@ const ArrowIconContainer = styled.div(() => ({
   display: 'flex'
 }));
 
-const MenuContainer = styled.div(() => ({
+const MenuContainer = styled.div({
   top: '0px',
   right: 'calc((40px + 2rem) - (1rem + 60px))',
   width: 'calc(2 * (1rem + 60px))',
@@ -400,34 +409,34 @@ const MenuContainer = styled.div(() => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center'
-}));
+});
 
 const MenuNav = styled.nav((p: ITAOAThemeUIContext) => ({
   backgroundColor: p.theme.colors.tintBackground as CSS.ColorProperty,
   borderRadius: '5px',
-  boxShadow: `3px 4px 3px 0px ${p.theme.colors.tintHover}`,
+  boxShadow: `rgba(0,0,0,.11) 0 0 0 1px, rgba(0,0,0,.05) 0 10px 10px -5px`,
+  border: '0px',
   paddingBottom: '5px',
   transition: p.theme.colorModeTransition
 }));
 
 const NavContainer = styled.div({
-  zIndex: '100',
+  zIndex: 100,
   display: 'flex',
   justifyContent: 'space-between'
 });
 
-const LogoLink = styled(Link)<{ back: string }>((p: ITAOAThemeUIContext) => ({
+const LogoLink = styled(Link)((p: ITAOAThemeUIContext) => ({
   position: 'relative',
   display: 'flex',
   alignItems: 'center',
-  left: p.back === 'true' ? '-54px' : 0,
 
   [mediaquery.desktop_medium()]: {
     left: 0
   },
 
   '&[data-a11y="true"]:focus::after': {
-    content: '',
+    content: '""',
     position: 'absolute',
     left: '-10%',
     top: '-30%',
@@ -441,11 +450,15 @@ const LogoLink = styled(Link)<{ back: string }>((p: ITAOAThemeUIContext) => ({
   '&:hover': {}
 }));
 
-const NavLinks = styled.div((p: ITAOAThemeUIContext) => ({
+interface INavLinks extends ITAOAThemeUIContext {
+  arrow: number;
+}
+
+const NavLinks = styled.div((p: INavLinks) => ({
   position: 'relative',
   display: 'flex',
-  align: p.showArrow ? 'none' : 'left',
-  flexDirection: p.showArrow ? 'column' : 'row',
+  align: p.arrow ? 'none' : 'left',
+  flexDirection: p.arrow ? 'column' : 'row',
   marginRight: 'auto',
 
   [mediaquery.phablet()]: {
@@ -460,7 +473,11 @@ const NavControls = styled.div(() => ({
   alignItems: 'center'
 }));
 
-const NavLink = styled(Link)<{ arrow: boolean }>((p: ITAOAThemeUIContext) => ({
+interface INavLink extends ITAOAThemeUIContext {
+  arrow: number;
+}
+
+const NavLink = styled(Link)((p: INavLink) => ({
   position: 'relative',
   display: 'flex',
   alignItems: 'center',
@@ -469,54 +486,67 @@ const NavLink = styled(Link)<{ arrow: boolean }>((p: ITAOAThemeUIContext) => ({
   paddingTop: p.arrow ? '5px' : '0px',
   marginLeft: p.arrow ? 'auto' : '30px',
   [mediaquery.tablet()]: {
-    marginLeft: p.arrow ? 'auto' : '13px'
+    marginLeft: p.arrow ? 'auto' : '20px'
   }
 }));
 
-const NavLinkText = styled(Headings.h3)(
-  (p: ITAOAThemeUIContext) => `
-  font-family: ${p.theme.fonts.serif};
-  transition: ${p.theme.colorModeTransition};
+interface INavLinkText extends ITAOAThemeUIContext {
+  arrow: number;
+}
 
-  ${mediaqueries.desktop_large`
-    font-size: 20px;
-    `};
-  ${mediaqueries.desktop`
-    font-size: 21px;
-    `};
-  ${mediaqueries.tablet`
-    font-size: 16px;
-    `};
-  ${mediaqueries.phablet`
-    font-size: 16px;
-    `};
+const NavLinkText = styled(Headings.h6)(
+  (p: INavLinkText) => `
+    font-family: ${p.theme.fonts.serif};
+    transition: ${p.theme.colorModeTransition};
+    font-size: 26px;
 
-  &::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 3px;
-    bottom: 25%;
-    left: 0;
-    background-color: ${p.theme.colors.primary};
-    visibility: visible;
-    -webkit-transform: scaleX(1);
-    transform: scaleX(1);
-    -webkit-transition: all 0.25s ease-in-out 0s;
-    transition: all 0.25s ease-in-out 0s;
-  }
+    ${mediaquery.desktop_large()} {
+        font-size: 26px;
+    };
 
-  &:hover:before {
-    height: 3px;
-    color: ${p.theme.colors.grey};
-    visibility: none;
-    -webkit-transform: scaleX(0);
-    transform: scaleX(0);
-  }
+    ${mediaquery.desktop()} {
+        font-size: 26px;
+    };
+
+    ${mediaquery.tablet()} {
+        font-size: 18px;
+    };
+
+    ${mediaquery.phablet()} {
+        font-size: 18px;
+    };
+
+                   &::before {
+                                content: ' ';
+                                position: absolute;
+                                width: 100%;
+                                height: ${p.arrow ? '2px' : '3px'};
+                                bottom: 25%;
+                                left: 0;
+                                background-color: ${p.theme.colors.primary};
+                                visibility: visible;
+                                        -webkit-transform: scaleX(1);
+                                transform: scaleX(1);
+                                        -webkit-transition: all 0.25s ease-in-out 0s;
+                                transition: all 0.25s ease-in-out 0s;
+                            }
+
+                   &:hover:before {
+                       height: ${p.arrow ? '2px' : '3px'};
+                       color: ${p.theme.colors.grey};
+                       visibility: none;
+                              -webkit-transform: scaleX(0);
+                       transform: scaleX(0);
+                   }
     `
 );
 
-const ToolTip = styled.div<{ isDark: boolean; hasCopied: boolean }>((p: ITAOAThemeUIContext) => ({
+interface IToolTip extends ITAOAThemeUIContext {
+  isDark: boolean;
+  hasCopied: boolean;
+}
+
+const ToolTip = styled.div((p: IToolTip) => ({
   position: 'absolute',
   padding: '4px 13px',
   background: p.isDark ? '#000' : 'rgba(0,0,0,0.1)',
@@ -529,7 +559,7 @@ const ToolTip = styled.div<{ isDark: boolean; hasCopied: boolean }>((p: ITAOAThe
   transition: p.theme.colorModeTransition,
 
   '&::after': {
-    content: '',
+    content: '""',
     position: 'absolute',
     left: 0,
     right: 0,
@@ -543,7 +573,11 @@ const ToolTip = styled.div<{ isDark: boolean; hasCopied: boolean }>((p: ITAOAThe
   }
 }));
 
-const IconWrapper = styled.button<{ isDark: boolean }>((p: ITAOAThemeUIContext) => ({
+interface IIconWrapper extends ITAOAThemeUIContext {
+  isDark: boolean;
+}
+
+const IconWrapper = styled.div((p: IIconWrapper) => ({
   opacity: 0.5,
   position: 'relative',
   borderRadius: '5px',
@@ -573,7 +607,7 @@ const IconWrapper = styled.button<{ isDark: boolean }>((p: ITAOAThemeUIContext) 
   },
 
   "&[data-a11y='true']:focus::after": {
-    content: '',
+    content: '""',
     position: 'absolute',
     left: 0,
     top: '-30%',
@@ -607,7 +641,7 @@ const GridButton = styled.button((p: ITAOAThemeUIContext) => ({
   },
 
   "&[data-a11y='true']:focus::after": {
-    content: '',
+    content: '""',
     position: 'absolute',
     left: '-10%',
     top: '-10%',
@@ -628,43 +662,47 @@ const GridButton = styled.button((p: ITAOAThemeUIContext) => ({
   }
 }));
 
+interface IMoonOrSun extends ITAOAThemeUIContext {
+  isDark: boolean;
+}
+
 // This is based off a codepen! Much appreciated to: https://codepen.io/aaroniker/pen/KGpXZo
-const MoonOrSun = styled.div<{ isDark: boolean }>(
-  (p: ITAOAThemeUIContext) => `
-  position: relative;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: ${p.isDark ? '4px' : '2px'} solid ${p.theme.colors.primary};
-  background: ${p.theme.colors.primary};
-  transform: scale(${p.isDark ? 0.55 : 1});
-  transition: all 0.45s ease;
-  overflow: ${p.isDark ? 'visible' : 'hidden'};
-
-  &::before {
-    outline: 0;
-    border: 0;
-    content: '';
-    position: absolute;
-    right: -9px;
-    top: -9px;
-    height: 24px;
+const MoonOrSun = styled.div(
+  (p: IMoonOrSun) => `
+    position: relative;
     width: 24px;
-    border: 2px solid ${p.theme.colors.primary};
+    height: 24px;
     border-radius: 50%;
-    transform: translate(${p.isDark ? '14px, -14px' : '0, 0'});
-    opacity: ${p.isDark ? 0 : 1};
-    transition: transform 0.45s ease;
-    background: radial-gradient(
-      ellipse farthest-corner at 33% 100%,
-      ${p.theme.colors.secondary} 50%,
-      ${p.theme.colors.secondary} 50%
-    );
-  }
+    border: ${p.isDark ? '4px' : '2px'} solid ${p.theme.colors.primary};
+    background: ${p.theme.colors.primary};
+    transform: scale(${p.isDark ? 0.55 : 1});
+    transition: all 0.45s ease;
+    overflow: ${p.isDark ? 'visible' : 'hidden'};
 
-  &::after {
-    content: '';
-    width: 8px;
+                            &::before {
+                                outline: 0;
+                                border: 0;
+                                content: ' ';
+                                position: absolute;
+                                right: -9px;
+                                top: -9px;
+                                height: 24px;
+                                width: 24px;
+                                border: 2px solid ${p.theme.colors.primary};
+                                border-radius: 50%;
+                                transform: translate(${p.isDark ? '14px, -14px' : '0, 0'});
+                                opacity: ${p.isDark ? 0 : 1};
+                                transition: transform 0.45s ease;
+                                background: radial-gradient(
+                                    ellipse farthest-corner at 33% 100%,
+                                    ${p.theme.colors.secondary} 50%,
+                                    ${p.theme.colors.secondary} 50%
+                                );
+                            }
+
+                            &::after {
+                                content: ' ';
+                                width: 8px;
     height: 8px;
     border-radius: 50%;
     margin: -4px 0 0 -4px;
@@ -679,62 +717,8 @@ const MoonOrSun = styled.div<{ isDark: boolean }>(
     transition: all 0.35s ease;
 
     ${mediaqueries.tablet`
-        transform: scale(${p.isDark ? 0.92 : 0});
-        `}
+    transform: scale(${p.isDark ? 0.92 : 0});
+    `}
   }
-        `
+    `
 );
-
-/* const MoonOrSun = styled.div<{ isDark: boolean }>((p: ITAOAThemeUIContext) => ({
- *     position: 'relative',
- *     width: '24px',
- *     height: '24px',
- *     borderRadius: '50%',
- *     border: `${p.isDark ? '4px' : '2px'} solid ${p.theme.colors.primary}`,
- *     background: `${p.theme.colors.primary}`,
- *     transform: `scale(${p.isDark ? 0.55 : 1})`,
- *     transition: 'all 0.45s ease',
- *     overflow: `${p.isDark ? 'visible' : 'hidden'}`,
- *
- *     '&::before': {
- *         outline: 0,
- *         border: 0,
- *         content: '',
- *         position: 'absolute',
- *         right: '-9px',
- *         top: '-9px',
- *         height: '24px',
- *         width: '24px',
- *         border: `2px solid ${p.theme.colors.primary}`,
- *         borderRadius: '50%',
- *         transform: `translate(${p.isDark ? '14px, -14px' : '0, 0'})`,
- *         opacity: `${p.isDark ? 0 : 1}`,
- *         transition: 'transform 0.45s ease',
- *         background: `radial-gradient(
- *                      ellipse farthest-corner at 33% 100%,
- *                      ${p.theme.colors.secondary} 50%,
- *                      ${p.theme.colors.secondary} 50%
- *                  )`
- *     },
- *
- *     '&::after': {
- *         content: '',
- *         width: '8px',
- *         height: '8px',
- *         borderRadius: '50%',
- *         margin: '-4px 0 0 -4px',
- *         position: 'absolute',
- *         top: '50%',
- *         left: '50%',
- *         boxShadow: `0 -23px 0 ${p.theme.colors.primary}, 0 23px 0 ${p.theme.colors.primary},
- *                              23px 0 0 ${p.theme.colors.primary}, -23px 0 0 ${p.theme.colors.primary},
- *                              15px 15px 0 ${p.theme.colors.primary}, -15px 15px 0 ${p.theme.colors.primary},
- *                              15px -15px 0 ${p.theme.colors.primary}, -15px -15px 0 ${p.theme.colors.primary}`,
- *         transform: `scale(${p.isDark ? 1 : 0})`,
- *         transition: 'all 0.35s ease',
- *
- *         [mediaquery.tablet()]: {
- *             transform: `scale(${p.isDark ? 0.92 : 0})`
- *         }
- *     }
- * })); */

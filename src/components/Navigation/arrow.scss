@@ -90,7 +90,7 @@ $tri_width: $tri_height / tan($bar_deg);
   float: right;
   border-radius: 1px;
   &:after {
-    content:'';
+    content:' ';
     width: $bar_width;
     height: $bar_height;
     display: block;
@@ -113,7 +113,7 @@ $tri_width: $tri_height / tan($bar_deg);
   float: right;
   border-radius: 1px;
   &:after {
-    content:'';
+    content:' ';
     width: $bar_width;
     height: $bar_height;
     display: block;

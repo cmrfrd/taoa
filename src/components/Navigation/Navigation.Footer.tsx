@@ -1,13 +1,13 @@
-import React from 'react'
-import styled from '@emotion/styled'
-import { graphql, useStaticQuery } from 'gatsby'
+import Section from '@components/Section';
+import SocialLinks from '@components/SocialLinks';
+import { mediaquery } from '@styles/media';
+import { ITAOAThemeUIContext } from '@types';
 
-import Section from '@components/Section'
-import SocialLinks from '@components/SocialLinks'
-
-import mediaqueries from '@styles/media'
-
-import { Twemoji } from 'react-emoji-render'
+import styled from '@emotion/styled';
+import * as CSS from 'csstype';
+import { graphql, useStaticQuery } from 'gatsby';
+import React from 'react';
+import { Twemoji } from 'react-emoji-render';
 
 const siteQuery = graphql`
   {
@@ -29,7 +29,7 @@ const siteQuery = graphql`
     }
     allMdx(
       sort: { fields: frontmatter___date, order: ASC }
-      filter: { frontmatter: { date: { ne: null } } }
+      filter: { frontmatter: { date: { ne: "null" } } }
     ) {
       edges {
         node {
@@ -40,90 +40,95 @@ const siteQuery = graphql`
       }
     }
   }
-`
+`;
 
-const Footer : React.FC<{}> = ({ gradient = true }) => {
-    const results = useStaticQuery(siteQuery)
-    const { name, social, footer } = results.allSite.edges[0].node.siteMetadata
-
-    const copyrightDate = (() => {
-        const { edges } = results.allMdx
-        const years = [0, edges.length - 1].map((edge) =>
-            new Date(edges[edge].node.frontmatter.date).getFullYear()
-        )
-        return years[0] === years[1] ? `${years[0]}` : `${years[0]}–${years[1]}`
-    })()
-
-    return (
-        <>
-            {gradient ? <FooterGradient /> : <></>}
-            <Section narrow>
-                <HoritzontalRule />
-                <FooterContainer>
-                    <FooterText>
-                        {copyrightDate} {name} - <Twemoji text={footer.message} />
-                    </FooterText>
-                    <div>
-                        <SocialLinks links={social} />
-                    </div>
-                </FooterContainer>
-            </Section>
-        </>
-    )
+interface IFooterProps {
+  gradient: boolean;
 }
 
-export default Footer
+const Footer: React.FC<IFooterProps> = ({ gradient = true }: IFooterProps) => {
+  const results = useStaticQuery(siteQuery);
+  const { name, social, footer } = results.allSite.edges[0].node.siteMetadata;
 
-const FooterContainer = styled.div`
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: 80px;
-  color: ${(p) => p.theme.colors.grey};
+  const copyrightDate = ((): string => {
+    const { edges } = results.allMdx;
+    console.log(edges);
+    const years = [0, edges.length - 1].map((edge: number) =>
+      new Date(edges[edge].node.frontmatter.date).getFullYear()
+    );
+    return years[0] === years[1] ? `${years[0]}` : `${years[0]}–${years[1]}`;
+  })();
 
-  ${mediaqueries.tablet`
-flex-direction: column;
-    padding-bottom: 100px;
-  `}
+  return (
+    <>
+      {gradient ? <FooterGradient /> : <></>}
+      <Section narrow>
+        <HoritzontalRule />
+        <FooterContainer>
+          <FooterText>
+            {copyrightDate} {name} - <Twemoji text={footer.message} />
+          </FooterText>
+          <div>
+            <SocialLinks links={social} />
+          </div>
+        </FooterContainer>
+      </Section>
+    </>
+  );
+};
 
-  ${mediaqueries.phablet`
-    padding-bottom: 50px;
-  `}
-`
+export default Footer;
 
-const HoritzontalRule = styled.div`
-  position: relative;
-  margin: 140px auto 50px;
-  border-bottom: 1px solid ${(p) => p.theme.colors.horizontalRule};
+const FooterContainer = styled.div((p: ITAOAThemeUIContext) => ({
+  position: 'relative',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  paddingBottom: '80px',
+  color: p.theme.colors.grey as CSS.Color,
 
-  ${mediaqueries.tablet`
-    margin: 60px auto;
-  `}
+  [mediaquery.tablet()]: {
+    flexDirection: 'column',
+    paddingBottom: '100px'
+  },
 
-  ${mediaqueries.phablet`
-    display: none;
-  `}
-`
+  [mediaquery.phablet()]: {
+    paddingBottom: '50px'
+  }
+}));
 
-const FooterText = styled.div`
-  ${mediaqueries.tablet`
-    margin-bottom: 80px;
-  `}
+const HoritzontalRule = styled.div((p: ITAOAThemeUIContext) => ({
+  position: 'relative',
+  margin: '140px auto 50px',
+  borderBottom: `1px solid ${p.theme.colors.horizontalRule}`,
 
-  ${mediaqueries.phablet`
-    margin: 120px auto 100px;
-  `}
-`
+  [mediaquery.tablet()]: {
+    margin: '60px auto'
+  },
 
-const FooterGradient = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 590px;
-  z-index: 0;
-  pointer-events: none;
-  background: ${(p) => p.theme.colors.gradient};
-  transition: ${(p) => p.theme.colorModeTransition};
-`
+  [mediaquery.phablet()]: {
+    display: 'none'
+  }
+}));
+
+const FooterText = styled.div({
+  [mediaquery.tablet()]: {
+    marginBottom: '80px'
+  },
+
+  [mediaquery.phablet()]: {
+    margin: '120px auto 100px'
+  }
+});
+
+const FooterGradient = styled.div((p: ITAOAThemeUIContext) => ({
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  width: '100%',
+  height: '590px',
+  zIndex: -1,
+  pointerEvents: 'none',
+  background: p.theme.colors.gradient as CSS.ColorProperty,
+  transition: p.theme.colorModeTransition
+}));

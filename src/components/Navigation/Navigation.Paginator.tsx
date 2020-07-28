@@ -1,13 +1,14 @@
-import React, { Component } from "react";
-import styled from "@emotion/styled";
-import { css } from "@emotion/core";
-import { Link } from "gatsby";
-import { Helmet } from "react-helmet";
+import { mediaquery, mediaqueryup } from '@styles/media';
+import { IPaginator, ITAOAThemeUIContext } from '@types';
+import { range } from '@utils';
 
-import mediaqueries from "@styles/media";
-import { range } from "@utils";
-
-import { IPaginator } from "@types";
+import { css } from '@emotion/core';
+import { SerializedStyles } from '@emotion/serialize';
+import styled from '@emotion/styled';
+import * as CSS from 'csstype';
+import { Link } from 'gatsby';
+import React, { Component } from 'react';
+import { Helmet } from 'react-helmet';
 
 /**
  * <Paginator />
@@ -22,23 +23,23 @@ import { IPaginator } from "@types";
  */
 
 class Paginator extends Component<IPaginator, {}> {
-  maxPages = 3;
-  count = this.props.pageCount;
-  current = this.props.index;
-  pageRoot = this.props.pathPrefix;
+  maxPages: number = 3;
+  count: number = this.props.pageCount;
+  current: number = this.props.index;
+  pageRoot: string = this.props.pathPrefix;
 
-  get nextPath() {
+  get nextPath(): string {
     return this.getFullPath(this.current + 1);
   }
 
-  get previousPath() {
+  get previousPath(): string {
     return this.getFullPath(this.current - 1);
   }
 
   /**
    * Utility function to return a 1 ... 5 6 7 ... 10 style pagination
    */
-  get getPageLinks() {
+  get getPageLinks(): React.ReactNode {
     const current = this.current;
     const count = this.count;
     const maxPages = this.maxPages;
@@ -72,11 +73,7 @@ class Paginator extends Component<IPaginator, {}> {
     // the pagination will end up looking a bit short (e.g. on 8 pages ... 7, 8)
     // Push to the end an extra page maxPages from the end
     if (pagesRange[0] + 1 === count && pagesRange[0] - 1 > 0) {
-      truncatedRange.splice(
-        pagesRange.length - 1 - maxPages,
-        0,
-        pagesRange[0] - 1,
-      );
+      truncatedRange.splice(pagesRange.length - 1 - maxPages, 0, pagesRange[0] - 1);
     }
 
     // We might need a spacer at the end of the pagination e.g. 4 5 6 ... 8
@@ -90,7 +87,7 @@ class Paginator extends Component<IPaginator, {}> {
       truncatedRange.push(count);
     }
 
-    return [...new Set(truncatedRange)].map((page: number | null, i) =>
+    return [...new Set(truncatedRange)].map((page: number | null, i: number) =>
       page === null ? (
         // If you find a null in the truncated array then add a spacer
         <Spacer key={`PaginatorPage_spacer_${i}`} aria-hidden={true} />
@@ -104,7 +101,7 @@ class Paginator extends Component<IPaginator, {}> {
         >
           {page}
         </PageNumberBUtton>
-      ),
+      )
     );
   }
 
@@ -113,15 +110,15 @@ class Paginator extends Component<IPaginator, {}> {
    * All it really does is glue the page path to the front,
    * but note there's special behaviour for page 1 where the URL should be / not /page/1
    */
-  getFullPath = (n: number) => {
-    if (this.pageRoot === "/") {
-      return n === 1 ? this.pageRoot : this.pageRoot + "page/" + n;
+  getFullPath: (arg0: number) => string = (n: number): string => {
+    if (this.pageRoot === '/') {
+      return n === 1 ? this.pageRoot : this.pageRoot + 'page/' + n;
     } else {
-      return n === 1 ? this.pageRoot : this.pageRoot + "/page/" + n;
+      return n === 1 ? this.pageRoot : this.pageRoot + '/page/' + n;
     }
   };
 
-  render() {
+  render(): React.ReactNode {
     const count = this.count;
     const current = this.current;
 
@@ -153,7 +150,7 @@ class Paginator extends Component<IPaginator, {}> {
 
 export default Paginator;
 
-const paginationItemMixin = p => css`
+const paginationItemMixin = (p: ITAOAThemeUIContext): SerializedStyles => css`
   line-height: 1;
   color: ${p.theme.colors.primary};
   padding: 0;
@@ -164,7 +161,7 @@ const paginationItemMixin = p => css`
   justify-content: center;
   font-variant-numeric: tabular-nums;
 
-  ${mediaqueries.desktop_up`
+  ${mediaqueryup.desktop()} {
     display: block;
     width: auto;
     height: auto;
@@ -177,15 +174,15 @@ const paginationItemMixin = p => css`
     &:last-child {
       padding-right: 0;
     }
-  `}
+  }
 `;
 
 const PageButton = styled(Link)`
   font-weight: 600;
   font-size: 18px;
   text-decoration: none;
-  color: ${p => p.theme.colors.primary};
-  ${paginationItemMixin}
+  color: ${(p: ITAOAThemeUIContext): CSS.ColorProperty => p.theme.colors.primary};
+  ${(p: ITAOAThemeUIContext): SerializedStyles => paginationItemMixin(p)}
 
   &:hover,
   &:focus {
@@ -198,8 +195,8 @@ const PageNumberBUtton = styled(Link)`
   font-weight: 400;
   font-size: 18px;
   text-decoration: none;
-  color: ${p => p.theme.colors.primary};
-  ${paginationItemMixin}
+  color: ${(p: ITAOAThemeUIContext): CSS.ColorProperty => p.theme.colors.primary};
+  ${(p: ITAOAThemeUIContext): SerializedStyles => paginationItemMixin(p)}
 
   &:hover,
   &:focus {
@@ -210,21 +207,21 @@ const PageNumberBUtton = styled(Link)`
 
 const Spacer = styled.span`
   opacity: 0.3;
-  ${paginationItemMixin}
+  ${(p: ITAOAThemeUIContext): SerializedStyles => paginationItemMixin(p)}
   &::before {
-    content: "...";
+    content: '...';
   }
 `;
 
 const MobileReference = styled.span`
-  font-weight: 400;
-  ${paginationItemMixin}
-  color: ${p => p.theme.colors.primary};
+    font-weight: 400;
+    ${(p: ITAOAThemeUIContext): SerializedStyles => paginationItemMixin(p)}
+    color: ${(p: ITAOAThemeUIContext): CSS.ColorProperty => p.theme.colors.primary};
 
-  em {
+    em {
     font-style: normal;
-    color: ${p => p.theme.colors.primary};
-  }
+    color: ${(p: ITAOAThemeUIContext): CSS.ColorProperty => p.theme.colors.primary};
+    }
 `;
 
 const Frame = styled.nav`
@@ -234,13 +231,18 @@ const Frame = styled.nav`
   justify-content: space-between;
   align-items: center;
 
-  ${mediaqueries.tablet`
-    .Paginator__pageLink, ${Spacer} { display: none; }
+  ${mediaquery.tablet()} {
+    .Paginator__pageLink,
+    ${Spacer} {
+      display: none;
+    }
     left: -15px;
-  `}
+  }
 
-  ${mediaqueries.desktop_up`
+  ${mediaqueryup.desktop()} {
     justify-content: flex-start;
-    ${MobileReference} { display: none; }
-  `}
+    ${MobileReference} {
+      display: none;
+    }
+  }
 `;
