@@ -1,16 +1,25 @@
 {
   "compilerOptions": {
-    "jsx": "react",
+    "jsx": "preserve",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
+    "outDir": "./dist/",
+    "sourceMap": true,
     "moduleResolution": "node",
-    "module": "es6",
-    "target": "es6",
+    "module": "es2020",
+    "target": "es2019",
+    "lib": ["es5", "es6", "dom"],
     "baseUrl": ".",
     "paths": {
       "@*": ["src/*"]
     }
   },
+  "env": {
+    "browser": true,
+    "node": true,
+    "jasmine": true
+  },
   "include": ["./src/**/*"],
-  "exclude": ["dist", "./node_modules/**/*"]
+  "exclude": ["dist", "./node_modules/**/*"],
+  "typeRoots": ["./node_modules/@types"]
 }
