@@ -1,7 +1,7 @@
-import merge from 'lodash/merge';
-
 import colors from './colors';
 import tags from './tags';
+
+import merge from 'lodash/merge';
 
 const breakpoints = [
   ['phone_small', 320],

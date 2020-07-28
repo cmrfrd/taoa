@@ -8,11 +8,11 @@ export default {
     bg: `prism.background`,
     overflow: `auto`,
     borderRadius: 10,
-    p: 3,
+    p: 3
   },
   code: {
     fontFamily: `"Operator Mono", monospace`,
-    fontSize: `inherit`,
+    fontSize: `inherit`
   },
   inlineCode: {
     borderRadius: `0.3em`,
@@ -20,6 +20,6 @@ export default {
     bg: `rgba(233, 218, 172, 0.3)`,
     paddingTop: `0.15em`,
     paddingBottom: `0.05em`,
-    paddingX: `0.2em`,
-  },
+    paddingX: `0.2em`
+  }
 };

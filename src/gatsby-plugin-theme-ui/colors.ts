@@ -25,6 +25,7 @@ export default {
   horizontalRule: 'rgba(8, 8, 11, 0.15)',
   horizontalNav: '#a19ca6',
   inputBackground: 'rgba(0, 0, 0, 0.05)',
+  scrollbar: '#CCCCCC',
   modes: {
     dark: {
       primary: '#fff',
@@ -39,8 +40,7 @@ export default {
       siteName: '#e8e0da',
       tintHover: '#17181e',
       hover: 'rgba(255, 255, 255, 0.50)',
-      gradient:
-        'linear-gradient(180deg, #15161c 0%, rgba(66, 81, 98, 0.36) 100%)',
+      gradient: 'linear-gradient(180deg, #15161c 0%, rgba(66, 81, 98, 0.36) 100%)',
       articleText: '#fff',
       track: 'rgba(255, 255, 255, 0.3)',
       progress: '#fff',
