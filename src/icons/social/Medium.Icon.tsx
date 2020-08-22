@@ -1,15 +1,9 @@
-import React from "react";
-
 import { Icon } from '@types';
 
-const MediumIcon: Icon = ({ fill = "white" }) => (
-  <svg
-    width="13"
-    height="11"
-    viewBox="0 0 13 11"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+import React from 'react';
+
+const MediumIcon: React.FC<Icon> = ({ fill = 'white' }: Icon) => (
+  <svg width="13" height="11" viewBox="0 0 13 11" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"

@@ -1,8 +1,8 @@
-import React from 'react';
-
 import { Icon } from '@types';
 
-const BehanceIcon: Icon = ({ fill = "white" }) => (
+import React from 'react';
+
+const BehanceIcon: React.FC<Icon> = ({ fill = 'white' }: Icon) => (
   <svg
     version="1.1"
     xmlns="http://www.w3.org/2000/svg"
