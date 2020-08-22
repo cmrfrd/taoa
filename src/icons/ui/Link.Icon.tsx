@@ -1,15 +1,9 @@
-import React from "react";
-
 import { Icon } from '@types';
 
-const LinkIcon: Icon = ({ fill }) => (
-  <svg
-    width="24"
-    height="20"
-    viewBox="0 0 24 20"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+import React from 'react';
+
+const LinkIcon: React.FC<Icon> = ({ fill }: Icon) => (
+  <svg width="24" height="20" viewBox="0 0 24 20" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
       clipRule="evenodd"

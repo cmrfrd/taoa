@@ -1,8 +1,8 @@
-import React from "react";
-
 import { Icon } from '@types';
 
-const CopyIcon: Icon = ({ fill = "#08080B", ...props }) => (
+import React from 'react';
+
+const CopyIcon: React.FC<Icon> = ({ fill = '#08080B', ...props }: Icon) => (
   <svg
     width="15"
     height="19"
