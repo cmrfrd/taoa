@@ -22,7 +22,7 @@ import React from 'react';
 import Helmet from 'react-helmet';
 
 interface IHelmetProps {
-  title: string;
+  title?: string;
   description?: string;
   pathname: string;
   image?: string;
@@ -30,6 +30,7 @@ interface IHelmetProps {
   canonicalUrl?: string;
   published?: string;
   timeToRead?: string;
+  children?: React.ReactNode;
 }
 
 const seoQuery = graphql`
