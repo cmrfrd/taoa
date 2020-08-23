@@ -7,7 +7,8 @@ import * as CSS from 'csstype';
 /** Caption is a styled component to display captions under
  *  Images
  */
-const Caption = styled.p((p: ITAOAThemeUIContext) => ({
+const Caption = styled.span((p: ITAOAThemeUIContext) => ({
+  display: 'inline-block',
   textAlign: 'center',
   lineHeight: '1.756',
   fontSize: '14px',
