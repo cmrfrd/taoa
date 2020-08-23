@@ -15,7 +15,7 @@ const StyledGatsbyImag = styled(GatsbyImg)`
 `;
 
 interface IImg {
-  src: { [K: any]: any } | string | null;
+  src: { [K: string]: any };
   alt?: string;
   title?: string;
 }

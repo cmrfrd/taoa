@@ -34,8 +34,9 @@ const ImageZoom: React.FC<IImageZoomProps> = ({ title, ...props }: IImageZoomPro
   }, []);
 
   return (
-    <>
+    <span>
       <ControlledZoom
+        wrapElement="span"
         isZoomed={isZoomed}
         onZoomChange={handleZoomChange}
         zoomMargin={40}
@@ -44,7 +45,7 @@ const ImageZoom: React.FC<IImageZoomProps> = ({ title, ...props }: IImageZoomPro
         <img {...image} />
       </ControlledZoom>
       <Caption>{title}</Caption>
-    </>
+    </span>
   );
 };
 
