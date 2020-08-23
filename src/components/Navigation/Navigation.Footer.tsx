@@ -52,7 +52,6 @@ const Footer: React.FC<IFooterProps> = ({ gradient = true }: IFooterProps) => {
 
   const copyrightDate = ((): string => {
     const { edges } = results.allMdx;
-    console.log(edges);
     const years = [0, edges.length - 1].map((edge: number) =>
       new Date(edges[edge].node.frontmatter.date).getFullYear()
     );
