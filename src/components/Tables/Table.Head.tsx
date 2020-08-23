@@ -1,14 +1,16 @@
-import styled from "@emotion/styled";
+import { ITAOAThemeUIContext } from '@types';
 
-const Head = styled.thead`
-  text-align: left;
-  border-collapse: collapse;
-  position: relative;
-  line-height: 1.756;
-  font-weight: 600;
-  color: ${p => p.theme.colors.primary};
-  font-family: ${p => p.theme.fonts.serif};
-  transition: ${p => p.theme.colorModeTransition};
-`;
+import styled from '@emotion/styled';
+
+const Head = styled.thead((p: ITAOAThemeUIContext) => ({
+  textAlign: 'left',
+  borderCollapse: 'collapse',
+  position: 'relative',
+  lineHeight: 1.756,
+  fontWeight: 600,
+  color: p.theme.colors.primary,
+  fontFamily: p.theme.fonts.serif,
+  transition: p.theme.colorModeTransition
+}));
 
 export default Head;

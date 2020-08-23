@@ -1,38 +1,46 @@
-import React from "react";
-import styled from "@emotion/styled";
-import mediaqueries from "@styles/media";
+import { mediaquery } from '@styles/media';
+import { ITAOAThemeUIContext } from '@types';
 
-const StyledTable = styled.table`
-  position: relative;
-  line-height: 1.65;
-  color: ${p => p.theme.colors.grey};
-  font-family: ${p => p.theme.fonts.sansSerif};
-  transition: ${p => p.theme.colorModeTransition};
-  background: ${p => p.theme.colors.card};
-  margin: 45px auto 85px;
-  width: 100%;
-  max-width: 1004px;
-  border: 1px solid ${p => p.theme.colors.horizontalRule};
-  border-radius: 5px;
-  overflow: hidden;
-  border-collapse: separate;
+import styled from '@emotion/styled';
+import * as CSS from 'csstype';
+import React from 'react';
 
-  ${mediaqueries.desktop`
-    margin: 25px auto 65px;
-  `}
+const StyledTable = styled.table((p: ITAOAThemeUIContext) => ({
+  position: 'relative',
+  lineHeight: 1.65,
+  color: p.theme.colors.grey as CSS.ColorProperty,
+  fontFamily: p.theme.fonts.sansSerif,
+  transition: p.theme.colorModeTransition,
+  background: p.theme.colors.card as CSS.ColorProperty,
+  margin: '45px auto 85px',
+  width: '100%',
+  maxWidth: '804px',
+  border: `1px solid ${p.theme.colors.horizontalRule}`,
+  borderRadius: '5px',
+  overflow: 'hidden',
+  borderCollapse: 'separate',
 
-  ${mediaqueries.tablet`
-    max-width: 486px;
-  `};
+  [mediaquery.desktop()]: {
+    margin: '25px auto 65px',
+    maxWidth: '750px'
+  },
 
-  ${mediaqueries.phablet`
-    margin: 15px auto 55px;
-  `};
-`;
+  [mediaquery.tablet()]: {
+    maxWidth: '486px'
+  },
 
-const Table: React.FC<{}> = ({ children }) => {
+  [mediaquery.phablet()]: {
+    margin: '15px auto 55px'
+  }
+}));
+
+interface ITableProps {
+  children: React.ReactNode;
+}
+
+const Table: React.FC<ITableProps> = ({ children }: ITableProps) => {
   return (
-    <div style={{ overflowX: "auto", padding: "0 20px" }}>
+    <div style={{ overflowX: 'auto', padding: '0 20px' }}>
       <StyledTable>{children}</StyledTable>
     </div>
   );

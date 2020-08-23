@@ -1,18 +1,20 @@
-import styled from "@emotion/styled";
-import mediaqueries from "@styles/media";
+import { mediaquery } from '@styles/media';
+import { ITAOAThemeUIContext } from '@types';
 
-const Cell = styled.td`
-  padding: 18px 30px;
-  font-size: 16px;
-  background: ${p => p.theme.colors.card};
+import styled from '@emotion/styled';
 
-  ${mediaqueries.desktop`
-    padding: 14px 20px;
-  `}
+const Cell = styled.td((p: ITAOAThemeUIContext) => ({
+  padding: '18px 30px',
+  fontSize: '16px',
+  background: `${p.theme.colors.card}`,
 
-  ${mediaqueries.tablet`
-    font-size: 14px;
-  `}
-`;
+  [mediaquery.desktop()]: {
+    padding: '14px 20px'
+  },
+
+  [mediaquery.tablet()]: {
+    fontSize: '14px'
+  }
+}));
 
 export default Cell;
