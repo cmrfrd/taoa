@@ -7,7 +7,7 @@
 type ExtractAction<A, T> = Extract<A, { type: T }>;
 
 // Exclude the "type" field from an object
-type ExcludeTypeField = { [K in Exclude<keyof A, 'type'>]: A[K] };
+type ExcludeTypeField<A> = { [K in Exclude<keyof A, 'type'>]: A[K] };
 
 // If there are no params left after you exclude the "type" key,
 // then don't force the user to provide a payload (since {type: 'SOMETHING'} without payload works)

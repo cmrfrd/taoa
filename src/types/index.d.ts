@@ -1,5 +1,5 @@
 import React from 'react';
-import { Theme } from 'theme-ui';
+import { Theme, ColorMode } from 'theme-ui';
 
 export interface IStringMap {
   [key: string]: string | number | boolean;
@@ -9,9 +9,18 @@ export interface ITAOAFonts {
   [K: string]: string;
 }
 
+export interface ITAOAColorMode extends ColorMode {
+  [key: string]: any;
+}
+
 export interface ITAOATheme extends Theme {
   colorModeTransition: string;
   fonts: ITAOAFonts;
+  colors: ITAOAColorMode & {
+    modes?: {
+      [k: string]: ITAOAColorMode;
+    };
+  };
 }
 
 export interface ITAOAThemeUIContext {
@@ -57,15 +66,22 @@ export interface IAuthor {
   avatar: {
     image: IGatsbyImageFluid;
     full: IGatsbyImageFluid;
+    small: IGatsbyImageFluid;
+    medium: IGatsbyImageFluid;
+    large: IGatsbyImageFluid;
   };
 }
 
 export interface IAbout {
   name: string;
   about: {
-    title: string;
-    about: string;
+    title: {
+      author: string;
+      authors: string;
+      about: string[];
+    };
     author: string;
+    about: string[];
   };
 }
 
@@ -76,15 +92,19 @@ export interface IPage {
 }
 
 export interface IArticle {
+  id: string;
   slug: string;
+  secret: boolean;
+  title: string;
   authors: IAuthor[];
   excerpt: string;
   body: string;
-  id: string;
+  dateForSEO: string;
   hero: {
     full: IGatsbyImageFluid;
     preview: IGatsbyImageFluid;
     regular: IGatsbyImageFluid;
+    narrow: IGatsbyImageFluid;
     seo: string;
   };
   timeToRead: number;
@@ -105,16 +125,29 @@ export interface IProgress {
   onClose?: () => void;
 }
 
-export type Icon = React.FC<{
-  fill: string;
-}>;
+export type Icon = {
+  fill?: string;
+};
 
-export type Template = React.FC<{
+export type TLayout = {
+  gradient?: boolean;
+  enableGridRow?: boolean;
+  location: Location;
+  pageName?: string;
+  children: React.ReactNode;
+};
+
+export type TTemplate = {
   pageContext: {
+    pageCount?: number;
+    articles?: IArticle[];
+
     article: IArticle;
     authors: IAuthor[];
     mailchimp: boolean;
     next: IArticle[];
+    about: IAbout;
   };
   location: Location;
-}>;
+};
+export type Template = React.FC<TTemplate>;
