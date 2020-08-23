@@ -1,1 +1,1 @@
-export { default } from '@components/UseStickyScroll/useStickyScroll'
+export { default } from './useStickyScroll';

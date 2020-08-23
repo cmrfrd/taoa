@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext } from "react";
-import throttle from "lodash/throttle";
+import throttle from 'lodash/throttle';
+import { useState, useEffect } from 'react';
 
 /**
  *  useHideOnScrolled is a function to hold the state
@@ -7,22 +7,22 @@ import throttle from "lodash/throttle";
  *
  *  When the scroll bar is close to '0' the state is set to true
  */
-const useStickyOnScrolled = () => {
-    const [sticky, setSticky] = useState(false);
+const useStickyOnScrolled = (): boolean => {
+  const [sticky, setSticky] = useState<boolean>(false);
 
-    const handleScroll = () => {
-        const top = window.pageYOffset || document.documentElement.scrollTop;
-        setSticky(top > 1);
+  const handleScroll = (): void => {
+    const top = window.pageYOffset || document.documentElement.scrollTop;
+    setSticky(top > 1);
+  };
+
+  useEffect((): (() => void) => {
+    window.addEventListener('scroll', throttle(handleScroll, 20));
+    return (): void => {
+      window.removeEventListener('scroll', throttle(handleScroll, 20));
     };
+  }, []);
 
-    useEffect(() => {
-        window.addEventListener("scroll", throttle(handleScroll, 20));
-        return () => {
-            window.removeEventListener("scroll", throttle(handleScroll, 20));
-        };
-    }, []);
-
-    return sticky;
+  return sticky;
 };
 
 export default useStickyOnScrolled;
