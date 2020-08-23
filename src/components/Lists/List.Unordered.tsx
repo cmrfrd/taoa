@@ -60,7 +60,7 @@ const UnorderedList = styled.ul((p: ITAOAThemeUIContext) =>
       display: 'inline-block',
       position: 'absolute',
       color: p.theme.colors.articleText as CSS.ColorProperty,
-      content: '',
+      content: ' ',
       left: '-30px',
       top: '8px',
       height: '8px',
