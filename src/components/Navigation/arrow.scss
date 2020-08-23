@@ -61,9 +61,9 @@ $_precision: 5;
 $easing: cubic-bezier(0,1.24,.68,.92);
 
 $total_width: 80px;
-$bar_deg: 35deg;
-$bar_width: 20px;
-$bar_height: 5px;
+$bar_deg: 33deg;
+$bar_width: 24px;
+$bar_height: 6px;
 $duration: 0.4s;
 
 $tri_height: sin($bar_deg) * $bar_width;
@@ -105,7 +105,7 @@ $tri_width: $tri_height / tan($bar_deg);
   position: absolute;
   background-color: transparent;
   top: 0px;
-  left: ($total_width / 2) - 2px;
+  left: ($total_width / 2) - 5px;
   width: $bar_width;
   height: $bar_height;
   display: block;

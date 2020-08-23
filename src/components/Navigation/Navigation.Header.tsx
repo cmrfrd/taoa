@@ -200,8 +200,8 @@ const NavigationHeader: React.FC<INavigationHeader> = (props: INavigationHeader)
     right: 0,
     opacity: 1,
     zIndex: 100,
-    paddingTop: '20px',
-    paddingBottom: '20px',
+    paddingTop: '16px',
+    paddingBottom: '16px',
     transition: theme.colorModeTransition,
     backgroundColor: tcolors.background
   });
@@ -273,7 +273,6 @@ const NavigationHeader: React.FC<INavigationHeader> = (props: INavigationHeader)
                 {arrowUp && (
                   <motion.div {...arrowMenuMotion}>
                     <MenuContainer>
-                      <Caret />
                       <MenuNav>
                         <NavLinks arrow={showArrow}>
                           <NavLink
@@ -371,19 +370,6 @@ const NavigationHeader: React.FC<INavigationHeader> = (props: INavigationHeader)
 };
 
 export default NavigationHeader;
-
-const Caret = styled.div((p: ITAOAThemeUIContext) => ({
-  width: 0,
-  height: 0,
-  border: '10px solid transparent',
-  borderWidth: '10px',
-  borderStyle: 'solid',
-  borderBottomColor: p.theme.colors.tintBackground as CSS.ColorProperty,
-  transition: p.theme.colorModeTransition,
-  zIndex: 9,
-  position: 'relative',
-  top: '1px'
-}));
 
 const Horizontal = styled.div((p: ITAOAThemeUIContext) => ({
   position: 'relative',
@@ -587,10 +573,14 @@ const IconWrapper = styled.div((p: IIconWrapper) => ({
   alignItems: 'center',
   justifyContent: 'center',
   transition: 'opacity 0.3s ease',
-  marginLeft: '30px',
+  marginLeft: '25px',
 
   [mediaquery.phone()]: {
     marginLeft: '2px'
+  },
+
+  [mediaquery.phablet()]: {
+    marginLeft: '10px'
   },
 
   [mediaquery.tablet()]: {
