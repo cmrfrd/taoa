@@ -29,7 +29,7 @@ const siteQuery = graphql`
 
 /** Logo is simply the acronym of the site in a nice font
  */
-const Logo: Icon = () => {
+const Logo: React.FC<Icon> = () => {
   const { text } = useStaticQuery(siteQuery).allSite.edges[0].node.siteMetadata.logo;
 
   const [colorMode] = useColorMode();
@@ -87,7 +87,7 @@ const LogoFont = styled.h1((p: ITAOAThemeUIContext) => ({
 
   [mediaquery.desktop()]: {
     verticleAlign: 'middle',
-    fontSize: '34px'
+    fontSize: '32px'
   },
 
   [mediaquery.tablet()]: {
@@ -98,7 +98,7 @@ const LogoFont = styled.h1((p: ITAOAThemeUIContext) => ({
   [mediaquery.phablet()]: {
     fontSize: '26px',
     verticleAlign: 'middle',
-    '-webkit-line-clamp': 3,
+    WebkitLineClamp: 3,
     padding: '3px 7px 1px 7px'
   },
 
