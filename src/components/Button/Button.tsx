@@ -3,6 +3,7 @@ import { ITAOAThemeUIContext } from '@types';
 import styled from '@emotion/styled';
 import * as CSS from 'csstype';
 import React from 'react';
+// @ts-ignore
 import { AwesomeButton } from 'react-awesome-button';
 
 /**
@@ -294,7 +295,7 @@ const ButtonContainer = styled.div(
       color var(--transform-speed) ease-out,
       -webkit-transform var(--transform-speed) ease-out;
   }
-  .aws-btn .aws-btn__content > span:nth-child(1) {
+  .aws-btn .aws-btn__content > span:first-of-type {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -308,7 +309,7 @@ const ButtonContainer = styled.div(
     -webkit-transform: skew(0) translate3d(0, 0, 0);
     transform: skew(0) translate3d(0, 0, 0);
   }
-  .aws-btn .aws-btn__content > span:nth-child(1) > svg {
+  .aws-btn .aws-btn__content > span:first-of-type > svg {
     margin-top: -2px;
     margin-right: 3px;
   }
@@ -906,7 +907,7 @@ const ButtonContainer = styled.div(
     );
     transform: translate3d(0, calc(1px * var(--button-hover-pressure)), 0);
   }
-  .aws-btn--icon .aws-btn__content > span:nth-child(1) > svg {
+  .aws-btn--icon .aws-btn__content > span:first-of-type > svg {
     vertical-align: middle;
   }
   .aws-btn--active:before {
