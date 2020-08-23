@@ -1,15 +1,17 @@
-import React from 'react';
-import styled from '@emotion/styled';
-
 import Icons from '@icons';
-import mediaqueries from '@styles/media';
+import { mediaquery } from '@styles/media';
+import { ITAOAThemeUIContext } from '@types';
 
-interface SocialLinksProps {
-  links: {
-    name: string;
-    url: string;
-  }[];
-  fill: string;
+import styled from '@emotion/styled';
+import React from 'react';
+
+interface ILink {
+  name: string;
+  url: string;
+}
+interface ISocialLinksProps {
+  links: ILink[];
+  fill?: string;
 }
 
 const icons = {
@@ -27,28 +29,26 @@ const icons = {
   unsplash: Icons.Unsplash,
   patreon: Icons.Patreon,
   paypal: Icons.Paypal,
-  digitalocean: Icons.DigitalOcean,
+  digitalocean: Icons.DigitalOcean
 };
 
-const getHostname = url => {
+const getHostname = (url: string): string => {
   return new URL(url.toLowerCase()).hostname.replace('www.', '').split('.')[0];
 };
 
-const SocialLinks: React.FC<SocialLinksProps> = ({
+const SocialLinks: React.FC<ISocialLinksProps> = ({
   links,
   fill = '#73737D'
-}) => {
+}: ISocialLinksProps) => {
   if (!links) return null;
 
   return (
     <>
-      {links.map(option => {
+      {links.map((option: ILink) => {
         const name = option.name || getHostname(option.url);
         const Icon = icons[name];
         if (!Icon) {
-          throw new Error(
-            `unsupported social link name=${name} / url=${option.url}`,
-          );
+          throw new Error(`unsupported social link name=${name} / url=${option.url}`);
         }
         return (
           <SocialIconContainer
@@ -70,53 +70,53 @@ const SocialLinks: React.FC<SocialLinksProps> = ({
 
 export default SocialLinks;
 
-const SocialIconContainer = styled.a`
-  position: relative;
-  margin-left: 3.2rem;
-  text-decoration: none;
-  max-width: 16px;
+const SocialIconContainer = styled.a((p: ITAOAThemeUIContext) => ({
+  position: 'relative',
+  marginLeft: '3.2rem',
+  textDecoration: 'none',
+  maxWidth: '16px',
 
-  &:hover {
-    svg {
-      &:hover * {
-        fill: ${p => p.theme.colors.primary};
-      }
-      * {
-        transition: fill 0.25s var(--ease-in-out-quad);
+  '&:hover': {
+    svg: {
+      '&:hover *': {
+        fill: `${p.theme.colors.primary}`
+      },
+      '*': {
+        transition: 'fill 0.25s var(--ease-in-out-quad)'
       }
     }
+  },
+
+  '&:first-of-type': {
+    marginLeft: 0
+  },
+
+  '&:last-child': {
+    marginRight: 0
+  },
+
+  "&[data-a11y='true']:focus::after": {
+    content: '" "',
+    position: 'absolute',
+    left: '-50%',
+    top: '-20%',
+    width: '200%',
+    height: '160%',
+    border: `2px solid ${p.theme.colors.accent}`,
+    background: 'rgba(255, 255, 255, 0.01)',
+    borderRadius: '5px'
+  },
+
+  [mediaquery.tablet()]: {
+    margin: '0 2.2rem'
   }
+}));
 
-  &:first-of-type {
-    margin-left: 0;
-  }
-
-  &:last-child {
-    margin-right: 0;
-  }
-
-  &[data-a11y='true']:focus::after {
-    content: '';
-    position: absolute;
-    left: -50%;
-    top: -20%;
-    width: 200%;
-    height: 160%;
-    border: 2px solid ${p => p.theme.colors.accent};
-    background: rgba(255, 255, 255, 0.01);
-    border-radius: 5px;
-  }
-
-  ${mediaqueries.tablet`
-    margin: 0 2.2rem;
-  `};
-`;
-
-const Hidden = styled.span`
-  width: 0px;
-  height: 0px;
-  visibility: hidden;
-  opacity: 0;
-  overflow: hidden;
-  display: inline-block;
-`;
+const Hidden = styled.span({
+  width: '0px',
+  height: '0px',
+  visibility: 'hidden',
+  opacity: 0,
+  overflow: 'hidden',
+  display: 'inline-block'
+});
