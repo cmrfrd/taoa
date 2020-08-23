@@ -2,6 +2,7 @@ import Anchor from '@components/Anchor';
 import Blockquote from '@components/Blockquote';
 import Button from '@components/Button';
 import Code from '@components/Code';
+import CodeEditorWithOutput from '@components/CodeEditor';
 import ConfettiButton from '@components/ConfettiButton';
 import Figcaption from '@components/Figcaption';
 import Headings from '@components/Headings';
@@ -14,11 +15,14 @@ import { mediaquery } from '@styles/media';
 import { ITAOAThemeUIContext } from '@types';
 
 import styled from '@emotion/styled';
-import { MDXProvider } from '@mdx-js/react';
+import { MDXProvider, MDXProviderProps } from '@mdx-js/react';
 import * as CSS from 'csstype';
 import { MDXRenderer } from 'gatsby-plugin-mdx';
 import React from 'react';
 import { useColorMode } from 'theme-ui';
+
+import { ThemeProvider } from 'theme-ui';
+import { theme } from '@utils';
 
 type ComponentType =
   | 'img'
@@ -30,6 +34,7 @@ type ComponentType =
   | 'h4'
   | 'h5'
   | 'h6'
+  | 'hr'
   | 'ul'
   | 'ol'
   | 'p'
@@ -41,14 +46,12 @@ type ComponentType =
   | 'td'
   | 'figcaption';
 type Components = {
-  [key in ComponentType]?: React.ComponentType<{ children: React.ReactNode }>;
+  [key in ComponentType | string]?:
+    | React.ComponentType<{ children: React.ReactNode }>
+    | React.FC<any>;
 };
-interface IMDXProviderProps {
-  children: React.ReactNode;
-  components: Components;
-}
 
-const components = {
+const components: Components = {
   img: ImageZoom,
   a: Anchor,
   blockquote: Blockquote,
@@ -70,28 +73,26 @@ const components = {
   td: Tables.Cell,
   figcaption: Figcaption,
   Button,
-  ConfettiButton
+  ConfettiButton,
+  CodeEditorWithOutput
 };
 
-interface IMDXProps {
-  children: React.ReactNode;
-  content: React.ReactNode;
+interface IMDXProps extends MDXProviderProps {
+  content: string;
 }
 
 interface IStringMap {
-  [key: string]: string | number | boolean;
+  [key: string]: string | number | boolean | IStringMap;
 }
 
-const MDX: React.FC<IMDXProps> = ({ content, children, ...props }: IMDXProps) => {
+const MDX: React.FC<React.ReactNode> = ({ content, children }: IMDXProps) => {
   const [colorMode] = useColorMode();
 
   return (
     <MDXProvider components={components}>
       <MDXBody>
-        <MDXRenderer isDark={colorMode === 'dark'} {...props}>
-          {content}
-        </MDXRenderer>
-        {children}
+        <MDXRenderer isDark={colorMode === 'dark'}>{content}</MDXRenderer>
+        <ThemeProvider theme={theme}>{children}</ThemeProvider>
       </MDXBody>
     </MDXProvider>
   );
@@ -146,7 +147,6 @@ const PrismCSS = (p: ITAOAThemeUIContext): IStringMap => ({
     overflow: 'auto',
     width: '100%',
     maxWidth: '744px',
-    margin: '0 auto',
     padding: '32px',
     fontSize: '13px',
     margin: '15px auto 50px',
@@ -165,7 +165,7 @@ const PrismCSS = (p: ITAOAThemeUIContext): IStringMap => ({
             }
           };
         })
-        .reduce((curr: IStringMap, next: IStringMap) => ({ ...curr, ...next }), ``),
+        .reduce((curr: IStringMap, next: IStringMap) => ({ ...curr, ...next }), {}),
 
       '& > span': {}
     },
