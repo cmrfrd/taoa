@@ -3,12 +3,11 @@ import ArticlesContextProvider from '../../sections/articles/Articles.List.Conte
 import NavigationFooter from '@components/Navigation/Navigation.Footer';
 import NavigationHeader from '@components/Navigation/Navigation.Header';
 import { globalStyles } from '@styles';
+import { TLayout, ITAOAThemeUIContext } from '@types';
 
-import { Global, css } from '@emotion/core';
+import { Global } from '@emotion/core';
 import styled from '@emotion/styled';
-import PageTransition from 'gatsby-plugin-page-transitions';
-import React, { useEffect, useState } from 'react';
-import { Transition } from 'react-transition-group';
+import React, { useEffect } from 'react';
 import { useColorMode } from 'theme-ui';
 
 /**
@@ -16,19 +15,12 @@ import { useColorMode } from 'theme-ui';
  * and the main structure of each page. Within Layout we have the <Container />
  * which hides a lot of the mess we need to create our Desktop and Mobile experiences.
  */
-const Layout: React.FC<{}> = ({ children, location, enableGridRow = false, gradient = true }) => {
+const Layout: React.FC<TLayout> = ({
+  children,
+  enableGridRow = false,
+  gradient = true
+}: TLayout) => {
   const [colorMode] = useColorMode();
-  const [arrowUp, setArrowUp] = useState<boolean>(false);
-
-  const defaultStyle = {
-    transition: 'all 250ms cubic-bezier(0.47, 0, 0.75, 0.72)'
-  };
-  const transitionStyles = {
-    entering: { opacity: 1 },
-    entered: { opacity: 0 },
-    exiting: { opacity: 0 },
-    exited: { opacity: 1 }
-  };
 
   useEffect(() => {
     parent.postMessage({ theme: colorMode }, '*');
@@ -39,27 +31,9 @@ const Layout: React.FC<{}> = ({ children, location, enableGridRow = false, gradi
       <Container>
         <HeaderTexture />
         <Global styles={globalStyles} />
-        <NavigationHeader
-          enableGridRow={enableGridRow}
-          initialArrowUp={location.state ? location.state.arrowUp : false}
-        />
-        <PageTransition transitionTime={250}>
-          <Transition timeout={250}>
-            {state => {
-              return (
-                <div
-                  style={{
-                    ...defaultStyle,
-                    ...transitionStyles[state]
-                  }}
-                >
-                  {children}
-                  <NavigationFooter gradient={gradient} />
-                </div>
-              );
-            }}
-          </Transition>
-        </PageTransition>
+        <NavigationHeader enableGridRow={enableGridRow} initialArrowUp={false} />
+        {children}
+        <NavigationFooter gradient={gradient} />
       </Container>
     </ArticlesContextProvider>
   );
@@ -67,15 +41,15 @@ const Layout: React.FC<{}> = ({ children, location, enableGridRow = false, gradi
 
 export default Layout;
 
-const Container = styled.div`
-  position: relative;
-  background: ${p => p.theme.colors.background};
-  transition: ${p => p.theme.colorModeTransition};
-  min-height: 100vh;
-  overflow: hidden;
-`;
+const Container = styled.div((p: ITAOAThemeUIContext) => ({
+  position: 'relative',
+  background: p.theme.colors.background,
+  transition: p.theme.colorModeTransition,
+  minHeight: '100vh',
+  overflow: 'hidden'
+}));
 
-const HeaderTexture = styled.div(p => ({
+const HeaderTexture = styled.div({
   position: 'absolute',
   top: 0,
   left: 0,
@@ -83,7 +57,7 @@ const HeaderTexture = styled.div(p => ({
   height: '250px',
   zIndex: 0,
   pointerEvents: 'none'
-}));
+});
 
 // Maybe one day
 /*
