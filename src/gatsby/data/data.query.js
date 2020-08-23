@@ -28,13 +28,7 @@ module.exports.local = {
           date(formatString: "MMMM Do, YYYY")
           dateForSEO: date
           timeToRead
-          excerpt
           canonical_url
-          secret
-          slug
-          subscription
-          canonical_url
-          id
           excerpt
           body
           hero {
@@ -108,7 +102,7 @@ module.exports.local = {
         }
       }
     }
-  }`,
+  }`
 };
 
 // module.exports.contentful = {
