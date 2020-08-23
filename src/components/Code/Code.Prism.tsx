@@ -88,8 +88,8 @@ const CodePrism: React.FC<ICodePrismProps> = ({
       <Container>
         <LiveProvider code={codeString} noInline={true} theme={theme}>
           <LiveEditor style={{ marginBottom: '3px', borderRadius: '2px' }} />
-          <LivePreview style={{ fontSize: '18px', borderRadius: '2px' }} />
-          <LiveError style={{ color: 'tomato' }} />
+          {props['preview'] && <LivePreview style={{ fontSize: '18px', borderRadius: '2px' }} />}
+          {props['error'] && <LiveError style={{ color: 'tomato' }} />}
         </LiveProvider>
       </Container>
     );
@@ -98,8 +98,8 @@ const CodePrism: React.FC<ICodePrismProps> = ({
       <Highlight {...defaultProps} code={codeString} language={language}>
         {({ className, tokens, getLineProps, getTokenProps }: any): React.ReactElement => {
           return (
-            <div style={{ overflow: 'auto' }}>
-              <pre className={className} style={{ position: 'relative' }}>
+            <div style={{ overflow: 'auto', overflowY: 'hidden' }}>
+              <pre className={className} style={{ position: 'relative', marginBottom: '0px' }}>
                 <Copy toCopy={codeString} />
                 {tokens.map((line: string[], index: number) => {
                   const { className } = getLineProps({
@@ -156,7 +156,7 @@ const CopyButton = styled.button((p: ITAOAThemeUIContext) => ({
   },
 
   "&[data-a11y='true']:focus::after": {
-    content: '',
+    content: ' ',
     position: 'absolute',
     left: '-2%',
     top: '-2%',
