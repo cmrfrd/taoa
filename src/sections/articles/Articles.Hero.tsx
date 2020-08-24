@@ -28,20 +28,12 @@ const authorQuery = graphql`
   }
 `;
 
-const ArticlesHero: React.FC<IAuthor> = ({ authors }) => {
+const ArticlesHero: React.FC<IAuthor> = () => {
   const { gridLayout = 'tiles', hasSetGridLayout, setGridLayout } = useContext(GridLayoutContext);
 
   const results = useStaticQuery(authorQuery);
   const hero = results.site.edges[0].node.siteMetadata.hero;
   const tilesIsActive = hasSetGridLayout && gridLayout === 'tiles';
-  const featuredAuthor = authors.find(author => author.featured);
-
-  if (!featuredAuthor) {
-    throw new Error(`
-      No featured Author found.
-      Please ensure you have at least featured Author.
-        `);
-  }
 
   return (
     <Section relative id="Articles__Hero">
@@ -51,7 +43,6 @@ const ArticlesHero: React.FC<IAuthor> = ({ authors }) => {
         <HeroHeading dangerouslySetInnerHTML={{ __html: hero.heading }} />
       </HeadingContainer>
       <Horizontal />
-      <EntriesHeading>Latest Entries</EntriesHeading>
     </Section>
   );
 };
@@ -60,7 +51,7 @@ export default ArticlesHero;
 
 const Horizontal = styled.div`
   position: relative;
-  margin: 20px auto 50px;
+  margin: 20px auto 20px;
   border-bottom: 1px solid ${p => p.theme.colors.horizontalNav};
 
   ${mediaqueries.tablet`
@@ -163,28 +154,5 @@ font-size: 26px;
 
 ${mediaqueries.phone`
 font-size: 24px;
-`}
-`;
-
-const EntriesHeading = styled.h2`
-font-style: normal;
-font-size: 30px;
-    line-height: 1.15;
-    color: ${p => p.theme.colors.primary};
-
-    a {
-    color: ${p => p.theme.colors.accent};
-    }
-
-    ${mediaqueries.desktop`
-font-size: 20px
-`}
-
-    ${mediaqueries.phablet`
-font-size: 14px;
-`}
-
-    ${mediaqueries.phone`
-font-size: 14px;
 `}
 `;
