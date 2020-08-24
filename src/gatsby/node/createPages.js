@@ -1,4 +1,4 @@
-/* eslint-disable no-console, import/no-extraneous-dependencies, prefer-const, no-shadow */
+/* eslint-disable  */
 
 require('dotenv').config();
 
@@ -15,7 +15,7 @@ const templates = {
   author: path.resolve(templatesDirectory, 'author.template.tsx'),
   about: path.resolve(templatesDirectory, 'about.template.tsx'),
   search: path.resolve(templatesDirectory, 'search.template.tsx'),
-  fourofour: path.resolve(templatesDirectory, '404.template.tsx'),
+  fourofour: path.resolve(templatesDirectory, '404.template.tsx')
 };
 
 const query = require('../data/data.query');
@@ -54,12 +54,11 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
     rootPath = '/',
     basePath = '/',
     pageLength = 6,
-    sources = {},
-    mailchimp = '',
+    sources = {}
   } = themeOptions;
 
   const dataSources = {
-    local: { authors: [], articles: [] },
+    local: { authors: [], articles: [] }
   };
 
   log('Config rootPath', rootPath);
@@ -71,39 +70,30 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
     const localArticles = await graphql(query.local.articles);
     const localAbout = await graphql(query.local.about);
 
-    log('Authors edges', "Mapping");
-    dataSources.local.authors = localAuthors.data.authors.edges.map(
-      normalize.local.authors,
-    );
+      log('Mapping', 'Authors edges');
+    dataSources.local.authors = localAuthors.data.authors.edges.map(normalize.local.authors);
 
-    log('Articles edges', "Mapping");
-    dataSources.local.articles = localArticles.data.articles.edges.map(
-      normalize.local.articles,
-    );
+      log('Mapping', 'Articles edges');
+    dataSources.local.articles = localArticles.data.articles.edges.map(normalize.local.articles);
 
     log('About edge');
     about = localAbout.data.about;
-
   } catch (error) {
     console.error(error);
   }
 
   // Combining together all the articles from different sources
-  articles = [
-    ...dataSources.local.articles,
-  ].sort(byDate);
-  log('Sorted articles', "");
+  articles = [...dataSources.local.articles].sort(byDate);
+  log('Sorted articles', '');
+  log(`${articles.length}`, 'total articles');
 
   const articlesThatArentSecret = articles.filter(article => !article.secret);
-  log('Filtered secret articles', "");
+  log('Filtered secret articles', '');
+  log(`${articlesThatArentSecret.length}`, 'total articles that are not secret');
 
   // Combining together all the authors from different sources
-  authors = getUniqueListBy(
-    [
-      ...dataSources.local.authors,
-    ],
-    'name',
-  );
+  authors = getUniqueListBy([...dataSources.local.authors], 'name');
+  log(`${authors.length}`, 'authors found');
 
   if (articles.length === 0 || authors.length === 0) {
     throw new Error(`
@@ -128,11 +118,12 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
     pageTemplate: templates.articles,
     buildPath: buildPaginatedPath,
     context: {
-      authors,
       basePath,
+      articles: articlesThatArentSecret,
       skip: pageLength,
       limit: pageLength,
-    },
+      enableGridRow: true
+    }
   });
 
   /**
@@ -145,9 +136,7 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
     let authorsThatWroteTheArticle;
     try {
       authorsThatWroteTheArticle = authors.filter(author => {
-        const allAuthors = article.author
-          .split(',')
-          .map(a => a.trim().toLowerCase());
+        const allAuthors = article.author.split(',').map(a => a.trim().toLowerCase());
         return allAuthors.some(a => a === author.name.toLowerCase());
       });
     } catch (error) {
@@ -183,12 +172,11 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
         id: article.id,
         title: article.title,
         canonicalUrl: article.canonical_url,
-        mailchimp,
-        next,
-      },
+        enableGridRow: false,
+        next
+      }
     });
   });
-
 
   log('Creating', 'about page');
 
@@ -203,13 +191,14 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
       basePath,
       slug: aboutPath,
       id: '123',
-    },
+      enableGridRow: false
+    }
   });
 
   log('Creating', 'search page');
 
   // Creating the about page
-  const articlesPath = "/articles";
+  const articlesPath = '/articles';
   createPaginatedPages({
     edges: articlesThatArentSecret,
     pathPrefix: articlesPath,
@@ -220,11 +209,12 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
     context: {
       authors,
       articlesPath,
+      articles: articlesThatArentSecret,
       skip: pageLength,
       limit: pageLength,
-    },
+      enableGridRow: true
+    }
   });
-
 
   log('Creating', '404 page');
 
@@ -237,7 +227,7 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
       basePath,
       slug: path404,
       id: '404',
-    },
+      enableGridRow: true
+    }
   });
-
 };
