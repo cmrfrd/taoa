@@ -25,17 +25,17 @@ import React, { useContext, useEffect } from 'react';
  * [LONG]
  */
 
-interface ArticlesListProps {
+interface IArticlesListProps {
   articles: IArticle[];
   alwaysShowAllDetails?: boolean;
 }
 
-interface ArticlesListItemProps {
+interface IArticlesListItemProps {
   article: IArticle;
   narrow?: boolean;
 }
 
-const ArticlesList: React.FC<ArticlesListProps> = ({ articles, alwaysShowAllDetails }) => {
+const ArticlesList: React.FC<IArticlesListProps> = ({ articles, alwaysShowAllDetails }) => {
   if (!articles) return null;
 
   const hasOnlyOneArticle = articles.length === 1;
@@ -48,9 +48,10 @@ const ArticlesList: React.FC<ArticlesListProps> = ({ articles, alwaysShowAllDeta
       style={{ opacity: hasSetGridLayout ? 1 : 0 }}
       alwaysShowAllDetails={alwaysShowAllDetails}
     >
+      <EntriesHeading>Latest Entries</EntriesHeading>
       <List gridLayout={gridLayout} hasOnlyOneArticle={hasOnlyOneArticle} reverse={true}>
         <AnimatePresence initial={false}>
-          {articles.map((ap, index) => (
+          {articles.map((ap: IArticle, index: number) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 50, scale: 0.3 }}
@@ -68,7 +69,7 @@ const ArticlesList: React.FC<ArticlesListProps> = ({ articles, alwaysShowAllDeta
 
 export default ArticlesList;
 
-const ListItem: React.FC<ArticlesListItemProps> = ({ article, narrow }) => {
+const ListItem: React.FC<IArticlesListItemProps> = ({ article, narrow }) => {
   if (!article) return null;
 
   const { gridLayout } = useContext(GridLayoutContext);
@@ -112,8 +113,8 @@ const limitToTwoLines = css`
   overflow: hidden;
 
   ${mediaqueries.phablet`
-    -webkit-line-clamp: 3;
-  `}
+                       -webkit-line-clamp: 3;
+`}
 `;
 
 const showDetails = css`
@@ -138,7 +139,7 @@ const listTile = p => css`
   display: grid;
   grid-template-columns: ${narrow} ${narrow};
   grid-template-rows: 2;
-  column-gap: 30px;
+  column-gap: 60px;
 
   &:not(:last-child) {
     margin-bottom: 75px;
@@ -339,7 +340,7 @@ const ArticleLink = styled(Link)`
   }
 
   &[data-a11y='true']:focus::after {
-    content: '';
+    content: ' ';
     position: absolute;
     left: -1.5%;
     top: -2%;
@@ -352,12 +353,36 @@ const ArticleLink = styled(Link)`
 
   ${mediaqueries.phablet`
                    &:hover ${ImageContainer} {
-      transform: none;
-      box-shadow: initial;
+                       transform: none;
+                       box-shadow: initial;
+                   }
+
+                   &:active {
+                       transform: scale(0.97) translateY(3px);
+                   }
+`}
+`;
+
+const EntriesHeading = styled.h2`
+    font-style: normal;
+    font-size: 30px;
+    line-height: 1.15;
+    color: ${p => p.theme.colors.primary};
+    padding-bottom: 20px;
+
+    a {
+    color: ${p => p.theme.colors.accent};
     }
 
-    &:active {
-      transform: scale(0.97) translateY(3px);
-    }
-  `}
+    ${mediaqueries.desktop`
+font-size: 20px
+`}
+
+    ${mediaqueries.phablet`
+font-size: 14px;
+`}
+
+    ${mediaqueries.phone`
+font-size: 14px;
+`}
 `;
