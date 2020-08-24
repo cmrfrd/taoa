@@ -1,12 +1,11 @@
 /* eslint-disable */
 
 const path = require('path');
-const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
-// const DynamicImportPlugin = require('babel-plugin-dynamic-import-node');
+const LoadablePlugin = require('@loadable/webpack-plugin');
 
 module.exports = ({ actions }) => {
   actions.setWebpackConfig({
-    plugins: [new MonacoWebpackPlugin()],
+    plugins: [new LoadablePlugin()],
     resolve: {
       alias: {
         '@components': path.resolve(__dirname, '../../components/'),
