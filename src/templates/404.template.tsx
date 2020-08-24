@@ -1,5 +1,5 @@
-import Layout from '@components/Layout';
 import Paragraph from '@components/Paragraph';
+import SEO from '@components/SEO';
 import Section from '@components/Section';
 import { mediaquery } from '@styles/media';
 import { Template, ITAOAThemeUIContext } from '@types';
@@ -29,13 +29,14 @@ const siteQuery = graphql`
   }
 `;
 
-const Page404: Template = ({ location }: Template) => {
+const Page404: Template = ({ location }: any) => {
   const results = useStaticQuery(siteQuery);
   const { fourOfour } = results.allSite.edges[0].node.siteMetadata;
   const message = _.sample(fourOfour.messages);
 
   return (
-    <Layout location={location} gradient={false}>
+    <span>
+      <SEO pathname={location.pathname} />
       <Section narrow>
         <Container>
           <CenterRowMessage>
@@ -48,7 +49,7 @@ const Page404: Template = ({ location }: Template) => {
         </Container>
       </Section>
       <AboutGradient />
-    </Layout>
+    </span>
   );
 };
 
