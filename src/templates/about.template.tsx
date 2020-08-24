@@ -1,12 +1,10 @@
 import AuthorHero from '../sections/author/Author.Hero';
 
 import Headings from '@components/Headings';
-import Layout from '@components/Layout';
-import Name from '@components/Name';
 import Paragraph from '@components/Paragraph';
 import Section from '@components/Section';
 import { mediaquery } from '@styles/media';
-import { Template, IAuthor, ITAOAThemeUIContext } from '@types';
+import { Template, TTemplate, IAuthor, ITAOAThemeUIContext } from '@types';
 
 import styled from '@emotion/styled';
 import * as CSS from 'csstype';
@@ -17,15 +15,15 @@ import React from 'react';
  * excerpt about each of the author(s)
  *
  */
-const AboutPage: Template = ({ location, pageContext }: Template) => {
+const AboutPage: Template = ({ pageContext }: TTemplate) => {
   const authors = pageContext.authors;
   const about = pageContext.about.about;
 
   return (
-    <Layout location={location}>
+    <span>
       <Section narrow>
         <AuthorContainer>
-          <AboutHeading>{about.title.about[0]}</AboutHeading>
+          <AboutHeading>{about.title.about}</AboutHeading>
           {about.about.map((para: string, i: number) => {
             return <AboutParagraph key={i}>{para}</AboutParagraph>;
           })}
@@ -38,7 +36,7 @@ const AboutPage: Template = ({ location, pageContext }: Template) => {
         </AuthorContainer>
       </Section>
       <AboutGradient />
-    </Layout>
+    </span>
   );
 };
 
