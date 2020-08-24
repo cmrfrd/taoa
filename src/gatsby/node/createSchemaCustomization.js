@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 module.exports = ({ actions }) => {
   const { createTypes } = actions;
 
