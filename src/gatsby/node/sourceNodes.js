@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 module.exports = ({ actions }) => {
   actions.createTypes(`
     type Article implements Node {
