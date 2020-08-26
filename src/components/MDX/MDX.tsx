@@ -13,6 +13,7 @@ import Paragraph from '@components/Paragraph';
 import Tables from '@components/Tables';
 import { mediaquery } from '@styles/media';
 import { ITAOAThemeUIContext } from '@types';
+import { theme } from '@utils';
 
 import styled from '@emotion/styled';
 import { MDXProvider, MDXProviderProps } from '@mdx-js/react';
@@ -20,9 +21,7 @@ import * as CSS from 'csstype';
 import { MDXRenderer } from 'gatsby-plugin-mdx';
 import React from 'react';
 import { useColorMode } from 'theme-ui';
-
 import { ThemeProvider } from 'theme-ui';
-import { theme } from '@utils';
 
 type ComponentType =
   | 'img'
@@ -79,6 +78,7 @@ const components: Components = {
 
 interface IMDXProps extends MDXProviderProps {
   content: string;
+  children: React.ReactNode;
 }
 
 interface IStringMap {
