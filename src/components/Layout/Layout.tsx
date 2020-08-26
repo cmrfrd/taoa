@@ -41,12 +41,21 @@ const Layout: React.FC<TLayout> = ({
 
 export default Layout;
 
+/* const Container = styled.div`
+ *   position: relative;
+ *   background: ${p => p.theme.colors.background};
+ *   transition: ${p => p.theme.colorModeTransition};
+ *   min-height: 100vh;
+ *   overflow: hidden;
+ * `; */
+
 const Container = styled.div((p: ITAOAThemeUIContext) => ({
   position: 'relative',
   background: p.theme.colors.background,
   transition: p.theme.colorModeTransition,
   minHeight: '100vh',
-  overflow: 'hidden'
+  overflow: 'hidden',
+  scrollBehavior: 'smooth'
 }));
 
 const HeaderTexture = styled.div({
