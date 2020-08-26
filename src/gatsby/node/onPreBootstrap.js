@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const fs = require('fs-extra'); // eslint-disable-line import/no-extraneous-dependencies
 
 module.exports = async ({ reporter }, themeOptions) => {
