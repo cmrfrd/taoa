@@ -19,8 +19,8 @@ const Container = styled.div({
   }
 });
 
-/** ImagePlaceholder is a component that places an empty image
- *
+/**
+ * ImagePlaceholder is a component that places an empty image
  * @param props
  */
 const ImagePlaceholder: React.FC<{}> = (props: any) => {

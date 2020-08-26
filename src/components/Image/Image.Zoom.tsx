@@ -10,8 +10,8 @@ interface IImageZoomProps {
   title?: string;
 }
 
-/** ImageZoom is a component to display a zoomed in image
- *
+/**
+ * ImageZoom is a component to display a zoomed in image
  * @param props
  */
 const ImageZoom: React.FC<IImageZoomProps> = ({ title, ...props }: IImageZoomProps) => {
