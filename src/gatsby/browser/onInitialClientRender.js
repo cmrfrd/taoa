@@ -1,7 +1,5 @@
 /* eslint-disable */
 
-const { globalHistory } = require('@reach/router');
-
 function handleAccessibilityFocus() {
   const elementsWithA11yFocus = [...document.querySelectorAll('[data-a11y]')];
 
@@ -26,15 +24,13 @@ function handleAccessibilityFocus() {
 }
 
 module.exports = () => {
-  localStorage.removeItem('previousPath');
-
   setTimeout(() => {
     handleAccessibilityFocus();
   }, 1000);
 
-  /**
-   * This is a workaround for a bug in Gatsby
-   * See https://github.com/gatsbyjs/gatsby/issues/8357 for more details
-   */
-  globalHistory._onTransitionComplete();
+  // ensure that the scrollRestoration is set to manual
+  // this stops the browser from 'jumping' the scroll position
+  if ('scrollRestoration' in history && history.scrollRestoration != 'manual') {
+    history.scrollRestoration = 'manual';
+  }
 };

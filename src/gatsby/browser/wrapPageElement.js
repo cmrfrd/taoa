@@ -2,42 +2,52 @@
 
 import Layout from '@components/Layout';
 
+import { motion, AnimatePresence } from 'framer-motion';
 import { TransitionProvider, TransitionViews } from 'gatsby-plugin-transitions';
 import React from 'react';
 
-const timeout = 200;
+const { animationDurationSeconds } = require('../../../gatsby-config').siteMetadata.transition;
 
+// configuration for framer motion components
+const variants = {
+  initial: {
+    opacity: 0
+  },
+  enter: {
+    opacity: 1,
+    transition: {
+      duration: animationDurationSeconds
+    }
+  },
+  exit: {
+    opacity: 0,
+    transition: { duration: animationDurationSeconds }
+  }
+};
+
+/**
+ * Component to animate the fade in and fade out
+ * of non layout components
+ */
 const FadeTransitionLayout = ({ children, location, ...props }) => {
   const { enableGridRow } = props.pageContext;
 
   return (
-    <Layout location={location} enableGridRow={enableGridRow} gradient={true}>
-      <TransitionProvider
-        location={location}
-        mode="successive"
-        enter={{
-          opacity: 0,
-          config: {
-            duration: 300
-          }
-        }}
-        usual={{
-          opacity: 1,
-          config: {
-            duration: timeout
-          }
-        }}
-        leave={{
-          opacity: 0,
-          config: {
-            duration: timeout
-          }
-        }}
-        y={(): void => window.scrollY}
-      >
-        <TransitionViews>{children}</TransitionViews>
-      </TransitionProvider>
-    </Layout>
+    <>
+      <Layout location={location} enableGridRow={enableGridRow}>
+        <AnimatePresence exitBeforeEnter>
+          <motion.div
+            key={location.pathname}
+            variants={variants}
+            initial="initial"
+            animate="enter"
+            exit="exit"
+          >
+            {children}
+          </motion.div>
+        </AnimatePresence>
+      </Layout>
+    </>
   );
 };
 
