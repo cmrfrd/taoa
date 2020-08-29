@@ -1,6 +1,6 @@
+import { graphql, useStaticQuery } from 'gatsby';
 import React from 'react';
 import EmojioneV4, { Props } from 'react-emoji-render';
-import { graphql, useStaticQuery } from 'gatsby';
 
 const nameQuery = graphql`
   {
