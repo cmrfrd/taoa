@@ -1,3 +1,4 @@
+import { ITAOAThemeUIContext } from '@types';
 import mediaqueries from '@styles/media';
 import { copyToClipboard } from '@utils';
 
@@ -31,7 +32,7 @@ const DarkModeToggle: React.FC<{}> = () => {
   const [colorMode, setColorMode] = useColorMode();
   const isDark = colorMode === `dark`;
 
-  function toggleColorMode(event) {
+  function toggleColorMode(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
     event.preventDefault();
     setColorMode(isDark ? `light` : `dark`);
   }
@@ -49,7 +50,7 @@ const SharePageButton: React.FC<{}> = () => {
   const [colorMode] = useColorMode();
   const isDark = colorMode === `dark`;
 
-  function copyToClipboardOnClick() {
+  function copyToClipboardOnClick(): void {
     if (hasCopied) return;
 
     copyToClipboard(window.location.href);
@@ -87,38 +88,43 @@ const ArticleControls: React.FC<{}> = () => {
 
 export default ArticleControls;
 
-const NavControls = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
+const NavControls = styled.div({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center'
+});
 
-const ToolTip = styled.div<{ isDark: boolean; hasCopied: boolean }>`
-  position: absolute;
-  padding: 4px 13px;
-  background: ${p => (p.isDark ? '#000' : 'rgba(0,0,0,0.1)')};
-  color: ${p => (p.isDark ? '#fff' : '#000')};
-  border-radius: 5px;
-  font-size: 14px;
-  top: -35px;
-  opacity: ${p => (p.hasCopied ? 1 : 0)};
-  transform: ${p => (p.hasCopied ? 'translateY(-3px)' : 'none')};
-  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+interface IToolTip extends ITAOAThemeUIContext {
+  isDark: boolean;
+  hasCopied: boolean;
+}
 
-  &::after {
-    content: ' ';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -6px;
-    margin: 0 auto;
-    width: 0;
-    height: 0;
-    border-left: 6px solid transparent;
-    border-right: 6px solid transparent;
-    border-top: 6px solid ${p => (p.isDark ? '#000' : 'rgba(0,0,0,0.1)')};
+const ToolTip = styled.div((p: IToolTip) => ({
+  position: 'absolute',
+  padding: '4px 13px',
+  background: p.isDark ? '#000' : 'rgba(0,0,0,0.1)',
+  color: p.isDark ? '#fff' : '#000',
+  borderRadius: '5px',
+  fontSize: '14px',
+  top: '-5px',
+  opacity: p.hasCopied ? 1 : 0,
+  transform: p.hasCopied ? 'translateY(-3px)' : 'none',
+  transition: 'transform 0.3s ease-in-out, opacity 0.3s ease-in-out',
+
+  '&::after': {
+    content: ' ',
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: '-6px',
+    margin: '0 auto',
+    width: 0,
+    height: 0,
+    borderLeft: '6px solid transparent',
+    borderRight: '6px solid transparent',
+    borderTop: `6px solid ${p.isDark ? '#000' : 'rgba(0,0,0,0.1)'}`
   }
-`;
+}));
 
 const IconWrapper = styled.button`
   opacity: 0.5;
