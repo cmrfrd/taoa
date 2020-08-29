@@ -56,7 +56,7 @@ const variants = {
 const ArticlesList: React.FC<IArticlesListProps> = ({ articles, alwaysShowAllDetails }) => {
   if (!articles) return null;
 
-  const hasOnlyOneArticle = articles.length === 1;
+  const hasOnlyOneArticle = [...articles].length === 1;
   const { gridLayout = 'tiles', hasSetGridLayout, getGridLayout } = useContext(GridLayoutContext);
 
   return (
@@ -66,7 +66,7 @@ const ArticlesList: React.FC<IArticlesListProps> = ({ articles, alwaysShowAllDet
     >
       <EntriesHeading>Latest Entries</EntriesHeading>
       <List gridLayout={gridLayout} hasOnlyOneArticle={hasOnlyOneArticle} reverse={true}>
-        {articles.map((ap: IArticle, index: number) => (
+        {[...articles].map((ap: IArticle, index: number) => (
           <ListItem key={index} article={ap} narrow={true} grid={gridLayout} />
         ))}
       </List>
