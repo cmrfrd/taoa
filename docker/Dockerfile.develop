@@ -26,12 +26,20 @@ RUN apk -U upgrade -a && \
   libjpeg-turbo-dev \
   libpng-dev \
   make \
+  openssl \
+  go \
   nasm && \
   rm -rf /var/cache/apk/*
-RUN npm install --global prettier gatsby
 
+## Install mkcert for ssl cert generation
+RUN \
+  git clone https://github.com/FiloSottile/mkcert && \
+  cd mkcert && \
+  go build -ldflags "-X main.Version=$(git describe --tags)" && \
+  mv mkcert /usr/bin/ && \
+  rm -r /mkcert
 
 ## Setup entrypoint
-COPY ./docker/entry.sh /
+COPY ./entry.sh /
 RUN chmod +x /entry.sh
 ENTRYPOINT ["/entry.sh"]
