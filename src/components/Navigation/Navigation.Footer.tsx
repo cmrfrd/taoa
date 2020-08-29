@@ -60,7 +60,6 @@ const Footer: React.FC<IFooterProps> = ({ gradient = true }: IFooterProps) => {
     return years[0] === years[1] ? `${years[0]}` : `${years[0]}–${years[1]}`;
   })();
 
-  console.log(footer);
   return (
     <>
       {gradient ? <FooterGradient /> : <></>}
@@ -72,12 +71,12 @@ const Footer: React.FC<IFooterProps> = ({ gradient = true }: IFooterProps) => {
             {[...footer.message].map((e: string, i: number) => {
               if (i === footer.linkIndex) {
                 return (
-                  <a href={footer.link}>
-                    <Emoji text={e} />
+                  <a href={footer.link} key={i}>
+                    <Emoji text={e} key={i} />
                   </a>
                 );
               } else {
-                return <Emoji text={e} />;
+                return <Emoji text={e} key={i} />;
               }
             })}
           </FooterText>
