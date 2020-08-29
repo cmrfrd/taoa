@@ -1,3 +1,4 @@
+import Emoji from '@components/Emoji';
 import Section from '@components/Section';
 import SocialLinks from '@components/SocialLinks';
 import { mediaquery } from '@styles/media';
@@ -7,7 +8,6 @@ import styled from '@emotion/styled';
 import * as CSS from 'csstype';
 import { graphql, useStaticQuery } from 'gatsby';
 import React from 'react';
-import { Twemoji } from 'react-emoji-render';
 
 const siteQuery = graphql`
   {
@@ -22,6 +22,8 @@ const siteQuery = graphql`
             }
             footer {
               message
+              link
+              linkIndex
             }
           }
         }
@@ -58,6 +60,7 @@ const Footer: React.FC<IFooterProps> = ({ gradient = true }: IFooterProps) => {
     return years[0] === years[1] ? `${years[0]}` : `${years[0]}–${years[1]}`;
   })();
 
+  console.log(footer);
   return (
     <>
       {gradient ? <FooterGradient /> : <></>}
@@ -65,7 +68,18 @@ const Footer: React.FC<IFooterProps> = ({ gradient = true }: IFooterProps) => {
         <HoritzontalRule />
         <FooterContainer>
           <FooterText>
-            {copyrightDate} {name} - <Twemoji text={footer.message} />
+            {copyrightDate} {name} -
+            {[...footer.message].map((e: string, i: number) => {
+              if (i === footer.linkIndex) {
+                return (
+                  <a href={footer.link}>
+                    <Emoji text={e} />
+                  </a>
+                );
+              } else {
+                return <Emoji text={e} />;
+              }
+            })}
           </FooterText>
           <div>
             <SocialLinks links={social} />
