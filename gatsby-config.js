@@ -7,6 +7,7 @@ module.exports = {
     name: `Alexander Comerford`,
     siteUrl: `https://TheArtofAbstraction.com`,
     description: ``,
+    emojiDir: 'emojis',
     transition: {
       scrollTimeoutMilliseconds: 300,
       animationDurationSeconds: 0.3
@@ -15,64 +16,13 @@ module.exports = {
       text: 'T·A·O·A'
     },
     footer: {
-      message: 'Made with :heart: and ☕'
+      message: [' Made with', ' :heart:', ' and ☕'],
+      link: '/ambiguity.txt',
+      linkIndex: 1
     },
     search: {
       placeholder: `Search by title or tags`,
       heading: `Search Articles`
-    },
-    fourOfour: {
-      messages: [
-        {
-          emoji: '🌵',
-          message: 'Oh no! Nothing is here'
-        },
-        {
-          emoji: '📄',
-          message: 'No page exists here'
-        },
-        {
-          emoji: '👀',
-          message: 'Nothing to see here, folks!'
-        },
-        {
-          emoji: ':walking:',
-
-          message: 'Keep walking, nothing to see here'
-        },
-        {
-          emoji: '🤕',
-          message: 'Something is not right... try going somewhere else!'
-        },
-        {
-          emoji: ':world_map:',
-          message: 'I think you might be lost. Try a different page!'
-        },
-        {
-          emoji: '😵',
-          message: "You just got 404'd, the page your looking for doesn't exist"
-        },
-        {
-          emoji: '🙅',
-          message: "Your page isn't here!"
-        },
-        {
-          emoji: '👿',
-          message: "Don't freak out! You can go anywhere else, just not here"
-        },
-        {
-          emoji: '🙇',
-          message: "So sorry but we can't find you page. Try going somewhere else!"
-        },
-        {
-          emoji: '🚷',
-          message: 'No humans allowed! Try a different page'
-        },
-        {
-          emoji: '🤦',
-          message: "This is embarrassing. Your page isn't here, but it might be somewhere else!"
-        }
-      ]
     },
     hero: {
       welcome: `Welcome to`,
@@ -108,6 +58,47 @@ module.exports = {
     `gatsby-plugin-theme-ui`,
     `gatsby-plugin-offline`,
     {
+      resolve: `gatsby-plugin-manifest`,
+      options: {
+        name: 'The Art of Abstraction',
+        short_name: 'T·A·O·A',
+        start_url: '/',
+        display: 'standalone',
+        icon: 'content/favicons/favicon-32x32.png',
+        theme_color: '#ffffff',
+        background_color: '#ffffff',
+        display: 'standalone'
+      }
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: 'content/posts',
+        name: 'content/posts'
+      }
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: 'content/authors',
+        name: 'content/authors'
+      }
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: 'content/about',
+        name: 'content/about'
+      }
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: 'content/not_found',
+        name: 'content/not_found'
+      }
+    },
+    {
       resolve: 'gatsby-plugin-webpack-bundle-analyser-v2',
       options: {
         disable: true,
@@ -121,19 +112,6 @@ module.exports = {
       options: {
         isTSX: true,
         allExtensions: true
-      }
-    },
-    {
-      resolve: `gatsby-plugin-manifest`,
-      options: {
-        name: 'The Art of Abstraction',
-        short_name: 'T·A·O·A',
-        start_url: '/',
-        display: 'standalone',
-        icon: 'content/favicons/favicon-32x32.png',
-        theme_color: '#ffffff',
-        background_color: '#ffffff',
-        display: 'standalone'
       }
     },
     {
@@ -163,34 +141,6 @@ module.exports = {
             }
           }
         ]
-      }
-    },
-    {
-      resolve: `gatsby-source-filesystem`,
-      options: {
-        path: 'content/posts',
-        name: 'content/posts'
-      }
-    },
-    {
-      resolve: `gatsby-source-filesystem`,
-      options: {
-        path: 'content/authors',
-        name: 'content/authors'
-      }
-    },
-    {
-      resolve: `gatsby-source-filesystem`,
-      options: {
-        path: 'content/about',
-        name: 'content/about'
-      }
-    },
-    {
-      resolve: `gatsby-source-filesystem`,
-      options: {
-        path: 'content/pages',
-        name: 'content/pages'
       }
     },
     {
