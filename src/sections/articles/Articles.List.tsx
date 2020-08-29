@@ -7,7 +7,6 @@ import { IArticle } from '@types';
 
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'gatsby';
 import React, { useContext, useEffect } from 'react';
 
@@ -25,6 +24,9 @@ import React, { useContext, useEffect } from 'react';
  * [LONG]
  */
 
+import FadeTransition from '@components/FadeTransition';
+import { motion, AnimatePresence } from 'framer-motion';
+
 interface IArticlesListProps {
   articles: IArticle[];
   alwaysShowAllDetails?: boolean;
@@ -35,44 +37,52 @@ interface IArticlesListItemProps {
   narrow?: boolean;
 }
 
+const variants = {
+  initial: {
+    opacity: 0
+  },
+  enter: {
+    opacity: 1,
+    transition: {
+      duration: 0.5
+    }
+  },
+  exit: {
+    opacity: 0,
+    transition: { duration: 0.5 }
+  }
+};
+
 const ArticlesList: React.FC<IArticlesListProps> = ({ articles, alwaysShowAllDetails }) => {
   if (!articles) return null;
 
   const hasOnlyOneArticle = articles.length === 1;
   const { gridLayout = 'tiles', hasSetGridLayout, getGridLayout } = useContext(GridLayoutContext);
 
-  useEffect(() => getGridLayout(), []);
-
   return (
     <ArticlesListContainer
       style={{ opacity: hasSetGridLayout ? 1 : 0 }}
       alwaysShowAllDetails={alwaysShowAllDetails}
     >
-      <EntriesHeading>Latest Entries</EntriesHeading>
       <List gridLayout={gridLayout} hasOnlyOneArticle={hasOnlyOneArticle} reverse={true}>
-        <AnimatePresence initial={false}>
-          {articles.map((ap: IArticle, index: number) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 50, scale: 0.3 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.3, transition: { duration: 0.15 } }}
-            >
-              <ListItem article={ap} narrow={true} />
-            </motion.div>
-          ))}
-        </AnimatePresence>
+        {articles.map((ap: IArticle, index: number) => (
+          <ListItem key={index} article={ap} narrow={true} grid={gridLayout} />
+        ))}
       </List>
     </ArticlesListContainer>
   );
 };
-
 export default ArticlesList;
 
-const ListItem: React.FC<IArticlesListItemProps> = ({ article, narrow }) => {
+const ListItem: React.FC<IArticlesListItemProps> = ({
+  article,
+  narrow,
+  grid
+}: IArticlesListItemProps) => {
   if (!article) return null;
 
-  const { gridLayout } = useContext(GridLayoutContext);
+  /*     const { gridLayout } = useContext(GridLayoutContext); */
+  const gridLayout = grid;
   const hasOverflow = narrow && article.title.length > 35;
   const imageSource = narrow ? article.hero.narrow : article.hero.regular;
   const hasHeroImage =
