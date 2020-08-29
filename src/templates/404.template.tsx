@@ -1,3 +1,4 @@
+import Emoji from '@components/Emoji';
 import Paragraph from '@components/Paragraph';
 import SEO from '@components/SEO';
 import Section from '@components/Section';
@@ -8,20 +9,15 @@ import styled from '@emotion/styled';
 import { graphql, useStaticQuery } from 'gatsby';
 import _ from 'lodash';
 import React from 'react';
-import { Twemoji } from 'react-emoji-render';
 
-const siteQuery = graphql`
+const messagesQuery = graphql`
   {
-    allSite {
+    allNotFoundYaml {
       edges {
         node {
-          siteMetadata {
-            fourOfour {
-              messages {
-                emoji
-                message
-              }
-            }
+          messages {
+            emoji
+            message
           }
         }
       }
@@ -30,9 +26,9 @@ const siteQuery = graphql`
 `;
 
 const Page404: Template = ({ location }: any) => {
-  const results = useStaticQuery(siteQuery);
-  const { fourOfour } = results.allSite.edges[0].node.siteMetadata;
-  const message = _.sample(fourOfour.messages);
+  const results = useStaticQuery(messagesQuery);
+  const { messages } = results.allNotFoundYaml.edges[0].node;
+  const message = _.sample(messages);
 
   return (
     <span>
@@ -42,7 +38,7 @@ const Page404: Template = ({ location }: any) => {
           <CenterRowMessage>
             <Big>404</Big>
             <EmojiContainer>
-              <Twemoji text={message.emoji} />
+              <Emoji text={message.emoji} />
             </EmojiContainer>
           </CenterRowMessage>
           <Small>{message.message}</Small>
