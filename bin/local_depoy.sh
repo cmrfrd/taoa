@@ -1,5 +1,5 @@
 #!/bin/bash
-IMAGE=cmrfrd.site
+source ./constants.env
 EMAIL=alexanderjcomerford@gmail.com
 SSHKEY=$1
 COMMITMSG={$2:-Updatesite}
@@ -12,7 +12,7 @@ docker run \
        -e SSHKEY=$SSHKEY \
        -e COMMITMSG=$COMMITMSG \
        -e EMAIL=$EMAIL \
-       -it cmrfrd.site \
+       -it $IMAGE_NAME:$TAG \
        '
        eval `ssh-agent -s`;
        ssh-add $SSHKEY;

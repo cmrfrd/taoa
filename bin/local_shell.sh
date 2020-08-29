@@ -1,12 +1,13 @@
-#!/bin/bash
-IMAGE=cmrfrd.site
+#!/bin/sh
+source ./constants.env
+./bin/build_image.sh
 docker run \
        -v $(pwd):/site:z \
        -v ~/.ssh:/.ssh:z \
        --net host \
        --rm \
        -w /site \
-       -it cmrfrd.site \
+       -it $IMAGE_NAME:$TAG \
        '
        eval `ssh-agent -s`;
        sh

@@ -1,9 +1,9 @@
 #!/bin/bash
-IMAGE=cmrfrd.site
+source ./constants.env
 docker run \
        -p 8000:8000 \
        --name develop \
        -v $(pwd):/site:z \
        --rm \
-       -it $IMAGE \
+       -it $IMAGE_NAME:$TAG \
        develop
