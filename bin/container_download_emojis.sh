@@ -9,7 +9,8 @@ fi
 # Get the emoji directory from the default gatsby config
 EMOJI_DIR=$(echo 'require("./gatsby-config").siteMetadata.emojiDir;' |
               node -i |
-              awk '{a[NR]=$2} END{print a[NR-1] }')
+              awk '{a[NR]=$2} END{print a[NR-1] }' |
+              tr -d \')
 
 # Configure static/emoji/fileext dir
 STATIC_DIR=static
