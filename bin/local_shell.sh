@@ -1,6 +1,6 @@
 #!/bin/sh
 source ./constants.env
-./bin/build_image.sh
+./bin/local_build_image.sh
 docker run \
        -v $(pwd):/site:z \
        -v ~/.ssh:/.ssh:z \
