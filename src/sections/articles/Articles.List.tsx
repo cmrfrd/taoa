@@ -64,6 +64,7 @@ const ArticlesList: React.FC<IArticlesListProps> = ({ articles, alwaysShowAllDet
       style={{ opacity: hasSetGridLayout ? 1 : 0 }}
       alwaysShowAllDetails={alwaysShowAllDetails}
     >
+      <EntriesHeading>Latest Entries</EntriesHeading>
       <List gridLayout={gridLayout} hasOnlyOneArticle={hasOnlyOneArticle} reverse={true}>
         {articles.map((ap: IArticle, index: number) => (
           <ListItem key={index} article={ap} narrow={true} grid={gridLayout} />
@@ -72,6 +73,7 @@ const ArticlesList: React.FC<IArticlesListProps> = ({ articles, alwaysShowAllDet
     </ArticlesListContainer>
   );
 };
+
 export default ArticlesList;
 
 const ListItem: React.FC<IArticlesListItemProps> = ({
