@@ -44,38 +44,71 @@ const variants = {
   enter: {
     opacity: 1,
     transition: {
-      duration: 0.5
+      duration: 0.2
+    }
+  },
+  tiles: {
+    opacity: 1,
+    transition: {
+      duration: 0.2
+    }
+  },
+  rows: {
+    opacity: 1,
+    transition: {
+      duration: 0.2
     }
   },
   exit: {
     opacity: 0,
-    transition: { duration: 0.5 }
+    transition: { duration: 0.2 }
   }
 };
 
-const ArticlesList: React.FC<IArticlesListProps> = ({ articles, alwaysShowAllDetails }) => {
+const ArticlesList: React.FC<IArticlesListProps> = ({
+  articles,
+  alwaysShowAllDetails
+}: IArticlesListProps) => {
   if (!articles) return null;
 
   const hasOnlyOneArticle = [...articles].length === 1;
-  const { gridLayout = 'tiles', hasSetGridLayout, getGridLayout } = useContext(GridLayoutContext);
+  const { gridLayout = 'tiles', getGridLayout } = useContext(GridLayoutContext);
 
   return (
     <ArticlesListContainer alwaysShowAllDetails={alwaysShowAllDetails}>
       <EntriesHeading>Latest Entries</EntriesHeading>
-      <List gridLayout={gridLayout} hasOnlyOneArticle={hasOnlyOneArticle} reverse={true}>
-        <AnimatePresence initial={false}>
-          {[...articles].map((ap: IArticle, index: number) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 50, scale: 0.3 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.3, transition: { duration: 0.15 } }}
-            >
-              <ListItem article={ap} narrow={true} grid={gridLayout} />
-            </motion.div>
-          ))}
-        </AnimatePresence>
-      </List>
+      <AnimatePresence exitBeforeEnter>
+        {gridLayout == 'tiles' && (
+          <motion.div
+            key="tiles"
+            variants={variants}
+            animate={gridLayout}
+            initial="initial"
+            exit="exit"
+          >
+            <List gridLayout={gridLayout} hasOnlyOneArticle={hasOnlyOneArticle} reverse={true}>
+              {[...articles].map((ap: IArticle, index: number) => (
+                <ListItem article={ap} narrow={true} grid={gridLayout} />
+              ))}
+            </List>
+          </motion.div>
+        )}
+        {gridLayout == 'rows' && (
+          <motion.div
+            key="rows"
+            variants={variants}
+            animate={gridLayout}
+            initial="initial"
+            exit="exit"
+          >
+            <List gridLayout={gridLayout} hasOnlyOneArticle={hasOnlyOneArticle} reverse={true}>
+              {[...articles].map((ap: IArticle, index: number) => (
+                <ListItem article={ap} narrow={true} grid={gridLayout} />
+              ))}
+            </List>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </ArticlesListContainer>
   );
 };
