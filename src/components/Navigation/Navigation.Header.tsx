@@ -27,14 +27,16 @@ interface IGridRowToggle {
  */
 const GridRowToggle: React.FC<IGridRowToggle> = (props: IGridRowToggle) => {
   const { active } = props;
-  const { gridLayout = 'tiles', hasSetGridLayout, setGridLayout } = useContext(GridLayoutContext);
-  const rowsIsActive = hasSetGridLayout && gridLayout === 'tiles';
+  const { gridLayout = 'tiles', setGridLayout } = useContext(GridLayoutContext);
+  const rowsIsActive = gridLayout === 'tiles';
 
   return (
     <IconWrapper isDark={false}>
       {rowsIsActive ? (
         <GridButton
-          onClick={(): void => setGridLayout('rows')}
+          onClick={(): void => {
+            setGridLayout('rows');
+          }}
           active={active}
           data-a11y={false}
           title="Show articles in Row grid"
@@ -44,7 +46,9 @@ const GridRowToggle: React.FC<IGridRowToggle> = (props: IGridRowToggle) => {
         </GridButton>
       ) : (
         <GridButton
-          onClick={(): void => setGridLayout('tiles')}
+          onClick={(): void => {
+            setGridLayout('tiles');
+          }}
           active={active}
           data-a11y={false}
           title="Show articles in Tile grid"
