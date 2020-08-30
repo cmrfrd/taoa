@@ -60,15 +60,21 @@ const ArticlesList: React.FC<IArticlesListProps> = ({ articles, alwaysShowAllDet
   const { gridLayout = 'tiles', hasSetGridLayout, getGridLayout } = useContext(GridLayoutContext);
 
   return (
-    <ArticlesListContainer
-      style={{ opacity: hasSetGridLayout ? 1 : 0 }}
-      alwaysShowAllDetails={alwaysShowAllDetails}
-    >
+    <ArticlesListContainer alwaysShowAllDetails={alwaysShowAllDetails}>
       <EntriesHeading>Latest Entries</EntriesHeading>
       <List gridLayout={gridLayout} hasOnlyOneArticle={hasOnlyOneArticle} reverse={true}>
-        {[...articles].map((ap: IArticle, index: number) => (
-          <ListItem key={index} article={ap} narrow={true} grid={gridLayout} />
-        ))}
+        <AnimatePresence initial={false}>
+          {[...articles].map((ap: IArticle, index: number) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 50, scale: 0.3 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.3, transition: { duration: 0.15 } }}
+            >
+              <ListItem article={ap} narrow={true} grid={gridLayout} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </List>
     </ArticlesListContainer>
   );
