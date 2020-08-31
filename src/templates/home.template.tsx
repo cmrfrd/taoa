@@ -1,7 +1,6 @@
 import ArticlesHero from '../sections/articles/Articles.Hero';
 import ArticlesList from '../sections/articles/Articles.List';
 
-import Layout from '@components/Layout';
 import Paginator from '@components/Navigation/Navigation.Paginator';
 import SEO from '@components/SEO';
 import Section from '@components/Section';
@@ -11,7 +10,7 @@ import styled from '@emotion/styled';
 import * as CSS from 'csstype';
 import React from 'react';
 
-const ArticlesPage: Template = ({ location, pageContext }: TTemplate) => {
+const HomePage: Template = ({ location, pageContext }: TTemplate) => {
   const { articles } = pageContext;
 
   return (
@@ -29,7 +28,7 @@ const ArticlesPage: Template = ({ location, pageContext }: TTemplate) => {
   );
 };
 
-export default ArticlesPage;
+export default HomePage;
 
 const ArticlesGradient = styled.div((p: ITAOAThemeUIContext) => ({
   position: 'absolute',
