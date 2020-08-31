@@ -10,7 +10,7 @@ const createPaginatedPages = require('gatsby-paginate');
 
 const templatesDirectory = path.resolve(__dirname, '../../templates');
 const templates = {
-  articles: path.resolve(templatesDirectory, 'articles.template.tsx'),
+  home: path.resolve(templatesDirectory, 'home.template.tsx'),
   article: path.resolve(templatesDirectory, 'article.template.tsx'),
   author: path.resolve(templatesDirectory, 'author.template.tsx'),
   about: path.resolve(templatesDirectory, 'about.template.tsx'),
@@ -50,7 +50,7 @@ const byDate = (a, b) => new Date(b.dateForSEO) - new Date(a.dateForSEO);
 // ///////////////////////////////////////////////////////
 
 module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
-  const { rootPath = '/', basePath = '/', pageLength = 6, sources = {} } = themeOptions;
+  const { rootPath = '/', basePath = '/', sources = {} } = themeOptions;
 
   const dataSources = {
     local: { authors: [], articles: [] }
@@ -104,13 +104,14 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
    * /articles/page/1
    * ...
    */
-  log('Creating', 'articles page');
+  log('Creating', 'home page');
+  const pageLength = 6;
   createPaginatedPages({
     edges: articlesThatArentSecret,
     pathPrefix: basePath,
     createPage,
     pageLength,
-    pageTemplate: templates.articles,
+    pageTemplate: templates.home,
     buildPath: buildPaginatedPath,
     context: {
       basePath,
