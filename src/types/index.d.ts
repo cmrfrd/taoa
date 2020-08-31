@@ -144,7 +144,6 @@ export type TTemplate = {
 
     article: IArticle;
     authors: IAuthor[];
-    mailchimp: boolean;
     next: IArticle[];
     about: IAbout;
   };
