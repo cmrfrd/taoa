@@ -7,8 +7,9 @@ import { IArticle } from '@types';
 
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
-import { Link } from 'gatsby';
-import React, { useContext, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link, graphql, useStaticQuery } from 'gatsby';
+import React, { useContext } from 'react';
 
 /**
  * Tiles
@@ -24,46 +25,10 @@ import React, { useContext, useEffect } from 'react';
  * [LONG]
  */
 
-import FadeTransition from '@components/FadeTransition';
-import { motion, AnimatePresence } from 'framer-motion';
-
 interface IArticlesListProps {
   articles: IArticle[];
   alwaysShowAllDetails?: boolean;
 }
-
-interface IArticlesListItemProps {
-  article: IArticle;
-  narrow?: boolean;
-}
-
-const variants = {
-  initial: {
-    opacity: 0
-  },
-  enter: {
-    opacity: 1,
-    transition: {
-      duration: 0.2
-    }
-  },
-  tiles: {
-    opacity: 1,
-    transition: {
-      duration: 0.2
-    }
-  },
-  rows: {
-    opacity: 1,
-    transition: {
-      duration: 0.2
-    }
-  },
-  exit: {
-    opacity: 0,
-    transition: { duration: 0.2 }
-  }
-};
 
 const ArticlesList: React.FC<IArticlesListProps> = ({
   articles,
@@ -71,42 +36,16 @@ const ArticlesList: React.FC<IArticlesListProps> = ({
 }: IArticlesListProps) => {
   if (!articles) return null;
 
-  const hasOnlyOneArticle = [...articles].length === 1;
   const { gridLayout = 'tiles', getGridLayout } = useContext(GridLayoutContext);
 
   return (
     <ArticlesListContainer alwaysShowAllDetails={alwaysShowAllDetails}>
       <EntriesHeading>Latest Entries</EntriesHeading>
       <AnimatePresence exitBeforeEnter>
-        {gridLayout == 'tiles' && (
-          <motion.div
-            key="tiles"
-            variants={variants}
-            animate={gridLayout}
-            initial="initial"
-            exit="exit"
-          >
-            <List gridLayout={gridLayout} hasOnlyOneArticle={hasOnlyOneArticle} reverse={true}>
-              {[...articles].map((ap: IArticle, index: number) => (
-                <ListItem article={ap} narrow={true} grid={gridLayout} />
-              ))}
-            </List>
-          </motion.div>
-        )}
-        {gridLayout == 'rows' && (
-          <motion.div
-            key="rows"
-            variants={variants}
-            animate={gridLayout}
-            initial="initial"
-            exit="exit"
-          >
-            <List gridLayout={gridLayout} hasOnlyOneArticle={hasOnlyOneArticle} reverse={true}>
-              {[...articles].map((ap: IArticle, index: number) => (
-                <ListItem article={ap} narrow={true} grid={gridLayout} />
-              ))}
-            </List>
-          </motion.div>
+        {gridLayout == 'tiles' ? (
+          <ListLayoutContainer key={gridLayout} gridLayout={gridLayout} articles={articles} />
+        ) : (
+          <ListLayoutContainer key={gridLayout} gridLayout={gridLayout} articles={articles} />
         )}
       </AnimatePresence>
     </ArticlesListContainer>
@@ -115,15 +54,76 @@ const ArticlesList: React.FC<IArticlesListProps> = ({
 
 export default ArticlesList;
 
+interface IListLayoutContainerProps {
+  articles: any;
+  gridLayout: any;
+}
+
+const siteQuery = graphql`
+  {
+    allSite {
+      edges {
+        node {
+          siteMetadata {
+            transition {
+              gridRowAnimationDurationSeconds
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+const ListLayoutContainer: React.FC<IListLayoutContainerProps> = ({
+  articles,
+  gridLayout,
+  ...props
+}: IListLayoutContainerProps) => {
+  const { gridRowAnimationDurationSeconds } = useStaticQuery(
+    siteQuery
+  ).allSite.edges[0].node.siteMetadata.transition;
+
+  const variants = {
+    initial: {
+      opacity: 0
+    },
+    enter: {
+      opacity: 1,
+      transition: {
+        duration: gridRowAnimationDurationSeconds
+      }
+    },
+    exit: {
+      opacity: 0,
+      transition: { duration: gridRowAnimationDurationSeconds }
+    }
+  };
+
+  return (
+    <motion.div variants={variants} animate="enter" initial="initial" exit="exit" {...props}>
+      <List gridLayout={gridLayout} reverse={true}>
+        {[...articles].map((ap: IArticle, index: number) => (
+          <ListItem key={index} article={ap} narrow={true} gridLayout={gridLayout} />
+        ))}
+      </List>
+    </motion.div>
+  );
+};
+
+interface IArticlesListItemProps {
+  article: IArticle;
+  narrow?: boolean;
+  gridLayout: string;
+}
+
 const ListItem: React.FC<IArticlesListItemProps> = ({
   article,
   narrow,
-  grid
+  gridLayout
 }: IArticlesListItemProps) => {
   if (!article) return null;
 
-  /*     const { gridLayout } = useContext(GridLayoutContext); */
-  const gridLayout = grid;
   const hasOverflow = narrow && article.title.length > 35;
   const imageSource = narrow ? article.hero.narrow : article.hero.regular;
   const hasHeroImage =
@@ -136,7 +136,7 @@ const ListItem: React.FC<IArticlesListItemProps> = ({
           {hasHeroImage ? <Image src={imageSource} /> : <ImagePlaceholder />}
         </ImageContainer>
         <div>
-          <Title dark hasOverflow={hasOverflow} gridLayout={gridLayout}>
+          <Title hasOverflow={hasOverflow} gridLayout={gridLayout}>
             {article.title}
           </Title>
           <Excerpt narrow={narrow} hasOverflow={hasOverflow} gridLayout={gridLayout}>
@@ -261,13 +261,12 @@ border-bottom-left-radius: 5px;
 // If only 1 article, dont create 2 rows.
 const listRow = p => css`
   display: grid;
-  grid-template-rows: ${p.hasOnlyOneArticle ? '1fr' : '1fr 1fr'};
+  grid-template-rows: '1fr 1fr';
 `;
 
 const List = styled.div<{
   reverse: boolean;
   gridLayout: string;
-  hasOnlyOneArticle: boolean;
 }>`
   justify-content: ${p => (p.gridLayout === 'tiles' ? 'space-between' : 'none')};
   ${p => (p.gridLayout === 'tiles' ? listTile : listRow)}
