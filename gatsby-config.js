@@ -10,7 +10,8 @@ module.exports = {
     emojiDir: 'emojis',
     transition: {
       scrollTimeoutMilliseconds: 300,
-      animationDurationSeconds: 0.3
+      pageAnimationDurationSeconds: 0.3,
+      gridRowAnimationDurationSeconds: 0.2
     },
     logo: {
       text: 'T·A·O·A'
@@ -22,7 +23,8 @@ module.exports = {
     },
     search: {
       placeholder: `Search by title or tags`,
-      heading: `Search Articles`
+      heading: `Search Articles`,
+      pageLength: 6
     },
     hero: {
       welcome: `Welcome to`,
