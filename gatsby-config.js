@@ -16,20 +16,23 @@ module.exports = {
     logo: {
       text: 'T·A·O·A'
     },
-    footer: {
-      message: [' Made with', ' :heart:', ' and ☕'],
-      link: '/ambiguity.txt',
-      linkIndex: 1
+    home: {
+      numberOfArticles: 4,
+      hero: {
+        welcome: `Welcome to`,
+        heading: `A tech blog about first principles, system design, and computation`,
+        maxWidth: 900
+      }
     },
     search: {
       placeholder: `Search by title or tags`,
       heading: `Search Articles`,
       pageLength: 6
     },
-    hero: {
-      welcome: `Welcome to`,
-      heading: `A tech blog about first principles, system design, and computation`,
-      maxWidth: 900
+    footer: {
+      message: [' Made with', ' :heart:', ' and ☕'],
+      link: '/ambiguity.txt',
+      linkIndex: 1
     },
     social: [
       {
