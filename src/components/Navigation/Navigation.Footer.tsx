@@ -139,7 +139,7 @@ const FooterGradient = styled.div((p: ITAOAThemeUIContext) => ({
   left: 0,
   width: '100%',
   height: '590px',
-  zIndex: -1,
+  zIndex: 0,
   pointerEvents: 'none',
   background: p.theme.colors.gradient as CSS.ColorProperty,
   transition: p.theme.colorModeTransition
