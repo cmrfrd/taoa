@@ -35,7 +35,6 @@ const AboutPage: Template = ({ pageContext }: TTemplate) => {
           })}
         </AuthorContainer>
       </Section>
-      <AboutGradient />
     </span>
   );
 };
@@ -46,9 +45,9 @@ const AuthorContainer = styled.div((p: ITAOAThemeUIContext) => ({
   position: 'relative',
   bottom: 0,
   left: 0,
+  zIndex: 1,
   width: '100%',
   padding: '200px 30px 0',
-  background: p.theme.colors.background as CSS.ColorProperty,
   transition: p.theme.colorModeTransition
 }));
 
