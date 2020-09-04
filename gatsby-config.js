@@ -9,9 +9,9 @@ module.exports = {
     description: ``,
     emojiDir: 'emojis',
     transition: {
-      scrollTimeoutMilliseconds: 300,
-      pageAnimationDurationSeconds: 0.3,
-      gridRowAnimationDurationSeconds: 0.2
+      scrollTimeoutMilliseconds: 250,
+      pageAnimationDurationSeconds: 0.25,
+      gridRowAnimationDurationSeconds: 0.25
     },
     logo: {
       text: 'T·A·O·A'
