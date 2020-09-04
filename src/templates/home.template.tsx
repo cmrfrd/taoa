@@ -44,17 +44,29 @@ const HomePage: Template = ({ location, pageContext }: TTemplate) => {
       <SEO pathname={location.pathname} />
       <ArticlesHero />
       <Section narrow>
-        <ArticlesList articles={articlesToShow} />
-        <LinkThingy>
-          <Headings.h4>Thingy</Headings.h4>
-        </LinkThingy>
+        <Container>
+          <ArticlesList articles={articlesToShow} />
+          <LinkContainer>
+            <Link to={'/articles'}>
+              <LinkText>More articles ...</LinkText>
+            </Link>
+          </LinkContainer>
+        </Container>
       </Section>
-      <ArticlesGradient />
     </span>
   );
 };
 
 export default HomePage;
+
+const Container = styled.div((p: ITAOAThemeUIContext) => ({
+  position: 'relative',
+  bottom: 0,
+  left: 0,
+  zIndex: 1,
+  width: '100%',
+  transition: p.theme.colorModeTransition
+}));
 
 const paginationItemMixin = (p: ITAOAThemeUIContext): SerializedStyles => css`
   line-height: 1;
@@ -83,7 +95,17 @@ const paginationItemMixin = (p: ITAOAThemeUIContext): SerializedStyles => css`
   }
 `;
 
-const LinkThingy = styled(Link)((p: ITAOAThemeUIContext) => ({}));
+const LinkContainer = styled.div((p: ITAOAThemeUIContext) => ({
+  marginTop: '100px',
+  overflowY: 'auto'
+}));
+
+const LinkText = styled(Headings.h4)((p: ITAOAThemeUIContext) => ({
+  transition: 'color 0.3s ease-in-out',
+  '&:hover': {
+    color: p.theme.colors.accent
+  }
+}));
 
 const Text = styled(Headings.h6)(
   (p: ITAOAThemeUIContext) => `

@@ -111,7 +111,7 @@ const FooterContainer = styled.div((p: ITAOAThemeUIContext) => ({
 
 const HoritzontalRule = styled.div((p: ITAOAThemeUIContext) => ({
   position: 'relative',
-  margin: '140px auto 50px',
+  margin: '90px auto 50px',
   borderBottom: `1px solid ${p.theme.colors.horizontalRule}`,
 
   [mediaquery.tablet()]: {
