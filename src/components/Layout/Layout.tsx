@@ -1,5 +1,6 @@
 import ArticlesContextProvider from '../../sections/articles/Articles.List.Context';
 
+import FadeTransition from '@components/FadeTransition';
 import NavigationFooter from '@components/Navigation/Navigation.Footer';
 import NavigationHeader from '@components/Navigation/Navigation.Header';
 import { globalStyles } from '@styles';
@@ -7,20 +8,42 @@ import { TLayout, ITAOAThemeUIContext } from '@types';
 
 import { Global } from '@emotion/core';
 import styled from '@emotion/styled';
+import { graphql, useStaticQuery } from 'gatsby';
 import React, { useEffect } from 'react';
 import { useColorMode } from 'theme-ui';
+
+const durationQuery = graphql`
+  {
+    site: allSite {
+      edges {
+        node {
+          siteMetadata {
+            transition {
+              pageAnimationDurationSeconds
+            }
+          }
+        }
+      }
+    }
+  }
+`;
 
 /**
  * <Layout /> needs to wrap every page as it provides styles, navigation,
  * and the main structure of each page. Within Layout we have the <Container />
- * which hides a lot of the mess we need to create our Desktop and Mobile experiences.
+ * which hides a lot of the mess we need to create the Desktop and Mobile experiences.
  */
 const Layout: React.FC<TLayout> = ({
   children,
   enableGridRow = false,
-  gradient = true
+  gradient = true,
+  location
 }: TLayout) => {
   const [colorMode] = useColorMode();
+
+  const { pageAnimationDurationSeconds } = useStaticQuery(
+    durationQuery
+  ).site.edges[0].node.siteMetadata.transition;
 
   useEffect(() => {
     parent.postMessage({ theme: colorMode }, '*');
@@ -32,8 +55,14 @@ const Layout: React.FC<TLayout> = ({
         <HeaderTexture />
         <Global styles={globalStyles} />
         <NavigationHeader enableGridRow={enableGridRow} initialArrowUp={false} />
-        {children}
-        <NavigationFooter gradient={gradient} />
+        <FadeTransition
+          animatePresenceProps={{ exitBeforeEnter: true }}
+          motionKey={location.pathname}
+          duration={pageAnimationDurationSeconds}
+        >
+          {children}
+          <NavigationFooter gradient={gradient} />
+        </FadeTransition>
       </Container>
     </ArticlesContextProvider>
   );
