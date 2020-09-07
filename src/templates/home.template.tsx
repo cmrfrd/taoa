@@ -5,6 +5,7 @@ import Paginator from '@components/Navigation/Navigation.Paginator';
 import SEO from '@components/SEO';
 import Headings from '@components/Headings';
 import Section from '@components/Section';
+import { MediumButton } from '@components/Button';
 import { Template, TTemplate, ITAOAThemeUIContext } from '@types';
 
 import styled from '@emotion/styled';
@@ -48,7 +49,7 @@ const HomePage: Template = ({ location, pageContext }: TTemplate) => {
           <ArticlesList articles={articlesToShow} />
           <LinkContainer>
             <Link to={'/articles'}>
-              <LinkText>More articles ...</LinkText>
+              <MediumButton text="More articles ➡ " />
             </Link>
           </LinkContainer>
         </Container>
@@ -97,7 +98,8 @@ const paginationItemMixin = (p: ITAOAThemeUIContext): SerializedStyles => css`
 
 const LinkContainer = styled.div((p: ITAOAThemeUIContext) => ({
   marginTop: '100px',
-  overflowY: 'auto'
+  display: 'flex',
+  flexDirection: 'row'
 }));
 
 const LinkText = styled(Headings.h4)((p: ITAOAThemeUIContext) => ({
