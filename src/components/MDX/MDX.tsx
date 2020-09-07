@@ -1,6 +1,6 @@
 import Anchor from '@components/Anchor';
 import Blockquote from '@components/Blockquote';
-import Button from '@components/Button';
+import Button, { SmallButton, MediumButton, LargeButton } from '@components/Button';
 import Code from '@components/Code';
 import CodeEditorWithOutput from '@components/CodeEditor';
 import ConfettiButton from '@components/ConfettiButton';
@@ -72,6 +72,9 @@ const components: Components = {
   td: Tables.Cell,
   figcaption: Figcaption,
   Button,
+  SmallButton,
+  MediumButton,
+  LargeButton,
   ConfettiButton,
   CodeEditorWithOutput
 };
