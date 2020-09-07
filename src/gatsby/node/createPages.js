@@ -88,7 +88,7 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
 
   // Combining together all the authors from different sources
   authors = getUniqueListBy([...dataSources.local.authors], 'name');
-  log(`${authors.length}`, 'authors found');
+  log(`${authors.length}`, 'author(s) found');
 
   if (articles.length === 0 || authors.length === 0) {
     throw new Error(`
@@ -100,24 +100,14 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
    * Once we've queried all our data sources and normalized them to the same structure
    * we can begin creating our pages. First, we'll want to create all main articles pages
    * that have pagination.
-   * /articles
-   * /articles/page/1
-   * ...
    */
   log('Creating', 'home page');
-  const pageLength = 6;
-  createPaginatedPages({
-    edges: articlesThatArentSecret,
-    pathPrefix: basePath,
-    createPage,
-    pageLength,
-    pageTemplate: templates.home,
-    buildPath: buildPaginatedPath,
+  createPage({
+    path: basePath,
+    component: templates.home,
     context: {
       basePath,
       articles: articlesThatArentSecret,
-      skip: pageLength,
-      limit: pageLength,
       enableGridRow: true
     }
   });
@@ -195,19 +185,13 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
 
   // Creating the about page
   const articlesPath = '/articles';
-  createPaginatedPages({
-    edges: articlesThatArentSecret,
-    pathPrefix: articlesPath,
-    createPage,
-    pageLength,
-    pageTemplate: templates.search,
-    buildPath: buildPaginatedPath,
+  createPage({
+    path: articlesPath,
+    component: templates.search,
     context: {
       authors,
       articlesPath,
       articles: articlesThatArentSecret,
-      skip: pageLength,
-      limit: pageLength,
       enableGridRow: true
     }
   });
