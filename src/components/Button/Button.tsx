@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import * as CSS from 'csstype';
 import React from 'react';
 // @ts-ignore
-import { AwesomeButton, AwesomeButtonProps } from 'react-awesome-button';
+import { AwesomeButton } from 'react-awesome-button';
 
 interface IButtonPropsTheme extends ITAOAThemeUIContext {
   fontSize?: string;
@@ -12,8 +12,14 @@ interface IButtonPropsTheme extends ITAOAThemeUIContext {
   height?: string;
 }
 
+interface IButtonPropsAwesome {
+  // extends AwesomeButtonProps
+  onPress?(): void;
+  size?: string;
+}
+
 interface IButtonProps {
-  button?: AwesomeButtonProps;
+  button?: IButtonPropsAwesome;
   theme?: IButtonPropsTheme;
   text?: string;
 }
