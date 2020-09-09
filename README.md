@@ -20,21 +20,27 @@ Posts for TAOA are written in org mode, exported to mdx, then become viewable in
 
 ## Running locally
 
-To run this repo locally via docker run
+Scripts to setup and interact with the rest of the code in this repo are located in the `bin/` directory. Scripts
+prefixed with `local` are meant to be run on the developers local machine, scripts prefixed with `container` are
+meant to be run inside of `the_art_of_abstraction` container.
+
+To run this app locally there is some setup that needs to be done
+
+1. Get an active shell in `the_art_of_abstraction` docker container.
 
 ``` shell
-./bin/shell.sh
+$ ./bin/local_shell.sh
 ```
 
-Once inside the container, run
+Once inside the container, download emojis and generate TLS certificates (don't forget to add the root CA signature to your browser!)
 
 ``` shell
-npm i
-gatsby develop
+$ ./bin/container_download_emojis.sh
+$ ./bin/container_generate_certs.sh
 ```
 
 This will run the website in development mode where you can test, edit, and view the website
-in the browser at `localhost:8000`
+in the browser at `https://localhost:8000`
 
 ## Contributing
 
