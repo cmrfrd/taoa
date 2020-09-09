@@ -46,6 +46,7 @@ const HomePage: Template = ({ location, pageContext }: TTemplate) => {
       <ArticlesHero />
       <Section narrow>
         <Container>
+          <EntriesHeading>Latest Entries</EntriesHeading>
           <ArticlesList articles={articlesToShow} />
           <LinkContainer>
             <Link to={'/articles'}>
@@ -68,6 +69,30 @@ const Container = styled.div((p: ITAOAThemeUIContext) => ({
   width: '100%',
   transition: p.theme.colorModeTransition
 }));
+
+const EntriesHeading = styled.h2`
+    font-style: normal;
+    font-size: 30px;
+    line-height: 1.15;
+    color: ${p => p.theme.colors.primary};
+    padding-bottom: 20px;
+
+    a {
+    color: ${p => p.theme.colors.accent};
+    }
+
+    ${mediaqueries.desktop`
+font-size: 20px
+`}
+
+    ${mediaqueries.phablet`
+font-size: 14px;
+`}
+
+    ${mediaqueries.phone`
+font-size: 14px;
+`}
+`;
 
 const paginationItemMixin = (p: ITAOAThemeUIContext): SerializedStyles => css`
   line-height: 1;
