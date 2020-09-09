@@ -44,7 +44,11 @@ const SearchPage: Template = ({ location, pageContext }: TTemplate) => {
   const [searchResults, setSearchResults] = useState(articles);
   const pages = Math.ceil([...searchResults].length / search.pageLength);
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const [searching, setSearching] = useState(false);
+
+  const [numSearchResults, setNumSearchResults] = useState(articles.length);
 
   const filter = (e: IArticle, term: string): boolean => {
     return e.title.toLowerCase().includes(term) || e.title.includes(term);
@@ -67,25 +71,31 @@ const SearchPage: Template = ({ location, pageContext }: TTemplate) => {
         <SearchContainer>
           <SearchHeading>{search.heading}</SearchHeading>
           <Search
+            setNumSearchResults={setNumSearchResults}
             searchResults={searchResults}
             setSearchResults={setSearchResults}
+            setCurrentPage={setCurrentPage}
+            searching={searching}
+            setSearching={setSearching}
             elements={articles}
             filter={filter}
             sort={sort}
             placeholder={search.placeholder}
           />
           <Horizontal />
+          <NumArticlesHeader>{numSearchResults} results found</NumArticlesHeader>
           <ArticlesList
             articles={searchResults.slice(
-              (currentPage - 1) * search.pageLength,
-              currentPage * search.pageLength
+              currentPage * search.pageLength,
+              (currentPage + 1) * search.pageLength
             )}
             currentPage={currentPage}
+            searching={searching}
           />
           <ArticlesPaginator show={pageContext.pageCount > 1}>
             <Paginator
               {...{
-                index: 1,
+                index: 0,
                 pageCount: pages,
                 count: searchResults.slice(
                   (currentPage - 1) * search.pageLength,
@@ -98,7 +108,6 @@ const SearchPage: Template = ({ location, pageContext }: TTemplate) => {
               }}
             />
           </ArticlesPaginator>
-          <div>{pages}</div>
         </SearchContainer>
       </Section>
     </span>
@@ -117,23 +126,13 @@ const Horizontal = styled.div((p: ITAOAThemeUIContext) => ({
   }
 }));
 
-const ArticlesGradient = styled.div((p: ITAOAThemeUIContext) => ({
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  width: '100%',
-  height: '590px',
-  zIndex: 0,
-  pointerEvents: 'none',
-  background: p.theme.colors.gradient as CSS.ColorProperty,
-  transition: p.theme.colorModeTransition
-}));
-
 interface IArticlesPaginator extends ITAOAThemeUIContext {
   show: boolean;
 }
 const ArticlesPaginator = styled.div((p: IArticlesPaginator) => ({
-  ...(p.show && { marginTop: '95px' })
+  ...(p.show && { marginTop: '95px' }),
+  position: 'absolute',
+  bottom: 0
 }));
 
 const SearchContainer = styled.div((p: ITAOAThemeUIContext) => ({
@@ -142,8 +141,9 @@ const SearchContainer = styled.div((p: ITAOAThemeUIContext) => ({
   left: 0,
   zIndex: 1,
   width: '100%',
-  padding: '200px 30px 0',
+  padding: '200px 30px 50px',
   transition: p.theme.colorModeTransition,
+  minHeight: '850px',
 
   [mediaquery.phablet()]: {
     padding: '150px 30px 0'
@@ -151,6 +151,12 @@ const SearchContainer = styled.div((p: ITAOAThemeUIContext) => ({
 }));
 
 const SearchHeading = styled(Headings.h2)({
+  [mediaquery.phablet()]: {
+    padding: 0
+  }
+});
+
+const NumArticlesHeader = styled(Headings.h5)({
   [mediaquery.phablet()]: {
     padding: 0
   }
