@@ -28,29 +28,21 @@ class Paginator extends Component<IPaginator, {}> {
   current: number = this.props.index;
   pageRoot: string = this.props.pathPrefix;
 
-  get nextPath(): string {
-    return this.getFullPath(this.current + 1);
-  }
-
-  get previousPath(): string {
-    return this.getFullPath(this.current - 1);
-  }
-
   /**
    * Utility function to return a 1 ... 5 6 7 ... 10 style pagination
    */
   get getPageLinks(): React.ReactNode {
-    const current = this.current;
-    const count = this.count;
+    const current = this.props.currentPage;
+    const count = this.props.pageCount;
     const maxPages = this.maxPages;
 
     // Current is the page we're on
     // We want to show current - 1, current, current + 1
     // Of course if we're on page 1, we don't want a page 0
-    const previousPage = current === 1 ? current : current - 1;
+    const previousPage = current === 0 ? current : current - 1;
 
     // Now create a range of numbers from the previousPage to the total pages (count)
-    const pagesRange = range(previousPage, count + 1 - previousPage);
+    const pagesRange = range(previousPage, count);
 
     // We might need to truncate that pagesRange if it's
     // more than the max pages we wish to display (3)
@@ -61,12 +53,12 @@ class Paginator extends Component<IPaginator, {}> {
 
     // We might need a spacer at the start of the pagination e.g. 1 ... 3 4 5 etc.
     // If we're after the second page, we need a ... spacer (3 and up)
-    if (pagesRange[0] > 2) {
+    if (pagesRange[0] > 1) {
       truncatedRange.unshift(null);
     }
     // If we're after the first page, we need page 1 to appear (2 and up)
-    if (pagesRange[0] > 1) {
-      truncatedRange.unshift(1);
+    if (pagesRange[0] > 0) {
+      truncatedRange.unshift(0);
     }
 
     // If we're on the final page, then there won't be a "next" page and
@@ -95,28 +87,17 @@ class Paginator extends Component<IPaginator, {}> {
         // Otherwise render a PageButton
         <PageNumberBUtton
           key={`PaginatorPage_${page}`}
-          to={this.getFullPath(page)}
           style={{ opacity: current === page ? 1 : 0.3 }}
           className="Paginator__pageLink"
+          onClick={() => {
+            this.props.setCurrentPage(page);
+          }}
         >
           {page}
         </PageNumberBUtton>
       )
     );
   }
-
-  /**
-   * Utility to turn an index in to a page path.
-   * All it really does is glue the page path to the front,
-   * but note there's special behaviour for page 1 where the URL should be / not /page/1
-   */
-  getFullPath: (arg0: number) => string = (n: number): string => {
-    if (this.pageRoot === '/') {
-      return n === 1 ? this.pageRoot : this.pageRoot + 'page/' + n;
-    } else {
-      return n === 1 ? this.pageRoot : this.pageRoot + '/page/' + n;
-    }
-  };
 
   render(): React.ReactNode {
     const count = this.count;
@@ -126,8 +107,10 @@ class Paginator extends Component<IPaginator, {}> {
 
     const previousPath = this.previousPath;
     const nextPath = this.nextPath;
-    const hasNext = this.current < this.count;
-    const hasPrevious = this.current > 1;
+    const hasNext = this.props.currentPage < this.count;
+    const hasPrevious = this.props.currentPage > 1;
+
+    const mod = (a, b) => ((a % b) + b) % b;
 
     return (
       <>
@@ -136,12 +119,28 @@ class Paginator extends Component<IPaginator, {}> {
           {hasNext && <link rel="next" href={nextPath} />}
         </Helmet>
         <Frame>
-          {hasPrevious && <PageButton to={previousPath}>Prev</PageButton>}
+          {this.props.pageCount > 0 && (
+            <PageButton
+              onClick={() => {
+                this.props.setCurrentPage(mod(this.props.currentPage - 1, this.props.pageCount));
+              }}
+            >
+              Prev
+            </PageButton>
+          )}
           {this.getPageLinks}
           <MobileReference aria-hidden="true">
             <em>{current}</em>&nbsp;of {count}
           </MobileReference>
-          {hasNext && <PageButton to={nextPath}>Next</PageButton>}
+          {this.props.pageCount > 0 && (
+            <PageButton
+              onClick={() => {
+                this.props.setCurrentPage(mod(this.props.currentPage + 1, this.props.pageCount));
+              }}
+            >
+              Next
+            </PageButton>
+          )}
         </Frame>
       </>
     );
@@ -153,7 +152,7 @@ export default Paginator;
 const paginationItemMixin = (p: ITAOAThemeUIContext): SerializedStyles => css`
   line-height: 1;
   color: ${p.theme.colors.primary};
-  padding: 0;
+  padding: 2rem;
   width: 6.8rem;
   height: 6.8rem;
   display: flex;
@@ -165,33 +164,23 @@ const paginationItemMixin = (p: ITAOAThemeUIContext): SerializedStyles => css`
     display: block;
     width: auto;
     height: auto;
-    padding: 2rem;
-
-    &:first-of-type {
-      padding-left: 0;
-    }
-
-    &:last-child {
-      padding-right: 0;
-    }
   }
 `;
 
-const PageButton = styled(Link)`
+const PageButton = styled.div`
   font-weight: 600;
   font-size: 18px;
   text-decoration: none;
-  color: ${(p: ITAOAThemeUIContext): CSS.ColorProperty => p.theme.colors.primary};
   ${(p: ITAOAThemeUIContext): SerializedStyles => paginationItemMixin(p)}
 
   &:hover,
-  &:focus {
+    &:focus {
     opacity: 1;
     text-decoration: underline;
   }
 `;
 
-const PageNumberBUtton = styled(Link)`
+const PageNumberBUtton = styled.div`
   font-weight: 400;
   font-size: 18px;
   text-decoration: none;
@@ -199,7 +188,7 @@ const PageNumberBUtton = styled(Link)`
   ${(p: ITAOAThemeUIContext): SerializedStyles => paginationItemMixin(p)}
 
   &:hover,
-  &:focus {
+    &:focus {
     opacity: 1;
     text-decoration: underline;
   }
