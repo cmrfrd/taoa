@@ -1,5 +1,6 @@
 import { GridLayoutContext } from './Articles.List.Context';
 
+import FadeTransition from '@components/FadeTransition';
 import Headings from '@components/Headings';
 import Image, { ImagePlaceholder } from '@components/Image';
 import mediaqueries from '@styles/media';
@@ -28,35 +29,7 @@ import React, { useContext } from 'react';
 interface IArticlesListProps {
   articles: IArticle[];
   alwaysShowAllDetails?: boolean;
-}
-
-const ArticlesList: React.FC<IArticlesListProps> = ({
-  articles,
-  alwaysShowAllDetails
-}: IArticlesListProps) => {
-  if (!articles) return null;
-
-  const { gridLayout = 'tiles', getGridLayout } = useContext(GridLayoutContext);
-
-  return (
-    <ArticlesListContainer alwaysShowAllDetails={alwaysShowAllDetails}>
-      <EntriesHeading>Latest Entries</EntriesHeading>
-      <AnimatePresence exitBeforeEnter>
-        {gridLayout == 'tiles' ? (
-          <ListLayoutContainer key={gridLayout} gridLayout={gridLayout} articles={articles} />
-        ) : (
-          <ListLayoutContainer key={gridLayout} gridLayout={gridLayout} articles={articles} />
-        )}
-      </AnimatePresence>
-    </ArticlesListContainer>
-  );
-};
-
-export default ArticlesList;
-
-interface IListLayoutContainerProps {
-  articles: any;
-  gridLayout: any;
+  currentPage: number;
 }
 
 const siteQuery = graphql`
@@ -75,6 +48,74 @@ const siteQuery = graphql`
   }
 `;
 
+const variants = (duration: number): any => ({
+  initial: p => ({
+    zIndex: 1,
+    opacity: 0
+  }),
+  enter: p => ({
+    opacity: 1,
+    zIndex: 1,
+    transition: {
+      duration: duration
+    }
+  }),
+  exit: p => ({
+    opacity: 0,
+    zIndex: 1,
+
+    transition: { duration: duration }
+  })
+});
+
+const ArticlesList: React.FC<IArticlesListProps> = ({
+  articles,
+  alwaysShowAllDetails,
+  currentPage,
+  searching
+}: IArticlesListProps) => {
+  if (!articles) return null;
+
+  const { gridLayout = 'tiles', getGridLayout } = useContext(GridLayoutContext);
+  const { gridRowAnimationDurationSeconds } = useStaticQuery(
+    siteQuery
+  ).allSite.edges[0].node.siteMetadata.transition;
+
+  return (
+    <ArticlesListContainer alwaysShowAllDetails={alwaysShowAllDetails}>
+      <FadeTransition
+        animatePresenceProps={{ initial: false, exitBeforeEnter: true }}
+        motionKey={currentPage}
+        duration={gridRowAnimationDurationSeconds}
+      >
+        <FadeTransition
+          animatePresenceProps={{ exitBeforeEnter: true }}
+          motionKey={gridLayout}
+          duration={gridRowAnimationDurationSeconds}
+        >
+          <FadeTransition
+            animatePresenceProps={{ exitBeforeEnter: true }}
+            motionKey={searching}
+            duration={gridRowAnimationDurationSeconds}
+            motionProps={{
+              animate: searching ? 'exit' : 'enter'
+            }}
+          >
+            <ListLayoutContainer key={gridLayout} gridLayout={gridLayout} articles={articles} />
+          </FadeTransition>
+        </FadeTransition>
+      </FadeTransition>
+    </ArticlesListContainer>
+  );
+};
+
+export default ArticlesList;
+
+interface IListLayoutContainerProps {
+  articles: any;
+  gridLayout: any;
+}
+
 const ListLayoutContainer: React.FC<IListLayoutContainerProps> = ({
   articles,
   gridLayout,
@@ -84,30 +125,12 @@ const ListLayoutContainer: React.FC<IListLayoutContainerProps> = ({
     siteQuery
   ).allSite.edges[0].node.siteMetadata.transition;
 
-  const variants = {
-    initial: {
-      opacity: 0
-    },
-    enter: {
-      opacity: 1,
-      transition: {
-        duration: gridRowAnimationDurationSeconds
-      }
-    },
-    exit: {
-      opacity: 0,
-      transition: { duration: gridRowAnimationDurationSeconds }
-    }
-  };
-
   return (
-    <motion.div variants={variants} animate="enter" initial="initial" exit="exit" {...props}>
-      <List gridLayout={gridLayout} reverse={true}>
-        {[...articles].map((ap: IArticle, index: number) => (
-          <ListItem key={index} article={ap} narrow={true} gridLayout={gridLayout} />
-        ))}
-      </List>
-    </motion.div>
+    <List gridLayout={gridLayout} reverse={true}>
+      {[...articles].map((ap: IArticle, index: number) => (
+        <ListItem key={index} article={ap} narrow={true} gridLayout={gridLayout} />
+      ))}
+    </List>
   );
 };
 
@@ -152,7 +175,7 @@ const ListItem: React.FC<IArticlesListItemProps> = ({
 };
 
 const wide = '1fr';
-const narrow = '527px';
+const narrow = '1fr';
 
 const limitToTwoLines = css`
   text-overflow: ellipsis;
