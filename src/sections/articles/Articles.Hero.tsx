@@ -16,10 +16,12 @@ const authorQuery = graphql`
       edges {
         node {
           siteMetadata {
-            hero {
-              welcome
-              heading
-              maxWidth
+            home {
+              hero {
+                welcome
+                heading
+                maxWidth
+              }
             }
           }
         }
@@ -32,7 +34,7 @@ const ArticlesHero: React.FC<IAuthor> = () => {
   const { gridLayout = 'tiles', hasSetGridLayout, setGridLayout } = useContext(GridLayoutContext);
 
   const results = useStaticQuery(authorQuery);
-  const hero = results.site.edges[0].node.siteMetadata.hero;
+  const { hero } = results.site.edges[0].node.siteMetadata.home;
   const tilesIsActive = hasSetGridLayout && gridLayout === 'tiles';
 
   return (
