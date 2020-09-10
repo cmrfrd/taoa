@@ -7,7 +7,6 @@ export default {
   secondary: '#73737D',
   grey: '#4E4E55',
   background: '#fafafa',
-  buttonHover: '#D6D6D6',
   tintBackground: '#efefef',
   invTintBackground: '#1d2028',
   invbackground: '#15161c',

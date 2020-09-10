@@ -88,7 +88,7 @@ const ButtonContainer = styled.div(
             --button-primary-color-light: ${p.theme.colors.background};
             --button-primary-color: ${p.theme.colors.invTintBackground as CSS.ColorProperty};
             --button-primary-color-dark: ${p.theme.colors.grey as CSS.ColorProperty};
-            --button-primary-color-hover: ${p.theme.colors.buttonHover as CSS.ColorProperty};
+            --button-primary-color-hover: ${p.theme.colors.tintBackground as CSS.ColorProperty};
             --button-primary-color-active: ${p.theme.colors.tintBackground as CSS.ColorProperty};
             --button-primary-border: none;
             --button-secondary-color: #f2f6f9;
