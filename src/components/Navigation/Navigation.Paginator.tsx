@@ -129,9 +129,6 @@ class Paginator extends Component<IPaginator, {}> {
             </PageButton>
           )}
           {this.getPageLinks}
-          <MobileReference aria-hidden="true">
-            <em>{current}</em>&nbsp;of {count}
-          </MobileReference>
           {this.props.pageCount > 0 && (
             <PageButton
               onClick={() => {
@@ -213,25 +210,20 @@ const MobileReference = styled.span`
     }
 `;
 
-const Frame = styled.nav`
+const Frame = styled.div`
   position: relative;
   z-index: 1;
   display: inline-flex;
-  justify-content: space-between;
-  align-items: center;
 
   ${mediaquery.tablet()} {
-    .Paginator__pageLink,
-    ${Spacer} {
-      display: none;
-    }
-    left: -15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   ${mediaqueryup.desktop()} {
+    justify-content: space-between;
+    align-items: center;
     justify-content: flex-start;
-    ${MobileReference} {
-      display: none;
-    }
   }
 `;
