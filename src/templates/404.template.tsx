@@ -3,31 +3,14 @@ import Paragraph from '@components/Paragraph';
 import SEO from '@components/SEO';
 import Section from '@components/Section';
 import { mediaquery } from '@styles/media';
-import { Template, ITAOAThemeUIContext } from '@types';
+import { Template, TTemplate, ITAOAThemeUIContext } from '@types';
 
 import styled from '@emotion/styled';
-import { graphql, useStaticQuery } from 'gatsby';
 import _ from 'lodash';
 import React from 'react';
 
-const messagesQuery = graphql`
-  {
-    allNotFoundYaml {
-      edges {
-        node {
-          messages {
-            emoji
-            message
-          }
-        }
-      }
-    }
-  }
-`;
-
-const Page404: Template = ({ location }: any) => {
-  const results = useStaticQuery(messagesQuery);
-  const { messages } = results.allNotFoundYaml.edges[0].node;
+const Page404: Template = ({ location, pageContext }: TTemplate) => {
+  const { name, messages } = pageContext.notFoundPageData.edges[0].node;
   const message = _.sample(messages);
 
   return (
@@ -36,7 +19,7 @@ const Page404: Template = ({ location }: any) => {
       <Section narrow>
         <Container>
           <CenterRowMessage>
-            <Big>404</Big>
+            <Big>{name}</Big>
             <EmojiContainer>
               <Emoji text={message.emoji} />
             </EmojiContainer>
@@ -56,6 +39,7 @@ const Container = styled('div')({
   textAlign: 'center',
   paddingTop: '200px',
   paddingBottom: '300px',
+  zIndex: 1,
   [mediaquery.desktop()]: {
     paddingTop: '200px',
     paddingBottom: '200px'
