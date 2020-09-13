@@ -19,6 +19,9 @@ const Search: React.FC<{}> = (props: any) => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+    // const top = window.pageYOffset || document.documentElement.scrollTop;
+    // if (top > 150) window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+
     setSearchTerm(event.target.value);
   };
 
@@ -35,7 +38,7 @@ const Search: React.FC<{}> = (props: any) => {
       resultsTimeoutRef.current = null;
       setSearchResults(results);
       setNumSearchResults(results.length);
-    }, 480);
+    }, 375);
 
     setSearchResults([]);
   }, [searchTerm]);
@@ -50,7 +53,7 @@ const Search: React.FC<{}> = (props: any) => {
       searchingTimeoutRef.current = null;
       console.log('not searching');
       setSearching(false);
-    }, 500);
+    }, 400);
 
     setSearching(true);
     setCurrentPage(0);
@@ -60,14 +63,25 @@ const Search: React.FC<{}> = (props: any) => {
   return (
     <InputContainer>
       <IconContainer>
-        {searching && (
+        {searching ? (
           <LoaderContainer>
             <CircleLoader />
           </LoaderContainer>
+        ) : (
+          <Icons.SearchIcon fill={tcolors.invbackground} />
         )}
-        <Icons.SearchIcon fill={tcolors.invbackground} />
       </IconContainer>
-      <Input type="text" placeholder={placeholder} onChange={handleChange} />
+      <Input
+        type="text"
+        placeholder={placeholder}
+        onChange={handleChange}
+        onFocus={e => {
+          console.log('focus', e);
+        }}
+        onScroll={e => {
+          e.preventDefault();
+        }}
+      />
     </InputContainer>
   );
 };
@@ -124,7 +138,7 @@ const InputContainer = styled.div(() => ({
 
 const LoaderContainer = styled.div(() => ({
   position: 'absolute',
-  right: '4.5rem'
+  right: '0.8rem'
 }));
 
 const Input = styled.input((p: ITAOAThemeUIContext) => ({
@@ -134,7 +148,7 @@ const Input = styled.input((p: ITAOAThemeUIContext) => ({
   color: p.theme.colors.invbackground as CSS.ColorProperty,
   background: 'transparent',
   height: '30px',
-  padding: '0.5rem',
+  paddingTop: '0.5rem',
   width: '100%'
 }));
 
