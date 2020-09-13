@@ -7,7 +7,6 @@ import { mediaquery } from '@styles/media';
 import { Template, TTemplate, IAuthor, ITAOAThemeUIContext } from '@types';
 
 import styled from '@emotion/styled';
-import * as CSS from 'csstype';
 import React from 'react';
 
 /*
@@ -17,7 +16,7 @@ import React from 'react';
  */
 const AboutPage: Template = ({ pageContext }: TTemplate) => {
   const authors = pageContext.authors;
-  const about = pageContext.about.about;
+  const about = pageContext.aboutPageData.about;
 
   return (
     <span>
@@ -48,18 +47,6 @@ const AuthorContainer = styled.div((p: ITAOAThemeUIContext) => ({
   zIndex: 1,
   width: '100%',
   padding: '200px 30px 0',
-  transition: p.theme.colorModeTransition
-}));
-
-const AboutGradient = styled.div((p: ITAOAThemeUIContext) => ({
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  width: '100%',
-  height: '590px',
-  zIndex: 0,
-  pointerEvents: 'none',
-  background: p.theme.colors.gradient as CSS.ColorProperty,
   transition: p.theme.colorModeTransition
 }));
 
