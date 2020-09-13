@@ -15,15 +15,11 @@ import { graphql, useStaticQuery } from 'gatsby';
 import throttle from 'lodash/throttle';
 import React, { useRef, useState, useEffect } from 'react';
 
-const siteQuery = graphql`
+const articleQuery = graphql`
   {
-    allSite {
-      edges {
-        node {
-          siteMetadata {
-            name
-          }
-        }
+    site {
+      siteMetadata {
+        siteName
       }
     }
   }
@@ -35,10 +31,9 @@ const Article: Template = ({ pageContext, location }: TTemplate) => {
   const [hasCalculated, setHasCalculated] = useState<boolean>(false);
   const [contentHeight, setContentHeight] = useState<number>(0);
 
-  const results = useStaticQuery(siteQuery);
-  const name = results.allSite.edges[0].node.siteMetadata.name;
-
-  const { article, authors, next } = pageContext;
+  const { article, authors, next, articlePageData } = pageContext;
+  const { nextArticleText } = articlePageData.edges[0].node.article;
+  const { siteName } = useStaticQuery(articleQuery).site.siteMetadata;
 
   useEffect(() => {
     const calculateBodySize = throttle(() => {
@@ -86,7 +81,9 @@ const Article: Template = ({ pageContext, location }: TTemplate) => {
       </ArticleBody>
       {next.length > 0 && (
         <NextArticle narrow>
-          <FooterNext>More articles from {name}</FooterNext>
+          <FooterNext>
+            {nextArticleText} {siteName}
+          </FooterNext>
           <ArticlesNext articles={next} />
           <FooterSpacer />
         </NextArticle>
