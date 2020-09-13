@@ -1,41 +1,28 @@
 import ArticlesHero from '../sections/articles/Articles.Hero';
 import ArticlesList from '../sections/articles/Articles.List';
 
+import { MediumButton } from '@components/Button';
+import Headings from '@components/Headings';
 import Paginator from '@components/Navigation/Navigation.Paginator';
 import SEO from '@components/SEO';
-import Headings from '@components/Headings';
 import Section from '@components/Section';
-import { MediumButton } from '@components/Button';
+import mediaqueries, { mediaquery, mediaqueryup } from '@styles/media';
 import { Template, TTemplate, ITAOAThemeUIContext } from '@types';
 
+import { css } from '@emotion/core';
+import { SerializedStyles } from '@emotion/serialize';
 import styled from '@emotion/styled';
 import * as CSS from 'csstype';
-import { Link, graphql, useStaticQuery } from 'gatsby';
+import { Link } from 'gatsby';
 import React from 'react';
 
-import mediaqueries, { mediaquery, mediaqueryup } from '@styles/media';
-import { SerializedStyles } from '@emotion/serialize';
-import { css } from '@emotion/core';
-
-const numberOfArticlesQuery = graphql`
-  {
-    site: allSite {
-      edges {
-        node {
-          siteMetadata {
-            home {
-              numberOfArticles
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
 const HomePage: Template = ({ location, pageContext }: TTemplate) => {
-  const results = useStaticQuery(numberOfArticlesQuery);
-  const { numberOfArticles } = results.site.edges[0].node.siteMetadata.home;
+  console.log('home context', pageContext);
+  const {
+    numberOfArticles,
+    moreArticlesText,
+    entriesHeadingText
+  } = pageContext.homePageData.edges[0].node.home;
 
   const { articles } = pageContext;
   const articlesToShow = articles.slice(0, numberOfArticles);
@@ -46,11 +33,11 @@ const HomePage: Template = ({ location, pageContext }: TTemplate) => {
       <ArticlesHero />
       <Section narrow>
         <Container>
-          <EntriesHeading>Latest Entries</EntriesHeading>
+          <EntriesHeading>{entriesHeadingText}</EntriesHeading>
           <ArticlesList articles={articlesToShow} />
           <LinkContainer>
             <Link to={'/articles'}>
-              <MediumButton text="More articles ➡ " />
+              <MediumButton text={moreArticlesText} />
             </Link>
           </LinkContainer>
         </Container>
