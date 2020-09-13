@@ -1,0 +1,9 @@
+name: "home"
+home:
+  numberOfArticles: 4
+  entriesHeadingText: "Latest Entries"
+  moreArticlesText: "More articles ➡ "
+  hero:
+    welcome: "Welcome to"
+    heading: "A tech blog about first principles, system design, and computation"
+    maxWidth: 900
