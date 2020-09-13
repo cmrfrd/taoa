@@ -1,4 +1,5 @@
 import ArticlesList from '../sections/articles/Articles.List';
+import { GridLayoutContext } from '../sections/articles/Articles.List.Context';
 
 import Headings from '@components/Headings';
 import Paginator from '@components/Navigation/Navigation.Paginator';
@@ -15,31 +16,11 @@ import styled from '@emotion/styled';
 import * as CSS from 'csstype';
 import { graphql, useStaticQuery } from 'gatsby';
 import { Link } from 'gatsby';
-import React, { useState } from 'react';
-
-const siteQuery = graphql`
-  {
-    allSite {
-      edges {
-        node {
-          siteMetadata {
-            search {
-              placeholder
-              heading
-              pageLength
-            }
-          }
-        }
-      }
-    }
-  }
-`;
+import React, { useState, useContext } from 'react';
 
 const SearchPage: Template = ({ location, pageContext }: TTemplate) => {
   const { articles } = pageContext;
-
-  const results = useStaticQuery(siteQuery);
-  const { search } = results.allSite.edges[0].node.siteMetadata;
+  const { search } = pageContext.searchPageData.edges[0].node;
 
   const [searchResults, setSearchResults] = useState(articles);
   const pages = Math.ceil([...searchResults].length / search.pageLength);
@@ -49,6 +30,8 @@ const SearchPage: Template = ({ location, pageContext }: TTemplate) => {
   const [searching, setSearching] = useState(false);
 
   const [numSearchResults, setNumSearchResults] = useState(articles.length);
+
+  const { gridLayout = 'tiles', getGridLayout } = useContext(GridLayoutContext);
 
   const filter = (e: IArticle, term: string): boolean => {
     return e.title.toLowerCase().includes(term) || e.title.includes(term);
@@ -68,7 +51,7 @@ const SearchPage: Template = ({ location, pageContext }: TTemplate) => {
     <span>
       <SEO pathname={location.pathname} />
       <Section narrow>
-        <SearchContainer>
+        <SearchContainer gridLayout={gridLayout}>
           <SearchHeading>{search.heading}</SearchHeading>
           <Search
             setNumSearchResults={setNumSearchResults}
@@ -92,23 +75,23 @@ const SearchPage: Template = ({ location, pageContext }: TTemplate) => {
             currentPage={currentPage}
             searching={searching}
           />
-          <ArticlesPaginator show={pageContext.pageCount > 1}>
-            <Paginator
-              {...{
-                index: 0,
-                pageCount: pages,
-                count: searchResults.slice(
-                  (currentPage - 1) * search.pageLength,
-                  currentPage * search.pageLength
-                ).length,
-                pathPrefix: '/bluh',
-                setCurrentPage: setCurrentPage,
-                currentPage: currentPage,
-                ...pageContext
-              }}
-            />
-          </ArticlesPaginator>
         </SearchContainer>
+        <ArticlesPaginator show={pageContext.pageCount > 1}>
+          <Paginator
+            {...{
+              index: 0,
+              pageCount: pages,
+              count: searchResults.slice(
+                (currentPage - 1) * search.pageLength,
+                currentPage * search.pageLength
+              ).length,
+              pathPrefix: '/bluh',
+              setCurrentPage: setCurrentPage,
+              currentPage: currentPage,
+              ...pageContext
+            }}
+          />
+        </ArticlesPaginator>
       </Section>
     </span>
   );
@@ -131,11 +114,14 @@ interface IArticlesPaginator extends ITAOAThemeUIContext {
 }
 const ArticlesPaginator = styled.div((p: IArticlesPaginator) => ({
   ...(p.show && { marginTop: '95px' }),
-  position: 'absolute',
-  bottom: 0
+  width: '100%'
 }));
 
-const SearchContainer = styled.div((p: ITAOAThemeUIContext) => ({
+interface ISearchContainerProps extends ITAOAThemeUIContext {
+  gridLayout: string;
+}
+
+const SearchContainer = styled.div((p: ISearchContainerProps) => ({
   position: 'relative',
   bottom: 0,
   left: 0,
@@ -143,7 +129,7 @@ const SearchContainer = styled.div((p: ITAOAThemeUIContext) => ({
   width: '100%',
   padding: '200px 30px 50px',
   transition: p.theme.colorModeTransition,
-  minHeight: '850px',
+  minHeight: p.gridLayout ? '1600px' : '1000px',
 
   [mediaquery.phablet()]: {
     padding: '150px 30px 0'
