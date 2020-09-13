@@ -9,13 +9,12 @@ import * as CSS from 'csstype';
 import { graphql, useStaticQuery } from 'gatsby';
 import React from 'react';
 
-const siteQuery = graphql`
+const footerQuery = graphql`
   {
-    allSite {
+    allComponentsYaml {
       edges {
         node {
-          siteMetadata {
-            name
+          components {
             social {
               url
               name
@@ -25,6 +24,15 @@ const siteQuery = graphql`
               link
               linkIndex
             }
+          }
+        }
+      }
+    }
+    allSite {
+      edges {
+        node {
+          siteMetadata {
+            siteName
           }
         }
       }
@@ -49,8 +57,9 @@ interface IFooterProps {
 }
 
 const Footer: React.FC<IFooterProps> = ({ gradient = true }: IFooterProps) => {
-  const results = useStaticQuery(siteQuery);
-  const { name, social, footer } = results.allSite.edges[0].node.siteMetadata;
+  const results = useStaticQuery(footerQuery);
+  const { siteName } = results.allSite.edges[0].node.siteMetadata;
+  const { social, footer } = results.allComponentsYaml.edges[0].node.components;
 
   const copyrightDate = ((): string => {
     const { edges } = results.allMdx;
@@ -67,7 +76,7 @@ const Footer: React.FC<IFooterProps> = ({ gradient = true }: IFooterProps) => {
         <HoritzontalRule />
         <FooterContainer>
           <FooterText>
-            {copyrightDate} {name} -
+            {copyrightDate} {siteName} -
             {[...footer.message].map((e: string, i: number) => {
               if (i === footer.linkIndex) {
                 return (
