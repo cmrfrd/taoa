@@ -16,19 +16,6 @@ module.exports = {
     logo: {
       text: 'T·A·O·A'
     },
-    home: {
-      numberOfArticles: 4,
-      hero: {
-        welcome: `Welcome to`,
-        heading: `A tech blog about first principles, system design, and computation`,
-        maxWidth: 900
-      }
-    },
-    search: {
-      placeholder: `Search by title or tags`,
-      heading: `Search Articles`,
-      pageLength: 6
-    },
     footer: {
       message: [' Made with', ' :heart:', ' and ☕'],
       link: '/ambiguity.txt',
@@ -92,21 +79,49 @@ module.exports = {
     {
       resolve: `gatsby-source-filesystem`,
       options: {
-        path: 'content/about',
-        name: 'content/about'
+        path: 'content/components',
+        name: 'content/components'
       }
     },
     {
       resolve: `gatsby-source-filesystem`,
       options: {
-        path: 'content/not_found',
-        name: 'content/not_found'
+        path: 'content/pages/home',
+        name: 'content/pages/home'
+      }
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: 'content/pages/about',
+        name: 'content/pages/about'
+      }
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: 'content/pages/search',
+        name: 'content/pages/search'
+      }
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: 'content/pages/article',
+        name: 'content/pages/article'
+      }
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: 'content/pages/not_found',
+        name: 'content/pages/not_found'
       }
     },
     {
       resolve: 'gatsby-plugin-webpack-bundle-analyser-v2',
       options: {
-        disable: true,
+        disable: false,
         devMode: true,
         analyzerMode: 'server',
         analyzerPort: '9000'
