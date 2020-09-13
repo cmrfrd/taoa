@@ -30,14 +30,29 @@ const GridRowToggle: React.FC<IGridRowToggle> = (props: IGridRowToggle) => {
   const { gridLayout = 'tiles', setGridLayout } = useContext(GridLayoutContext);
   const rowsIsActive = gridLayout === 'tiles';
 
+  const [activeInLargeFormat, setActiveInLargeFormat] = useState<boolean>(true);
+
+  const handleWindowResize = (): void => {
+    const { width } = getWindowDimensions();
+    const breakpoint = getBreakpointFromTheme('tablet');
+    setActiveInLargeFormat(width >= breakpoint);
+  };
+
+  useEffect((): (() => void) => {
+    window.addEventListener('resize', handleWindowResize);
+    return (): void => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, []);
+
   return (
     <IconWrapper isDark={false}>
       {rowsIsActive ? (
         <GridButton
           onClick={(): void => {
-            setGridLayout('rows');
+            if (active && activeInLargeFormat) setGridLayout('rows');
           }}
-          active={active}
+          active={active && activeInLargeFormat}
           data-a11y={false}
           title="Show articles in Row grid"
           aria-label="Show articles in Row grid"
@@ -47,9 +62,9 @@ const GridRowToggle: React.FC<IGridRowToggle> = (props: IGridRowToggle) => {
       ) : (
         <GridButton
           onClick={(): void => {
-            setGridLayout('tiles');
+            if (active && activeInLargeFormat) setGridLayout('tiles');
           }}
-          active={active}
+          active={active && activeInLargeFormat}
           data-a11y={false}
           title="Show articles in Tile grid"
           aria-label="Show articles in Tile grid"
