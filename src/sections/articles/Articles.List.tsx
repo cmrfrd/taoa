@@ -8,7 +8,6 @@ import { IArticle } from '@types';
 
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Link, graphql, useStaticQuery } from 'gatsby';
 import React, { useContext } from 'react';
 
@@ -47,26 +46,6 @@ const siteQuery = graphql`
     }
   }
 `;
-
-const variants = (duration: number): any => ({
-  initial: p => ({
-    zIndex: 1,
-    opacity: 0
-  }),
-  enter: p => ({
-    opacity: 1,
-    zIndex: 1,
-    transition: {
-      duration: duration
-    }
-  }),
-  exit: p => ({
-    opacity: 0,
-    zIndex: 1,
-
-    transition: { duration: duration }
-  })
-});
 
 const ArticlesList: React.FC<IArticlesListProps> = ({
   articles,
