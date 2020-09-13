@@ -11,12 +11,12 @@ import { graphql, useStaticQuery } from 'gatsby';
 import React from 'react';
 import { useColorMode } from 'theme-ui';
 
-const siteQuery = graphql`
+const logoTextQuery = graphql`
   {
-    allSite {
+    allComponentsYaml {
       edges {
         node {
-          siteMetadata {
+          components {
             logo {
               text
             }
@@ -30,7 +30,7 @@ const siteQuery = graphql`
 /** Logo is simply the acronym of the site in a nice font
  */
 const Logo: React.FC<Icon> = () => {
-  const { text } = useStaticQuery(siteQuery).allSite.edges[0].node.siteMetadata.logo;
+  const { text } = useStaticQuery(logoTextQuery).allComponentsYaml.edges[0].node.components.logo;
 
   const [colorMode] = useColorMode();
   const stickyHeader = useStickyOnScrolled();
