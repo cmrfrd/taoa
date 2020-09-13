@@ -1,0 +1,5 @@
+name: "search"
+search:
+  placeholder: "Search by title"
+  heading: "Search Articles"
+  pageLength: 6
