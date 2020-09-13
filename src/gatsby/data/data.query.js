@@ -57,6 +57,19 @@ module.exports.local = {
       }
     }
   }`,
+  home: `{
+    home: allHomeYaml {
+      edges {
+        node {
+          home {
+            entriesHeadingText
+            moreArticlesText
+            numberOfArticles
+          }
+        }
+      }
+    }
+  }`,
   about: `{
     about: aboutYaml {
       name
@@ -67,6 +80,43 @@ module.exports.local = {
           about
         }
         about
+      }
+    }
+  }`,
+  search: `{
+    search: allSearchYaml {
+      edges {
+        node {
+          search {
+            heading
+            pageLength
+            placeholder
+          }
+        }
+      }
+    }
+  }`,
+  article: `{
+    article: allArticleYaml {
+      edges {
+        node {
+          article {
+            nextArticleText
+          }
+        }
+      }
+    }
+  }`,
+  notFound: `{
+    notFound: allNotFoundYaml {
+      edges {
+        node {
+          name
+          messages {
+            emoji
+            message
+          }
+        }
       }
     }
   }`,

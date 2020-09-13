@@ -60,19 +60,35 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
   log('Config basePath', basePath);
 
   try {
-    log('Querying Authors & Articles source:', 'Local');
-    const localAuthors = await graphql(query.local.authors);
-    const localArticles = await graphql(query.local.articles);
-    const localAbout = await graphql(query.local.about);
+    log('Querying all source data for pages:', 'Local');
 
     log('Mapping', 'Authors edges');
+    const localAuthors = await graphql(query.local.authors);
     dataSources.local.authors = localAuthors.data.authors.edges.map(normalize.local.authors);
 
     log('Mapping', 'Articles edges');
+    const localArticles = await graphql(query.local.articles);
     dataSources.local.articles = localArticles.data.articles.edges.map(normalize.local.articles);
 
+    log('Mapping', 'Article edge');
+    const localArticle = await graphql(query.local.article);
+    var articlePageData = localArticle.data.article;
+
+    log('Mapping', 'Home edge');
+    const localHome = await graphql(query.local.home);
+    var homePageData = localHome.data.home;
+
     log('Mapping', 'About edge');
-    about = localAbout.data.about;
+    const localAbout = await graphql(query.local.about);
+    var aboutPageData = localAbout.data.about;
+
+    log('Mapping', 'Search edge');
+    const localSearch = await graphql(query.local.search);
+    var searchPageData = localSearch.data.search;
+
+    log('Mapping', 'notFound edge');
+    const localNotFound = await graphql(query.local.notFound);
+    var notFoundPageData = localNotFound.data.notFound;
   } catch (error) {
     console.error(error);
   }
@@ -107,6 +123,39 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
     component: templates.home,
     context: {
       basePath,
+      homePageData: homePageData,
+      articles: articlesThatArentSecret,
+      enableGridRow: true
+    }
+  });
+
+  // Creating the about page
+  log('Creating', 'about page');
+  const aboutPath = '/about';
+  createPage({
+    path: aboutPath,
+    component: templates.about,
+    context: {
+      aboutPageData: aboutPageData,
+      authors: authors,
+      basePath,
+      slug: aboutPath,
+      id: '123',
+      enableGridRow: false
+    }
+  });
+
+  log('Creating', 'search page');
+
+  // Creating the about page
+  const articlesPath = '/articles';
+  createPage({
+    path: articlesPath,
+    component: templates.search,
+    context: {
+      authors,
+      articlesPath,
+      searchPageData: searchPageData,
       articles: articlesThatArentSecret,
       enableGridRow: true
     }
@@ -152,8 +201,9 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
       component: templates.article,
       context: {
         article,
-        authors: authorsThatWroteTheArticle,
         basePath,
+        articlePageData: articlePageData,
+        authors: authorsThatWroteTheArticle,
         slug: article.slug,
         id: article.id,
         title: article.title,
@@ -162,38 +212,6 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
         next
       }
     });
-  });
-
-  log('Creating', 'about page');
-
-  // Creating the about page
-  const aboutPath = '/about';
-  createPage({
-    path: aboutPath,
-    component: templates.about,
-    context: {
-      about: about,
-      authors: authors,
-      basePath,
-      slug: aboutPath,
-      id: '123',
-      enableGridRow: false
-    }
-  });
-
-  log('Creating', 'search page');
-
-  // Creating the about page
-  const articlesPath = '/articles';
-  createPage({
-    path: articlesPath,
-    component: templates.search,
-    context: {
-      authors,
-      articlesPath,
-      articles: articlesThatArentSecret,
-      enableGridRow: true
-    }
   });
 
   log('Creating', '404 page');
@@ -205,6 +223,7 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
     component: templates.fourofour,
     context: {
       basePath,
+      notFoundPageData: notFoundPageData,
       slug: path404,
       id: '404',
       enableGridRow: true
