@@ -10,18 +10,16 @@ import { IAuthor } from '@types';
 
 import { GridLayoutContext } from './Articles.List.Context';
 
-const authorQuery = graphql`
+const homeHeroQuery = graphql`
   {
-    site: allSite {
+    home: allHomeYaml {
       edges {
         node {
-          siteMetadata {
-            home {
-              hero {
-                welcome
-                heading
-                maxWidth
-              }
+          home {
+            hero {
+              heading
+              maxWidth
+              welcome
             }
           }
         }
@@ -33,8 +31,7 @@ const authorQuery = graphql`
 const ArticlesHero: React.FC<IAuthor> = () => {
   const { gridLayout = 'tiles', hasSetGridLayout, setGridLayout } = useContext(GridLayoutContext);
 
-  const results = useStaticQuery(authorQuery);
-  const { hero } = results.site.edges[0].node.siteMetadata.home;
+  const { hero } = useStaticQuery(homeHeroQuery).home.edges[0].node.home;
   const tilesIsActive = hasSetGridLayout && gridLayout === 'tiles';
 
   return (
@@ -134,19 +131,19 @@ font-size: 24px;
 `;
 
 const HeroWelcome = styled.h1`
-font-style: normal;
-font-weight: 500;
-font-size: 40px;
-line-height: 1.15;
-color: ${p => p.theme.colors.primary};
-font-family: ${p => p.theme.fonts.astigmatic};
-margin-bottom: 20px;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 40px;
+    line-height: 1.15;
+    color: ${p => p.theme.colors.primary};
+    font-family: ${p => p.theme.fonts.astigmatic};
+    margin-bottom: 20px;
 
-a {
+    a {
     color: ${p => p.theme.colors.accent};
-}
+    }
 
-${mediaqueries.desktop`
+    ${mediaqueries.desktop`
 font-size: 32px
 `}
 
