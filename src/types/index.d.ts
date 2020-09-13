@@ -142,6 +142,12 @@ export type TTemplate = {
     pageCount?: number;
     articles?: IArticle[];
 
+    homePageData?: any;
+    aboutPageData?: any;
+    searchPageData?: any;
+    articlePageData?: any;
+    notFoundPageData?: any;
+
     article: IArticle;
     authors: IAuthor[];
     next: IArticle[];
