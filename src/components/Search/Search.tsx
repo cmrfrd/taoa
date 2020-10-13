@@ -19,9 +19,7 @@ const Search: React.FC<{}> = (props: any) => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    // const top = window.pageYOffset || document.documentElement.scrollTop;
-    // if (top > 150) window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
     setSearchTerm(event.target.value);
   };
 
