@@ -16,7 +16,7 @@ import styled from '@emotion/styled';
 import * as CSS from 'csstype';
 import { graphql, useStaticQuery } from 'gatsby';
 import { Link } from 'gatsby';
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef } from 'react';
 
 const SearchPage: Template = ({ location, pageContext }: TTemplate) => {
   const { articles } = pageContext;
@@ -31,7 +31,7 @@ const SearchPage: Template = ({ location, pageContext }: TTemplate) => {
 
   const [numSearchResults, setNumSearchResults] = useState(articles.length);
 
-  const { gridLayout = 'tiles', getGridLayout } = useContext(GridLayoutContext);
+  const { gridLayout, getGridLayout } = useContext(GridLayoutContext);
 
   const filter = (e: IArticle, term: string): boolean => {
     return e.title.toLowerCase().includes(term) || e.title.includes(term);
@@ -79,7 +79,6 @@ const SearchPage: Template = ({ location, pageContext }: TTemplate) => {
         <ArticlesPaginator show={pageContext.pageCount > 1}>
           <Paginator
             {...{
-              index: 0,
               pageCount: pages,
               count: searchResults.slice(
                 (currentPage - 1) * search.pageLength,
