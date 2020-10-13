@@ -1,13 +1,13 @@
 import React, { createContext, useState } from 'react';
 
 export const GridLayoutContext = createContext({
-  gridLayout: 'tiles',
+  gridLayout: 'rows',
   setGridLayout: (tile: string) => {},
   getGridLayout: () => {}
 });
 
 const GridLayoutProvider: React.FC<{}> = ({ children }) => {
-  const initialLayout = 'tiles';
+  const initialLayout = 'rows';
 
   const [gridLayout, setGridLayout] = useState<string>(initialLayout);
 

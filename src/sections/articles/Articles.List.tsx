@@ -55,7 +55,7 @@ const ArticlesList: React.FC<IArticlesListProps> = ({
 }: IArticlesListProps) => {
   if (!articles) return null;
 
-  const { gridLayout = 'tiles', getGridLayout } = useContext(GridLayoutContext);
+  const { gridLayout, getGridLayout } = useContext(GridLayoutContext);
   const { gridRowAnimationDurationSeconds } = useStaticQuery(
     siteQuery
   ).allSite.edges[0].node.siteMetadata.transition;
