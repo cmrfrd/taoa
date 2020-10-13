@@ -1,6 +1,8 @@
-import Button from '@components/Button';
+import { MediumButton } from '@components/Button';
 
 import React from 'react';
+
+// @ts-ignore
 import Reward from 'react-rewards';
 
 const ConfettiButton: React.FC<{}> = (props: any) => {
@@ -10,15 +12,17 @@ const ConfettiButton: React.FC<{}> = (props: any) => {
   return (
     <div style={{ margin: '15px auto' }}>
       <Reward
-        ref={(ref: React.RefObject): never => {
+        ref={(ref: React.RefObject): void => {
           rewardRef = ref;
         }}
         type={settings.type}
         config={settings}
       >
-        <Button
-          onPress={(): never => {
-            rewardRef.rewardMe();
+        <MediumButton
+          button={{
+            onPress: (): void => {
+              rewardRef.rewardMe();
+            }
           }}
           text={text}
         />
