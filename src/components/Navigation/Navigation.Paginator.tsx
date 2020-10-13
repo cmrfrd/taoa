@@ -10,6 +10,13 @@ import { Link } from 'gatsby';
 import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
 
+interface IPaginatorProps {
+  maxPages: number;
+  count: number;
+}
+
+const Pagin: React.FC<{}> = ({ children }) => {};
+
 /**
  * <Paginator />
  *
@@ -25,7 +32,6 @@ import { Helmet } from 'react-helmet';
 class Paginator extends Component<IPaginator, {}> {
   maxPages: number = 3;
   count: number = this.props.pageCount;
-  current: number = this.props.index;
   pageRoot: string = this.props.pathPrefix;
 
   /**
@@ -101,7 +107,6 @@ class Paginator extends Component<IPaginator, {}> {
 
   render(): React.ReactNode {
     const count = this.count;
-    const current = this.current;
 
     if (count <= 1) return null;
 
@@ -123,6 +128,7 @@ class Paginator extends Component<IPaginator, {}> {
             <PageButton
               onClick={() => {
                 this.props.setCurrentPage(mod(this.props.currentPage - 1, this.props.pageCount));
+                window.scroll({ top: 0, left: 0, behavior: 'smooth' });
               }}
             >
               Prev
@@ -133,6 +139,7 @@ class Paginator extends Component<IPaginator, {}> {
             <PageButton
               onClick={() => {
                 this.props.setCurrentPage(mod(this.props.currentPage + 1, this.props.pageCount));
+                window.scroll({ top: 0, left: 0, behavior: 'smooth' });
               }}
             >
               Next
