@@ -1,4 +1,3 @@
-import ArticleAside from '../sections/article/Article.Aside';
 import ArticleHero from '../sections/article/Article.Hero';
 import ArticlesNext from '../sections/article/Article.Next';
 import ArticleSEO from '../sections/article/Article.SEO';
@@ -8,12 +7,10 @@ import MDX from '@components/MDX';
 import Section from '@components/Section';
 import { mediaquery } from '@styles/media';
 import { Template, TTemplate, ITAOAThemeUIContext } from '@types';
-import { debounce } from '@utils';
 
 import styled from '@emotion/styled';
 import { graphql, useStaticQuery } from 'gatsby';
-import throttle from 'lodash/throttle';
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef } from 'react';
 
 const articleQuery = graphql`
   {
@@ -25,55 +22,21 @@ const articleQuery = graphql`
   }
 `;
 
+/**
+ * Article page layout. Every article's content comes from MDX
+ * and suggests next articles, comments, and how to email subscribe
+ */
 const Article: Template = ({ pageContext, location }: TTemplate) => {
   const contentSectionRef = useRef<HTMLElement>(null);
-
-  const [hasCalculated, setHasCalculated] = useState<boolean>(false);
-  const [contentHeight, setContentHeight] = useState<number>(0);
 
   const { article, authors, next, articlePageData } = pageContext;
   const { nextArticleText } = articlePageData.edges[0].node.article;
   const { siteName } = useStaticQuery(articleQuery).site.siteMetadata;
 
-  useEffect(() => {
-    const calculateBodySize = throttle(() => {
-      const contentSection = contentSectionRef.current;
-
-      if (!contentSection) return;
-
-      /**
-       * If we haven't checked the content's height before,
-       * we want to add listeners to the content area's
-       * imagery to recheck when it's loaded
-       */
-      if (!hasCalculated) {
-        const debouncedCalculation = debounce(calculateBodySize);
-        const $imgs = contentSection.querySelectorAll('img');
-
-        $imgs.forEach(($img: HTMLImageElement) => {
-          // If the image hasn't finished loading then add a listener
-          if (!$img.complete) $img.onload = debouncedCalculation;
-        });
-
-        // Prevent rerun of the listener attachment
-        setHasCalculated(true);
-      }
-
-      // Set the height and offset of the content area
-      setContentHeight(contentSection.getBoundingClientRect().height);
-    }, 20);
-
-    calculateBodySize();
-    window.addEventListener('resize', calculateBodySize);
-
-    return (): void => window.removeEventListener('resize', calculateBodySize);
-  }, []);
-
   return (
     <span>
       <ArticleSEO article={article} authors={authors} location={location} />
       <ArticleHero article={article} authors={authors} />
-      <ArticleAside contentHeight={contentHeight}></ArticleAside>
       <ArticleBody ref={contentSectionRef}>
         <MDX content={article.body}>
           <ArticleShare />
