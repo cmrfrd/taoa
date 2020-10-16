@@ -9,10 +9,9 @@ import { Template, TTemplate, IAuthor, ITAOAThemeUIContext } from '@types';
 import styled from '@emotion/styled';
 import React from 'react';
 
-/*
+/**
  * About page contains a small excerpt about the website and a spotlight
  * excerpt about each of the author(s)
- *
  */
 const AboutPage: Template = ({ pageContext }: TTemplate) => {
   const authors = pageContext.authors;
