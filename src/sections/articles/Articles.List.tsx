@@ -60,6 +60,13 @@ const ArticlesList: React.FC<IArticlesListProps> = ({
     siteQuery
   ).allSite.edges[0].node.siteMetadata.transition;
 
+  /*
+   * Three transitions are here for three possible interactions that
+   * can affect the visibility of the articles.
+   * 1. Change from grid layout to row layout
+   * 2. Change of page
+   * 3. Searching for an article
+   */
   return (
     <ArticlesListContainer alwaysShowAllDetails={alwaysShowAllDetails}>
       <FadeTransition
