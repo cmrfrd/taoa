@@ -1,7 +1,6 @@
 import { MediumButton } from '@components/Button';
 
 import React from 'react';
-
 // @ts-ignore
 import Reward from 'react-rewards';
 
