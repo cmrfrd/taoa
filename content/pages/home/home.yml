@@ -1,7 +1,7 @@
 name: "home"
 home:
   numberOfArticles: 4
-  entriesHeadingText: "Latest Entries"
+  entriesHeadingText: "Latest Articles"
   moreArticlesText: "More articles ➡ "
   hero:
     welcome: "Welcome to"
