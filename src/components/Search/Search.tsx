@@ -30,7 +30,6 @@ const Search: React.FC<{}> = (props: any) => {
     }
 
     const results = elements.filter((e: any) => filter(e, searchTerm)).sort(sort);
-    console.log('num results', results.length);
 
     resultsTimeoutRef.current = setTimeout(() => {
       resultsTimeoutRef.current = null;
@@ -49,13 +48,11 @@ const Search: React.FC<{}> = (props: any) => {
 
     searchingTimeoutRef.current = setTimeout(() => {
       searchingTimeoutRef.current = null;
-      console.log('not searching');
       setSearching(false);
     }, 400);
 
     setSearching(true);
     setCurrentPage(0);
-    console.log('searching');
   }, [searchTerm]);
 
   return (
