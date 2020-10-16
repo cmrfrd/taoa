@@ -16,7 +16,7 @@ import { ITAOAThemeUIContext } from '@types';
 import { theme } from '@utils';
 
 import styled from '@emotion/styled';
-import { MDXProvider, MDXProviderProps } from '@mdx-js/react';
+import { MDXProvider } from '@mdx-js/react';
 import * as CSS from 'csstype';
 import { MDXRenderer } from 'gatsby-plugin-mdx';
 import React from 'react';
@@ -79,7 +79,7 @@ const components: Components = {
   CodeEditorWithOutput
 };
 
-interface IMDXProps extends MDXProviderProps {
+interface IMDXProps {
   content: string;
   children: React.ReactNode;
 }
@@ -88,7 +88,7 @@ interface IStringMap {
   [key: string]: string | number | boolean | IStringMap;
 }
 
-const MDX: React.FC<React.ReactNode> = ({ content, children }: IMDXProps) => {
+const MDX: React.FC<IMDXProps> = ({ content, children }: IMDXProps) => {
   const [colorMode] = useColorMode();
 
   return (
