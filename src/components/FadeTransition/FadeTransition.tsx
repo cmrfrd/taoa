@@ -35,7 +35,6 @@ const FadeTransition: React.FC<IFadeTransitionProps> = ({
   motionKey,
   duration
 }: IFadeTransitionProps) => {
-  console.log(animatePresenceProps, motionKey);
   return (
     <AnimatePresence {...animatePresenceProps}>
       <motion.div
