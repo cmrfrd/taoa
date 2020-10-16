@@ -27,6 +27,7 @@ RUN apk -U upgrade -a && \
   libpng-dev \
   make \
   openssl \
+  openssh \
   go \
   nasm && \
   rm -rf /var/cache/apk/*
