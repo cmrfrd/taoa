@@ -6,17 +6,11 @@ import Paginator from '@components/Navigation/Navigation.Paginator';
 import SEO from '@components/SEO';
 import Search from '@components/Search';
 import Section from '@components/Section';
-import mediaqueries, { mediaquery, mediaqueryup } from '@styles/media';
+import { mediaquery } from '@styles/media';
 import { Template, TTemplate, IArticle, ITAOAThemeUIContext } from '@types';
-import { motion, AnimatePresence } from 'framer-motion';
 
-import { css } from '@emotion/core';
-import { SerializedStyles } from '@emotion/serialize';
 import styled from '@emotion/styled';
-import * as CSS from 'csstype';
-import { graphql, useStaticQuery } from 'gatsby';
-import { Link } from 'gatsby';
-import React, { useState, useContext, useRef } from 'react';
+import React, { useState, useContext } from 'react';
 
 const SearchPage: Template = ({ location, pageContext }: TTemplate) => {
   const { articles } = pageContext;
@@ -27,7 +21,7 @@ const SearchPage: Template = ({ location, pageContext }: TTemplate) => {
 
   const [currentPage, setCurrentPage] = useState(0);
 
-  const [searching, setSearching] = useState(false);
+  const [searching, setSearching] = useState(true);
 
   const [numSearchResults, setNumSearchResults] = useState(articles.length);
 
