@@ -97,6 +97,7 @@ class Paginator extends Component<IPaginator, {}> {
           className="Paginator__pageLink"
           onClick={() => {
             this.props.setCurrentPage(page);
+            window.scroll({ top: 0, left: 0, behavior: 'smooth' });
           }}
         >
           {page}
