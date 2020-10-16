@@ -9,6 +9,9 @@ import styled from '@emotion/styled';
 import _ from 'lodash';
 import React from 'react';
 
+/**
+ * 404 page to display on unknown routes
+ */
 const Page404: Template = ({ location, pageContext }: TTemplate) => {
   const { name, messages } = pageContext.notFoundPageData.edges[0].node;
   const message = _.sample(messages);
