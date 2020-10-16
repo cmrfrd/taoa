@@ -1,0 +1,137 @@
+$pi: 3.14159265359;
+$_precision: 5;
+
+@function pow($base, $exp) {
+  $value: $base;
+  @if $exp > 1 {
+    @for $i from 2 through $exp {
+      $value: $value * $base;
+    }
+  }
+  @if $exp < 1{
+    @for $i from 0 through -$exp {
+      $value: $value / $base;
+    }
+  }
+  @return $value;
+}
+
+@function fact($num) {
+  $fact: 1;
+  @if $num > 0{
+    @for $i from 1 through $num {
+      $fact: $fact * $i;
+    }
+  }
+  @return $fact;
+}
+
+@function _to_unitless_rad($angle) {
+  @if unit($angle) == "deg" {
+    $angle: $angle / 180deg * $pi;
+  }
+  @if unit($angle) == "rad" {
+    $angle: $angle / 1rad;
+  }
+  @return $angle;
+}
+
+@function sin($angle){
+  $a: _to_unitless_rad($angle);
+  $sin: $a;
+  @for $n from 1 through $_precision {
+    $sin: $sin + (pow(-1, $n) / fact(2 * $n + 1) ) * pow($a, (2 * $n + 1));
+  }
+  @return $sin;
+}
+
+@function cos($angle){
+  $a: _to_unitless_rad($angle);
+  $cos: 1;
+  @for $n from 1 through $_precision {
+    $cos: $cos + ( pow(-1,$n) / fact(2*$n) ) * pow($a,2*$n);
+  }
+  @return $cos;
+}
+
+@function tan($angle){
+  @return sin($angle) / cos($angle);
+}
+
+$easing: cubic-bezier(0,1.24,.68,.92);
+
+$total_width: 80px;
+$bar_deg: 33deg;
+$bar_width: 24px;
+$bar_height: 6px;
+$duration: 0.4s;
+
+$tri_height: sin($bar_deg) * $bar_width;
+$tri_width: $tri_height / tan($bar_deg);
+
+.arrow-icon {
+  top: calc(50%);
+  width: $total_width;
+  position: relative;
+  display: flex;
+  cursor: pointer;
+  border-radius: 1px;
+}
+
+.left-bar {
+  position: absolute;
+  background-color: transparent;
+  top: 0;
+  left: ($total_width / 2) - $tri_width;
+  width: $bar_width;
+  height: $bar_height;
+  display: block;
+  transform: rotate($bar_deg);
+  float: right;
+  border-radius: 1px;
+  &:after {
+    content:' ';
+    width: $bar_width;
+    height: $bar_height;
+    display: block;
+    float: right;
+    border-radius: 3px 7px 7px 3px;
+    transition: all $duration $easing;
+    z-index: -1;
+  }
+}
+
+.right-bar {
+  position: absolute;
+  background-color: transparent;
+  top: 0px;
+  left: ($total_width / 2) - 5px;
+  width: $bar_width;
+  height: $bar_height;
+  display: block;
+  transform: rotate(-1 * $bar_deg);
+  float: right;
+  border-radius: 1px;
+  &:after {
+    content:' ';
+    width: $bar_width;
+    height: $bar_height;
+    display: block;
+    float: right;
+    border-radius: 7px 3px 3px 7px;
+    transition: all $duration $easing;
+    z-index: -1;
+  }
+}
+
+.open {
+  .left-bar:after {
+    transform-origin: center center;
+    transform: rotate(-70deg);
+  }
+  .right-bar:after {
+    transform-origin: center center;
+    transform: rotate(70deg);
+  }
+
+}

@@ -1,0 +1,20 @@
+name: 'components'
+components:
+  logo:
+    text: 'T·A·O·A'
+  footer:
+    message:
+      - ' Made with'
+      - ' :heart:'
+      - ' and ☕'
+    link: '/ambiguity.txt'
+    linkIndex: 1
+  social:
+    - name: 'twitter'
+      url: 'https://https://twitter.com/alexjcomerford'
+    - name: 'github'
+      url: 'https://github.com/cmrfrd'
+    - name: 'instagram'
+      url: 'https://www.instagram.com/cmrfrd/'
+    - name: 'linkedin'
+      url: 'https://www.linkedin.com/in/ajcomerford'

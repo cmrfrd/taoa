@@ -1,20 +1,45 @@
-FROM node:10.16-alpine
+FROM node:14-alpine
 
 ## Install deps
-RUN apk update && \
+RUN apk -U upgrade -a && \
+  apk update && \
   apk add \
   --update \
   --no-cache \
+  --repository http://dl-cdn.alpinelinux.org/alpine/edge/main \
   --repository http://dl-3.alpinelinux.org/alpine/edge/community \
   --repository http://dl-3.alpinelinux.org/alpine/edge/main \
   --repository http://dl-3.alpinelinux.org/alpine/edge/testing \
   vips-dev vips-tools && \
   apk add fftw-dev gcc g++ make libc6-compat python && \
   apk add git && \
+  apk add \
+  bash \
+  libx11-dev \
+  libxi \
+  mesa-gl \
+  autoconf \
+  automake \
+  bash \
+  g++ \
+  libc6-compat \
+  libjpeg-turbo-dev \
+  libpng-dev \
+  make \
+  openssl \
+  go \
+  nasm && \
   rm -rf /var/cache/apk/*
-RUN npm install --global yarn prettier gatsby
+
+## Install mkcert for ssl cert generation
+RUN \
+  git clone https://github.com/FiloSottile/mkcert && \
+  cd mkcert && \
+  go build -ldflags "-X main.Version=$(git describe --tags)" && \
+  mv mkcert /usr/bin/ && \
+  rm -r /mkcert
 
 ## Setup entrypoint
-COPY ./docker/entry.sh /
+COPY ./entry.sh /
 RUN chmod +x /entry.sh
 ENTRYPOINT ["/entry.sh"]

@@ -1,0 +1,19 @@
+- name: Alexander Comerford
+  bio:
+    - |
+      Hi! I'm a Data Scientist living in New York. I spend most of my time
+      programming, reading, or trying to solve math problems. Other things I'm
+      interested in are juggling, Hebrew, and philosophy.
+    - |
+      I love to write about ideas and solutions outside that norm that actually
+      work
+  avatar: ./avatars/Alex.png
+  social:
+    - url: https://unsplash.com
+    - url: https://stackoverflow.com
+    - url: https://github.com
+    - url: https://github.com
+    - url: https://github.com
+  featured: true
+
+# Send me an email if you want to join, all are welcome :)
