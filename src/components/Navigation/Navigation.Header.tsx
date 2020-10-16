@@ -553,12 +553,12 @@ interface IToolTip extends ITAOAThemeUIContext {
 
 const ToolTip = styled.div((p: IToolTip) => ({
   position: 'absolute',
-  padding: '4px 13px',
+  padding: '3px 10px',
   background: p.isDark ? '#000' : 'rgba(0,0,0,0.1)',
   color: p.isDark ? '#fff' : '#000',
-  borderRadius: '5px',
-  fontSize: '14px',
-  top: '-35px',
+  borderRadius: '3px',
+  fontSize: '10px',
+  top: '-20px',
   opacity: p.hasCopied ? 1 : 0,
   transform: p.hasCopied ? 'translateY(-3px)' : 'none',
   transition: p.theme.colorModeTransition,
