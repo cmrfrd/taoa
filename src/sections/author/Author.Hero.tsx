@@ -24,11 +24,13 @@ const AuthorHero: React.FC<AuthorHeroProps> = ({ author }) => {
           </HeroImage>
           <Heading>{author.name}</Heading>
         </HeroHeadings>
-        <AuthorParagraph>{author.bio}</AuthorParagraph>
+        {author.bio.map((para: string, i: number) => {
+          return <AuthorParagraph key={i}>{para}</AuthorParagraph>;
+        })}
       </HeroDiv>
       {/* <Social>
-                <SocialLinks links={author.social} />
-                </Social> */}
+              <SocialLinks links={author.social} />
+              </Social> */}
     </Hero>
   );
 };
