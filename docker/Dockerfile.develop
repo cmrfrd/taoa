@@ -1,9 +1,18 @@
 FROM node:14-alpine
 
+ENV USER node
+ENV HOME /home/$USER
+RUN apk add --update sudo
+
+RUN echo "$USER ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$USER \
+  && chmod 0440 /etc/sudoers.d/$USER
+USER $USER
+
 ## Install deps
-RUN apk -U upgrade -a && \
-  apk update && \
-  apk add \
+RUN \
+  sudo apk -U upgrade -a && \
+  sudo apk update && \
+  sudo apk add \
   --update \
   --no-cache \
   --repository http://dl-cdn.alpinelinux.org/alpine/edge/main \
@@ -11,9 +20,14 @@ RUN apk -U upgrade -a && \
   --repository http://dl-3.alpinelinux.org/alpine/edge/main \
   --repository http://dl-3.alpinelinux.org/alpine/edge/testing \
   vips-dev vips-tools && \
-  apk add fftw-dev gcc g++ make libc6-compat python && \
-  apk add git && \
-  apk add \
+  sudo apk add \
+  fftw-dev \
+  gcc \
+  g++ \
+  make \
+  libc6-compat \
+  python \
+  git \
   bash \
   libx11-dev \
   libxi \
@@ -30,17 +44,17 @@ RUN apk -U upgrade -a && \
   openssh \
   go \
   nasm && \
-  rm -rf /var/cache/apk/*
+  sudo rm -rf /var/cache/apk/*
 
 ## Install mkcert for ssl cert generation
 RUN \
-  git clone https://github.com/FiloSottile/mkcert && \
-  cd mkcert && \
+  git clone https://github.com/FiloSottile/mkcert /tmp/mkcert && \
+  cd /tmp/mkcert && \
   go build -ldflags "-X main.Version=$(git describe --tags)" && \
-  mv mkcert /usr/bin/ && \
-  rm -r /mkcert
+  sudo mv mkcert /usr/bin/ && \
+  rm -rf /tmp/mkcert
 
 ## Setup entrypoint
 COPY ./entry.sh /
-RUN chmod +x /entry.sh
+RUN sudo chmod +x /entry.sh
 ENTRYPOINT ["/entry.sh"]
