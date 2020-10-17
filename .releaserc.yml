@@ -1,0 +1,26 @@
+---
+branches:
+- development
+plugins:
+- - "@semantic-release/commit-analyzer"
+  - preset: angular
+- - "@semantic-release/release-notes-generator"
+  - preset: angular
+- - "@semantic-release/changelog"
+  - changelogFile: CHANGELOG.md
+- - "@semantic-release/git"
+  - assets:
+    - CHANGELOG.md
+    message: |-
+      chore(release): ${nextRelease.version} [skip ci]
+
+      ${nextRelease.notes}
+- - "@semantic-release/exec"
+  - verifyConditionsCmd: "echo 'woot woot'"
+    prepareCmd: |-
+      ./bin/container_build.sh
+    publishCmd: |-
+       ./bin/container_publish.sh
+      Publish version ${nextRelease.version} at ${Date.now()}
+
+      ${nextRelease.notes}
