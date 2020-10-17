@@ -221,8 +221,8 @@ grid-template-columns: 1fr;
 const listItemRow = p => css`
   display: grid;
   grid-template-rows: 1fr;
-  grid-template-columns: 1fr 488px;
-  grid-column-gap: 96px;
+  grid-template-columns: 1fr 500px;
+  grid-column-gap: 120px;
   grid-template-rows: 1;
   align-items: center;
   position: relative;
