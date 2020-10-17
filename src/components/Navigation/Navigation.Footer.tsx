@@ -160,6 +160,7 @@ const FooterText = styled.div({
 const FooterLink = styled.a((p: ITAOAThemeUIContext) => ({
   transition: p.theme.colorModeTransition,
   textDecoration: 'none',
+  color: p.theme.colors.grey as CSS.ColorProperty,
 
   '&:hover': {
     color: p.theme.colors.grey as CSS.ColorProperty,
