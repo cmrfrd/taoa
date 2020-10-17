@@ -1,5 +1,5 @@
 #!/bin/bash
-source ./constants.env
+source development.env
 docker run \
        -p 8000:8000 \
        --name develop \

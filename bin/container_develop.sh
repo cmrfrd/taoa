@@ -1,5 +1,6 @@
 #!/bin/sh
-source ./constants.env
+set -e
+source development.env
 
 npx gatsby develop \
     --https \

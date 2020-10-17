@@ -1,5 +1,6 @@
 #!/bin/bash
-source ./constants.env
+set -e
+source development.env
 EMAIL=alexanderjcomerford@gmail.com
 SSHKEY=$1
 COMMITMSG={$2:-Updatesite}

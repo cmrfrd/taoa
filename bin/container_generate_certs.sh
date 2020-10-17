@@ -1,5 +1,6 @@
 #!/bin/sh
-source ./constants.env
+set -e
+source development.env
 
 [ -d $CERTS_DIR ] && \
   echo "Directory $CERTS_DIR exists. Certificates already generated" && \

@@ -1,7 +1,7 @@
 #!/bin/sh
+set -e
 
 # Clean all images in current directory for metadata
-
 mogrify -strip \
         $(find . -type f \
                -not -path "./node_modules/*" \

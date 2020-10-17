@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 if ! command -v node &> /dev/null
 then
