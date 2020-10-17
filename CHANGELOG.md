@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/cmrfrd/taoa/compare/v1.1.0...v1.1.1) (2020-10-17)
+
+
+### Bug Fixes
+
+* **footer:** make color for first time link not blue ([c97ac90](https://github.com/cmrfrd/taoa/commit/c97ac90716b6f4e13aeac64cf95cae516b4759b2))
+
 # [1.1.0](https://github.com/cmrfrd/taoa/compare/v1.0.1...v1.1.0) (2020-10-17)
 
 
