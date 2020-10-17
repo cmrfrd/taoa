@@ -33,6 +33,10 @@ const footerQuery = graphql`
         node {
           siteMetadata {
             siteName
+            git {
+              repo
+              user
+            }
           }
         }
       }
@@ -49,6 +53,9 @@ const footerQuery = graphql`
         }
       }
     }
+    gitTag(latest: { eq: true }) {
+      name
+    }
   }
 `;
 
@@ -60,6 +67,11 @@ const Footer: React.FC<IFooterProps> = ({ gradient = true }: IFooterProps) => {
   const results = useStaticQuery(footerQuery);
   const { siteName } = results.allSite.edges[0].node.siteMetadata;
   const { social, footer } = results.allComponentsYaml.edges[0].node.components;
+
+  const versionTag = results.gitTag.name;
+  const { repo, user } = results.allSite.edges[0].node.siteMetadata.git;
+  const createGithubLink = (user: string, repo: string, tag: string): string =>
+    `https://github.com/${user}/${repo}/tree/${tag}`;
 
   const copyrightDate = ((): string => {
     const { edges } = results.allMdx;
@@ -76,7 +88,10 @@ const Footer: React.FC<IFooterProps> = ({ gradient = true }: IFooterProps) => {
         <HoritzontalRule />
         <FooterContainer>
           <FooterText>
-            {copyrightDate} {siteName} -
+            {copyrightDate} {siteName}
+            {' | '}
+            {<FooterLink href={createGithubLink(user, repo, versionTag)}>{versionTag}</FooterLink>}
+            {' | '}
             {[...footer.message].map((e: string, i: number) => {
               if (i === footer.linkIndex) {
                 return (
@@ -141,6 +156,30 @@ const FooterText = styled.div({
     margin: '120px auto 100px'
   }
 });
+
+const FooterLink = styled.a((p: ITAOAThemeUIContext) => ({
+  transition: p.theme.colorModeTransition,
+  textDecoration: 'none',
+
+  '&:hover': {
+    color: p.theme.colors.grey as CSS.ColorProperty,
+    fontWeight: 'bold',
+    textShadow: '0 0 .01px black'
+  },
+
+  ':visited': {
+    color: p.theme.colors.grey as CSS.ColorProperty,
+    textDecoration: 'none'
+  },
+
+  [mediaquery.tablet()]: {
+    marginBottom: '80px'
+  },
+
+  [mediaquery.phablet()]: {
+    margin: '120px auto 100px'
+  }
+}));
 
 const FooterGradient = styled.div((p: ITAOAThemeUIContext) => ({
   position: 'absolute',
