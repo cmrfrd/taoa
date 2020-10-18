@@ -5,6 +5,13 @@
 
 * **release:** Update release, publish to domain ([497d6f3](https://github.com/cmrfrd/taoa/commit/497d6f33178f55e5de24727c5f71ae86ee6ff6f9))
 
+## [1.1.3](https://github.com/cmrfrd/taoa/compare/v1.1.2...v1.1.3) (2020-10-18)
+
+
+### Bug Fixes
+
+* **release:** Update release, publish to domain ([497d6f3](https://github.com/cmrfrd/taoa/commit/497d6f33178f55e5de24727c5f71ae86ee6ff6f9))
+
 ## [1.1.2](https://github.com/cmrfrd/taoa/compare/v1.1.1...v1.1.2) (2020-10-18)
 
 
