@@ -16,7 +16,8 @@ plugins:
 
       ${nextRelease.notes}
 - - "@semantic-release/exec"
-  - verifyConditionsCmd: "echo 'woot woot'"
+  - verifyConditionsCmd: |-
+      echo 'Publishing site'
     prepareCmd: |-
       ./bin/container_build.sh
     publishCmd: |-

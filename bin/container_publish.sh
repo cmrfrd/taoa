@@ -2,6 +2,7 @@
 set -e
 source development.env
 
+## Publish github pages
 npx gh-pages \
     -b master \
     -d public \

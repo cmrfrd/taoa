@@ -2,5 +2,8 @@
 set -e
 source development.env
 
-npx gatsby build \
-    --profile
+## Output sitename to CNAME
+node -e "console.log(require('./gatsby-config.js').siteMetadata.siteUrl)" > static/CNAME
+
+## Build site
+npx gatsby build
