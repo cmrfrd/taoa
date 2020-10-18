@@ -54,21 +54,21 @@ module.exports = {
     `gatsby-plugin-theme-ui`,
     `gatsby-source-local-git`,
     `gatsby-plugin-offline`,
-    {
-      resolve: `gatsby-plugin-csp`,
-      options: {
-        disableOnDev: true,
-        reportOnly: false,
-        mergeScriptHashes: true,
-        mergeStyleHashes: true,
-        mergeDefaultDirectives: true,
-        directives: {
-          'script-src': "'self' 'unsafe-inline'",
-          'style-src': "'self' 'unsafe-inline'",
-          'img-src': "'self' data: 'unsafe-inline'"
-        }
-      }
-    },
+    // {
+    //   resolve: `gatsby-plugin-csp`,
+    //   options: {
+    //     disableOnDev: false,
+    //     reportOnly: false,
+    //     mergeScriptHashes: true,
+    //     mergeStyleHashes: true,
+    //     mergeDefaultDirectives: true,
+    //     directives: {
+    //       'script-src': `'self' 'unsafe-inline' data: blob:`,
+    //       'style-src': `'self' 'unsafe-inline' data: blob:`,
+    //       'img-src': `'self' 'unsafe-inline' data: blob:`
+    //     }
+    //   }
+    // },
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
