@@ -1,3 +1,10 @@
+## [1.1.7](https://github.com/cmrfrd/taoa/compare/v1.1.6...v1.1.7) (2020-10-18)
+
+
+### Bug Fixes
+
+* **local:** Update author description and temporarility remove csp ([f3bc5e9](https://github.com/cmrfrd/taoa/commit/f3bc5e987a26c273d202feaf9576a14728b7c6ee))
+
 ## [1.1.6](https://github.com/cmrfrd/taoa/compare/v1.1.5...v1.1.6) (2020-10-18)
 
 
