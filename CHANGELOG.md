@@ -1,3 +1,10 @@
+## [1.1.5](https://github.com/cmrfrd/taoa/compare/v1.1.4...v1.1.5) (2020-10-18)
+
+
+### Bug Fixes
+
+* Add github pages ([e01361e](https://github.com/cmrfrd/taoa/commit/e01361ebe9c814bde022dc0f1818b6d0a4b0b148))
+
 ## [1.1.4](https://github.com/cmrfrd/taoa/compare/v1.1.3...v1.1.4) (2020-10-18)
 
 
