@@ -5,7 +5,7 @@ module.exports = {
     siteName: `The Art of Abstraction`,
     title: `Welcome | The Art of Abstraction`,
     name: `Alexander Comerford`,
-    siteUrl: `taoa.io`,
+    siteUrl: `https://taoa.io`,
     description: ``,
     emojiDir: 'emojis',
     git: {
