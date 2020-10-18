@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/cmrfrd/taoa/compare/v1.1.1...v1.1.2) (2020-10-18)
+
+
+### Bug Fixes
+
+* **release:** Add releaserc for semantic-release ([fd82769](https://github.com/cmrfrd/taoa/commit/fd82769056115070747c5beecef84a8eec3ed572))
+
 ## [1.1.1](https://github.com/cmrfrd/taoa/compare/v1.1.0...v1.1.1) (2020-10-17)
 
 
