@@ -32,15 +32,44 @@ To run this app locally there is some setup that needs to be done
 $ ./bin/local_shell.sh
 ```
 
-Once inside the container, download emojis and generate TLS certificates (don't forget to add the root CA signature to your browser!)
+Once inside the container, use `npm` to download all the necessary js based dependencies.
+
+```shell
+$ npm i
+```
+
+Once the necessary dependencies are installed, download emojis and generate TLS certificates (don't forget to add the root CA signature to your browser!)
 
 ``` shell
 $ ./bin/container_download_emojis.sh
 $ ./bin/container_generate_certs.sh
 ```
 
+After this setup, the site can be developed upon with the command
+
+```shell
+$ ./bin/container_develop.sh
+```
+
 This will run the website in development mode where you can test, edit, and view the website
 in the browser at `https://localhost:8000`
+
+## Releasing
+
+This repo uses [semantic-release](https://github.com/semantic-release/semantic-release) for the release process and is triggered by release tags and commit messages.
+
+To run a release from inside the container run
+
+```
+$ ./bin/container_release.sh
+```
+
+When this command is run the following checks are run
+
+1. `semantic-release` checks commits if a release should be triggered
+2. If release is triggered, generate an updated `CHANGELOG.md`
+3. Build the latest static build of the site
+4. Publish the site to github pages
 
 ## Contributing
 
