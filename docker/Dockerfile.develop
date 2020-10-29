@@ -31,6 +31,7 @@ RUN \
   bash \
   libx11-dev \
   libxi \
+  libtool \
   mesa-gl \
   autoconf \
   automake \
