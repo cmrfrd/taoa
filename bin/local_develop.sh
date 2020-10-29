@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 source development.env
 docker run \
        -p 8000:8000 \
