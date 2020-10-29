@@ -2,9 +2,6 @@
 branches:
 - development
 plugins:
-- - "@semantic-release/exec"
-  - prepareCmd: |-
-      ./bin/container_build.sh
 - - "@semantic-release/commit-analyzer"
   - preset: angular
 - - "@semantic-release/release-notes-generator"
@@ -19,6 +16,8 @@ plugins:
 
       ${nextRelease.notes}
 - - "@semantic-release/exec"
+  - prepareCmd: |-
+      ./bin/container_build.sh
   - verifyConditionsCmd: |-
       echo 'Publishing site'
     publishCmd: |-
