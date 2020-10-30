@@ -1,7 +1,7 @@
-import ArticleHero from '../sections/article/Article.Hero';
-import ArticlesNext from '../sections/article/Article.Next';
-import ArticleSEO from '../sections/article/Article.SEO';
-import ArticleShare from '../sections/article/Article.Share';
+import PostHero from '../sections/post/Post.Hero';
+import PostsNext from '../sections/post/Post.Next';
+import PostSEO from '../sections/post/Post.SEO';
+import PostShare from '../sections/post/Post.Share';
 
 import MDX from '@components/MDX';
 import Section from '@components/Section';
@@ -12,7 +12,7 @@ import styled from '@emotion/styled';
 import { graphql, useStaticQuery } from 'gatsby';
 import React, { useRef } from 'react';
 
-const articleQuery = graphql`
+const postQuery = graphql`
   {
     site {
       siteMetadata {
@@ -23,41 +23,41 @@ const articleQuery = graphql`
 `;
 
 /**
- * Article page layout. Every article's content comes from MDX
- * and suggests next articles, comments, and how to email subscribe
+ * Post page layout. Every post's content comes from MDX
+ * and suggests next posts, comments, and how to email subscribe
  */
-const Article: Template = ({ pageContext, location }: TTemplate) => {
+const Post: Template = ({ pageContext, location }: TTemplate) => {
   const contentSectionRef = useRef<HTMLElement>(null);
 
-  const { article, authors, next, articlePageData } = pageContext;
-  const { nextArticleText } = articlePageData.edges[0].node.article;
-  const { siteName } = useStaticQuery(articleQuery).site.siteMetadata;
+  const { post, authors, next, postPageData } = pageContext;
+  const { nextPostText } = postPageData.edges[0].node.post;
+  const { siteName } = useStaticQuery(postQuery).site.siteMetadata;
 
   return (
     <span>
-      <ArticleSEO article={article} authors={authors} location={location} />
-      <ArticleHero article={article} authors={authors} />
-      <ArticleBody ref={contentSectionRef}>
-        <MDX content={article.body}>
-          <ArticleShare />
+      <PostSEO post={post} authors={authors} location={location} />
+      <PostHero post={post} authors={authors} />
+      <PostBody ref={contentSectionRef}>
+        <MDX content={post.body}>
+          <PostShare />
         </MDX>
-      </ArticleBody>
+      </PostBody>
       {next.length > 0 && (
-        <NextArticle narrow>
+        <NextPost narrow>
           <FooterNext>
-            {nextArticleText} {siteName}
+            {nextPostText} {siteName}
           </FooterNext>
-          <ArticlesNext articles={next} />
+          <PostsNext posts={next} />
           <FooterSpacer />
-        </NextArticle>
+        </NextPost>
       )}
     </span>
   );
 };
 
-export default Article;
+export default Post;
 
-const ArticleBody = styled.article({
+const PostBody = styled.article({
   position: 'relative',
   padding: '160px 0 35px',
   transition: 'background 0.2s linear',
@@ -75,7 +75,7 @@ const ArticleBody = styled.article({
   }
 });
 
-const NextArticle = styled(Section)({
+const NextPost = styled(Section)({
   display: 'block'
 });
 

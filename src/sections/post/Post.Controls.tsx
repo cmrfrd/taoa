@@ -77,7 +77,7 @@ const SharePageButton: React.FC<{}> = () => {
   );
 };
 
-const ArticleControls: React.FC<{}> = () => {
+const PostControls: React.FC<{}> = () => {
   return (
     <NavControls>
       <SharePageButton />
@@ -86,7 +86,7 @@ const ArticleControls: React.FC<{}> = () => {
   );
 };
 
-export default ArticleControls;
+export default PostControls;
 
 const NavControls = styled.div({
   display: 'flex',

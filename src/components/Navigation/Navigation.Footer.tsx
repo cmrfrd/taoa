@@ -3,11 +3,12 @@ import Section from '@components/Section';
 import SocialLinks from '@components/SocialLinks';
 import { mediaquery } from '@styles/media';
 import { ITAOAThemeUIContext } from '@types';
+import { getWindowDimensions, getBreakpointFromTheme } from '@utils';
 
 import styled from '@emotion/styled';
 import * as CSS from 'csstype';
 import { graphql, useStaticQuery } from 'gatsby';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const footerQuery = graphql`
   {
@@ -78,8 +79,25 @@ const Footer: React.FC<IFooterProps> = ({ gradient = true }: IFooterProps) => {
     const years = [0, edges.length - 1].map((edge: number) =>
       new Date(edges[edge].node.frontmatter.date).getFullYear()
     );
-    return years[0] === years[1] ? `${years[0]}` : `${years[0]}–${years[1]}`;
+    return years[0] === years[1] ? `© ${years[0]}` : `© ${years[0]}–${years[1]}`;
   })();
+
+  const { width } = getWindowDimensions();
+  const breakpoint = getBreakpointFromTheme('phone');
+  const [breakInSmallFormat, setbreakInSmallFormat] = useState<boolean>(width <= breakpoint);
+
+  const handleWindowResize = (): void => {
+    const { width } = getWindowDimensions();
+    const breakpoint = getBreakpointFromTheme('phone');
+    setbreakInSmallFormat(width < breakpoint);
+  };
+
+  useEffect((): (() => void) => {
+    window.addEventListener('resize', handleWindowResize);
+    return (): void => {
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, []);
 
   return (
     <>
@@ -87,26 +105,57 @@ const Footer: React.FC<IFooterProps> = ({ gradient = true }: IFooterProps) => {
       <Section narrow>
         <HoritzontalRule />
         <FooterContainer>
-          <FooterText>
-            {copyrightDate} {siteName}
-            {' | '}
-            {<FooterLink href={createGithubLink(user, repo, versionTag)}>{versionTag}</FooterLink>}
-            {' | '}
-            {[...footer.message].map((e: string, i: number) => {
-              if (i === footer.linkIndex) {
-                return (
-                  <a href={footer.link} key={i}>
-                    <Emoji text={e} key={i} />
-                  </a>
-                );
-              } else {
-                return <Emoji text={e} key={i} />;
+          {breakInSmallFormat ? (
+            <div>
+              <FooterText>
+                {copyrightDate} {siteName}
+                {' | '}
+                {
+                  <FooterLink href={createGithubLink(user, repo, versionTag)}>
+                    {versionTag}
+                  </FooterLink>
+                }
+              </FooterText>
+              <FooterText>
+                {[...footer.message].map((e: string, i: number) => {
+                  if (i === footer.linkIndex) {
+                    return (
+                      <a href={footer.link} key={i}>
+                        <Emoji text={e} key={i} />
+                      </a>
+                    );
+                  } else {
+                    return <Emoji text={e} key={i} />;
+                  }
+                })}
+              </FooterText>
+            </div>
+          ) : (
+            <FooterText>
+              {copyrightDate} {siteName}
+              {' | '}
+              {
+                <FooterLink href={createGithubLink(user, repo, versionTag)}>
+                  {versionTag}
+                </FooterLink>
               }
-            })}
-          </FooterText>
-          <div>
+              {' | '}
+              {[...footer.message].map((e: string, i: number) => {
+                if (i === footer.linkIndex) {
+                  return (
+                    <a href={footer.link} key={i}>
+                      <Emoji text={e} key={i} />
+                    </a>
+                  );
+                } else {
+                  return <Emoji text={e} key={i} />;
+                }
+              })}
+            </FooterText>
+          )}
+          <SocialLinksContainer>
             <SocialLinks links={social} />
-          </div>
+          </SocialLinksContainer>
         </FooterContainer>
       </Section>
     </>
@@ -129,6 +178,7 @@ const FooterContainer = styled.div((p: ITAOAThemeUIContext) => ({
   },
 
   [mediaquery.phablet()]: {
+    margin: '120px auto 100px',
     paddingBottom: '50px'
   }
 }));
@@ -142,18 +192,24 @@ const HoritzontalRule = styled.div((p: ITAOAThemeUIContext) => ({
     margin: '60px auto'
   },
 
-  [mediaquery.phablet()]: {
+  [mediaquery.phone()]: {
     display: 'none'
   }
 }));
 
 const FooterText = styled.div({
-  [mediaquery.tablet()]: {
-    marginBottom: '80px'
-  },
+  fontSize: '16px',
 
-  [mediaquery.phablet()]: {
-    margin: '120px auto 100px'
+  [mediaquery.tablet()]: {
+    fontSize: '14px',
+    paddingTop: '10px',
+    textAlign: 'center'
+  }
+});
+
+const SocialLinksContainer = styled.div({
+  [mediaquery.tablet()]: {
+    paddingTop: '80px'
   }
 });
 

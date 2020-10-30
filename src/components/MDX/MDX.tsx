@@ -2,7 +2,7 @@ import Anchor from '@components/Anchor';
 import Blockquote from '@components/Blockquote';
 import Button, { SmallButton, MediumButton, LargeButton } from '@components/Button';
 import Code from '@components/Code';
-import CodeEditorWithOutput from '@components/CodeEditor';
+/* import CodeEditorWithOutput from '@components/CodeEditor'; */
 import ConfettiButton from '@components/ConfettiButton';
 import Figcaption from '@components/Figcaption';
 import Headings from '@components/Headings';
@@ -54,7 +54,7 @@ const components: Components = {
   img: ImageZoom,
   a: Anchor,
   blockquote: Blockquote,
-  h1: Headings.h2, // h1 reserved article title
+  h1: Headings.h2, // h1 reserved post title
   h2: Headings.h2,
   h3: Headings.h3,
   h4: Headings.h4,
@@ -75,8 +75,8 @@ const components: Components = {
   SmallButton,
   MediumButton,
   LargeButton,
-  ConfettiButton,
-  CodeEditorWithOutput
+  ConfettiButton
+  /*   CodeEditorWithOutput */
 };
 
 interface IMDXProps {
@@ -109,7 +109,7 @@ const IMAGE_WIDTHS = (): IStringMap => ({
   full: '100vw'
 });
 
-const ARTICLE_WIDTH = (): IStringMap => ({
+const POST_WIDTH = (): IStringMap => ({
   width: '100%',
   maxWidth: '780px',
 
@@ -129,7 +129,7 @@ const ARTICLE_WIDTH = (): IStringMap => ({
 const HeadingsCSS = (): IStringMap => ({
   'h1, h2, h3, h4, h5, h6': {
     margin: '0 auto',
-    ...ARTICLE_WIDTH()
+    ...POST_WIDTH()
   },
 
   'h1, h1 *, h2, h2 *': {
@@ -335,7 +335,7 @@ const ImageCSS = (): IStringMap => ({
 
 /**
  * MDXBody
- * Here we're applying "global" selectors to make sure we maintain an article
+ * Here we're applying "global" selectors to make sure we maintain an post
  * body type feel. We're also applying all the Prism selecotors and styles within
  * the MDXBody.
  */

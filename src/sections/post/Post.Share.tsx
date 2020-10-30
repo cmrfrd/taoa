@@ -25,7 +25,7 @@ interface MenuFloatState {
 const MENU_WIDTH: number = 235;
 const MENU_HEIGHT: number = 46;
 
-const ArticleShare: React.FC<{}> = () => {
+const PostShare: React.FC<{}> = () => {
   const [colorMode] = useColorMode();
   const [text, setText] = useState('');
   const [focus, setFocus] = useState(false);
@@ -50,20 +50,20 @@ const ArticleShare: React.FC<{}> = () => {
        * the window.selection values will give the previous ranges instead of the current!
        */
       setTimeout(() => {
-        const article = document.getElementsByTagName('article')[0];
+        const post = document.getElementsByTagName('post')[0];
         const paragraphOffset = document.getElementsByTagName('p')[0].offsetLeft;
 
-        if (!article) return;
+        if (!post) return;
 
         // We want to not show the menu float in code blocks
-        const codeBlocks = Array.from(article.getElementsByClassName('prism-code'));
+        const codeBlocks = Array.from(post.getElementsByClassName('prism-code'));
         const isHighlightedInCodeBlock = codeBlocks.some(block =>
           window.getSelection().containsNode(block, true)
         );
 
         if (isHighlightedInCodeBlock) return;
 
-        const articleBox = article.getBoundingClientRect() as DOMRect;
+        const postBox = post.getBoundingClientRect() as DOMRect;
 
         const { width, height } = getSelectionDimensions();
         const { x, y } = getHighlightedTextPositioning();
@@ -72,7 +72,7 @@ const ArticleShare: React.FC<{}> = () => {
         const desktop = getBreakpointFromTheme('desktop');
 
         /**
-         * Because the article is offset to the side to compensate for the progress bar
+         * Because the post is offset to the side to compensate for the progress bar
          * we need to calculate the offset of the menu share in the same way.
          */
         let paddingOffset = 0;
@@ -93,7 +93,7 @@ const ArticleShare: React.FC<{}> = () => {
          */
         const offset: { x: number; y: number } = {
           x: height > 29 ? paragraphOffset + paddingOffset : x,
-          y: y - articleBox.y - 160
+          y: y - postBox.y - 160
         };
 
         setPosition({
@@ -175,7 +175,7 @@ const ArticleShare: React.FC<{}> = () => {
   );
 };
 
-export default ArticleShare;
+export default PostShare;
 
 function ReferralLink({ disabled, share, children }) {
   function handleClick(event) {
@@ -203,7 +203,7 @@ function generateShare(shareText: string) {
 
   return {
     twitter: `https://twitter.com/intent/tweet?text="${shareText}" — ${url}`,
-    linkedin: `http://www.linkedin.com/shareArticle?mini=true&url=${url}&summary=${shareText}&title=${shareText}`
+    linkedin: `http://www.linkedin.com/sharePost?mini=true&url=${url}&summary=${shareText}&title=${shareText}`
   };
 }
 

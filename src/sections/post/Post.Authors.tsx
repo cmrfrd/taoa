@@ -76,7 +76,7 @@ const CoAuthors: React.FC<IAuthorsProps> = ({ authors }: IAuthorsProps) => {
   );
 };
 
-const ArticleAuthors: React.FC<IAuthorsProps> = ({ authors }: IAuthorsProps) => {
+const PostAuthors: React.FC<IAuthorsProps> = ({ authors }: IAuthorsProps) => {
   const hasCoAuthors = authors.length > 1;
 
   // Special dropdown UI for multiple authors
@@ -95,7 +95,7 @@ const ArticleAuthors: React.FC<IAuthorsProps> = ({ authors }: IAuthorsProps) => 
   }
 };
 
-export default ArticleAuthors;
+export default PostAuthors;
 
 const AuthorAvatar = styled.div((p: ITAOAThemeUIContext) => ({
   height: '25px',
@@ -135,11 +135,7 @@ const AuthorLink = styled(Link)((p: ITAOAThemeUIContext) => ({
 const CoAuthorsList = styled.div({
   position: 'relative',
   height: '25px',
-  marginRight: '15px',
-
-  [mediaquery.phablet()]: {
-    display: 'none'
-  }
+  marginRight: '15px'
 });
 
 const CoAuthorsListOpen = styled.ul((p: ITAOAThemeUIContext) => ({

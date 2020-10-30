@@ -53,7 +53,7 @@ export const globalStyles = css`
     height: 100%;
   }
 
-  article {
+  post {
     word-break: break-word;
   }
 

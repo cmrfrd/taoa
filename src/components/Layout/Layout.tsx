@@ -1,4 +1,4 @@
-import ArticlesContextProvider from '../../sections/articles/Articles.List.Context';
+import PostsContextProvider from '../../sections/posts/Posts.List.Context';
 
 import FadeTransition from '@components/FadeTransition';
 import NavigationFooter from '@components/Navigation/Navigation.Footer';
@@ -50,7 +50,7 @@ const Layout: React.FC<TLayout> = ({
   }, [colorMode]);
 
   return (
-    <ArticlesContextProvider>
+    <PostsContextProvider>
       <Container>
         <HeaderTexture />
         <Global styles={globalStyles} />
@@ -64,7 +64,7 @@ const Layout: React.FC<TLayout> = ({
           <NavigationFooter gradient={gradient} />
         </FadeTransition>
       </Container>
-    </ArticlesContextProvider>
+    </PostsContextProvider>
   );
 };
 

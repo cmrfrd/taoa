@@ -1,5 +1,5 @@
-import ArticlesList from '../sections/articles/Articles.List';
-import { GridLayoutContext } from '../sections/articles/Articles.List.Context';
+import PostsList from '../sections/posts/Posts.List';
+import { GridLayoutContext } from '../sections/posts/Posts.List.Context';
 
 import Headings from '@components/Headings';
 import Paginator from '@components/Navigation/Navigation.Paginator';
@@ -7,31 +7,31 @@ import SEO from '@components/SEO';
 import Search from '@components/Search';
 import Section from '@components/Section';
 import { mediaquery } from '@styles/media';
-import { Template, TTemplate, IArticle, ITAOAThemeUIContext } from '@types';
+import { Template, TTemplate, IPost, ITAOAThemeUIContext } from '@types';
 
 import styled from '@emotion/styled';
 import React, { useState, useContext } from 'react';
 
 const SearchPage: Template = ({ location, pageContext }: TTemplate) => {
-  const { articles } = pageContext;
+  const { posts } = pageContext;
   const { search } = pageContext.searchPageData.edges[0].node;
 
-  const [searchResults, setSearchResults] = useState(articles);
+  const [searchResults, setSearchResults] = useState(posts);
   const pages = Math.ceil([...searchResults].length / search.pageLength);
 
   const [currentPage, setCurrentPage] = useState(0);
 
   const [searching, setSearching] = useState(true);
 
-  const [numSearchResults, setNumSearchResults] = useState(articles.length);
+  const [numSearchResults, setNumSearchResults] = useState(posts.length);
 
-  const { gridLayout, getGridLayout } = useContext(GridLayoutContext);
+  const { gridLayout } = useContext(GridLayoutContext);
 
-  const filter = (e: IArticle, term: string): boolean => {
+  const filter = (e: IPost, term: string): boolean => {
     return e.title.toLowerCase().includes(term) || e.title.includes(term);
   };
 
-  const sort = (a: IArticle, b: IArticle): number => {
+  const sort = (a: IPost, b: IPost): number => {
     if (a.dateForSEO > b.dateForSEO) {
       return -1;
     }
@@ -54,15 +54,15 @@ const SearchPage: Template = ({ location, pageContext }: TTemplate) => {
             setCurrentPage={setCurrentPage}
             searching={searching}
             setSearching={setSearching}
-            elements={articles}
+            elements={posts}
             filter={filter}
             sort={sort}
             placeholder={search.placeholder}
           />
           <Horizontal />
-          <NumArticlesHeader>{numSearchResults} results found</NumArticlesHeader>
-          <ArticlesList
-            articles={searchResults.slice(
+          <NumPostsHeader>{numSearchResults} results found</NumPostsHeader>
+          <PostsList
+            posts={searchResults.slice(
               currentPage * search.pageLength,
               (currentPage + 1) * search.pageLength
             )}
@@ -70,7 +70,7 @@ const SearchPage: Template = ({ location, pageContext }: TTemplate) => {
             searching={searching}
           />
         </SearchContainer>
-        <ArticlesPaginator show={pageContext.pageCount > 1}>
+        <PostsPaginator show={pageContext.pageCount > 1}>
           <Paginator
             {...{
               pageCount: pages,
@@ -84,7 +84,7 @@ const SearchPage: Template = ({ location, pageContext }: TTemplate) => {
               ...pageContext
             }}
           />
-        </ArticlesPaginator>
+        </PostsPaginator>
       </Section>
     </span>
   );
@@ -102,10 +102,10 @@ const Horizontal = styled.div((p: ITAOAThemeUIContext) => ({
   }
 }));
 
-interface IArticlesPaginator extends ITAOAThemeUIContext {
+interface IPostsPaginator extends ITAOAThemeUIContext {
   show: boolean;
 }
-const ArticlesPaginator = styled.div((p: IArticlesPaginator) => ({
+const PostsPaginator = styled.div((p: IPostsPaginator) => ({
   ...(p.show && { marginTop: '95px' }),
   width: '100%'
 }));
@@ -135,7 +135,7 @@ const SearchHeading = styled(Headings.h2)({
   }
 });
 
-const NumArticlesHeader = styled(Headings.h5)({
+const NumPostsHeader = styled(Headings.h5)({
   [mediaquery.phablet()]: {
     padding: 0
   }

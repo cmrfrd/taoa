@@ -13,8 +13,8 @@ const GatsbyFluid_withWebp = `
 `;
 
 module.exports.local = {
-  articles: `{
-    articles: allArticle(
+  posts: `{
+    posts: allPost(
       sort: { fields: [date, title], order: DESC }
       limit: 1000
     ) {
@@ -62,9 +62,9 @@ module.exports.local = {
       edges {
         node {
           home {
-            entriesHeadingText
-            moreArticlesText
-            numberOfArticles
+            postsHeadingText
+            morePostsText
+            numberOfPosts
           }
         }
       }
@@ -96,12 +96,12 @@ module.exports.local = {
       }
     }
   }`,
-  article: `{
-    article: allArticleYaml {
+  post: `{
+    post: allPostYaml {
       edges {
         node {
-          article {
-            nextArticleText
+          post {
+            nextPostText
           }
         }
       }

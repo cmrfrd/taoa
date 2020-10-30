@@ -1,5 +1,5 @@
 name: "search"
 search:
   placeholder: "Search by title"
-  heading: "Search Articles"
+  heading: "Search Posts"
   pageLength: 6

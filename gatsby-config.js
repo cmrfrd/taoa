@@ -13,9 +13,9 @@ module.exports = {
       repo: process.env.REPO_NAME
     },
     transition: {
-      scrollTimeoutMilliseconds: 250,
-      pageAnimationDurationSeconds: 0.25,
-      gridRowAnimationDurationSeconds: 0.25
+      scrollTimeoutMilliseconds: 300,
+      pageAnimationDurationSeconds: 0.3,
+      gridRowAnimationDurationSeconds: 0.3
     },
     logo: {
       text: 'T·A·O·A'
@@ -127,8 +127,8 @@ module.exports = {
     {
       resolve: `gatsby-source-filesystem`,
       options: {
-        path: 'content/pages/article',
-        name: 'content/pages/article'
+        path: 'content/pages/post',
+        name: 'content/pages/post'
       }
     },
     {

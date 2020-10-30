@@ -6,6 +6,7 @@ import merge from 'lodash/merge';
 const breakpoints = [
   ['phone_small', 320],
   ['phone', 376],
+  ['phone_large', 426],
   ['phablet', 540],
   ['tablet', 735],
   ['desktop', 1070],

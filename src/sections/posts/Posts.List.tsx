@@ -1,10 +1,10 @@
-import { GridLayoutContext } from './Articles.List.Context';
+import { GridLayoutContext } from './Posts.List.Context';
 
 import FadeTransition from '@components/FadeTransition';
 import Headings from '@components/Headings';
 import Image, { ImagePlaceholder } from '@components/Image';
-import mediaqueries from '@styles/media';
-import { IArticle } from '@types';
+import mediaqueries, { mediaquery } from '@styles/media';
+import { IPost, ITAOAThemeUIContext } from '@types';
 
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
@@ -25,8 +25,8 @@ import React, { useContext } from 'react';
  * [LONG]
  */
 
-interface IArticlesListProps {
-  articles: IArticle[];
+interface IPostsListProps {
+  posts: IPost[];
   alwaysShowAllDetails?: boolean;
   currentPage: number;
 }
@@ -47,28 +47,28 @@ const siteQuery = graphql`
   }
 `;
 
-const ArticlesList: React.FC<IArticlesListProps> = ({
-  articles,
+const PostsList: React.FC<IPostsListProps> = ({
+  posts,
   alwaysShowAllDetails,
   currentPage,
   searching
-}: IArticlesListProps) => {
-  if (!articles) return null;
+}: IPostsListProps) => {
+  if (!posts) return null;
 
-  const { gridLayout, getGridLayout } = useContext(GridLayoutContext);
+  const { gridLayout } = useContext(GridLayoutContext);
   const { gridRowAnimationDurationSeconds } = useStaticQuery(
     siteQuery
   ).allSite.edges[0].node.siteMetadata.transition;
 
   /*
    * Three transitions are here for three possible interactions that
-   * can affect the visibility of the articles.
+   * can affect the visibility of the posts.
    * 1. Change from grid layout to row layout
    * 2. Change of page
-   * 3. Searching for an article
+   * 3. Searching for an post
    */
   return (
-    <ArticlesListContainer alwaysShowAllDetails={alwaysShowAllDetails}>
+    <PostsListContainer alwaysShowAllDetails={alwaysShowAllDetails}>
       <FadeTransition
         animatePresenceProps={{ initial: false, exitBeforeEnter: true }}
         motionKey={currentPage}
@@ -87,76 +87,72 @@ const ArticlesList: React.FC<IArticlesListProps> = ({
               animate: searching ? 'exit' : 'enter'
             }}
           >
-            <ListLayoutContainer key={gridLayout} gridLayout={gridLayout} articles={articles} />
+            <ListLayoutContainer key={gridLayout} gridLayout={gridLayout} posts={posts} />
           </FadeTransition>
         </FadeTransition>
       </FadeTransition>
-    </ArticlesListContainer>
+    </PostsListContainer>
   );
 };
 
-export default ArticlesList;
+export default PostsList;
 
 interface IListLayoutContainerProps {
-  articles: any;
+  posts: any;
   gridLayout: any;
 }
 
 const ListLayoutContainer: React.FC<IListLayoutContainerProps> = ({
-  articles,
+  posts,
   gridLayout,
   ...props
 }: IListLayoutContainerProps) => {
-  const { gridRowAnimationDurationSeconds } = useStaticQuery(
-    siteQuery
-  ).allSite.edges[0].node.siteMetadata.transition;
-
   return (
     <List gridLayout={gridLayout} reverse={true}>
-      {[...articles].map((ap: IArticle, index: number) => (
-        <ListItem key={index} article={ap} narrow={true} gridLayout={gridLayout} />
+      {[...posts].map((ap: IPost, index: number) => (
+        <ListItem key={index} post={ap} narrow={true} gridLayout={gridLayout} />
       ))}
     </List>
   );
 };
 
-interface IArticlesListItemProps {
-  article: IArticle;
+interface IPostsListItemProps {
+  post: IPost;
   narrow?: boolean;
   gridLayout: string;
 }
 
-const ListItem: React.FC<IArticlesListItemProps> = ({
-  article,
+const ListItem: React.FC<IPostsListItemProps> = ({
+  post,
   narrow,
   gridLayout
-}: IArticlesListItemProps) => {
-  if (!article) return null;
+}: IPostsListItemProps) => {
+  if (!post) return null;
 
-  const hasOverflow = narrow && article.title.length > 35;
-  const imageSource = narrow ? article.hero.narrow : article.hero.regular;
+  const hasOverflow = narrow && post.title.length > 35;
+  const imageSource = narrow ? post.hero.narrow : post.hero.regular;
   const hasHeroImage =
     imageSource && Object.keys(imageSource).length !== 0 && imageSource.constructor === Object;
 
   return (
-    <ArticleLink to={article.slug} data-a11y="false">
+    <PostLink to={post.slug} data-a11y="false">
       <Item gridLayout={gridLayout}>
         <ImageContainer narrow={narrow} gridLayout={gridLayout}>
           {hasHeroImage ? <Image src={imageSource} /> : <ImagePlaceholder />}
         </ImageContainer>
         <div>
           <Title hasOverflow={hasOverflow} gridLayout={gridLayout}>
-            {article.title}
+            {post.title}
           </Title>
           <Excerpt narrow={narrow} hasOverflow={hasOverflow} gridLayout={gridLayout}>
-            {article.excerpt}
+            {post.excerpt}
           </Excerpt>
           <MetaData>
-            {article.date} · {article.timeToRead} min read
+            {post.date} · {post.timeToRead} min read
           </MetaData>
         </div>
       </Item>
-    </ArticleLink>
+    </PostLink>
   );
 };
 
@@ -187,7 +183,7 @@ const showDetails = css`
   }
 `;
 
-const ArticlesListContainer = styled.div<{ alwaysShowAllDetails?: boolean }>`
+const PostsListContainer = styled.div<{ alwaysShowAllDetails?: boolean }>`
   transition: opacity 0.25s;
   padding-top: 20px;
   min-height: 300px;
@@ -267,7 +263,7 @@ border-bottom-left-radius: 5px;
 `}
 `;
 
-// If only 1 article, dont create 2 rows.
+// If only 1 post, dont create 2 rows.
 const listRow = p => css`
   display: grid;
   grid-template-rows: '1fr 1fr';
@@ -335,113 +331,136 @@ margin-bottom: 10px;
 `}
 `;
 
-const Excerpt = styled.p<{
+interface IExcerptProps extends ITAOAThemeUIContext {
   hasOverflow: boolean;
   narrow: boolean;
   gridLayout: string;
-}>`
-  ${limitToTwoLines};
-  font-size: 16px;
-  margin-bottom: 10px;
-  color: ${p => p.theme.colors.grey};
-  display: ${p => (p.hasOverflow && p.gridLayout === 'tiles' ? 'none' : 'box')};
-  max-width: ${p => (p.narrow ? '415px' : '515px')};
+}
 
-  ${mediaqueries.desktop`
-display: -webkit-box;
-`}
+//    ${limitToTwoLines};
+const Excerpt = styled.p((p: IExcerptProps) => ({
+  fontSize: '16px',
+  marginBottom: '10px',
+  color: `${p.theme.colors.grey}`,
+  display: p.hasOverflow && p.gridLayout === 'tiles' ? 'none' : 'box',
+  maxWidth: p.narrow ? '415px' : '515px',
 
-  ${mediaqueries.phablet`
-margin-bottom; 15px;
-`}
+  [mediaquery.desktop()]: {
+    display: '-webkit-box'
+  },
 
-  ${mediaqueries.phablet`
-max-width: 100%;
-padding:  0 20px;
-margin-bottom: 10px;
-                        -webkit-line-clamp: 3;
-`}
-`;
+  [mediaquery.phablet()]: {
+    marginBottom: '15px'
+  },
 
-const MetaData = styled.div`
-  font-weight: 600;
-  font-size: 16px;
-  color: ${p => p.theme.colors.grey};
-  opacity: 0.33;
-
-  ${mediaqueries.phablet`
-max-width: 100%;
-padding:  0 20px 20px;
-`}
-`;
-
-const ArticleLink = styled(Link)`
-  position: relative;
-  display: block;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  padding-bottom: 30px;
-  border-radius: 5px;
-  z-index: 1;
-  transition: transform 0.33s var(--ease-out-quart);
-  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
-
-  &:hover ${ImageContainer}, &:focus ${ImageContainer} {
-    transform: translateY(-1px);
-    box-shadow: 0 50px 80px -20px rgba(0, 0, 0, 0.27), 0 30px 50px -30px rgba(0, 0, 0, 0.3);
+  [mediaquery.phablet()]: {
+    maxWidth: '100%',
+    padding: '0 20px',
+    marginBottom: '10px',
+    WebkitLineClamp: 3
   }
+}));
 
-  &:hover h2,
-  &:focus h2 {
-    color: ${p => p.theme.colors.accent};
+const MetaData = styled.div((p: ITAOAThemeUIContext) => ({
+  fontWeight: 600,
+  fontSize: '16px',
+  color: `${p.theme.colors.grey}`,
+  opacity: 0.33,
+
+  [mediaquery.phablet()]: {
+    maxWidth: '100%',
+    padding: '0 20px 20px'
   }
+}));
 
-  &[data-a11y='true']:focus::after {
-    content: ' ';
-    position: absolute;
-    left: -1.5%;
-    top: -2%;
-    width: 103%;
-    height: 104%;
-    border: 3px solid ${p => p.theme.colors.accent};
-    background: rgba(255, 255, 255, 0.01);
-    border-radius: 5px;
-  }
+const PostLink = styled(Link)((p: ITAOAThemeUIContext) => ({
+  position: 'relative',
+  display: 'block',
+  width: '100%',
+  height: '100%',
+  top: 0,
+  left: 0,
+  paddingBottom: '30px',
+  borderRadius: '5px',
+  zIndex: 1,
+  transition: 'transform 0.33s var(--ease-out-quart)',
 
-  ${mediaqueries.phablet`
-                   &:hover ${ImageContainer} {
-                       transform: none;
-                       box-shadow: initial;
-                   }
+  [`&:hover ${ImageContainer}, &:focus ${ImageContainer}`]: {
+    transform: 'translateY(-1px)',
+    boxShadow: '0 50px 80px -20px rgba(0, 0, 0, 0.27), 0 30px 50px -30px rgba(0, 0, 0, 0.3)'
+  },
 
-                   &:active {
-                       transform: scale(0.97) translateY(3px);
-                   }
-`}
-`;
+  [`&:hover h2, &:focus h2`]: {
+    color: `${p.theme.colors.accent}`
+  },
 
-const EntriesHeading = styled.h2`
-    font-style: normal;
-    font-size: 30px;
-    line-height: 1.15;
-    color: ${p => p.theme.colors.primary};
-    padding-bottom: 20px;
+  [`&[data-a11y='true']:focus::after`]: {
+    content: ' ',
+    position: 'absolute',
+    left: '-1.5%',
+    top: '-2%',
+    width: '103%',
+    height: '104%',
+    border: `3px solid ${p.theme.colors.accent}`,
+    background: `rgba(255, 255, 255, 0.01)`,
+    borderRadius: `5px`
+  },
 
-    a {
-    color: ${p => p.theme.colors.accent};
+  [mediaquery.phablet()]: {
+    [`&:hover ${ImageContainer}`]: {
+      transform: 'none',
+      boxShadow: 'initial'
+    },
+
+    '&:active': {
+      transform: 'scale(0.97) translateY(3px)'
     }
+  }
+}));
 
-    ${mediaqueries.desktop`
-font-size: 20px
-`}
-
-    ${mediaqueries.phablet`
-font-size: 14px;
-`}
-
-    ${mediaqueries.phone`
-font-size: 14px;
-`}
-`;
+/* const PostLink = styled(Link)`
+ *   position: relative;
+ *   display: block;
+ *   width: 100%;
+ *   height: 100%;
+ *   top: 0;
+ *   left: 0;
+ *   padding-bottom: 30px;
+ *   border-radius: 5px;
+ *   z-index: 1;
+ *   transition: transform 0.33s var(--ease-out-quart);
+ *   -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+ *
+ *   &:hover ${ImageContainer}, &:focus ${ImageContainer} {
+ *     transform: translateY(-1px);
+ *     box-shadow: 0 50px 80px -20px rgba(0, 0, 0, 0.27), 0 30px 50px -30px rgba(0, 0, 0, 0.3);
+ *   }
+ *
+ *   &: hover h2;
+ *   &:focus h2 {
+ *     color: ${p => p.theme.colors.accent};
+ *   }
+ *
+ *   &[data-a11y='true']:focus::after {
+ *     content: ' ';
+ *     position: absolute;
+ *     left: -1.5%;
+ *     top: -2%;
+ *     width: 103%;
+ *     height: 104%;
+ *     border: 3px solid ${p => p.theme.colors.accent};
+ *     background: rgba(255, 255, 255, 0.01);
+ *     border-radius: 5px;
+ *   }
+ *
+ *   ${mediaqueries.phablet`
+ *                    &:hover ${ImageContainer} {
+ *                        transform: none;
+ *                        box-shadow: initial;
+ *                    }
+ *
+ *                    &:active {
+ *                        transform: scale(0.97) translateY(3px);
+ *                    }
+ * `}
+ * `; */

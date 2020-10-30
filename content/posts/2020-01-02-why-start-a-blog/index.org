@@ -85,7 +85,7 @@ excerpt: What is this blog, and why does it exist?
   content to these platforms, all these companies still maintain their own respective company blogs.
 
   Although they might be labeled differently (archive, journal, publication, etc.), they all have the same "blog" like format with listed
-  articles, authors, and different narratives. Even with new and alternative methods of posting content online, blogs have
+  posts, authors, and different narratives. Even with new and alternative methods of posting content online, blogs have
   solidified themselves from their mid-1990s inception to one of the strongest and oldest
   forms of content distribution on the internet.
 

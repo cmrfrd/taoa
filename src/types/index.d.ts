@@ -91,7 +91,7 @@ export interface IPage {
   id: string;
 }
 
-export interface IArticle {
+export interface IPost {
   id: string;
   slug: string;
   secret: boolean;
@@ -111,9 +111,9 @@ export interface IArticle {
   date: string;
 }
 
-interface IArticleQuery {
+interface IPostQuery {
   edges: {
-    node: IArticle;
+    node: IPost;
   }[];
 }
 
@@ -140,17 +140,17 @@ export type TLayout = {
 export type TTemplate = {
   pageContext: {
     pageCount?: number;
-    articles?: IArticle[];
+    posts?: IPost[];
 
     homePageData?: any;
     aboutPageData?: any;
     searchPageData?: any;
-    articlePageData?: any;
+    postPageData?: any;
     notFoundPageData?: any;
 
-    article: IArticle;
+    post: IPost;
     authors: IAuthor[];
-    next: IArticle[];
+    next: IPost[];
     about: IAbout;
   };
   location: Location;

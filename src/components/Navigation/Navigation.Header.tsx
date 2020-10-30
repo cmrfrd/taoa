@@ -1,4 +1,4 @@
-import { GridLayoutContext } from '../../sections/articles/Articles.List.Context';
+import { GridLayoutContext } from '../../sections/posts/Posts.List.Context';
 import ArrowIcon from './Navigation.Arrow';
 
 import Headings from '@components/Headings';
@@ -23,7 +23,7 @@ interface IGridRowToggle {
 }
 
 /* GridRowToggle is a component that toggles between two
- * layouts of articles
+ * layouts of posts
  */
 const GridRowToggle: React.FC<IGridRowToggle> = (props: IGridRowToggle) => {
   const { active } = props;
@@ -54,8 +54,8 @@ const GridRowToggle: React.FC<IGridRowToggle> = (props: IGridRowToggle) => {
           }}
           active={active && activeInLargeFormat}
           data-a11y={false}
-          title="Show articles in Row grid"
-          aria-label="Show articles in Row grid"
+          title="Show posts in Row grid"
+          aria-label="Show posts in Row grid"
         >
           <Icons.Rows />
         </GridButton>
@@ -66,8 +66,8 @@ const GridRowToggle: React.FC<IGridRowToggle> = (props: IGridRowToggle) => {
           }}
           active={active && activeInLargeFormat}
           data-a11y={false}
-          title="Show articles in Tile grid"
-          aria-label="Show articles in Tile grid"
+          title="Show posts in Tile grid"
+          aria-label="Show posts in Tile grid"
         >
           <Icons.Tiles />
         </GridButton>
@@ -315,20 +315,20 @@ const NavigationHeader: React.FC<INavigationHeader> = (props: INavigationHeader)
                             <NavLinkText arrow={showArrow}>About</NavLinkText>
                           </NavLink>
                           <NavLink
-                            to={'/articles'}
+                            to={'/posts'}
                             arrow={showArrow}
                             state={{ arrowUp: arrowUp }}
                             data-a11y={false}
-                            title="Navigate to the articles page"
-                            aria-label="Navigate to the articles page"
+                            title="Navigate to the posts page"
+                            aria-label="Navigate to the posts page"
                           >
-                            <NavLinkText arrow={showArrow}>Articles</NavLinkText>
+                            <NavLinkText arrow={showArrow}>Posts</NavLinkText>
                           </NavLink>
                         </NavLinks>
                         <Horizontal />
                         <NavControls>
                           <>
-                            <GridRowToggle active={enableGridRow} />
+                            <GridRowToggle active={false} />
                             <SharePageButton />
                             <DarkModeToggle />
                           </>
@@ -363,14 +363,14 @@ const NavigationHeader: React.FC<INavigationHeader> = (props: INavigationHeader)
                   <NavLinkText arrow={showArrow}>About</NavLinkText>
                 </NavLink>
                 <NavLink
-                  to={'/articles'}
+                  to={'/posts'}
                   arrow={showArrow}
                   state={{ arrowUp: arrowUp }}
                   data-a11y={false}
-                  title="Navigate to the articles page"
-                  aria-label="Navigate to the articles page"
+                  title="Navigate to the posts page"
+                  aria-label="Navigate to the posts page"
                 >
-                  <NavLinkText arrow={showArrow}>Articles</NavLinkText>
+                  <NavLinkText arrow={showArrow}>Posts</NavLinkText>
                 </NavLink>
               </NavLinks>
               <NavControls>
@@ -406,7 +406,7 @@ const ArrowIconContainer = styled.div(() => ({
 }));
 
 const MenuContainer = styled.div({
-  top: '0px',
+  top: '15px',
   right: 'calc((40px + 2rem) - (1rem + 60px))',
   width: 'calc(2 * (1rem + 60px))',
 
@@ -486,12 +486,13 @@ const NavLink = styled(Link)((p: INavLink) => ({
   position: 'relative',
   display: 'flex',
   alignItems: 'center',
-  marginRight: 'auto',
+  marginLeft: '20px',
+  marginRight: '5px',
   paddingBottom: p.arrow ? '6px' : '0px',
   paddingTop: p.arrow ? '5px' : '0px',
-  marginLeft: p.arrow ? 'auto' : '30px',
-  [mediaquery.tablet()]: {
-    marginLeft: p.arrow ? 'auto' : '20px'
+  [mediaquery.phablet()]: {
+    marginLeft: 'auto',
+    marginRight: 'auto'
   }
 }));
 
@@ -499,11 +500,12 @@ interface INavLinkText extends ITAOAThemeUIContext {
   arrow: number;
 }
 
-const NavLinkText = styled(Headings.h6)(
+const NavLinkText = styled(Headings.h2)(
   (p: INavLinkText) => `
     font-family: ${p.theme.fonts.serif};
     transition: ${p.theme.colorModeTransition};
     font-size: 26px;
+    font-weight: 600;
 
     ${mediaquery.desktop_large()} {
         font-size: 26px;
@@ -521,28 +523,29 @@ const NavLinkText = styled(Headings.h6)(
         font-size: 18px;
     };
 
-                   &::before {
-                                content: ' ';
-                                position: absolute;
-                                width: 100%;
-                                height: ${p.arrow ? '2px' : '3px'};
-                                bottom: 25%;
-                                left: 0;
-                                background-color: ${p.theme.colors.primary};
-                                visibility: visible;
-                                        -webkit-transform: scaleX(1);
-                                transform: scaleX(1);
-                                        -webkit-transition: all 0.25s ease-in-out 0s;
-                                transition: all 0.25s ease-in-out 0s;
-                            }
+    &::before {
+        content: ' ';
+        display: block;
+        position: relative;
+        width: 100%;
+        height: ${p.arrow ? '2px' : '3px'};
+        top: 1.4em;
+        left: 0;
+        background-color: ${p.theme.colors.primary};
+        visibility: visible;
+        -webkit-transform: scaleX(1);
+        transform: scaleX(1);
+        -webkit-transition: all 0.25s ease-in-out 0s;
+        transition: all 0.25s ease-in-out 0s;
+    }
 
-                   &:hover:before {
-                       height: ${p.arrow ? '2px' : '3px'};
-                       color: ${p.theme.colors.grey};
-                       visibility: none;
-                              -webkit-transform: scaleX(0);
-                       transform: scaleX(0);
-                   }
+    &:hover:before {
+        height: ${p.arrow ? '2px' : '3px'};
+        color: ${p.theme.colors.grey};
+        visibility: none;
+        -webkit-transform: scaleX(0);
+        transform: scaleX(0);
+    }
     `
 );
 

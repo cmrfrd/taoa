@@ -2,7 +2,7 @@
 
 module.exports = ({ actions }) => {
   actions.createTypes(`
-    type Article implements Node {
+    type Post implements Node {
       id: ID!
       slug: String!
       title: String!

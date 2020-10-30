@@ -45,7 +45,7 @@ const AuthorContainer = styled.div((p: ITAOAThemeUIContext) => ({
   left: 0,
   zIndex: 1,
   width: '100%',
-  padding: '200px 30px 0',
+  padding: '150px 30px 0',
   transition: p.theme.colorModeTransition
 }));
 

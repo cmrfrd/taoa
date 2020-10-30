@@ -11,7 +11,7 @@ const createPaginatedPages = require('gatsby-paginate');
 const templatesDirectory = path.resolve(__dirname, '../../templates');
 const templates = {
   home: path.resolve(templatesDirectory, 'home.template.tsx'),
-  article: path.resolve(templatesDirectory, 'article.template.tsx'),
+  post: path.resolve(templatesDirectory, 'post.template.tsx'),
   author: path.resolve(templatesDirectory, 'author.template.tsx'),
   about: path.resolve(templatesDirectory, 'about.template.tsx'),
   search: path.resolve(templatesDirectory, 'search.template.tsx'),
@@ -53,7 +53,7 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
   const { rootPath = '/', basePath = '/', sources = {} } = themeOptions;
 
   const dataSources = {
-    local: { authors: [], articles: [] }
+    local: { authors: [], posts: [] }
   };
 
   log('Config rootPath', rootPath);
@@ -66,13 +66,13 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
     const localAuthors = await graphql(query.local.authors);
     dataSources.local.authors = localAuthors.data.authors.edges.map(normalize.local.authors);
 
-    log('Mapping', 'Articles edges');
-    const localArticles = await graphql(query.local.articles);
-    dataSources.local.articles = localArticles.data.articles.edges.map(normalize.local.articles);
+    log('Mapping', 'Posts edges');
+    const localPosts = await graphql(query.local.posts);
+    dataSources.local.posts = localPosts.data.posts.edges.map(normalize.local.posts);
 
-    log('Mapping', 'Article edge');
-    const localArticle = await graphql(query.local.article);
-    var articlePageData = localArticle.data.article;
+    log('Mapping', 'Post edge');
+    const localPost = await graphql(query.local.post);
+    var postPageData = localPost.data.post;
 
     log('Mapping', 'Home edge');
     const localHome = await graphql(query.local.home);
@@ -93,20 +93,20 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
     console.error(error);
   }
 
-  // Combining together all the articles from different sources
-  articles = [...dataSources.local.articles].sort(byDate);
-  log('Sorted articles', '');
-  log(`${articles.length}`, 'total articles');
+  // Combining together all the posts from different sources
+  posts = [...dataSources.local.posts].sort(byDate);
+  log('Sorted posts', '');
+  log(`${posts.length}`, 'total posts');
 
-  const articlesThatArentSecret = articles.filter(article => !article.secret);
-  log('Filtered secret articles', '');
-  log(`${articlesThatArentSecret.length}`, 'total articles that are not secret');
+  const postsThatArentSecret = posts.filter(post => !post.secret);
+  log('Filtered secret posts', '');
+  log(`${postsThatArentSecret.length}`, 'total posts that are not secret');
 
   // Combining together all the authors from different sources
   authors = getUniqueListBy([...dataSources.local.authors], 'name');
   log(`${authors.length}`, 'author(s) found');
 
-  if (articles.length === 0 || authors.length === 0) {
+  if (posts.length === 0 || authors.length === 0) {
     throw new Error(`
     You must have at least one Author and Post.
   `);
@@ -114,7 +114,7 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
 
   /**
    * Once we've queried all our data sources and normalized them to the same structure
-   * we can begin creating our pages. First, we'll want to create all main articles pages
+   * we can begin creating our pages. First, we'll want to create all main posts pages
    * that have pagination.
    */
   log('Creating', 'home page');
@@ -124,7 +124,7 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
     context: {
       basePath,
       homePageData: homePageData,
-      articles: articlesThatArentSecret,
+      posts: postsThatArentSecret,
       enableGridRow: true
     }
   });
@@ -145,69 +145,69 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
     }
   });
 
-  log('Creating', 'search page');
+  log('Creating', 'search posts page');
 
   // Creating the about page
-  const articlesPath = '/articles';
+  const postsPath = '/posts';
   createPage({
-    path: articlesPath,
+    path: postsPath,
     component: templates.search,
     context: {
       authors,
-      articlesPath,
+      postsPath,
       searchPageData: searchPageData,
-      articles: articlesThatArentSecret,
+      posts: postsThatArentSecret,
       enableGridRow: true
     }
   });
 
   /**
-   * Once the list of articles have bene created, we need to make individual article posts.
+   * Once the list of posts have bene created, we need to make individual post posts.
    * To do this, we need to find the corresponding authors since we allow for co-authors.
    */
-  log('Creating', 'article posts');
-  articles.forEach((article, index) => {
-    // Match the Author to the one specified in the article
-    let authorsThatWroteTheArticle;
+  log('Creating', 'post posts');
+  posts.forEach((post, index) => {
+    // Match the Author to the one specified in the post
+    let authorsThatWroteThePost;
     try {
-      authorsThatWroteTheArticle = authors.filter(author => {
-        const allAuthors = article.author.split(',').map(a => a.trim().toLowerCase());
+      authorsThatWroteThePost = authors.filter(author => {
+        const allAuthors = post.author.split(',').map(a => a.trim().toLowerCase());
         return allAuthors.some(a => a === author.name.toLowerCase());
       });
     } catch (error) {
       throw new Error(`
-        We could not find the Author for: "${article.title}".
+        We could not find the Author for: "${post.title}".
         Double check the author field is specified in your post and the name
         matches a specified author.
-        Provided author: ${article.author}
+        Provided author: ${post.author}
         ${error}
       `);
     }
 
     /**
-     * We need a way to find the next artiles to suggest at the bottom of the articles page.
+     * We need a way to find the next artiles to suggest at the bottom of the posts page.
      * To accomplish this there is some special logic surrounding what to show next.
      */
-    let next = articlesThatArentSecret.slice(index + 1, index + 3);
-    // If it's the last item in the list, there will be no articles. So grab the first 2
-    if (next.length === 0) next = articlesThatArentSecret.slice(0, 2);
-    // If there's 1 item in the list, grab the first article
-    if (next.length === 1 && articlesThatArentSecret.length !== 2)
-      next = [...next, articlesThatArentSecret[0]];
-    if (articlesThatArentSecret.length === 1) next = [];
+    let next = postsThatArentSecret.slice(index + 1, index + 3);
+    // If it's the last item in the list, there will be no posts. So grab the first 2
+    if (next.length === 0) next = postsThatArentSecret.slice(0, 2);
+    // If there's 1 item in the list, grab the first post
+    if (next.length === 1 && postsThatArentSecret.length !== 2)
+      next = [...next, postsThatArentSecret[0]];
+    if (postsThatArentSecret.length === 1) next = [];
 
     createPage({
-      path: article.slug,
-      component: templates.article,
+      path: post.slug,
+      component: templates.post,
       context: {
-        article,
+        post,
         basePath,
-        articlePageData: articlePageData,
-        authors: authorsThatWroteTheArticle,
-        slug: article.slug,
-        id: article.id,
-        title: article.title,
-        canonicalUrl: article.canonical_url,
+        postPageData: postPageData,
+        authors: authorsThatWroteThePost,
+        slug: post.slug,
+        id: post.id,
+        title: post.title,
+        canonicalUrl: post.canonical_url,
         enableGridRow: false,
         next
       }

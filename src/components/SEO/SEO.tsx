@@ -124,7 +124,7 @@ const SEO: React.FC<IHelmetProps> = ({
   ];
 
   if (published) {
-    metaTags.push({ name: 'article:published_time', content: published });
+    metaTags.push({ name: 'post:published_time', content: published });
   }
 
   if (timeToRead) {

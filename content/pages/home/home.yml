@@ -1,9 +1,8 @@
 name: "home"
 home:
-  numberOfArticles: 4
-  entriesHeadingText: "Latest Articles"
-  moreArticlesText: "More articles ➡ "
+  numberOfPosts: 4
+  postsHeadingText: "Most recent posts"
+  morePostsText: "More Posts ➡ "
   hero:
-    welcome: "Welcome to"
     heading: "A tech blog about first principles, system design, and computation"
     maxWidth: 900

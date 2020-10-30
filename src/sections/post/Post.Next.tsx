@@ -1,66 +1,66 @@
 import Headings from '@components/Headings';
 import Image from '@components/Image';
 import mediaqueries from '@styles/media';
-import { IArticle } from '@types';
+import { IPost } from '@types';
 
 import { css } from '@emotion/core';
 import styled from '@emotion/styled';
 import { Link } from 'gatsby';
 import React from 'react';
 
-interface IArticlesNextProps {
-  articles: IArticle[];
+interface IPostsNextProps {
+  posts: IPost[];
 }
 
 /**
- * Sits at the bottom of our Article page. Shows the next 2 on desktop and the
+ * Sits at the bottom of our Post page. Shows the next 2 on desktop and the
  * next 1 on mobile!
  *
  *  [........], [........]
  *  [..NORM..], [..NORM..]
  *  [........], [........]
  *
- * This does NOT use Articles.List because there's a special case of only have 1 article
- * as the next one suggested article, which requires special styling we didn't want to
+ * This does NOT use Posts.List because there's a special case of only have 1 post
+ * as the next one suggested post, which requires special styling we didn't want to
  * mix into the generic list component.
  */
-const ArticlesNext: React.FC<IArticlesNextProps> = ({ articles }: IArticlesNextProps) => {
-  if (!articles) return null;
-  const numberOfArticles = articles.length;
+const PostsNext: React.FC<IPostsNextProps> = ({ posts }: IPostsNextProps) => {
+  if (!posts) return null;
+  const numberOfPosts = posts.length;
   return (
-    <Grid numberOfArticles={numberOfArticles}>
-      <GridItem article={articles[0]} />
-      <GridItem article={articles[1]} narrow />
+    <Grid numberOfPosts={numberOfPosts}>
+      <GridItem post={posts[0]} />
+      <GridItem post={posts[1]} narrow />
     </Grid>
   );
 };
 
-export default ArticlesNext;
+export default PostsNext;
 
 interface IGridItemProps {
-  article: IArticle;
+  post: IPost;
   narrow?: boolean;
 }
 
-const GridItem: React.FC<IGridItemProps> = ({ article, narrow }: IGridItemProps) => {
-  if (!article) return null;
+const GridItem: React.FC<IGridItemProps> = ({ post, narrow }: IGridItemProps) => {
+  if (!post) return null;
 
-  const hasOverflow = narrow && article.title.length > 35;
-  const imageSource = narrow ? article.hero.narrow : article.hero.regular;
+  const hasOverflow = narrow && post.title.length > 35;
+  const imageSource = narrow ? post.hero.narrow : post.hero.regular;
 
   return (
-    <ArticleLink to={article.slug} data-a11y="false" narrow={narrow ? 'true' : 'false'}>
+    <PostLink to={post.slug} data-a11y="false" narrow={narrow ? 'true' : 'false'}>
       <Item>
         <ImageContainer>
           <Image src={imageSource} />
         </ImageContainer>
-        <Title hasOverflow={hasOverflow}>{article.title}</Title>
-        <Excerpt hasOverflow={hasOverflow}>{article.excerpt}</Excerpt>
+        <Title hasOverflow={hasOverflow}>{post.title}</Title>
+        <Excerpt hasOverflow={hasOverflow}>{post.excerpt}</Excerpt>
         <MetaData>
-          {article.date} · {article.timeToRead} min read
+          {post.date} · {post.timeToRead} min read
         </MetaData>{' '}
       </Item>
-    </ArticleLink>
+    </PostLink>
   );
 };
 
@@ -81,11 +81,11 @@ const limitToTwoLines = css`
                        -webkit-line-clamp: 3;
 `}
 `;
-const Grid = styled.div<{ numberOfArticles: number }>`
+const Grid = styled.div<{ numberOfPosts: number }>`
   position: relative;
   display: grid;
   ${p => {
-    if (p.numberOfArticles === 1) {
+    if (p.numberOfPosts === 1) {
       return `
 grid-template-columns: 1fr;
 grid-template-rows: 1
@@ -99,7 +99,7 @@ grid-template-rows: 2;
   }}
   column-gap: 30px;
   margin: 0 auto;
-  max-width: ${p => (p.numberOfArticles === 1 ? '680px' : '100%')};
+  max-width: ${p => (p.numberOfPosts === 1 ? '680px' : '100%')};
 
   ${mediaqueries.desktop`
 grid-template-columns: 1fr 1fr;
@@ -203,7 +203,7 @@ padding:  0 20px 30px;
 `}
 `;
 
-const ArticleLink = styled(Link)<{ narrow: string }>`
+const PostLink = styled(Link)<{ narrow: string }>`
   position: relative;
   display: block;
   width: 100%;

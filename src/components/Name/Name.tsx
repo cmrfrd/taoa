@@ -19,6 +19,7 @@ const name = (): string => useStaticQuery(nameQuery).site.siteMetadata.siteName;
 
 const base = (p: ITAOAThemeUIContext): IStringMap => ({
   color: `${p.theme.colors.primary}`,
+  fontFamily: `${p.theme.fonts.serif}`,
   marginTop: '20px',
   overflow: 'auto',
   display: 'inline',

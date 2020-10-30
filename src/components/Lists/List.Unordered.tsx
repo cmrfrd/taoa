@@ -10,7 +10,7 @@ const UnorderedList = styled.ul((p: ITAOAThemeUIContext) =>
     listStyle: 'circle',
     listStylePosition: 'inside',
     counterReset: 'list',
-    color: p.theme.colors.articleText as CSS.ColorProperty,
+    color: p.theme.colors.postText as CSS.ColorProperty,
     position: 'relative',
     padding: '15px 0 30px 30px',
     margin: '0 auto',
@@ -59,13 +59,13 @@ const UnorderedList = styled.ul((p: ITAOAThemeUIContext) =>
     'li::before': {
       display: 'inline-block',
       position: 'absolute',
-      color: p.theme.colors.articleText as CSS.ColorProperty,
+      color: p.theme.colors.postText as CSS.ColorProperty,
       content: ' ',
       left: '-30px',
       top: '8px',
       height: '8px',
       width: '8px',
-      background: p.theme.colors.articleText as CSS.ColorProperty,
+      background: p.theme.colors.postText as CSS.ColorProperty,
 
       [mediaquery.tablet()]: {
         left: 0

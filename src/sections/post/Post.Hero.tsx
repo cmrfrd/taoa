@@ -1,44 +1,42 @@
-import ArticleAuthors from './Article.Authors';
+import PostAuthors from './Post.Authors';
 
 import Headings from '@components/Headings';
 import Image, { ImagePlaceholder } from '@components/Image';
 import { mediaquery } from '@styles/media';
-import { IArticle, IAuthor, ITAOAThemeUIContext } from '@types';
+import { IPost, IAuthor, ITAOAThemeUIContext } from '@types';
 
 import styled from '@emotion/styled';
 import React from 'react';
 
-interface IArticleHeroProps {
-  article: IArticle;
+interface IPostHeroProps {
+  post: IPost;
   authors: IAuthor[];
 }
 
-const ArticleHero: React.FC<IArticleHeroProps> = ({ article, authors }: IArticleHeroProps) => {
+const PostHero: React.FC<IPostHeroProps> = ({ post, authors }: IPostHeroProps) => {
   const hasCoAUthors = authors.length > 1;
   const hasHeroImage =
-    article.hero &&
-    Object.keys(article.hero.full).length !== 0 &&
-    article.hero.full.constructor === Object;
+    post.hero && Object.keys(post.hero.full).length !== 0 && post.hero.full.constructor === Object;
 
   return (
     <Hero>
       <Header>
-        <HeroHeading>{article.title}</HeroHeading>
+        <HeroHeading>{post.title}</HeroHeading>
         <HeroSubtitle hasCoAUthors={hasCoAUthors}>
-          <ArticleAuthors authors={authors} />
-          <ArticleMeta hasCoAUthors={hasCoAUthors}>
-            {article.date} · {article.timeToRead} min read
-          </ArticleMeta>
+          <PostAuthors authors={authors} />
+          <PostMeta hasCoAUthors={hasCoAUthors}>
+            {post.date} · {post.timeToRead} min read
+          </PostMeta>
         </HeroSubtitle>
       </Header>
-      <HeroImage id="ArticleImage__Hero">
-        {hasHeroImage ? <Image src={article.hero.full} /> : <ImagePlaceholder />}
+      <HeroImage id="PostImage__Hero">
+        {hasHeroImage ? <Image src={post.hero.full} /> : <ImagePlaceholder />}
       </HeroImage>
     </Hero>
   );
 };
 
-export default ArticleHero;
+export default PostHero;
 
 const Hero = styled.div(
   (p: ITAOAThemeUIContext) => `
@@ -71,10 +69,10 @@ const Hero = styled.div(
     `
 );
 
-interface IArticleMeta extends ITAOAThemeUIContext {
+interface IPostMeta extends ITAOAThemeUIContext {
   hasCoAUthors: boolean;
 }
-const ArticleMeta = styled.div((p: IArticleMeta) => ({
+const PostMeta = styled.div((p: IPostMeta) => ({
   marginLeft: p.hasCoAUthors ? '10px' : '0',
 
   [mediaquery.phablet()]: {

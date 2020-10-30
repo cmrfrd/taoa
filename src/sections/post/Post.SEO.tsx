@@ -2,7 +2,7 @@ import React from 'react';
 
 import SEO from '@components/SEO';
 
-import { IArticle, IAuthor } from '@types';
+import { IPost, IAuthor } from '@types';
 import { graphql, useStaticQuery } from 'gatsby';
 
 const siteQuery = graphql`
@@ -20,24 +20,20 @@ const siteQuery = graphql`
   }
 `;
 
-interface ArticleSEOProps {
-  article: IArticle;
+interface PostSEOProps {
+  post: IPost;
   authors: IAuthor[];
   location: Location;
 }
 
-const ArticleSEO: React.FC<ArticleSEOProps> = ({
-  article,
-  authors,
-  location,
-}) => {
+const PostSEO: React.FC<PostSEOProps> = ({ post, authors, location }) => {
   const results = useStaticQuery(siteQuery);
   const name = results.allSite.edges[0].node.siteMetadata.name;
   const siteUrl = results.allSite.edges[0].node.siteMetadata.siteUrl;
 
   const authorsData = authors.map(author => ({
     '@type': 'Person',
-    name: author.name,
+    name: author.name
   }));
 
   /**
@@ -46,17 +42,17 @@ const ArticleSEO: React.FC<ArticleSEOProps> = ({
    */
   let microdata = `{
     "@context": "https://schema.org",
-    "@type": "Article",
+    "@type": "Post",
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": "${siteUrl + location.pathname}"
     },
-    "headline": "${article.title}",
-    "image": "${siteUrl + article.hero.seo.src}",
-    "datePublished": "${article.dateForSEO}",
-    "dateModified": "${article.dateForSEO}",
+    "headline": "${post.title}",
+    "image": "${siteUrl + post.hero.seo.src}",
+    "datePublished": "${post.dateForSEO}",
+    "dateModified": "${post.dateForSEO}",
     "author": ${JSON.stringify(authorsData)},
-    "description": "${article.excerpt.replace(/"/g, '\\"')}",
+    "description": "${post.excerpt.replace(/"/g, '\\"')}",
     "publisher": {
       "@type": "Organization",
       "name": "${name}",
@@ -66,7 +62,7 @@ const ArticleSEO: React.FC<ArticleSEOProps> = ({
       }
     }
   }
-`.replace(/"[^"]+"|(\s)/gm, function(matched, group1) {
+`.replace(/"[^"]+"|(\s)/gm, function (matched, group1) {
     if (!group1) {
       return matched;
     } else {
@@ -80,17 +76,17 @@ const ArticleSEO: React.FC<ArticleSEOProps> = ({
 
   return (
     <SEO
-      title={article.title}
-      description={article.excerpt}
-      image={article.hero.seo.src}
-      timeToRead={article.timeToRead}
-      published={article.date}
+      title={post.title}
+      description={post.excerpt}
+      image={post.hero.seo.src}
+      timeToRead={post.timeToRead}
+      published={post.date}
       pathname={location.href}
-      canonicalUrl={article.canonicalUrl}
+      canonicalUrl={post.canonicalUrl}
     >
       <script type="application/ld+json">{microdata}</script>
     </SEO>
   );
 };
 
-export default ArticleSEO;
+export default PostSEO;

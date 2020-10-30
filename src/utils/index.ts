@@ -234,15 +234,15 @@ export const getSelectionDimensions = (): { height: number; width: number } => {
     .map((el: HTMLElement) => elementContainsSelection(el))
     .some((bool: boolean) => bool);
 
-  const isSelectedInArticle = Array.from(document.getElementsByTagName('article'))
+  const isSelectedInPost = Array.from(document.getElementsByTagName('post'))
     .map((el: HTMLElement) => elementContainsSelection(el))
     .some((bool: boolean) => bool);
 
   /**
-   * we don't want to show the ArticleShare option when it's outside of
-   * the article body or within prism code.
+   * we don't want to show the PostShare option when it's outside of
+   * the post body or within prism code.
    */
-  if (isSelectedInPrism || !isSelectedInArticle) {
+  if (isSelectedInPrism || !isSelectedInPost) {
     return {
       width: 0,
       height: 0

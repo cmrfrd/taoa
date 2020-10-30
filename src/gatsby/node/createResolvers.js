@@ -16,7 +16,7 @@ const mdxResolverPassthrough = fieldName => async (source, arguments_, context, 
 // Define resolvers for custom fields
 module.exports = ({ createResolvers }) => {
   createResolvers({
-    Article: {
+    Post: {
       excerpt: {
         resolve: mdxResolverPassthrough(`excerpt`)
       },

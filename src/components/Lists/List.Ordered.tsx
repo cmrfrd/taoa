@@ -10,7 +10,7 @@ const OrderedList = styled.ol((p: ITAOAThemeUIContext) =>
   css({
     listStyle: 'none',
     counterReset: 'list',
-    color: p.theme.colors.articleText as CSS.ColorProperty,
+    color: p.theme.colors.postText as CSS.ColorProperty,
     position: 'relative',
     padding: '15px 0 30px 0px',
     margin: '0 auto',
@@ -67,7 +67,7 @@ const OrderedList = styled.ol((p: ITAOAThemeUIContext) =>
     'li::before': {
       display: 'block',
       position: 'absolute',
-      color: p.theme.colors.articleText as CSS.ColorProperty,
+      color: p.theme.colors.postText as CSS.ColorProperty,
       content: `counter(list) '.'`,
       top: '0.2rem',
       width: '2.5rem',

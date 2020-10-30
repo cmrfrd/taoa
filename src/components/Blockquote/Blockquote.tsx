@@ -10,7 +10,7 @@ import * as CSS from 'csstype';
 const Blockquote = styled.blockquote((p: ITAOAThemeUIContext) => ({
   transition: p.theme.colorModeTransition,
   margin: '15px auto 50px',
-  color: p.theme.colors.articleText as CSS.ColorProperty,
+  color: p.theme.colors.postText as CSS.ColorProperty,
   fontFamily: p.theme.fonts.serif,
   fontStyle: 'italic',
   textAlign: 'center',
