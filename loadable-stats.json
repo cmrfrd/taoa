@@ -1,12 +1,12 @@
 {
   "errors": [],
   "warnings": [
-    "./.cache/static-entry.js\nModule not found: Error: Can't resolve '../src/html' in '/work/.cache'\n @ ./.cache/static-entry.js"
+    "./.cache/static-entry.js\nModule not found: Error: Can't resolve '../src/html' in '/home/node/work/.cache'\n @ ./.cache/static-entry.js"
   ],
   "version": "4.44.2",
-  "hash": "ecd5ffb20ff0b65f0bd9",
+  "hash": "4097b063eb11eea7aaba",
   "publicPath": "/",
-  "outputPath": "/work/public",
+  "outputPath": "/home/node/work/public",
   "assetsByChunkName": {
     "main": [
       "render-page.js",
@@ -16,7 +16,7 @@
   "assets": [
     {
       "name": "render-page.js",
-      "size": 5663303,
+      "size": 4617307,
       "chunks": [
         "main"
       ],
@@ -28,7 +28,7 @@
     },
     {
       "name": "render-page.js.map",
-      "size": 6182070,
+      "size": 5067431,
       "chunks": [
         "main"
       ],
