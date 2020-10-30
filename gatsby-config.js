@@ -53,22 +53,16 @@ module.exports = {
     `gatsby-transformer-yaml`,
     `gatsby-plugin-theme-ui`,
     `gatsby-source-local-git`,
-    // `gatsby-plugin-offline`,
-    // {
-    //   resolve: `gatsby-plugin-csp`,
-    //   options: {
-    //     disableOnDev: false,
-    //     reportOnly: false,
-    //     mergeScriptHashes: true,
-    //     mergeStyleHashes: true,
-    //     mergeDefaultDirectives: true,
-    //     directives: {
-    //       'script-src': `'self' 'unsafe-inline' data: blob:`,
-    //       'style-src': `'self' 'unsafe-inline' data: blob:`,
-    //       'img-src': `'self' 'unsafe-inline' data: blob:`
-    //     }
-    //   }
-    // },
+    {
+      resolve: `gatsby-plugin-google-analytics`,
+      options: {
+        trackingId: 'UA-126839741-1',
+        head: false,
+        anonymize: false,
+        respectDNT: true,
+        defer: true
+      }
+    },
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
@@ -259,6 +253,5 @@ module.exports = {
         usePreconnect: true
       }
     }
-    // `gatsby-plugin-no-javascript`
   ]
 };
