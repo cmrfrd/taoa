@@ -53,7 +53,7 @@ module.exports = {
     `gatsby-transformer-yaml`,
     `gatsby-plugin-theme-ui`,
     `gatsby-source-local-git`,
-    `gatsby-plugin-offline`,
+    // `gatsby-plugin-offline`,
     // {
     //   resolve: `gatsby-plugin-csp`,
     //   options: {
@@ -258,7 +258,7 @@ module.exports = {
         usePreload: true,
         usePreconnect: true
       }
-    },
-    `gatsby-plugin-no-javascript`
+    }
+    // `gatsby-plugin-no-javascript`
   ]
 };
