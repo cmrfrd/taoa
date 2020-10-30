@@ -56,6 +56,10 @@ in the browser at `https://localhost:8000`
 
 ## Releasing
 
+Before releasing ensure the following steps.
+
+1. Add `sshCommand = "ssh -i path/to/key"` into your git config core
+
 This repo uses [semantic-release](https://github.com/semantic-release/semantic-release) for the release process and is triggered by release tags and commit messages.
 
 To run a release from inside the container run
