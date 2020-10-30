@@ -18,7 +18,7 @@ plugins:
 - - "@semantic-release/exec"
   - prepareCmd: |-
       ./bin/container_build.sh
-  - verifyConditionsCmd: |-
+    verifyConditionsCmd: |-
       echo 'Publishing site'
     publishCmd: |-
        ./bin/container_publish.sh "Publish version ${nextRelease.version} at ${Date.now()}"
