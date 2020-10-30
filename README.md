@@ -10,13 +10,13 @@
 
 By: Alex Comerford (alexanderjcomerford@gmail.com)
 
-This repo contains the source code, articles, and configuration for `TheArtofAbstraction.com`.
+This repo contains the source code, posts, and configuration for `taoa.io` or `TheArtofAbstraction.com`.
 
 ## About
 
 The Art of Abstraction (TAOA) is a tech blog. To learn more about its mission read the about or the first post.
 
-Posts for TAOA are written in org mode, exported to mdx, then become viewable in a gatsby web app. Local development is done via `docker`.
+Posts for TAOA are written in org mode, exported to mdx, then become viewable in a gatsby web app. Local development is done via containers.
 
 ## Running locally
 
@@ -73,4 +73,4 @@ When this command is run the following checks are run
 
 ## Contributing
 
-If you would like to help contribute to future articles or help build the site, reach out my email or submit a PR.
+If you would like to help contribute to future posts or help build the site, reach out my email or submit a PR.
