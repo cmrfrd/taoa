@@ -1,3 +1,10 @@
+### [1.2.1](https://github.com/cmrfrd/taoa/compare/v1.2.0...v1.2.1) (2020-10-30)
+
+
+### Bug Fixes
+
+* disable bad plugins ([21607a0](https://github.com/cmrfrd/taoa/commit/21607a0c8203e60d732d211664342ccb5f92b782))
+
 ## [1.2.0](https://github.com/cmrfrd/taoa/compare/v1.1.9...v1.2.0) (2020-10-30)
 
 
