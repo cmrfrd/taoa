@@ -1,3 +1,10 @@
+### [1.1.9](https://github.com/cmrfrd/taoa/compare/v1.1.8...v1.1.9) (2020-10-30)
+
+
+### Bug Fixes
+
+* bits and bobs ([35937d4](https://github.com/cmrfrd/taoa/commit/35937d4d5a990e74a5c367fde2885eaa89fdac50))
+
 ### [1.1.8](https://github.com/cmrfrd/taoa/compare/v1.1.7...v1.1.8) (2020-10-30)
 
 
