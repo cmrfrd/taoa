@@ -1,3 +1,11 @@
+### [1.2.2](https://github.com/cmrfrd/taoa/compare/v1.2.1...v1.2.2) (2020-10-30)
+
+
+### Bug Fixes
+
+* **docs:** Update readme ([c379feb](https://github.com/cmrfrd/taoa/commit/c379feb2a3814c5057c07ab4f01f613e1c76364c))
+* Add google analytics ([a979d9b](https://github.com/cmrfrd/taoa/commit/a979d9be7c665eaf302c97a95af41a1a6c4a49ce))
+
 ### [1.2.1](https://github.com/cmrfrd/taoa/compare/v1.2.0...v1.2.1) (2020-10-30)
 
 
