@@ -100,52 +100,10 @@ const paginationItemMixin = (p: ITAOAThemeUIContext): SerializedStyles => css`
 const LinkContainer = styled.div({
   marginTop: '100px',
   display: 'flex',
-  flexDirection: 'row'
+  flexDirection: 'row',
+  [mediaquery.phablet()]: {
+    position: 'relative',
+    display: 'block',
+    textAlign: 'center'
+  }
 });
-
-const Text = styled(Headings.h6)(
-  (p: ITAOAThemeUIContext) => `
-    font-family: ${p.theme.fonts.serif};
-    transition: ${p.theme.colorModeTransition};
-    font-size: 26px;
-
-    ${mediaquery.desktop_large()} {
-        font-size: 26px;
-    };
-
-    ${mediaquery.desktop()} {
-        font-size: 26px;
-    };
-
-    ${mediaquery.tablet()} {
-        font-size: 18px;
-    };
-
-    ${mediaquery.phablet()} {
-        font-size: 18px;
-    };
-
-                   &::before {
-                                content: ' ';
-                                position: absolute;
-                                width: 100%;
-                                height: 3px;
-                                bottom: 25%;
-                                left: 0;
-                                background-color: ${p.theme.colors.primary};
-                                visibility: visible;
-                                        -webkit-transform: scaleX(1);
-                                transform: scaleX(1);
-                                        -webkit-transition: all 0.25s ease-in-out 0s;
-                                transition: all 0.25s ease-in-out 0s;
-                            }
-
-                   &:hover:before {
-                       height: 3px';
-                       color: ${p.theme.colors.grey};
-                       visibility: none;
-                              -webkit-transform: scaleX(0);
-                       transform: scaleX(0);
-                   }
-    `
-);
