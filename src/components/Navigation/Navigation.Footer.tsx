@@ -169,7 +169,7 @@ const FooterContainer = styled.div((p: ITAOAThemeUIContext) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  paddingBottom: '80px',
+  paddingBottom: '50px',
   color: p.theme.colors.grey as CSS.Color,
 
   [mediaquery.tablet()]: {
@@ -178,7 +178,7 @@ const FooterContainer = styled.div((p: ITAOAThemeUIContext) => ({
   },
 
   [mediaquery.phablet()]: {
-    margin: '120px auto 100px',
+    margin: '80px auto 50px',
     paddingBottom: '50px'
   }
 }));
@@ -198,10 +198,10 @@ const HoritzontalRule = styled.div((p: ITAOAThemeUIContext) => ({
 }));
 
 const FooterText = styled.div({
-  fontSize: '16px',
+  fontSize: '15px',
 
   [mediaquery.tablet()]: {
-    fontSize: '14px',
+    fontSize: '13px',
     paddingTop: '10px',
     textAlign: 'center'
   }
@@ -209,7 +209,7 @@ const FooterText = styled.div({
 
 const SocialLinksContainer = styled.div({
   [mediaquery.tablet()]: {
-    paddingTop: '80px'
+    paddingTop: '50px'
   }
 });
 
