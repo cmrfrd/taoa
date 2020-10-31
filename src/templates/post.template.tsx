@@ -59,19 +59,19 @@ export default Post;
 
 const PostBody = styled.article({
   position: 'relative',
-  padding: '160px 0 35px',
+  padding: '110px 0 35px',
   transition: 'background 0.2s linear',
 
   [mediaquery.desktop()]: {
-    padding: '160px 0 35px'
+    padding: '110px 0 35px'
   },
 
   [mediaquery.tablet()]: {
-    padding: '160px 10px 80px'
+    padding: '110px 10px 80px'
   },
 
   [mediaquery.phablet()]: {
-    padding: '160px 0'
+    padding: '110px 0'
   }
 });
 

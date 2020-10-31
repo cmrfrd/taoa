@@ -43,7 +43,7 @@ const Hero = styled.div(
   padding-top: 8rem;
   ${mediaquery.phablet()} {
             &::before {
-                content: '""';
+                content: ' ';
                 width: 100%;
                 height: 20px;
                 background: ${p.theme.colors.primary};
@@ -54,7 +54,7 @@ const Hero = styled.div(
             }
 
             &::after {
-                content: '""';
+                content: ' ';
                 width: 100%;
                 height: 10px;
                 background: ${p.theme.colors.background};

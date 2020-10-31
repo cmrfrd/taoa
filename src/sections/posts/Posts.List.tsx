@@ -295,7 +295,7 @@ const ImageContainer = styled.div<{ narrow: boolean; gridLayout: string }>`
   }
 
   ${mediaqueries.tablet`
-height: 150px;
+height: 200px;
 margin-bottom: 35px;
 `}
 
