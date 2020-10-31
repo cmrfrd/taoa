@@ -4,7 +4,7 @@
     "./.cache/static-entry.js\nModule not found: Error: Can't resolve '../src/html' in '/home/node/work/.cache'\n @ ./.cache/static-entry.js"
   ],
   "version": "4.44.2",
-  "hash": "eaa5a2cabb638ad39921",
+  "hash": "aff0fcaaa5c4d2a18646",
   "publicPath": "/",
   "outputPath": "/home/node/work/public",
   "assetsByChunkName": {
@@ -16,7 +16,7 @@
   "assets": [
     {
       "name": "render-page.js",
-      "size": 4645063,
+      "size": 4645057,
       "chunks": [
         "main"
       ],
@@ -28,7 +28,7 @@
     },
     {
       "name": "render-page.js.map",
-      "size": 5101070,
+      "size": 5101064,
       "chunks": [
         "main"
       ],
