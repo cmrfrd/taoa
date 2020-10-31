@@ -1,3 +1,10 @@
+### [1.2.3](https://github.com/cmrfrd/taoa/compare/v1.2.2...v1.2.3) (2020-10-31)
+
+
+### Bug Fixes
+
+* Update post, update bio, css knacks ([158d554](https://github.com/cmrfrd/taoa/commit/158d554b644a4cdfed15d569057806342c71c9d7))
+
 ### [1.2.2](https://github.com/cmrfrd/taoa/compare/v1.2.1...v1.2.2) (2020-10-30)
 
 
