@@ -5,7 +5,7 @@
 ---
 title: Why start a blog?
 author: Alexander Comerford
-date: 2020-02-17
+date: 2020-11-02
 hero: ./images/cover.jpg
 secret: false
 excerpt: What is this blog, and why does it exist?
