@@ -28,6 +28,7 @@ RUN \
   libc6-compat \
   python \
   git \
+  coreutils \
   bash \
   libx11-dev \
   libxi \
