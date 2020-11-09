@@ -2,4 +2,8 @@
 set -e
 source development.env
 
-npx gatsby serve
+npx http-server \
+    -S \
+    -p 9000 \
+    -C $(find $CERTS_DIR/ -name "$DOMAIN*" -not -name "*key*") \
+    -K $(find $CERTS_DIR/ -name "$DOMAIN*" -name "*key*")
