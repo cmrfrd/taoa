@@ -3,7 +3,7 @@
 module.exports = {
   siteMetadata: {
     siteName: `The Art of Abstraction`,
-    title: `Welcome | The Art of Abstraction`,
+    title: `T·A·O·A`,
     name: `Alexander Comerford`,
     siteUrl: `https://taoa.io`,
     description: ``,
@@ -53,29 +53,6 @@ module.exports = {
     `gatsby-transformer-yaml`,
     `gatsby-plugin-theme-ui`,
     `gatsby-source-local-git`,
-    {
-      resolve: `gatsby-plugin-google-analytics`,
-      options: {
-        trackingId: 'UA-126839741-1',
-        head: false,
-        anonymize: false,
-        respectDNT: true,
-        defer: true
-      }
-    },
-    {
-      resolve: `gatsby-plugin-manifest`,
-      options: {
-        name: 'The Art of Abstraction',
-        short_name: 'T·A·O·A',
-        start_url: '/',
-        display: 'standalone',
-        icon: 'content/favicons/favicon-32x32.png',
-        theme_color: '#ffffff',
-        background_color: '#ffffff',
-        display: 'standalone'
-      }
-    },
     {
       resolve: `gatsby-source-filesystem`,
       options: {
@@ -133,12 +110,39 @@ module.exports = {
       }
     },
     {
+      resolve: `gatsby-plugin-google-analytics`,
+      options: {
+        trackingId: 'UA-126839741-1',
+        head: false,
+        anonymize: false,
+        respectDNT: true,
+        defer: true
+      }
+    },
+    {
+      resolve: `gatsby-plugin-manifest`,
+      options: {
+        name: 'The Art of Abstraction',
+        short_name: 'T·A·O·A',
+        start_url: '/',
+        display: 'standalone',
+        icon: 'content/favicons/favicon-32x32.png',
+        theme_color: '#ffffff',
+        background_color: '#ffffff',
+        cache_busting_mode: 'none',
+        display: 'minimal-ui'
+      }
+    },
+    {
+      resolve: 'gatsby-plugin-offline'
+    },
+    {
       resolve: 'gatsby-plugin-webpack-bundle-analyser-v2',
       options: {
         disable: false,
         devMode: true,
         analyzerMode: 'server',
-        analyzerPort: '9000'
+        analyzerPort: '7000'
       }
     },
     {
@@ -149,21 +153,15 @@ module.exports = {
       }
     },
     {
-      resolve: `gatsby-transformer-remark`,
+      resolve: `gatsby-plugin-mdx`,
       options: {
-        // In your gatsby-transformer-remark plugin array
-        plugins: [
+        extensions: [`.mdx`, `.md`],
+        gatsbyRemarkPlugins: [
           {
             resolve: 'gatsby-remark-emojis',
             options: {
-              // Deactivate the plugin globally (default: true)
               active: true,
-              // In order to avoid pattern mismatch you can specify
-              // an escape character which will be prepended to the
-              // actual pattern (e.g. `#:poop:`).
-              // Select the size (available size: 16, 24, 32, 64)
               size: 64,
-              // Add custom styles
               styles: {
                 display: 'inline',
                 margin: '0',
@@ -173,15 +171,7 @@ module.exports = {
                 width: '25px'
               }
             }
-          }
-        ]
-      }
-    },
-    {
-      resolve: `gatsby-plugin-mdx`,
-      options: {
-        extensions: [`.mdx`, `.md`],
-        gatsbyRemarkPlugins: [
+          },
           {
             resolve: `gatsby-remark-images`,
             options: {
@@ -226,13 +216,16 @@ module.exports = {
             }
           }
         ],
-        remarkPlugins: [require(`remark-slug`)] // eslint-disable-line global-require
+        remarkPlugins: [require(`remark-slug`), require('remark-emoji')] // eslint-disable-line global-require
       }
     },
     {
       resolve: `gatsby-plugin-emotion`,
       options: {
-        displayName: process.env.NODE_ENV === `development`
+        sourceMap: true,
+        autoLabel: process.env.NODE_ENV !== 'production',
+        labelFormat: `[local]`,
+        cssPropOptimization: true
       }
     },
     {
@@ -250,7 +243,14 @@ module.exports = {
         formats: ['woff2', 'woff'],
         useMinify: true,
         usePreload: true,
-        usePreconnect: true
+        usePreconnect: false
+      }
+    },
+    {
+      resolve: 'gatsby-plugin-brotli',
+      options: {
+        extensions: ['css', 'html', 'js', 'svg'],
+        path: 'brotli'
       }
     }
   ]
