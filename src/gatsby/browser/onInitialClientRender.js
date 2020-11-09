@@ -33,4 +33,9 @@ module.exports = () => {
   if ('scrollRestoration' in history && history.scrollRestoration != 'manual') {
     history.scrollRestoration = 'manual';
   }
+
+  document.getElementById('___gatsby').style.display = 'block';
+  setTimeout(function () {
+    document.getElementById('___loader').style.display = 'none';
+  }, 0);
 };
