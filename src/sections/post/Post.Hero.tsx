@@ -73,7 +73,7 @@ interface IPostMeta extends ITAOAThemeUIContext {
   hasCoAUthors: boolean;
 }
 const PostMeta = styled.div((p: IPostMeta) => ({
-  marginLeft: p.hasCoAUthors ? '10px' : '0',
+  marginLeft: '10px',
 
   [mediaquery.phablet()]: {
     marginLeft: p.hasCoAUthors ? '10px' : '40px'
@@ -94,8 +94,8 @@ const Header = styled.header({
   },
 
   [mediaquery.tablet()]: {
-    paddingLeft: '20px',
-    paddingRight: '20px',
+    paddingLeft: '15px',
+    paddingRight: '15px',
     margin: '100px auto 70px',
     maxWidth: 'calc(540px)'
   },
