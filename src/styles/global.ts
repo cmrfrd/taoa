@@ -16,13 +16,6 @@ export const globalStyles = css`
     --ease-in-out-quart: cubic-bezier(0.77, 0, 0.175, 1);
   }
 
-  @font-face {
-    font-family: '-apple-system', 'BlinkMacSystemFont', 'San Francisco', 'Helvetica Neue',
-      'Helvetica', 'Ubuntu', 'Roboto', 'Noto', 'Segoe UI', 'Arial', sans-serif;
-    font-weight: 400;
-    font-style: normal;
-  }
-
   *,
   *:before,
   *:after {
