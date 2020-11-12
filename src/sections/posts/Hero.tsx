@@ -1,6 +1,7 @@
 import { GridLayoutContext } from './Posts.List.Context';
 
 import Name from '@components/Name';
+import Headings from '@components/Headings';
 import Section from '@components/Section';
 import Icons from '@icons';
 import mediaqueries, { mediaquery } from '@styles/media';
@@ -33,7 +34,9 @@ const Hero: React.FC = () => {
   return (
     <Section relative id="Posts__Hero">
       <HeadingContainer style={{ maxWidth: `${hero.maxWidth}px` }}>
-        <Name.h1 />
+        <HeroHeading>
+          <Name.h1 />
+        </HeroHeading>
         <HeroHeading>{hero.heading}</HeroHeading>
       </HeadingContainer>
       <Horizontal />
@@ -112,7 +115,7 @@ const HeadingContainer = styled.div({
   }
 });
 
-const HeroHeading = styled.h2`
+const HeroHeading = styled(Headings.h2)`
   font-family: ${p => p.theme.fonts.serif};
   font-style: normal;
   font-weight: 600;
