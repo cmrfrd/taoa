@@ -54,14 +54,20 @@ const Layout: React.FC<TLayout> = ({
       <Container>
         <HeaderTexture />
         <Global styles={globalStyles} />
-        <NavigationHeader enableGridRow={enableGridRow} initialArrowUp={false} />
         <FadeTransition
           animatePresenceProps={{ exitBeforeEnter: true }}
-          motionKey={location.pathname}
+          motionKey={'_'}
           duration={pageAnimationDurationSeconds}
         >
-          {children}
-          <NavigationFooter gradient={gradient} />
+          <NavigationHeader enableGridRow={enableGridRow} initialArrowUp={false} />
+          <FadeTransition
+            animatePresenceProps={{ exitBeforeEnter: true }}
+            motionKey={location.pathname}
+            duration={pageAnimationDurationSeconds}
+          >
+            {children}
+            <NavigationFooter gradient={gradient} />
+          </FadeTransition>
         </FadeTransition>
       </Container>
     </PostsContextProvider>
