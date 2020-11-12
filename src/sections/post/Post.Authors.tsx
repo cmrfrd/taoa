@@ -89,7 +89,6 @@ const PostAuthors: React.FC<IAuthorsProps> = ({ authors }: IAuthorsProps) => {
           <RoundedImage src={authors[0].avatar.small} />
         </AuthorAvatar>
         <strong>{authors[0].name}</strong>
-        <HideOnMobile>,&nbsp;</HideOnMobile>
       </AuthorLink>
     );
   }
