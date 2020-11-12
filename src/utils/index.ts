@@ -146,6 +146,18 @@ export function startAnimation(callback: () => any): void {
 }
 
 /**
+ * React hook to check whether a component is mounted
+ */
+export const useMounted = (): any => {
+  const [hasMounted, setHasMounted] = useState(false);
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
+
+  return hasMounted;
+};
+
+/**
  * Returns the X and Y coordinates of a selected piece of Text.
  * This will always return the top left corner of the selection.
  */
