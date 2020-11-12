@@ -240,10 +240,11 @@ module.exports = {
             }
           ]
         },
-        formats: ['woff2', 'woff'],
+        fontDisplay: 'block',
+        formats: ['woff2'],
         useMinify: true,
         usePreload: true,
-        usePreconnect: false
+        usePreconnect: true
       }
     },
     {
