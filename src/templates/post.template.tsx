@@ -5,6 +5,7 @@ import PostShare from '../sections/post/Post.Share';
 
 import MDX from '@components/MDX';
 import Section from '@components/Section';
+import Headings from '@components/Headings';
 import { mediaquery } from '@styles/media';
 import { Template, TTemplate, ITAOAThemeUIContext } from '@types';
 
@@ -79,7 +80,7 @@ const NextPost = styled(Section)({
   display: 'block'
 });
 
-const FooterNext = styled.h3((p: ITAOAThemeUIContext) => ({
+const FooterNext = styled(Headings.h3)((p: ITAOAThemeUIContext) => ({
   position: 'relative',
   opacity: 0.25,
   marginBottom: '100px',
