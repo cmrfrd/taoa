@@ -35,7 +35,7 @@ const GridRowToggle: React.FC<IGridRowToggle> = (props: IGridRowToggle) => {
   const handleWindowResize = (): void => {
     const { width } = getWindowDimensions();
     const breakpoint = getBreakpointFromTheme('tablet');
-    setActiveInLargeFormat(width >= breakpoint);
+    setActiveInLargeFormat(width > breakpoint);
   };
 
   useEffect((): (() => void) => {
@@ -158,9 +158,6 @@ const NavigationHeader: React.FC<INavigationHeader> = (props: INavigationHeader)
   const breakpoint = getBreakpointFromTheme('phablet');
   const [showArrow, setShowArrow] = useState<number>(+(width <= breakpoint));
 
-  const [colorMode] = useColorMode();
-  const tcolors = colorMode === 'dark' ? theme.colors.modes.dark : theme.colors;
-
   /* Function to handle turning the UI from a desktop view to
    * a mobile view.
    *
@@ -211,39 +208,6 @@ const NavigationHeader: React.FC<INavigationHeader> = (props: INavigationHeader)
 
   const stickyHeader = useStickyOnScrolled();
 
-  const sectionMain = css({
-    width: '100%',
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    opacity: 1,
-    zIndex: 100,
-    paddingTop: '16px',
-    paddingBottom: '16px',
-    transition: theme.colorModeTransition,
-    backgroundColor: tcolors.background
-  });
-
-  const sectionSticky = css({
-    paddingTop: '12px',
-    paddingBottom: '12px',
-    boxShadow: `3px 5px 2px 0px ${tcolors.tintHover}`,
-    backgroundColor: tcolors.tintBackground,
-    [mediaquery.desktop()]: {
-      paddingTop: '10px',
-      paddingBottom: '10px'
-    },
-    [mediaquery.tablet()]: {
-      paddingTop: '8px',
-      paddingBottom: '8px'
-    },
-    [mediaquery.phablet()]: {
-      paddingTop: '8px',
-      paddingBottom: '8px'
-    }
-  });
-
   const arrowMenuMotion = {
     initial: {
       opacity: 0,
@@ -263,7 +227,7 @@ const NavigationHeader: React.FC<INavigationHeader> = (props: INavigationHeader)
   };
 
   return (
-    <div css={stickyHeader ? [sectionMain, sectionSticky] : [sectionMain]}>
+    <HeaderSticky sticky={stickyHeader}>
       <Section>
         <NavContainer>
           <LogoLink
@@ -384,16 +348,64 @@ const NavigationHeader: React.FC<INavigationHeader> = (props: INavigationHeader)
           )}
         </NavContainer>
       </Section>
-    </div>
+    </HeaderSticky>
   );
 };
 
 export default NavigationHeader;
 
+interface IHeaderStickyProps extends ITAOAThemeUIContext {
+  sticky: boolean;
+}
+
+const HeaderSticky = styled.div((p: IHeaderStickyProps) =>
+  p.sticky
+    ? {
+        width: '100%',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        opacity: 1,
+        zIndex: 100,
+        transition: theme.colorModeTransition,
+        paddingTop: '12px',
+        paddingBottom: '12px',
+        boxShadow: `3px 5px 2px 0px ${p.theme.colors.tintHover}`,
+        backgroundColor: p.theme.colors.tintBackground,
+        [mediaquery.desktop()]: {
+          paddingTop: '10px',
+          paddingBottom: '10px'
+        },
+        [mediaquery.tablet()]: {
+          paddingTop: '8px',
+          paddingBottom: '8px'
+        },
+        [mediaquery.phablet()]: {
+          paddingTop: '8px',
+          paddingBottom: '8px'
+        }
+      }
+    : {
+        width: '100%',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        opacity: 1,
+        zIndex: 100,
+        paddingTop: '16px',
+        paddingBottom: '16px',
+        transition: theme.colorModeTransition,
+        backgroundColor: p.theme.colors.background
+      }
+);
+
 const Horizontal = styled.div((p: ITAOAThemeUIContext) => ({
   position: 'relative',
   margin: '5px 15px 50px',
   borderBottom: `1px solid ${p.theme.colors.horizontalNav}`,
+  zIndex: 0,
 
   [mediaquery.tablet()]: {
     margin: '10px 15px 5px'
@@ -557,7 +569,7 @@ interface IToolTip extends ITAOAThemeUIContext {
 const ToolTip = styled.div((p: IToolTip) => ({
   position: 'absolute',
   padding: '3px 10px',
-  background: p.isDark ? '#000' : 'rgba(0,0,0,0.1)',
+  background: p.isDark ? '#000' : p.theme.colors.background,
   color: p.isDark ? '#fff' : '#000',
   borderRadius: '3px',
   fontSize: '10px',
@@ -565,6 +577,7 @@ const ToolTip = styled.div((p: IToolTip) => ({
   opacity: p.hasCopied ? 1 : 0,
   transform: p.hasCopied ? 'translateY(-3px)' : 'none',
   transition: p.theme.colorModeTransition,
+  zIndex: 100,
 
   '&::after': {
     content: '""',
@@ -577,7 +590,7 @@ const ToolTip = styled.div((p: IToolTip) => ({
     height: 0,
     borderLeft: '6px solid transparent',
     borderRight: '6px solid transparent',
-    borderTop: `6px solid ${p.isDark ? '#000' : 'rgba(0,0,0,0.1)'}`
+    borderTop: `6px solid ${p.isDark ? '#000' : p.theme.colors.background}`
   }
 }));
 
