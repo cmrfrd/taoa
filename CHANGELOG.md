@@ -1,3 +1,11 @@
+### [1.2.4](https://github.com/cmrfrd/taoa/compare/v1.2.3...v1.2.4) (2020-11-15)
+
+
+### Bug Fixes
+
+* Update loading to export container as default ([d4538c9](https://github.com/cmrfrd/taoa/commit/d4538c901352e6ddb6759ec36d52bdf0d0e4a21d))
+* Update templates to include loading container ([d6b30c2](https://github.com/cmrfrd/taoa/commit/d6b30c27ba244b7de41afb0d9908a8eafb2e610c))
+
 ### [1.2.3](https://github.com/cmrfrd/taoa/compare/v1.2.2...v1.2.3) (2020-10-31)
 
 
