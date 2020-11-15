@@ -5,7 +5,7 @@ import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import React from 'react';
 
-const Loading: React.FC<{}> = () => {
+export const Loading: React.FC<{}> = () => {
   return (
     <SpinnerContainer>
       <Spinner />
@@ -22,13 +22,16 @@ const LoadingContainer: React.FC<ILoadingContainerProps> = ({
 }: ILoadingContainerProps) => {
   const mounted = useMounted();
 
-  return <span>{!mounted ? <Loading /> : { children }}</span>;
+  return !mounted ? (
+    <span>
+      <Loading />
+    </span>
+  ) : (
+    <span>{children}</span>
+  );
 };
 
-export default {
-  Loading,
-  LoadingContainer
-};
+export default LoadingContainer;
 
 const spin = keyframes({
   '0%': {
