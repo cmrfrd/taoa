@@ -1,3 +1,11 @@
+### [1.2.5](https://github.com/cmrfrd/taoa/compare/v1.2.4...v1.2.5) (2020-11-15)
+
+
+### Bug Fixes
+
+* remove unnecessary condition ([72ef62b](https://github.com/cmrfrd/taoa/commit/72ef62bd0c74bf56935101cada452aa813bec543))
+* **serviceworker:** Add service worker version update notification ([8ea6589](https://github.com/cmrfrd/taoa/commit/8ea65894a7dd463feab9ae55e4eaa61f058e5e07))
+
 ### [1.2.4](https://github.com/cmrfrd/taoa/compare/v1.2.3...v1.2.4) (2020-11-15)
 
 
