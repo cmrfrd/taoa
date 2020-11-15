@@ -16,7 +16,6 @@ plugins:
 
       ${nextRelease.notes}
 - - "@semantic-release/exec"
-  - prepareCmd: |-
-      ./bin/container_build.sh
     publishCmd: |-
+       ./bin/container_build.sh && \
        ./bin/container_publish.sh "Publish version ${nextRelease.version} at ${Date.now()}"
