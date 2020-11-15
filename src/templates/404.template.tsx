@@ -1,4 +1,5 @@
 import Emoji from '@components/Emoji';
+import LoadingContainer from '@components/Loading';
 import Paragraph from '@components/Paragraph';
 import SEO from '@components/SEO';
 import Section from '@components/Section';
@@ -17,7 +18,7 @@ const Page404: Template = ({ location, pageContext }: TTemplate) => {
   const message = _.sample(messages);
 
   return (
-    <span>
+    <LoadingContainer>
       <SEO pathname={location.pathname} />
       <Section narrow>
         <Container>
@@ -31,7 +32,7 @@ const Page404: Template = ({ location, pageContext }: TTemplate) => {
         </Container>
       </Section>
       <AboutGradient />
-    </span>
+    </LoadingContainer>
   );
 };
 

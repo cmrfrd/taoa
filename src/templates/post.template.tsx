@@ -3,9 +3,10 @@ import PostsNext from '../sections/post/Post.Next';
 import PostSEO from '../sections/post/Post.SEO';
 import PostShare from '../sections/post/Post.Share';
 
+import Headings from '@components/Headings';
+import LoadingContainer from '@components/Loading';
 import MDX from '@components/MDX';
 import Section from '@components/Section';
-import Headings from '@components/Headings';
 import { mediaquery } from '@styles/media';
 import { Template, TTemplate, ITAOAThemeUIContext } from '@types';
 
@@ -35,7 +36,7 @@ const Post: Template = ({ pageContext, location }: TTemplate) => {
   const { siteName } = useStaticQuery(postQuery).site.siteMetadata;
 
   return (
-    <span>
+    <LoadingContainer>
       <PostSEO post={post} authors={authors} location={location} />
       <PostHero post={post} authors={authors} />
       <PostBody ref={contentSectionRef}>
@@ -52,7 +53,7 @@ const Post: Template = ({ pageContext, location }: TTemplate) => {
           <FooterSpacer />
         </NextPost>
       )}
-    </span>
+    </LoadingContainer>
   );
 };
 

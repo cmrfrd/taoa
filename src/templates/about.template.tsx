@@ -1,6 +1,7 @@
 import AuthorHero from '../sections/author/Author.Hero';
 
 import Headings from '@components/Headings';
+import LoadingContainer from '@components/Loading';
 import Paragraph from '@components/Paragraph';
 import Section from '@components/Section';
 import { mediaquery } from '@styles/media';
@@ -18,7 +19,7 @@ const AboutPage: Template = ({ pageContext }: TTemplate) => {
   const about = pageContext.aboutPageData.about;
 
   return (
-    <span>
+    <LoadingContainer>
       <Section narrow>
         <AuthorContainer>
           <AboutHeading>{about.title.about}</AboutHeading>
@@ -33,7 +34,7 @@ const AboutPage: Template = ({ pageContext }: TTemplate) => {
           })}
         </AuthorContainer>
       </Section>
-    </span>
+    </LoadingContainer>
   );
 };
 

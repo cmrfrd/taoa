@@ -2,6 +2,7 @@ import PostsList from '../sections/posts/Posts.List';
 import { GridLayoutContext } from '../sections/posts/Posts.List.Context';
 
 import Headings from '@components/Headings';
+import LoadingContainer from '@components/Loading';
 import Paginator from '@components/Navigation/Navigation.Paginator';
 import SEO from '@components/SEO';
 import Search from '@components/Search';
@@ -42,7 +43,7 @@ const SearchPage: Template = ({ location, pageContext }: TTemplate) => {
   };
 
   return (
-    <span>
+    <LoadingContainer>
       <SEO pathname={location.pathname} />
       <Section narrow>
         <SearchContainer gridLayout={gridLayout}>
@@ -86,7 +87,7 @@ const SearchPage: Template = ({ location, pageContext }: TTemplate) => {
           />
         </PostsPaginator>
       </Section>
-    </span>
+    </LoadingContainer>
   );
 };
 

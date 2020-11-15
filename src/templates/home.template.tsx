@@ -3,6 +3,7 @@ import PostsList from '../sections/posts/Posts.List';
 
 import { MediumButton } from '@components/Button';
 import Headings from '@components/Headings';
+import LoadingContainer from '@components/Loading';
 import SEO from '@components/SEO';
 import Section from '@components/Section';
 import { mediaquery, mediaqueryup } from '@styles/media';
@@ -25,7 +26,7 @@ const HomePage: Template = ({ location, pageContext }: TTemplate) => {
   const postsToShow = posts.slice(0, numberOfPosts);
 
   return (
-    <span>
+    <LoadingContainer>
       <SEO pathname={location.pathname} />
       <Hero />
       <Section narrow>
@@ -39,7 +40,7 @@ const HomePage: Template = ({ location, pageContext }: TTemplate) => {
           </LinkContainer>
         </Container>
       </Section>
-    </span>
+    </LoadingContainer>
   );
 };
 
@@ -54,7 +55,7 @@ const Container = styled.div((p: ITAOAThemeUIContext) => ({
   transition: p.theme.colorModeTransition
 }));
 
-const PostsHeading = styled.h2((p: ITAOAThemeUIContext) => ({
+const PostsHeading = styled(Headings.h2)((p: ITAOAThemeUIContext) => ({
   fontStyle: 'normal',
   fontSize: '30px',
   lineHeight: '1.15',
@@ -67,6 +68,10 @@ const PostsHeading = styled.h2((p: ITAOAThemeUIContext) => ({
 
   [mediaquery.desktop()]: {
     fontSize: '20px'
+  },
+
+  [mediaquery.phablet()]: {
+    padding: '0 10px'
   }
 }));
 
