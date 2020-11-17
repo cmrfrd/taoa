@@ -3,7 +3,7 @@ import { useMounted } from '@utils';
 
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 export const Loading: React.FC<{}> = () => {
   return (
@@ -21,6 +21,11 @@ const LoadingContainer: React.FC<ILoadingContainerProps> = ({
   children
 }: ILoadingContainerProps) => {
   const mounted = useMounted();
+
+  // Scroll to top when mounted
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return !mounted ? (
     <span>
