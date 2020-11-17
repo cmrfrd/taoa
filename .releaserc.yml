@@ -1,4 +1,5 @@
 ---
+ci: false
 branches:
 - development
 plugins:
@@ -16,7 +17,7 @@ plugins:
 
       ${nextRelease.notes}
 - - "@semantic-release/exec"
-  - publishCmd: |
+  - prepareCmd: |
        ./bin/container_build.sh
-    succesCmd: |
+    publishCmd: |
        ./bin/container_publish.sh "Publish version ${nextRelease.version} at ${Date.now()}"
