@@ -1,3 +1,10 @@
+### [1.2.6](https://github.com/cmrfrd/taoa/compare/v1.2.5...v1.2.6) (2020-11-17)
+
+
+### Bug Fixes
+
+* Update post ([d6417e9](https://github.com/cmrfrd/taoa/commit/d6417e9c71c2e33ebc8b4ffa706a4dd20ef4c1eb))
+
 ### [1.2.5](https://github.com/cmrfrd/taoa/compare/v1.2.4...v1.2.5) (2020-11-15)
 
 
