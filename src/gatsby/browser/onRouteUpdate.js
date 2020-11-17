@@ -24,12 +24,12 @@ function handleAccessibilityFocus() {
 }
 
 module.exports = ({ location, prevLocation }) => {
-    handleAccessibilityFocus();
+  handleAccessibilityFocus();
 
-    if (location) {
-        localStorage.setItem('path', location.pathname);
-    }
-    if (prevLocation) {
-        localStorage.setItem('previousPath', prevLocation.pathname);
-    }
+  if (location) {
+    localStorage.setItem('path', location.pathname);
+  }
+  if (prevLocation) {
+    localStorage.setItem('previousPath', prevLocation.pathname);
+  }
 };

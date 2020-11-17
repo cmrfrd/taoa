@@ -13,7 +13,6 @@ module.exports = {
       repo: process.env.REPO_NAME
     },
     transition: {
-      scrollTimeoutMilliseconds: 300,
       pageAnimationDurationSeconds: 0.3,
       gridRowAnimationDurationSeconds: 0.3
     },
