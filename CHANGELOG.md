@@ -1,3 +1,10 @@
+### [1.2.8](https://github.com/cmrfrd/taoa/compare/v1.2.7...v1.2.8) (2020-11-17)
+
+
+### Bug Fixes
+
+* **release:** Update release config ([d16f026](https://github.com/cmrfrd/taoa/commit/d16f026d31f51e3c103ce227754bf2f42114f469))
+
 ### [1.2.7](https://github.com/cmrfrd/taoa/compare/v1.2.6...v1.2.7) (2020-11-17)
 
 
