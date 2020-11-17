@@ -34,9 +34,9 @@ excerpt: What is this blog, and why does it exist?
     (interactive)
     (if (memq 'save-to-mdx after-save-hook)
         (progn
-          (remove-hook 'after-save-hook 'shook t)
+          (remove-hook 'after-save-hook 'save-to-mdx t)
             (message "Disabled"))
-      (add-hook 'after-save-hook 'shook nil t)
+      (add-hook 'after-save-hook 'save-to-mdx nil t)
       (message "Enabled")))
 
   (export-on-save)
@@ -53,40 +53,12 @@ excerpt: What is this blog, and why does it exist?
   I've been reading and learning from tech blogs by people like [[https://jvns.ca][Julia Evans]],
   [[https://bost.ocks.org/mike/][Mike Bostock]], or [[https://koaning.io][Vincent Warmerdam]] for the past several years. They have
   consistently inspired and filled me with a new sense of awe for what it means
-  to build and display their ideas. I felt it was time to start a blog of my
-  own, about topics I care about, with a theme I find motivating, fun, and
+  to build and exhibit ideas. I felt it was time to start a blog of my own,
+  about topics I care about, with a theme I find motivating, fun, and
   interesting.
 
   In this first post I want to set the stage for future posts by going over this
   blog's overarching theme, goals, and a little bit about the underlying tech.
-
-* The Art of Abstraction
-
-  /"First you learn the value of abstraction, then you learn the cost of
-  abstraction, then you're ready to engineer."/ -- Kent Beck
-
-  Abstractions are tools used to simplify complex ideas. They are a medium to
-  ease our minds from tasks at hand so we don't need to fully digest the deeper
-  underlying concepts, just the higher level idea. An example of this is how to
-  drive a car. Understanding how the car regulates the optimal air to fuel ratio
-  is not necessary to know how to drive. The driver just needs to understand how
-  to turn the steering wheel and push on the gas pedal to go the direction they
-  want.
-
-  A steering wheel is just the tip of the iceberg as there are countless other
-  abstractions that researchers and engineers spend their whole careers
-  assembling and arguing over.
-
-  Abstractions are thrown out, re-evaluated, superseded, then thrown out again
-  all as part of a process, not an end destination. At the end of the day
-  abstractions are speculative in their value and normally just tend to scratch
-  a specific itch.
-
-  How people choose the right abstractions to represent the essence of some
-  underlying process fascinates me. This led me to choose the name, and
-  overarching theme, *The Art of Abstraction* for this blog. This message boiled
-  down into a simple phrase serves as the best bedrock I can think of for how to
-  link new and interesting topics under a single narrative.
 
 * Why you should care about blogs
 
@@ -107,30 +79,116 @@ excerpt: What is this blog, and why does it exist?
   People should care about blogs because it is one of the most dominant ways
   people can establish their voice over the internet.
 
-* Elevating stories with interactivity
+* The Art of Abstraction
 
-  Most stories presented in a blog lend themselves to text and images, but there
-  are series of amazing untold stories that would have an elevated and profound
-  impact if told interactively.
+  /"First you learn the value of abstraction, then you learn the cost of
+  abstraction, then you're ready to engineer."/ -- Kent Beck
 
-  Blog posts from places like [[https://distill.pub/][distill.pub]], [[https://blog.tensorflow.org/][TensorFlow blog]], or [[https://projects.fivethirtyeight.com/super-tuesday/][fivethirtyeight]]
-  include interactive portions where users can literally click and play with a
-  post and watch how information changes. Experiences like these bring out the
-  kid in me who goofed off playing flash games to pass the time in the computer
-  room in school. Interactivity can create a fun experience and leave people
-  with a smile on their face. I want this for all blog readers.
+  Abstractions are tools used to simplify complex ideas. They are a medium to
+  ease our minds from tasks at hand so we don't need to fully digest the deeper
+  underlying concepts, just the higher level idea. An example of this is how to
+  drive a car. Understanding how the car regulates the optimal air to fuel ratio
+  is not necessary to know how to drive. The driver just needs to understand how
+  to turn the steering wheel and push on the gas pedal to go the direction they
+  want.
 
-  Not every story should or can be expressed with interactivity, but in order to
-  have that option, code needs to be written to support it.
+  A steering wheel and a gas petal is just the tip of the iceberg as there are
+  countless other abstractions that researchers and engineers spend their whole
+  careers assembling and arguing over.
 
-  One of *The Art of Abstraction*'s goals is to illustrate and explain eccentric
-  ideas. Such ideas, which are outside the norm, tend to need illustration and
-  interactivity to be most informative and impactful. Therefore, the capability
-  to be interactive was highly prioritized when choosing the right tools when
-  building posts. Here is an /"example"/
+  Abstractions are thrown out, re-evaluated, superseded, then thrown out again
+  all as part of a process, not an end destination. At the end of the day
+  abstractions are speculative in their value and normally just tend to scratch
+  a specific itch.
 
-  #+begin_export md
-  <ConfettiButton
+  How people choose the right abstractions to represent the essence of some
+  underlying process fascinates me. This led me to choose the name, and
+  overarching theme, *The Art of Abstraction* for this blog. This message boiled
+  down into a simple phrase serves as the best bedrock I can think of for how to
+  link new and interesting topics under a single narrative.
+
+* Drafting the right seed goals
+
+  When starting any project, it's usually a good idea to establish a "North
+  Star" so it's readily apparent when the project's direction is veering off and
+  how to course correct.
+
+  One effective "North Star" is a well designed set of goals. It's important to
+  be aware however, that goals are no different from abstractions. Goals should
+  be crafted with the expectation that they will one day be reshaped to fit the
+  changing circumstances they occupy.
+
+  Don't expect these goals to be the bedrock, but instead as the seed for future
+  goals to grow from.
+
+  1. *Cultivate a digital garden*
+
+     The concept of a /"Digital Garden"/ has an [[https://maggieappleton.com/garden-history][interesting history]] and is a
+     very unique idea (see [[https://www.technologyreview.com/2020/09/03/1007716/digital-gardens-let-you-cultivate-your-own-little-bit-of-the-internet/][this]] or [[https://joelhooks.com/digital-garden][this]] for more).
+
+     /"The phrase 'digital garden' is a metaphor for thinking about writing and
+     creating that focuses less on the resulting 'showpiece' and more on the
+     process, care, and craft it takes to get there."/
+
+     Using the abstraction of the /"garden"/ in this analogy to describe this
+     blog is one I can respect and makes everything feel grounded. Phrases like
+     "pulling weeds", "planting seeds", and "watering" each have metaphorical
+     connotations for growing a healthy blog as well as literal connotations for
+     growing a beautiful garden.
+
+     This concept empasizes the journey of the creation process and not any one
+     destination.
+
+  2. *Stock over flow*
+
+     For a great overview of this idea, check out these [[https://tomcritchlow.com/2019/02/17/building-digital-garden/][two]] amazing [[http://snarkmarket.com/2010/4890][blogs]] from
+     which this goal has been appropriated.
+
+     /"Flow is the feed. It’s the posts and the tweets. It’s the stream of daily
+     and sub-daily updates that reminds people you exist./
+
+     /Stock is the durable stuff. It’s the content you produce that’s as
+     interesting in two months (or two years) as it is today. It’s what people
+     discover via search. It’s what spreads slowly but surely, building fans
+     over time."/
+
+     /Stock over flow/ imposes the opinion that the content creation process
+     should prioritize the verbose and long lasting, over the immediate and
+     short form /"status updates"/. I believe /"stock"/ content sticks in
+     people's minds longer and provides repeated value. If you put the work into
+     a post that improves the life of others, people will recognize it and share
+     it, reciprocating the value back to you.
+
+     This goal is not meant to disregard /"flow"/ and maybe in the future *The
+     Art of Abstraction* will produce /"flow"/ content. But in these early days
+     it's time to establish a solid base and build /"stock"/.
+
+  3. *Show AND tell*
+
+     Most stories presented in a blog lend themselves to text and images, but there
+     are series of amazing untold stories that would have an elevated and profound
+     impact if told interactively.
+
+     Blog posts from places like [[https://distill.pub/][distill.pub]], [[https://blog.tensorflow.org/][TensorFlow blog]], or
+     [[https://projects.fivethirtyeight.com/super-tuesday/][fivethirtyeight]] include interactive portions where users can literally
+     click and play with a post and watch how information changes. Experiences
+     like these bring out the kid in me who goofed off playing flash games to
+     pass the time in school. Interactivity can create a fun experience and
+     leave people just a tiny bit happier than they were before. I want this for
+     all blog readers.
+
+     To clarify, not every post should, or can be expressed with interactivity,
+     but future content deserves to have the option. Sometimes just a simple
+     button that does something fun will hopefully bring a smile to a reader's
+     face.
+
+#+begin_export md
+<div style={{
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+}}>
+   <ConfettiButton
     settings={{
       type: 'confetti',
       fakingRequest: false,
@@ -143,79 +201,63 @@ excerpt: What is this blog, and why does it exist?
       lifetime: 100,
       zIndex: 10,
       springAnimation: false
-      }}
-    text="Yay Interactivity!"
-    />
-  #+end_export
+    }}
+    text="Fun Button!  🎊"
+   />
+</div>
+#+end_export
 
-* The stack
+* The tech 🖥
 
   If you want to build any technology based product, you need to choose the
   right giants to stand on, and the right [[https://en.wikipedia.org/wiki/Solution_stack][stack]] for you.
 
-  There are countless hosting services and CMSs for blogs all competing for your
-  buisness to be a part of /your/ stack. It's also an intractable problem to
-  know which service will suite your needs best in the future. For this blog I
-  felt that the best decision was to use as few third party services as possible
-  to keep as many choices open as possible.
+  After researching how sites were built in the past, then watching [[https://www.youtube.com/watch?v=uWTMEDEPw8c][lecture]]
+  after [[https://www.youtube.com/watch?v=JCATu2WkOq8][lecture]] after [[https://www.youtube.com/watch?v=MZLS4cq7fRY][lecture]] about how they are being built now, I have
+  officially drank the koolaid and am now a proponant of subjectively "modern"
+  web development. Reading the philosophy of the [[https://jamstack.wtf/][JAM stack]], the [[https://web.dev/apply-instant-loading-with-prpl/][PRPL]] pattern,
+  and learning about the utility of [[https://www.staticgen.com/][static site generators]] (SSGs) has really
+  opened my eyes to a new set of tools for building amazing experiences
+  online. The development principles from other proponants of these ideas
+  consistently line up with my own and make me feel that I'm moving in the right
+  direction.
 
-  After researching how blogs were built in the past and how blogs are being
-  built now, the philosophy of the [[https://jamstack.wtf/][JAM stack]] and the use of static site
-  generators seem to allow for the most flexibility when it comes to
-  migratability and surviving for the long haul. While it may be in the [[https://www.gartner.com/en/research/methodologies/gartner-hype-cycle][peak of
-  inflated expectations]] of the hype cycle, I think it's a good bet as to how
-  websites will be built in the future.
+  There are [[https://github.com/topics/blog-engine][hundreds]] of blogging engines and SSGs to choose from. Each of them
+  have their own unique utility or are catered towards a specific developer
+  community. When finding the right SSG for this site I didn't do any particular
+  pro/con analysis. Instead I simply explored what tools were out there, took
+  them out for a test run, then determined what would be the best "/fit/" for my
+  particular workflow. After playing with 10 or so SSGs I came to a few
+  conclusions that helped me narrow down the selection.
 
-  There are [[https://github.com/topics/blog-engine][hundreds]] of blogging engines and [[https://www.staticgen.com/][static site generators]] (SSG) to
-  choose from. Each of them have their own unique utility or are catered towards
-  a specific developer community. When finding the right SSG for this site I
-  didn't do any particular pro/con analysis. Instead I wanted to simply explore
-  what tools were out there, take them out for a test run, and see what the best
-  "/fit/" would be for my particular workflow. After playing with 10 or so of
-  these types of frameworks I came to a few conclusions that helped me narrow
-  down the selection.
+  - *Markup converters are your friends* :clipboard:
 
-  1. *Embracing JavaScript*
+    Every developer has their favorite markup language. Whether that be
+    markdown, latex, or straight HTML. What's better than a really cool markup
+    language? Really cool markup converters! Tools like [[https://pandoc.org/index.html][pandoc]] that convert
+    your favorite markup language to the format you need are awesome and should
+    be used more! The right converter is a must if your won't budge on
+    switching from your favorite format to write in.
 
-     It seems that every programming language has their own tools to generate
-     websites. This is amazing! I'm so glad that developers can build the
-     website of their dreams in their favorite language. However to me, it seems
-     like this is an additional level of indirection and friction when creating
-     the final product of basic website elements (HTML/CSS/JS). After building a
-     bunch of demo sites with SSGs in a few different languages, I felt
-     Javascript based SSGs had the least amount of indirection.
+  - *It's the quality that counts* :rainbow:
 
-     I believe that when it comes to building websites, it's best to use the
-     language that was designed for building the websites.
+    Qualities of software like age or number of GitHub stars is a controversial
+    topic. Some people believe older software should be used because it may be
+    stable and well-known. The other side believes in using newer software
+    because it may use best practices, is actively maintained, or all the cool
+    kids are using it.
 
-  2. *Markup converters are your friends*
-
-     Every developer has their favorite markup language. Whether that be
-     markdown, latex, or straight HTML. What's better than a really cool markup
-     language? Really cool markup converters! Tools like [[https://pandoc.org/index.html][pandoc]] that convert
-     your favorite markup language to the format you actually need. The right
-     converter is a must if your won't on budge on switching from your favorite
-     format to write in.
-
-  3. *It's the quality that counts* 🌟
-
-     Qualities of software like age or number of GitHub stars is a controversial
-     topic. Some people believe older software should be used because it may be
-     stable and well-known. The other side believes in using newer software
-     because it may use best practices, is actively maintained, and all the cool
-     kids are using it.
-
-     There are a myriad of other reasons to choose the right tools. I believe
-     it's important to constantly re-evaluate and check your own reasoning and
-     not to be swayed by shiny toys. Don't choose software just because everyone
-     else is using it. Don't be a lemming.
+    There are a myriad of other reasons to choose the right tools. I believe
+    it's important to constantly re-evaluate and check your own reasoning and
+    not to be swayed by shiny toys. Don't choose software just because everyone
+    else is using it. Don't be a lemming.
 
 ** The tools for the job
 
   #+CAPTION: The Art of Abstraction's picture stack
   [[./images/stack.png]]
 
-  Here is a small synopsis of the libraries for *The Art of Abstraction*
+  Here is a synopsis of the core dependencies for *The Art of Abstraction*
 
   1. [[https://www.gatsbyjs.org/][*Gatsby*]]
 
@@ -223,11 +265,20 @@ excerpt: What is this blog, and why does it exist?
      developers build blazing fast websites and apps"/ -- gatsbyjs.org
 
      Modern front-end development is *overwhelming* and *hard*. In order to have
-     a website /feel/ and /behave/ like modern web apps, there are so many boxes
-     that need to be checked. Gatsby as a framework is the best shortcut I've
-     found for doing /modern/ web development.
+     a website /feel/ and /behave/ like a modern web app, there are so many
+     boxes that need to be checked. Gatsby easily checks many of those boxes and
+     is the best shortcut I've found for doing /modern/ web development in an
+     approachable way.
 
-     With the goal of embracing JavaScript, and being faced with the difficulty
+     Some amazing features that attracted me to Gatsby are
+
+     - /Configuration and setup is straight forward/
+
+     - /Integrates with the whole React ecosystem/
+
+     - /Great catalog of OSS plugins/
+
+     As somone who isn't a front-end developer being faced with the difficulty
      of front-end development, Gatsby feels like a breath of fresh air.
 
   2. [[https://mdxjs.com/][*MDX*]]
@@ -238,7 +289,7 @@ excerpt: What is this blog, and why does it exist?
      content with components a blast."/ -- mdxjs.com
 
      Markdown is an extremely effective document writing format. The syntax is
-     pretty straight forward, it's easy to write, easy to read, and integrates
+     pretty painless, it's easy to write, easy to read, and integrates
      well with a plethora of other tools. While searching for blogging tools I
      came across MDX and was purely amazed. After writing and feeling the
      experience of Markdown+JSX, I knew it was the right choice for writing
@@ -252,15 +303,17 @@ excerpt: What is this blog, and why does it exist?
      and authoring documents with a fast and effective plain-text system."/ --
      orgmode.org
 
-     After using Emacs and ~org-mode~ for the past few years for professional
-     and personal work, I've officially drank the Emacs kool-aid. It works
-     extremely well for my workflow and it's the best highly integrated mess
-     I've ever used.
+     I've used Emacs and ~org-mode~ for the past few years for professional and
+     personal work, I'm full steam ahead on Emacs and don't have any signs of
+     switching to another editor any time soon. It works extremely well for my
+     workflow and it's the best highly integrated mess I've ever used.
 
      Additionally, from a portability standpoint, ~org-mode~ can also export to
-     a [[https://orgmode.org/manual/Exporting.html][huge]] number of formats, including markdown.
+     a [[https://orgmode.org/manual/Exporting.html][bunch]] number of formats, including markdown.
 
-     ~The flow: org-mode -> MDX -> Gatsby~
+     ~The dev flow:~
+
+     ~org-mode -> MDX -> Gatsby~
 
 * In search of awe
 
