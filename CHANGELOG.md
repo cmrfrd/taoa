@@ -1,3 +1,11 @@
+### [1.2.9](https://github.com/cmrfrd/taoa/compare/v1.2.8...v1.2.9) (2020-11-17)
+
+
+### Bug Fixes
+
+* **scroll:** fix 'jumpy' scrolling by scrolling on mount only ([9562e50](https://github.com/cmrfrd/taoa/commit/9562e505d67d3cc07bed71610225d55a0bd11a24))
+* **scroll:** hidden edge case in fix ([a045360](https://github.com/cmrfrd/taoa/commit/a045360bc2bf1eed9d1be51933ec4b8e282c3c65))
+
 ### [1.2.8](https://github.com/cmrfrd/taoa/compare/v1.2.7...v1.2.8) (2020-11-17)
 
 
