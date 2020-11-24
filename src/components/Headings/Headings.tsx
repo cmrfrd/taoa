@@ -12,7 +12,16 @@ import { Theme } from 'theme-ui';
 const commonStyles = (p: ITAOAThemeUIContext): Theme => ({
   fontWeight: 'bold',
   color: p.theme.colors.primary,
-  fontFamily: p.theme.fonts.monospace
+  fontFamily: p.theme.fonts.monospace,
+  width: '100%',
+
+  [mediaquery.desktop_large()]: {
+    maxWidth: '800px'
+  },
+
+  [mediaquery.tablet()]: {
+    maxWidth: '586px'
+  }
 });
 
 const h1 = styled.h1((p: ITAOAThemeUIContext) => ({
@@ -41,7 +50,7 @@ const h2 = styled.h2((p: ITAOAThemeUIContext) => ({
   lineHeight: '1.333',
 
   [mediaquery.desktop()]: {
-    fontSize: '21px'
+    fontSize: '26px'
   },
 
   [mediaquery.tablet()]: {
@@ -50,8 +59,7 @@ const h2 = styled.h2((p: ITAOAThemeUIContext) => ({
   },
 
   [mediaquery.phablet()]: {
-    fontSize: '22px',
-    padding: '0 20px'
+    fontSize: '22px'
   }
 }));
 

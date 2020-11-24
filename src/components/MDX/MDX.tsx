@@ -126,8 +126,8 @@ const POST_WIDTH = (): IStringMap => ({
   }
 });
 
-const HeadingsCSS = (): IStringMap => ({
-  'h1, h2, h3, h4, h5, h6': {
+const BodyCSS = (): IStringMap => ({
+  'h1, h2, h3, h4, h5, h6, p, ul, ol': {
     margin: '0 auto',
     ...POST_WIDTH()
   },
@@ -347,7 +347,7 @@ const MDXBody = styled.div(
     justifyContent: 'center',
     flexDirection: 'column',
 
-    ...HeadingsCSS(),
+    ...BodyCSS(),
     ...ImageCSS(),
 
     ...PrismCSS(p)

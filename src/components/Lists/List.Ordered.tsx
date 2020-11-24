@@ -1,45 +1,40 @@
 import { mediaquery } from '@styles/media';
-import mediaqueries from '@styles/media';
 import { ITAOAThemeUIContext } from '@types';
 
-import { css } from '@emotion/core';
 import styled from '@emotion/styled';
 import * as CSS from 'csstype';
 
 const OrderedList = styled.ol((p: ITAOAThemeUIContext) => ({
-  listStyleType: 'decimal',
-  counterReset: 'ordered-list',
+  listStyle: 'none',
+  listStylePosition: 'inside',
+  counterReset: 'foo',
   color: p.theme.colors.postText as CSS.ColorProperty,
-  padding: '15px 0 30px 0px',
+  padding: '0px 0 0px 0px',
+  paddingLeft: '0px',
   margin: '0 auto',
   transition: p.theme.colorModeTransition,
   position: 'relative',
-  fontWeight: 400,
 
   width: '100%',
-  maxWidth: '780px',
 
-  [mediaquery.desktop()]: {
-    maxWidth: '607px'
+  'li > ol': {
+    textAlign: 'left',
+    [mediaquery.phablet()]: {
+      padding: '0px 0px'
+    }
   },
-
-  [mediaquery.tablet()]: {
-    maxWidth: '586px',
-    paddingLeft: '20px'
+  'li ol > li': {
+    margin: 0
   },
-
-  [mediaquery.phablet()]: {
-    padding: '0 20px',
-    paddingLeft: '20px'
-  },
-
-  [mediaquery.phone()]: {
-    paddingLeft: '40px'
+  'li ol > li:before': {
+    content: "counter(foo) '.'"
   },
 
   li: {
-    paddingBottom: '15px',
+    listStyle: 'none',
+    display: 'table',
     fontSize: '19px',
+    counterIncrement: 'foo',
 
     [mediaquery.tablet()]: {
       fontSize: '17px'
@@ -63,8 +58,12 @@ const OrderedList = styled.ol((p: ITAOAThemeUIContext) => ({
     }
   },
 
-  'li > :not(ol, ul)': {
-    display: 'inline-block'
+  'li::before': {
+    content: "counter(foo) '.'",
+    display: 'table-cell',
+    textAlign: 'left',
+    fontWeight: 600,
+    paddingRight: '10px'
   }
 }));
 

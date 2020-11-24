@@ -36,7 +36,7 @@ const Blockquote = styled.blockquote((p: ITAOAThemeUIContext) => ({
 
     [mediaquery.phablet()]: {
       fontSize: '36px',
-      padding: '0 20px 0 40px'
+      padding: '0 20px'
     }
   }
 }));
