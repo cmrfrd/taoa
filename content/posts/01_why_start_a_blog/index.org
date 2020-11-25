@@ -117,13 +117,13 @@ excerpt: What is this blog, and why does it exist?
      connotations for growing a healthy blog as well as literal connotations for
      growing a beautiful garden.
 
-     This concept empasizes the journey of the creation process and not any one
+     This concept emphasizes the journey of the creation process and not any one
      destination.
 
   2. *Stock OVER flow*
 
-     For a great overview of this idea, check out these two amazing blogs ([[https://tomcritchlow.com/2019/02/17/building-digital-garden/][tomcritchlow]] and ) [[]wo]] amazing [[http://snarkmarket.com/2010/4890]logs]] from
-     which this goal has been appropriated.
+     For a great overview of this idea, check out these two amazing blogs
+     ([[https://tomcritchlow.com/2019/02/17/building-digital-garden/][tomcritchlow]] and [[http://snarkmarket.com/2010/4890][Robin Sloan]]) from which this goal has been appropriated.
 
      /"Flow is the feed. It’s the posts and the tweets. It’s the stream of daily
      and sub-daily updates that reminds people you exist./
@@ -194,14 +194,14 @@ excerpt: What is this blog, and why does it exist?
   right giants to stand on, and the right [[https://en.wikipedia.org/wiki/Solution_stack][stack]] for you.
 
   After researching how sites were built in the past, then watching [[https://www.youtube.com/watch?v=uWTMEDEPw8c][lecture]]
-  after [[https://www.youtube.com/watch?v=JCATu2WkOq8][lecture]] after [[https://www.youtube.com/watch?v=MZLS4cq7fRY][lecture]] about how they are being built now, I have
-  officially drunk the Kool-Aid and am now a proponent of subjectively "modern"
-  web development. Reading the philosophy of the [[https://jamstack.wtf/][JAM stack]], the [[https://web.dev/apply-instant-loading-with-prpl/][PRPL]] pattern,
-  and learning about the utility of [[https://www.staticgen.com/][static site generators]] (SSGs) has really
-  opened my eyes to a new set of tools for building amazing experiences
-  online. The development principles from other proponents of these ideas
-  consistently line up with my own and make me feel that I'm moving in the right
-  direction.
+  after [[https://www.youtube.com/watch?v=JCATu2WkOq8][lecture]] after [[https://www.youtube.com/watch?v=MZLS4cq7fRY][lecture]] about how they are being built now, I'm
+  sufficently convinced of these new practices and am now a proponent of
+  subjectively "modern" web development. Reading the philosophy of the [[https://jamstack.wtf/][JAM
+  stack]], the [[https://web.dev/apply-instant-loading-with-prpl/][PRPL]] pattern, and learning about the utility of [[https://www.staticgen.com/][static site
+  generators]] (SSGs) has really opened my eyes to a new set of tools for building
+  amazing experiences online. The development principles from other proponents
+  of these ideas consistently line up with my own and make me feel that I'm
+  moving in the right direction.
 
   There are [[https://github.com/topics/blog-engine][hundreds]] of blogging engines and SSGs to choose from. Each has its
   own unique utility or caters to a specific developer community. When
@@ -252,11 +252,9 @@ excerpt: What is this blog, and why does it exist?
 
      Some amazing features that attracted me to Gatsby are
 
-     - /Configuration and setup is straightforward/
-
-     - /Integrates with the whole React ecosystem/
-
-     - /Great catalog of OSS plugins/
+     * /Configuration and setup is straightforward/
+     * /Integrates with the whole React ecosystem/
+     * /Great catalog of OSS plugins/
 
      As somone who isn't a front-end developer who is faced with the difficulty
      of front-end development, Gatsby feels like a breath of fresh air.
