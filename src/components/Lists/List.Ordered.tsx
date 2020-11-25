@@ -5,7 +5,7 @@ import styled from '@emotion/styled';
 import * as CSS from 'csstype';
 
 const OrderedList = styled.ol((p: ITAOAThemeUIContext) => ({
-  listStyle: 'none',
+  listStyleType: 'none',
   listStylePosition: 'inside',
   counterReset: 'foo',
   color: p.theme.colors.postText as CSS.ColorProperty,
@@ -24,15 +24,8 @@ const OrderedList = styled.ol((p: ITAOAThemeUIContext) => ({
       padding: '0px 0px'
     }
   },
-  'li ol > li': {
-    margin: 0
-  },
-  'li ol > li:before': {
-    content: "counter(foo) '.'"
-  },
 
   li: {
-    listStyle: 'none',
     display: 'table',
     fontSize: '19px',
     counterIncrement: 'foo',
@@ -60,7 +53,7 @@ const OrderedList = styled.ol((p: ITAOAThemeUIContext) => ({
     }
   },
 
-  'li::before': {
+  '> li::before': {
     content: "counter(foo) '.'",
     display: 'table-cell',
     textAlign: 'left',

@@ -5,11 +5,11 @@ import styled from '@emotion/styled';
 import * as CSS from 'csstype';
 
 const UnorderedList = styled.ul((p: ITAOAThemeUIContext) => ({
-  listStyleType: 'circle',
-  counterReset: 'list',
+  listStyleType: 'disc',
   color: p.theme.colors.postText as CSS.ColorProperty,
-  padding: '0px 0 0px 20px',
+  padding: '0px 0 0px 0px',
   paddingTop: '10px !important',
+  paddingLeft: '20px !important',
   margin: '0 auto',
   transition: p.theme.colorModeTransition,
   position: 'relative',
@@ -23,35 +23,47 @@ const UnorderedList = styled.ul((p: ITAOAThemeUIContext) => ({
   },
 
   [mediaquery.tablet()]: {
-    maxWidth: '586px',
-    paddingLeft: '20px !important'
+    maxWidth: '586px'
   },
+
   [mediaquery.phablet()]: {
     paddingLeft: '40px !important'
   },
 
   'li > ul': {
+    display: 'list-item',
     textAlign: 'left',
     [mediaquery.tablet()]: {
       paddingLeft: '20px !important'
+    },
+    [mediaquery.phablet()]: {
+      paddingLeft: '20px !important'
     }
   },
+
   'li ul > li': {
     margin: 0
   },
 
   li: {
-    position: 'relative',
-
+    display: 'list-item',
     p: {
-      listStyle: 'none',
+      paddingLeft: '0px',
+      fontSize: '18px',
       padding: '5px 0 5px 0',
-      paddingLeft: '0px'
+
+      [mediaquery.tablet()]: {
+        fontSize: '16px'
+      },
+
+      [mediaquery.phablet()]: {
+        fontSize: '14px'
+      }
     }
   },
 
-  'li > :not(ol, ul)': {
-    display: 'inline'
+  '> li::marker': {
+    color: p.theme.colors.postText as CSS.ColorProperty
   }
 }));
 
