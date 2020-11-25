@@ -81,41 +81,44 @@ const NextPost = styled(Section)({
   display: 'block'
 });
 
-const FooterNext = styled(Headings.h3)((p: ITAOAThemeUIContext) => ({
+const FooterNext = styled(Headings.h6)((p: ITAOAThemeUIContext) => ({
   position: 'relative',
   opacity: 0.25,
-  marginBottom: '100px',
+  marginTop: '30px',
+  marginBottom: '60px',
   fontWeight: 400,
   color: `${p.theme.colors.primary}`,
+  padding: 0,
 
   [mediaquery.tablet()]: {
-    marginBottom: '60px'
+    marginBottom: '40px'
   },
 
   [mediaquery.phone()]: {
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: '12px'
   },
 
   '&::after': {
     content: '""',
     position: 'absolute',
     background: `${p.theme.colors.grey}`,
-    width: `calc(100% - 290px)`,
+    width: `calc(100% - 400px)`,
     height: '1.25px',
     right: 0,
-    top: '11px',
+    top: '10px',
 
     [mediaquery.tablet()]: {
       height: '1px',
-      width: `${(600 / 1140) * 80}%`
+      width: `calc(100% - 370px)`
     },
 
     [mediaquery.phablet()]: {
-      width: `calc(100% - 290px)`
+      width: `calc(100% - 300px)`
     },
 
-    [mediaquery.phone()]: {
-      width: `${0}%`
+    [mediaquery.phone_large()]: {
+      width: '0'
     }
   }
 }));

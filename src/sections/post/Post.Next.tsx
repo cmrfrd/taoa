@@ -101,7 +101,7 @@ grid-template-rows: 2;
   margin: 0 auto;
   max-width: ${p => (p.numberOfPosts === 1 ? '680px' : '100%')};
 
-  ${mediaqueries.desktop`
+  ${mediaqueries.desktop_large`
 grid-template-columns: 1fr 1fr;
 `}
 

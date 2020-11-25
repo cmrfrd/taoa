@@ -74,8 +74,11 @@ interface IPostMeta extends ITAOAThemeUIContext {
 }
 const PostMeta = styled.div((p: IPostMeta) => ({
   marginLeft: '10px',
+  display: 'flex',
+  justifyContent: 'center',
+  flexDirection: 'column',
 
-  [mediaquery.phablet()]: {
+  [mediaquery.tablet()]: {
     marginLeft: p.hasCoAUthors ? '10px' : '40px'
   }
 }));
@@ -94,8 +97,8 @@ const Header = styled.header({
   },
 
   [mediaquery.tablet()]: {
-    paddingLeft: '15px',
-    paddingRight: '15px',
+    paddingLeft: '30px',
+    paddingRight: '30px',
     margin: '100px auto 70px',
     maxWidth: 'calc(540px)'
   },
@@ -117,6 +120,7 @@ const HeroHeading = styled(Headings.h1)((p: ITAOAThemeUIContext) => ({
   marginBottom: '25px',
   fontWeight: 'bold',
   lineHeight: 1.32,
+  padding: '0',
 
   [mediaquery.tablet()]: {
     marginBottom: '20px',
@@ -139,9 +143,9 @@ const HeroSubtitle = styled.div(
      font-size: 18px;
      color: ${p.theme.colors.grey};
 
-     ${mediaquery.phablet()} {
-         font-size: 14px;
+     ${mediaquery.tablet()} {
          flex-direction: column;
+         font-size: 18px;
 
          ${
            p.hasCoAUthors &&
@@ -155,7 +159,7 @@ const HeroSubtitle = styled.div(
         border: 1px solid ${p.theme.colors.horizontalRule};
         opacity: 0.5;
         border-radius: 5px;
-    }`
+           }`
          }
 
          strong {
@@ -164,7 +168,11 @@ const HeroSubtitle = styled.div(
            margin-bottom: 5px;
          }
      }
-    `
+
+     ${mediaquery.phablet()} {
+         font-size: 14px;
+     }
+   `
 );
 
 const HeroImage = styled.div({
