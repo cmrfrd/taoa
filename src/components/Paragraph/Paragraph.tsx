@@ -12,7 +12,8 @@ const Paragraph = styled.p((p: ITAOAThemeUIContext) => ({
   transition: p.theme.colorModeTransition,
   margin: '0 auto 25px',
   width: '100%',
-  maxWidth: '780px',
+  maxWidth: '800px',
+  paddingBottom: '20px',
 
   b: {
     fontWeight: 800
@@ -29,7 +30,6 @@ const Paragraph = styled.p((p: ITAOAThemeUIContext) => ({
   },
 
   [mediaquery.phablet()]: {
-    padding: '0 20px',
     fontSize: '14px'
   }
 }));
