@@ -8,7 +8,8 @@ const UnorderedList = styled.ul((p: ITAOAThemeUIContext) => ({
   listStyleType: 'circle',
   counterReset: 'list',
   color: p.theme.colors.postText as CSS.ColorProperty,
-  padding: '15px 0 15px 30px',
+  padding: '0px 0 0px 20px',
+  paddingTop: '10px !important',
   margin: '0 auto',
   transition: p.theme.colorModeTransition,
   position: 'relative',
@@ -17,20 +18,26 @@ const UnorderedList = styled.ul((p: ITAOAThemeUIContext) => ({
   width: '100%',
   maxWidth: '780px',
 
-  [mediaquery.desktop()]: {
+  [mediaquery.desktop_medium()]: {
     maxWidth: '607px'
   },
 
   [mediaquery.tablet()]: {
-    maxWidth: '586px'
+    maxWidth: '586px',
+    paddingLeft: '20px !important'
   },
-
   [mediaquery.phablet()]: {
-    paddingLeft: '20px'
+    paddingLeft: '40px !important'
   },
 
-  [mediaquery.phone()]: {
-    paddingLeft: '40px'
+  'li > ul': {
+    textAlign: 'left',
+    [mediaquery.tablet()]: {
+      paddingLeft: '20px !important'
+    }
+  },
+  'li ul > li': {
+    margin: 0
   },
 
   li: {
@@ -38,6 +45,7 @@ const UnorderedList = styled.ul((p: ITAOAThemeUIContext) => ({
 
     p: {
       listStyle: 'none',
+      padding: '5px 0 5px 0',
       paddingLeft: '0px'
     }
   },
