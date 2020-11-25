@@ -10,7 +10,6 @@ import mediaqueries, { mediaquery } from '@styles/media';
 import { ITAOAThemeUIContext } from '@types';
 import { copyToClipboard, getWindowDimensions, getBreakpointFromTheme, theme } from '@utils';
 
-import { css } from '@emotion/core';
 import styled from '@emotion/styled';
 import * as CSS from 'csstype';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -496,10 +495,11 @@ interface INavLink extends ITAOAThemeUIContext {
 
 const NavLink = styled(Link)((p: INavLink) => ({
   position: 'relative',
-  display: 'flex',
   alignItems: 'center',
-  marginLeft: '20px',
-  marginRight: '5px',
+  display: 'flex',
+  justifyContent: 'center',
+  flexDirection: 'column',
+
   paddingBottom: p.arrow ? '6px' : '0px',
   paddingTop: p.arrow ? '5px' : '0px',
   [mediaquery.phablet()]: {
@@ -518,6 +518,7 @@ const NavLinkText = styled(Headings.h2)(
     transition: ${p.theme.colorModeTransition};
     font-size: 26px;
     font-weight: 600;
+    padding: 0 20px;
 
     ${mediaquery.desktop_large()} {
         font-size: 26px;
@@ -528,20 +529,23 @@ const NavLinkText = styled(Headings.h2)(
     };
 
     ${mediaquery.tablet()} {
-        font-size: 18px;
+        padding: 0 15px;
+        font-size: 20px;
     };
 
     ${mediaquery.phablet()} {
         font-size: 18px;
     };
+    ${mediaquery.phone_large()} {
+    };
 
-    &::before {
-        content: ' ';
+                   &::before {
+                       content: ' ';
         display: block;
         position: relative;
         width: 100%;
         height: ${p.arrow ? '2px' : '3px'};
-        top: 1.4em;
+        top: 1.3em;
         left: 0;
         background-color: ${p.theme.colors.primary};
         visibility: visible;
