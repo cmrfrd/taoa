@@ -1,3 +1,11 @@
+### [1.2.11](https://github.com/cmrfrd/taoa/compare/v1.2.10...v1.2.11) (2020-11-25)
+
+
+### Bug Fixes
+
+* fix indentation on ordered lists ([553d67e](https://github.com/cmrfrd/taoa/commit/553d67e4e6d8d7958044f63ea1beaf95306b7907))
+* spacing on header links ([6885fd6](https://github.com/cmrfrd/taoa/commit/6885fd6cf74bb9a3c84d1f6fdc15ae996754722e))
+
 ### [1.2.10](https://github.com/cmrfrd/taoa/compare/v1.2.9...v1.2.10) (2020-11-17)
 
 
