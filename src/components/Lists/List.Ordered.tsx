@@ -9,7 +9,8 @@ const OrderedList = styled.ol((p: ITAOAThemeUIContext) => ({
   listStylePosition: 'inside',
   counterReset: 'foo',
   color: p.theme.colors.postText as CSS.ColorProperty,
-  padding: '0px 0 0px 0px',
+  padding: '0px 0px 0px 0px',
+  paddingTop: '10px !important',
   paddingLeft: '0px',
   margin: '0 auto',
   transition: p.theme.colorModeTransition,
@@ -47,6 +48,7 @@ const OrderedList = styled.ol((p: ITAOAThemeUIContext) => ({
     p: {
       paddingLeft: '0px',
       fontSize: '18px',
+      padding: '5px 0 5px 0',
 
       [mediaquery.tablet()]: {
         fontSize: '16px'
