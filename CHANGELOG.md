@@ -1,3 +1,10 @@
+### [1.2.12](https://github.com/cmrfrd/taoa/compare/v1.2.11...v1.2.12) (2020-11-26)
+
+
+### Bug Fixes
+
+* rename button because ¯\_(ツ)_/¯ ([9699734](https://github.com/cmrfrd/taoa/commit/9699734bf13ae87bb84c28fd6592233298a4bb84))
+
 ### [1.2.11](https://github.com/cmrfrd/taoa/compare/v1.2.10...v1.2.11) (2020-11-25)
 
 
