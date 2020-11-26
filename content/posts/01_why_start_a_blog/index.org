@@ -183,7 +183,7 @@ excerpt: What is this blog, and why does it exist?
       zIndex: 10,
       springAnimation: false
     }}
-    text="Fun Button!  🎊"
+    text="Click Me!  🎊"
    />
 </div>
 #+end_export
