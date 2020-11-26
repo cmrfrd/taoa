@@ -130,24 +130,9 @@ module.exports = {
         background_color: '#ffffff',
         cache_busting_mode: 'none',
         display: 'minimal-ui',
-        icons: [
-          {
-            type: 'image/png',
-            sizes: '192x192',
-            src: 'content/favicons/android-chrome-192x192.png'
-          },
-          {
-            type: 'image/png',
-            sizes: '512x512',
-            src: 'content/favicons/android-chrome-512x512.png'
-          },
-          {
-            type: 'image/png',
-            sizes: '512x512',
-            src: 'content/favicons/maskable_icon-512x512.png',
-            purpose: 'any maskable'
-          }
-        ]
+        icon_options: {
+          purpose: `any maskable`
+        }
       }
     },
     {
