@@ -1,3 +1,10 @@
+### [1.2.14](https://github.com/cmrfrd/taoa/compare/v1.2.13...v1.2.14) (2020-11-26)
+
+
+### Bug Fixes
+
+* add maskable icon ([b1c879f](https://github.com/cmrfrd/taoa/commit/b1c879f1dc7b10ffef83890f7bec1d1763123acc))
+
 ### [1.2.13](https://github.com/cmrfrd/taoa/compare/v1.2.12...v1.2.13) (2020-11-26)
 
 
