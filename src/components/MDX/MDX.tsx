@@ -119,10 +119,6 @@ const POST_WIDTH = (): IStringMap => ({
 
   [mediaquery.tablet()]: {
     maxWidth: '586px'
-  },
-
-  [mediaquery.phablet()]: {
-    padding: '0 20px'
   }
 });
 
@@ -130,6 +126,12 @@ const BodyCSS = (): IStringMap => ({
   'h1, h2, h3, h4, h5, h6, p, ul, ol': {
     margin: '0 auto',
     ...POST_WIDTH()
+  },
+
+  'h1, h2, h3, h4, h5, h6, p': {
+    [mediaquery.phablet()]: {
+      padding: '0 20px'
+    }
   },
 
   'h1, h1 *, h2, h2 *': {
