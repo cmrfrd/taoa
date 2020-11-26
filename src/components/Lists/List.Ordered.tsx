@@ -5,30 +5,48 @@ import styled from '@emotion/styled';
 import * as CSS from 'csstype';
 
 const OrderedList = styled.ol((p: ITAOAThemeUIContext) => ({
-  listStyleType: 'none',
-  listStylePosition: 'inside',
-  counterReset: 'foo',
+  listStyleType: 'decimal',
+  listStylePosition: 'outside',
   color: p.theme.colors.postText as CSS.ColorProperty,
-  padding: '0px 0px 0px 0px',
   paddingTop: '10px !important',
-  paddingLeft: '0px',
   margin: '0 auto',
   transition: p.theme.colorModeTransition,
   position: 'relative',
-
   width: '100%',
+  paddingLeft: '20px',
+  paddingRight: '20px',
+
+  [mediaquery.tablet()]: {
+    paddingLeft: '20px'
+  },
+  [mediaquery.phablet()]: {
+    paddingLeft: '40px'
+  },
+
+  '> li::before': {
+    fontWeight: 600
+  },
 
   'li > ol': {
     textAlign: 'left',
+    [mediaquery.tablet()]: {
+      paddingLeft: '20px !important'
+    },
     [mediaquery.phablet()]: {
-      padding: '0px 0px'
+      paddingLeft: '20px !important'
     }
   },
 
+  'li::marker': {
+    paddingLeft: '20px',
+    fontWeight: 'bold',
+    color: p.theme.colors.postText as CSS.ColorProperty
+  },
+
   li: {
-    display: 'table',
     fontSize: '19px',
-    counterIncrement: 'foo',
+    marginLeft: '0px',
+    paddingLeft: '0px',
 
     [mediaquery.tablet()]: {
       fontSize: '17px'
@@ -42,6 +60,7 @@ const OrderedList = styled.ol((p: ITAOAThemeUIContext) => ({
       paddingLeft: '0px',
       fontSize: '18px',
       padding: '5px 0 5px 0',
+      margin: '0',
 
       [mediaquery.tablet()]: {
         fontSize: '16px'
@@ -51,14 +70,6 @@ const OrderedList = styled.ol((p: ITAOAThemeUIContext) => ({
         fontSize: '14px'
       }
     }
-  },
-
-  '> li::before': {
-    content: "counter(foo) '.'",
-    display: 'table-cell',
-    textAlign: 'left',
-    fontWeight: 600,
-    paddingRight: '10px'
   }
 }));
 

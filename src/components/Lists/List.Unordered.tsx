@@ -6,32 +6,27 @@ import * as CSS from 'csstype';
 
 const UnorderedList = styled.ul((p: ITAOAThemeUIContext) => ({
   listStyleType: 'disc',
+  listStylePosition: 'outside',
   color: p.theme.colors.postText as CSS.ColorProperty,
   padding: '0px 0 0px 0px',
   paddingTop: '10px !important',
-  paddingLeft: '20px !important',
   margin: '0 auto',
   transition: p.theme.colorModeTransition,
   position: 'relative',
-  display: 'inline-block',
+  paddingLeft: '20px',
+  paddingRight: '20px',
 
   width: '100%',
-  maxWidth: '780px',
-
-  [mediaquery.desktop_medium()]: {
-    maxWidth: '607px'
-  },
 
   [mediaquery.tablet()]: {
-    maxWidth: '586px'
+    paddingLeft: '20px'
   },
 
   [mediaquery.phablet()]: {
-    paddingLeft: '40px !important'
+    paddingLeft: '40px'
   },
 
   'li > ul': {
-    display: 'list-item',
     textAlign: 'left',
     [mediaquery.tablet()]: {
       paddingLeft: '20px !important'
@@ -46,7 +41,6 @@ const UnorderedList = styled.ul((p: ITAOAThemeUIContext) => ({
   },
 
   li: {
-    display: 'list-item',
     p: {
       paddingLeft: '0px',
       fontSize: '18px',
@@ -60,11 +54,11 @@ const UnorderedList = styled.ul((p: ITAOAThemeUIContext) => ({
         fontSize: '14px'
       }
     }
-  },
-
-  '> li::marker': {
-    color: p.theme.colors.postText as CSS.ColorProperty
   }
+
+  /* '> li::marker': {
+   *   color: p.theme.colors.postText as CSS.ColorProperty
+   * } */
 }));
 
 export default UnorderedList;
