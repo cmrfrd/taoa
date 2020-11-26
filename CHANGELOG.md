@@ -1,3 +1,10 @@
+### [1.2.13](https://github.com/cmrfrd/taoa/compare/v1.2.12...v1.2.13) (2020-11-26)
+
+
+### Bug Fixes
+
+* Update manifest ([b87eb2f](https://github.com/cmrfrd/taoa/commit/b87eb2f465fe01b733ae2439b3da9babd4bb692c))
+
 ### [1.2.12](https://github.com/cmrfrd/taoa/compare/v1.2.11...v1.2.12) (2020-11-26)
 
 
