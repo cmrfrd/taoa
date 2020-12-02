@@ -31,7 +31,7 @@ export default {
       primary: '#fff',
       invPrimary: '#000',
       secondary: '#fff',
-      grey: '#4E4E55',
+      grey: '#6C6C75',
       accent: '#E9DAAC',
       background: '#15161c',
       tintBackground: '#1d2028',
