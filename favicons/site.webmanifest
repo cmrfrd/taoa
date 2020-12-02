@@ -1,0 +1,25 @@
+{
+  "name": "The Art of Abstraction",
+  "short_name": "T·A·O·A",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "type": "image/png",
+      "sizes": "192x192",
+      "src": "/android-chrome-192x192.png"
+    },
+    {
+      "type": "image/png",
+      "sizes": "512x512",
+      "src": "/android-chrome-512x512.png"
+    },
+    {
+      "type": "image/png",
+      "sizes": "512x512",
+      "src": "/maskable_icon-512x512.png",
+      "purpose": "any maskable"
+    }
+  ]
+}
