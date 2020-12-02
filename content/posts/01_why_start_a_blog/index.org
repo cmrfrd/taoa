@@ -267,9 +267,9 @@ excerpt: What is this blog, and why does it exist?
      content with components a blast."/ -- mdxjs.com
 
      Markdown is an extremely effective document writing format. The syntax is
-     pretty painless, it's easy to write, easy to read, and integrates well with
-     a plethora of other tools. While searching for blogging tools I came across
-     MDX and it was instant chemistry 💛🖤. After writing and feeling the
+     pretty painless, it's easy to write, easy to read, and is a target format
+     for a plethora of other tools. While searching for blogging tools I came
+     across MDX and it was instant chemistry 💛🖤. After writing and feeling the
      experience of Markdown+JSX, I knew it was the right choice for writing
      interactive content in a familiar format.
 

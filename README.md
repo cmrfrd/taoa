@@ -14,7 +14,7 @@ This repo contains the source code, posts, and configuration for `taoa.io` or `T
 
 ## About
 
-The Art of Abstraction (TAOA) is a tech blog. To learn more about its mission read the about or the first post.
+The Art of Abstraction (TAOA) is a blog. To learn more about its mission read the about or the first post.
 
 Posts for TAOA are written in org mode, exported to mdx, then become viewable in a gatsby web app. Local development is done via containers.
 
