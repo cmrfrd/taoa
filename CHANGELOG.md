@@ -1,3 +1,10 @@
+### [1.2.16](https://github.com/cmrfrd/taoa/compare/v1.2.15...v1.2.16) (2020-12-02)
+
+
+### Bug Fixes
+
+* Add icons in full resolution ([b2b9580](https://github.com/cmrfrd/taoa/commit/b2b9580d486a1de69d8a1ff0bc241500d342b10a))
+
 ### [1.2.15](https://github.com/cmrfrd/taoa/compare/v1.2.14...v1.2.15) (2020-12-02)
 
 
