@@ -363,7 +363,6 @@ const Excerpt = styled.p((p: IExcerptProps) => ({
 }));
 
 const MetaData = styled.div((p: ITAOAThemeUIContext) => ({
-  fontWeight: 600,
   fontSize: '16px',
   color: `${p.theme.colors.grey}`,
   opacity: 0.33,
