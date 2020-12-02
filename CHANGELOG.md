@@ -1,3 +1,11 @@
+### [1.2.15](https://github.com/cmrfrd/taoa/compare/v1.2.14...v1.2.15) (2020-12-02)
+
+
+### Bug Fixes
+
+* Add small amount of space between paragraphs ([470eb94](https://github.com/cmrfrd/taoa/commit/470eb94b4b9a7dbedff111ad9e7bb59df5ad14d0))
+* Content edit ([8359c27](https://github.com/cmrfrd/taoa/commit/8359c2785119a95e5d33da9f2d20a1dc58cff11f))
+
 ### [1.2.14](https://github.com/cmrfrd/taoa/compare/v1.2.13...v1.2.14) (2020-11-26)
 
 
