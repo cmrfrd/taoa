@@ -1,11 +1,5 @@
 /* eslint-disable */
 
 module.exports = () => {
-  const answer = window.confirm(
-    `This application has been updated. ` +
-      `Reload to display the latest version?`
-  )
-  if (answer === true) {
-    window.location.reload()
-  }
-}
+  window.location.reload();
+};
