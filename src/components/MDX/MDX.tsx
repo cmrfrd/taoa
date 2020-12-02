@@ -130,7 +130,8 @@ const BodyCSS = (): IStringMap => ({
 
   'h1, h2, h3, h4, h5, h6, p': {
     [mediaquery.phablet()]: {
-      padding: '0 20px'
+      paddingLeft: '20px',
+      paddingRight: '20px'
     }
   },
 
