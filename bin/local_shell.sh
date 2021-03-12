@@ -2,7 +2,7 @@
 set -e
 source development.env
 ./bin/local_build_image.sh
-docker run \
+podman run \
        -u $(id -u):$(id -g) \
        --userns=keep-id \
        -w /home/node/work/ \
