@@ -99,12 +99,11 @@ const Header = styled.header({
   [mediaquery.tablet()]: {
     paddingLeft: '30px',
     paddingRight: '30px',
-    margin: '100px auto 70px',
+    margin: '80px auto 80px',
     maxWidth: 'calc(540px)'
   },
 
   [mediaquery.phablet()]: {
-    margin: '170px auto 180px',
     padding: '0 20px',
     maxWidth: '480px'
   },
@@ -181,10 +180,10 @@ const HeroImage = styled.div({
   overflow: 'hidden',
   margin: '0 auto',
   boxShadow: '0 30px 60px -10px rgba(0, 0, 0, 0.2), 0 18px 36px -18px rgba(0, 0, 0, 0.22)',
-  width: '900px',
+  width: '70vw',
 
   [mediaquery.desktop()]: {
-    width: 'calc(80vw + 20px)'
+    width: 'calc(60vw + 20px)'
   },
 
   [mediaquery.phablet()]: {
