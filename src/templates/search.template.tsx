@@ -121,7 +121,7 @@ const SearchContainer = styled.div((p: ISearchContainerProps) => ({
   left: 0,
   zIndex: 1,
   width: '100%',
-  padding: '200px 30px 50px',
+  padding: '200px 0px 0px',
   transition: p.theme.colorModeTransition,
   minHeight: p.gridLayout ? '1600px' : '1000px',
 
