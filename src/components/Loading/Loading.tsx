@@ -28,12 +28,15 @@ const LoadingContainer: React.FC<ILoadingContainerProps> = ({
     }
   }, []);
 
-  return !mounted ? (
+  return (
     <span>
-      <Loading />
+      {!mounted && (
+        <CoverContainer>
+          <Loading />
+        </CoverContainer>
+      )}
+      {children}
     </span>
-  ) : (
-    <span>{children}</span>
   );
 };
 
@@ -47,6 +50,16 @@ const spin = keyframes({
     transform: 'rotate(360deg)'
   }
 });
+
+const CoverContainer = styled.div((p: ITAOAThemeUIContext) => ({
+  position: 'fixed',
+  height: '100%',
+  width: '100%',
+  top: '0px',
+  left: '0px',
+  backgroundColor: `${p.theme.colors.background}`,
+  zIndex: 1031
+}));
 
 const SpinnerContainer = styled.div({
   display: 'block',
