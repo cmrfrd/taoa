@@ -7,7 +7,7 @@ const Section = styled.section<{
   narrow?: boolean;
 }>((p: ITAOAThemeUIContext) => ({
   width: '100%',
-  maxWidth: '1220px',
+  maxWidth: '820px',
   margin: '0 auto',
   padding: '0 4rem',
 
