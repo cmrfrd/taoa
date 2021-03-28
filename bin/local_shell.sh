@@ -14,5 +14,5 @@ podman run \
        -it $IMAGE_NAME:$TAG \
        '
        eval `ssh-agent -s`;
-       sh
+       sh -l
        '
