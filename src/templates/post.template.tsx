@@ -14,6 +14,8 @@ import styled from '@emotion/styled';
 import { graphql, useStaticQuery } from 'gatsby';
 import React, { useRef } from 'react';
 
+import 'katex/dist/katex.min.css';
+
 const postQuery = graphql`
   {
     site {
