@@ -32,7 +32,7 @@ const Hero: React.FC = () => {
   const { hero } = useStaticQuery(homeHeroQuery).home.edges[0].node.home;
 
   return (
-    <Section relative id="Posts__Hero">
+    <Section relative>
       <HeadingContainer style={{ maxWidth: `${hero.maxWidth}px` }}>
         <HeroHeading>
           <Name.h1 />
