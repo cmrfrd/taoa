@@ -53,6 +53,15 @@ module.exports = {
     `gatsby-plugin-theme-ui`,
     `gatsby-source-local-git`,
     {
+      resolve: 'gatsby-plugin-purgecss',
+      options: {
+        printRejected: true,
+        develop: true,
+        printSummary: true,
+          ignore: ['katex/', 'react-medium-image-zoom/']
+      }
+    },
+    {
       resolve: `gatsby-source-filesystem`,
       options: {
         path: 'content/posts',
@@ -171,6 +180,14 @@ module.exports = {
       options: {
         extensions: [`.mdx`, `.md`],
         gatsbyRemarkPlugins: [
+          {
+            resolve: `gatsby-remark-katex`,
+            options: {
+              // Add any KaTeX options from https://github.com/KaTeX/KaTeX/blob/master/docs/options.md here
+              output: 'htmlAndMathml',
+              strict: `ignore`
+            }
+          },
           {
             resolve: 'gatsby-remark-emojis',
             options: {
