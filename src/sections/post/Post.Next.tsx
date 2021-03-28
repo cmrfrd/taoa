@@ -66,7 +66,7 @@ const GridItem: React.FC<IGridItemProps> = ({ post, narrow }: IGridItemProps) =>
 
 const wide = '1fr';
 /* const narrow = '527px'; */
-const narrow = '0.75fr';
+const narrow = '0.5fr';
 
 const limitToTwoLines = css`
   text-overflow: ellipsis;
@@ -87,12 +87,12 @@ const Grid = styled.div<{ numberOfPosts: number }>`
   ${p => {
     if (p.numberOfPosts === 1) {
       return `
-grid-template-columns: 1fr;
+grid-template-columns: minmax(0, ${narrow});
 grid-template-rows: 1
 `;
     } else {
       return `
-grid-template-columns: ${narrow} ${narrow};
+grid-template-columns: minmax(0, ${narrow}) ${narrow};
 grid-template-rows: 2;
 `;
     }
@@ -100,10 +100,6 @@ grid-template-rows: 2;
   column-gap: 30px;
   margin: 0 auto;
   max-width: ${p => (p.numberOfPosts === 1 ? '680px' : '100%')};
-
-  ${mediaqueries.desktop_large`
-grid-template-columns: 1fr 1fr;
-`}
 
   ${mediaqueries.tablet`
 grid-template-columns: 1fr;
