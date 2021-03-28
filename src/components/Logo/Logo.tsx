@@ -72,11 +72,11 @@ const LogoFont = styled.h1((p: ITAOAThemeUIContext) => ({
   transition: p.theme.colorModeTransition,
   color: p.theme.colors.background,
   background: p.theme.colors.invbackground as CSS.ColorProperty,
-  padding: '5px 10px 3px 10px',
+  padding: '4px 8px 2px 8px',
 
   fontStyle: 'normal',
   fontWeight: 500,
-  fontSize: '38px',
+  fontSize: '30px',
 
   '&:hover': {
     color: p.theme.colors.invbackground as CSS.ColorProperty,
@@ -87,16 +87,16 @@ const LogoFont = styled.h1((p: ITAOAThemeUIContext) => ({
 
   [mediaquery.desktop()]: {
     verticleAlign: 'middle',
-    fontSize: '32px'
+    fontSize: '26px'
   },
 
   [mediaquery.tablet()]: {
     verticleAlign: 'middle',
-    fontSize: '28px'
+    fontSize: '22px'
   },
 
   [mediaquery.phablet()]: {
-    fontSize: '26px',
+    fontSize: '20px',
     verticleAlign: 'middle',
     WebkitLineClamp: 3,
     padding: '3px 7px 1px 7px'

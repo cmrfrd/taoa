@@ -227,7 +227,7 @@ const NavigationHeader: React.FC<INavigationHeader> = (props: INavigationHeader)
 
   return (
     <HeaderSticky sticky={stickyHeader}>
-      <Section>
+      <HeaderSection>
         <NavContainer>
           <LogoLink
             to={'/'}
@@ -346,7 +346,7 @@ const NavigationHeader: React.FC<INavigationHeader> = (props: INavigationHeader)
             </>
           )}
         </NavContainer>
-      </Section>
+      </HeaderSection>
     </HeaderSticky>
   );
 };
@@ -368,21 +368,21 @@ const HeaderSticky = styled.div((p: IHeaderStickyProps) =>
         opacity: 1,
         zIndex: 100,
         transition: theme.colorModeTransition,
-        paddingTop: '12px',
-        paddingBottom: '12px',
+        paddingTop: '8px',
+        paddingBottom: '8px',
         boxShadow: `3px 5px 2px 0px ${p.theme.colors.tintHover}`,
         backgroundColor: p.theme.colors.tintBackground,
         [mediaquery.desktop()]: {
-          paddingTop: '10px',
-          paddingBottom: '10px'
+          paddingTop: '8px',
+          paddingBottom: '8px'
         },
         [mediaquery.tablet()]: {
-          paddingTop: '8px',
-          paddingBottom: '8px'
+          paddingTop: '6px',
+          paddingBottom: '6px'
         },
         [mediaquery.phablet()]: {
-          paddingTop: '8px',
-          paddingBottom: '8px'
+          paddingTop: '6px',
+          paddingBottom: '6px'
         }
       }
     : {
@@ -399,6 +399,12 @@ const HeaderSticky = styled.div((p: IHeaderStickyProps) =>
         backgroundColor: p.theme.colors.background
       }
 );
+
+const HeaderSection = styled(Section)({
+  paddingLeft: 0,
+  paddingRight: 0,
+  [mediaquery.tablet()]: {}
+});
 
 const Horizontal = styled.div((p: ITAOAThemeUIContext) => ({
   position: 'relative',
@@ -516,25 +522,25 @@ const NavLinkText = styled(Headings.h2)(
   (p: INavLinkText) => `
     font-family: ${p.theme.fonts.serif};
     transition: ${p.theme.colorModeTransition};
-    font-size: 26px;
+    font-size: 20px;
     font-weight: 600;
-    padding: 0 20px;
+    padding: 0 15px;
 
     ${mediaquery.desktop_large()} {
-        font-size: 26px;
-    };
-
-    ${mediaquery.desktop()} {
-        font-size: 26px;
-    };
-
-    ${mediaquery.tablet()} {
-        padding: 0 15px;
         font-size: 20px;
     };
 
+    ${mediaquery.desktop()} {
+        font-size: 20px;
+    };
+
+    ${mediaquery.tablet()} {
+        padding: 0 10px;
+        font-size: 16px;
+    };
+
     ${mediaquery.phablet()} {
-        font-size: 18px;
+        font-size: 14px;
     };
     ${mediaquery.phone_large()} {
     };
@@ -606,8 +612,8 @@ const IconWrapper = styled.div((p: IIconWrapper) => ({
   opacity: 0.5,
   position: 'relative',
   borderRadius: '5px',
-  width: '45px',
-  height: '35px',
+  width: '40px',
+  height: '30px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',

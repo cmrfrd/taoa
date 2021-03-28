@@ -28,7 +28,7 @@ const h1 = styled.h1((p: ITAOAThemeUIContext) => ({
   ...commonStyles(p),
 
   wordBreak: 'keep-all',
-  fontSize: '52px',
+  fontSize: '38px',
   lineHeight: '1.15',
 
   [mediaquery.desktop()]: {
