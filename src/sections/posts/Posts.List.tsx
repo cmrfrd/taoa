@@ -217,8 +217,8 @@ grid-template-columns: 1fr;
 const listItemRow = p => css`
   display: grid;
   grid-template-rows: 1fr;
-  grid-template-columns: 1fr 500px;
-  grid-column-gap: 120px;
+  grid-template-columns: 1fr 400px;
+  grid-column-gap: 80px;
   grid-template-rows: 1;
   align-items: center;
   position: relative;
@@ -284,8 +284,6 @@ const Item = styled.div<{ gridLayout: string }>`
 const ImageContainer = styled.div<{ narrow: boolean; gridLayout: string }>`
   background: ${p => p.theme.colors.invPrimary};
   position: relative;
-  height: '200px';
-  width: '100%';
   box-shadow: 0 30px 60px -10px rgba(0, 0, 0, ${p => (p.narrow ? 0.22 : 0.3)}),
     0 18px 36px -18px rgba(0, 0, 0, ${p => (p.narrow ? 0.25 : 0.33)});
   margin-bottom: ${p => (p.gridLayout === 'tiles' ? '30px' : 0)};
