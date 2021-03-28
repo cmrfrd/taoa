@@ -5,7 +5,7 @@ import { range } from '@utils';
 import { css } from '@emotion/core';
 import { SerializedStyles } from '@emotion/serialize';
 import styled from '@emotion/styled';
-import * as CSS from 'csstype';
+import { ColorProperty } from 'csstype';
 import { Link } from 'gatsby';
 import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
@@ -189,7 +189,7 @@ const PageNumberBUtton = styled.div`
   font-weight: 400;
   font-size: 18px;
   text-decoration: none;
-  color: ${(p: ITAOAThemeUIContext): CSS.ColorProperty => p.theme.colors.primary};
+  color: ${(p: ITAOAThemeUIContext): ColorProperty => p.theme.colors.primary};
   ${(p: ITAOAThemeUIContext): SerializedStyles => paginationItemMixin(p)}
 
   &:hover,
@@ -208,14 +208,14 @@ const Spacer = styled.span`
 `;
 
 const MobileReference = styled.span`
-    font-weight: 400;
-    ${(p: ITAOAThemeUIContext): SerializedStyles => paginationItemMixin(p)}
-    color: ${(p: ITAOAThemeUIContext): CSS.ColorProperty => p.theme.colors.primary};
+  font-weight: 400;
+  ${(p: ITAOAThemeUIContext): SerializedStyles => paginationItemMixin(p)}
+  color: ${(p: ITAOAThemeUIContext): ColorProperty => p.theme.colors.primary};
 
-    em {
+  em {
     font-style: normal;
-    color: ${(p: ITAOAThemeUIContext): CSS.ColorProperty => p.theme.colors.primary};
-    }
+    color: ${(p: ITAOAThemeUIContext): ColorProperty => p.theme.colors.primary};
+  }
 `;
 
 const Frame = styled.div`
