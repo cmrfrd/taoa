@@ -5,56 +5,65 @@ ENV HOME /home/$USER
 RUN apk add --update sudo
 
 RUN echo "$USER ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$USER \
-  && chmod 0440 /etc/sudoers.d/$USER
+    && chmod 0440 /etc/sudoers.d/$USER
 USER $USER
 
 ## Install deps
 RUN \
-  sudo apk -U upgrade -a && \
-  sudo apk update && \
-  sudo apk add \
-  --update \
-  --no-cache \
-  --repository http://dl-cdn.alpinelinux.org/alpine/edge/main \
-  --repository http://dl-3.alpinelinux.org/alpine/edge/community \
-  --repository http://dl-3.alpinelinux.org/alpine/edge/main \
-  --repository http://dl-3.alpinelinux.org/alpine/edge/testing \
-  vips-dev vips-tools && \
-  sudo apk add \
-  fftw-dev \
-  gcc \
-  g++ \
-  make \
-  libc6-compat \
-  python \
-  git \
-  coreutils \
-  bash \
-  libx11-dev \
-  libxi \
-  libtool \
-  mesa-gl \
-  autoconf \
-  automake \
-  bash \
-  g++ \
-  libc6-compat \
-  libjpeg-turbo-dev \
-  libpng-dev \
-  make \
-  openssl \
-  openssh \
-  go \
-  nasm && \
-  sudo rm -rf /var/cache/apk/*
+    sudo apk -U upgrade -a && \
+    sudo apk update && \
+    sudo apk add \
+    --update \
+    --no-cache \
+    --repository http://dl-cdn.alpinelinux.org/alpine/edge/main \
+    --repository http://dl-3.alpinelinux.org/alpine/edge/community \
+    --repository http://dl-3.alpinelinux.org/alpine/edge/main \
+    --repository http://dl-3.alpinelinux.org/alpine/edge/testing \
+    vips-dev vips-tools && \
+    sudo apk add \
+    fftw-dev \
+    gcc \
+    g++ \
+    make \
+    libc6-compat \
+    python \
+    git \
+    coreutils \
+    bash \
+    libx11-dev \
+    libxi \
+    libtool \
+    mesa-gl \
+    autoconf \
+    automake \
+    bash \
+    g++ \
+    libc6-compat \
+    libjpeg-turbo-dev \
+    libpng-dev \
+    make \
+    openssl \
+    openssh \
+    go \
+    gnupg \
+    chromium \
+    nasm && \
+    sudo rm -rf /var/cache/apk/*
 
 ## Install mkcert for ssl cert generation
 RUN \
-  git clone https://github.com/FiloSottile/mkcert /tmp/mkcert && \
-  cd /tmp/mkcert && \
-  go build -ldflags "-X main.Version=$(git describe --tags)" && \
-  sudo mv mkcert /usr/bin/ && \
-  rm -rf /tmp/mkcert
+    git clone https://github.com/FiloSottile/mkcert /tmp/mkcert && \
+    cd /tmp/mkcert && \
+    go build -ldflags "-X main.Version=$(git describe --tags)" && \
+    sudo mv mkcert /usr/bin/ && \
+    rm -rf /tmp/mkcert
+
+## Install yq for yml parsing
+RUN GO111MODULE=on go get github.com/mikefarah/yq/v4
+RUN echo $'\
+    export GOPATH=$HOME/go \n\
+    export PATH=$PATH:$GOROOT/bin:$GOPATH/bin \n'\
+    | sudo tee -a $HOME/.profile
 
 ## Setup entrypoint
 COPY ./entry.sh /
