@@ -32,13 +32,14 @@ To run this app locally there is some setup that needs to be done
 $ ./bin/local_shell.sh
 ```
 
-Once inside the container, use `npm` to download all the necessary js based dependencies.
+Once inside the container, use `yarn` to download all the necessary js based dependencies.
 
 ```shell
-$ npm i
+$ yarn install
 ```
 
-Once the necessary dependencies are installed, download emojis and generate TLS certificates (don't forget to add the root CA signature to your browser!)
+Once the necessary dependencies are installed, download emojis and generate dev
+TLS certificates (don't forget to add the root CA signature to your browser!)
 
 ``` shell
 $ ./bin/container_download_emojis.sh
@@ -55,10 +56,6 @@ This will run the website in development mode where you can test, edit, and view
 in the browser at `https://localhost:8000`
 
 ## Releasing
-
-Before releasing ensure the following steps.
-
-1. Add `sshCommand = "ssh -i path/to/key"` into your git config core
 
 This repo uses [semantic-release](https://github.com/semantic-release/semantic-release) for the release process and is triggered by release tags and commit messages.
 
@@ -77,4 +74,4 @@ When this command is run the following checks are run
 
 ## Contributing
 
-If you would like to help contribute to future posts or help build the site, reach out my email or submit a PR.
+If you would like to help contribute to future posts or help build the site, reach out to my email `alex@taoa.io` or submit a PR.
