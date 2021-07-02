@@ -1,12 +1,14 @@
 - name: Alexander Comerford
   bio:
     - |
-      Hi! I'm a Data Scientist living in New York. I spend most of my time
-      programming, reading, or trying to solve math problems. Other things I'm
-      interested in are juggling, Hebrew, and philosophy.
+      Hi! I'm a Programmer living in New York. I spend most of my time coding,
+      reading, or trying to solve math problems. Other things I'm interested in
+      are juggling, Hebrew, and philosophy.
     - |
       I love solving hard problems and blowing people's minds!
   avatar: ./avatars/Alex.png
+  email: 'alex@taoa.io'
+  pgp_keyid: '64DF35FA2BAD3764'
   social:
     - url: https://unsplash.com
     - url: https://stackoverflow.com
