@@ -3,7 +3,8 @@ import { ITAOAThemeUIContext } from '@types';
 import styled from '@emotion/styled';
 import React from 'react';
 
-import './arrow.scss';
+// import './arrow.scss';
+import './arrow.css';
 
 interface IArrowIcon {
   isOpen: boolean;
