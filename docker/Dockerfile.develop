@@ -1,4 +1,4 @@
-FROM node:14-alpine
+FROM node:16-alpine
 
 ENV USER node
 ENV HOME /home/$USER
@@ -19,16 +19,16 @@ RUN \
     --repository http://dl-3.alpinelinux.org/alpine/edge/community \
     --repository http://dl-3.alpinelinux.org/alpine/edge/main \
     --repository http://dl-3.alpinelinux.org/alpine/edge/testing \
-    vips-dev vips-tools && \
-    sudo apk add \
     fftw-dev \
     gcc \
     g++ \
     make \
     libc6-compat \
-    python \
+    python2 \
     git \
     coreutils \
+    util-linux \
+    vips-dev \
     bash \
     libx11-dev \
     libxi \
@@ -47,6 +47,7 @@ RUN \
     go \
     gnupg \
     chromium \
+    glib-dev \
     nasm && \
     sudo rm -rf /var/cache/apk/*
 
@@ -64,8 +65,3 @@ RUN echo $'\
     export GOPATH=$HOME/go \n\
     export PATH=$PATH:$GOROOT/bin:$GOPATH/bin \n'\
     | sudo tee -a $HOME/.profile
-
-## Setup entrypoint
-COPY ./entry.sh /
-RUN sudo chmod +x /entry.sh
-ENTRYPOINT ["/entry.sh"]
