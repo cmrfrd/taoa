@@ -2,16 +2,6 @@
 
 // https://github.com/gatsbyjs/gatsby/blob/master/packages/gatsby-transformer-sharp/src/fragments.js
 
-const GatsbyFluid_withWebp = `
-  base64
-  aspectRatio
-  src
-  srcSet
-  srcWebp
-  srcSetWebp
-  sizes
-`;
-
 module.exports.local = {
   posts: `{
     posts: allPost(
@@ -22,35 +12,35 @@ module.exports.local = {
         node {
           id
           slug
-          secret
           title
-          author
           date(formatString: "MMMM Do, YYYY")
           dateForSEO: date
           timeToRead
           canonical_url
           excerpt
+          parent {
+            ... on Mdx {
+              id
+              fileAbsolutePath
+              frontmatter {
+                author
+                secret
+              }
+            }
+          }
           body
           hero {
             full: childImageSharp {
-              fluid(maxWidth: 944, quality: 100) {
-                ${GatsbyFluid_withWebp}
-              }
+              gatsbyImageData(layout: FULL_WIDTH)
             }
             regular: childImageSharp {
-              fluid(maxWidth: 653, quality: 100) {
-                ${GatsbyFluid_withWebp}
-              }
+              gatsbyImageData(layout: FULL_WIDTH)
             }
             narrow: childImageSharp {
-              fluid(maxWidth: 457, quality: 100) {
-                ${GatsbyFluid_withWebp}
-              }
+              gatsbyImageData(layout: FULL_WIDTH)
             }
             seo: childImageSharp {
-              fixed(width: 1200, quality: 100) {
-                src
-              }
+              gatsbyImageData(layout: FIXED)
             }
           }
         }
@@ -121,36 +111,30 @@ module.exports.local = {
     }
   }`,
   authors: `{
-    authors: allAuthor {
-      edges {
-        node {
-          id
-          name
-          bio
-          featured
-          social {
-            url
+  authors: allAuthor {
+    edges {
+      node {
+        id
+        name
+        bio
+        featured
+        social {
+          url
+        }
+        slug
+        avatar {
+          small: childImageSharp {
+            gatsbyImageData(layout: FULL_WIDTH, width: 50)
           }
-          slug
-          avatar {
-            small: childImageSharp {
-              fluid(maxWidth: 50, quality: 100) {
-                ${GatsbyFluid_withWebp}
-              }
-            }
-            medium: childImageSharp {
-              fluid(maxWidth: 100, quality: 100) {
-                ${GatsbyFluid_withWebp}
-              }
-            }
-            large: childImageSharp {
-              fluid(maxWidth: 328, quality: 100) {
-                ${GatsbyFluid_withWebp}
-              }
-            }
+          medium: childImageSharp {
+            gatsbyImageData(layout: CONSTRAINED, width: 100)
+          }
+          large: childImageSharp {
+            gatsbyImageData(layout: CONSTRAINED, width: 328)
           }
         }
       }
     }
-  }`
+  }
+}`
 };
