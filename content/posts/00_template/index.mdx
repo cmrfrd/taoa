@@ -1,9 +1,9 @@
 ---
-title: Template Article
-author: Alexander Comerford
+title: "Template Article"
+author: ["Alexander Comerford"]
 date: 2020-09-25
 hero: ./images/hero.jpg
-secret: true
+secret: false
 excerpt: In this article I simply showcase the layout conversions
 ---
 
@@ -144,11 +144,40 @@ export default props => (
 
 ## Latex
 
+
+Here are some nifty inline formulas
+
 $
 a^2 + b^2 = c^2
 \newline
 f(x) = \int_{-\infty}^\infty\hat f(\xi)\,e^{2 \pi i \xi x}\,d\xi
 $
+
+systems of equations 🤓
+
+$
+\begin{alignedat}{2}
+   10&x+ &3&y = 2 \\
+   3&x+&13&y = 4
+\end{alignedat}
+$
+
+$$
+\begin{alignedat}{2}
+   6666&x+ &3&y = 2 \\
+   3&x+&13&y = 4
+\end{alignedat}
+$$
+
+Here are some $\KaTeX$ in display mode
+
+$$
+\begin{CD}
+   A @>a>> B \\
+     @VbVV @AAcA \\
+   C @= D
+\end{CD}
+$$
 
 This is a formula, $a^2 + b^2 = c^2$. It's pretty kool
 
