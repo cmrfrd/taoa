@@ -198,7 +198,7 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
 
     createPage({
       path: post.slug,
-      component: templates.post,
+      component: post.parent.fileAbsolutePath,
       context: {
         post,
         basePath,

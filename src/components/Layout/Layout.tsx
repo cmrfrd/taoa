@@ -6,7 +6,7 @@ import NavigationHeader from '@components/Navigation/Navigation.Header';
 import { globalStyles } from '@styles';
 import { TLayout, ITAOAThemeUIContext } from '@types';
 
-import { Global } from '@emotion/core';
+import { Global } from '@emotion/react';
 import styled from '@emotion/styled';
 import { graphql, useStaticQuery } from 'gatsby';
 import React, { useEffect } from 'react';

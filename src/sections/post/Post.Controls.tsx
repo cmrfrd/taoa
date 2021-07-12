@@ -112,7 +112,7 @@ const ToolTip = styled.div((p: IToolTip) => ({
   transition: 'transform 0.3s ease-in-out, opacity 0.3s ease-in-out',
 
   '&::after': {
-    content: ' ',
+    content: '" "',
     position: 'absolute',
     left: 0,
     right: 0,
@@ -168,7 +168,7 @@ const MoonOrSun = styled.div<{ isDark: boolean }>`
   overflow: ${p => (p.isDark ? 'visible' : 'hidden')};
 
   &::before {
-    content: ' ';
+    content: '" "';
     position: absolute;
     right: -9px;
     top: -9px;
@@ -182,7 +182,7 @@ const MoonOrSun = styled.div<{ isDark: boolean }>`
   }
 
   &::after {
-    content: ' ';
+    content: '" "';
     width: 8px;
     height: 8px;
     border-radius: 50%;

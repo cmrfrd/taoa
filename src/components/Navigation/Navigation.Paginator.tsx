@@ -2,7 +2,7 @@ import { mediaquery, mediaqueryup } from '@styles/media';
 import { IPaginator, ITAOAThemeUIContext } from '@types';
 import { range } from '@utils';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import { SerializedStyles } from '@emotion/serialize';
 import styled from '@emotion/styled';
 import { ColorProperty } from 'csstype';
@@ -207,16 +207,16 @@ const Spacer = styled.span`
   }
 `;
 
-const MobileReference = styled.span`
-  font-weight: 400;
-  ${(p: ITAOAThemeUIContext): SerializedStyles => paginationItemMixin(p)}
-  color: ${(p: ITAOAThemeUIContext): ColorProperty => p.theme.colors.primary};
-
-  em {
-    font-style: normal;
-    color: ${(p: ITAOAThemeUIContext): ColorProperty => p.theme.colors.primary};
-  }
-`;
+/* const MobileReference = styled.span`
+ *   font-weight: 400;
+ *   ${(p: ITAOAThemeUIContext): SerializedStyles => paginationItemMixin(p)}
+ *   color: ${(p: ITAOAThemeUIContext): ColorProperty => p.theme.colors.primary};
+ *
+ *   em {
+ *     font-style: normal;
+ *     color: ${(p: ITAOAThemeUIContext): ColorProperty => p.theme.colors.primary};
+ *   }
+ * `; */
 
 const Frame = styled.div`
   position: relative;

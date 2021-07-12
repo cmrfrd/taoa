@@ -29,8 +29,8 @@ const AuthorHero: React.FC<AuthorHeroProps> = ({ author }) => {
         })}
       </HeroDiv>
       {/* <Social>
-              <SocialLinks links={author.social} />
-              </Social> */}
+                <SocialLinks links={author.social} />
+                </Social> */}
     </Hero>
   );
 };
@@ -55,16 +55,16 @@ justify-content: center;
 `;
 
 const HeroImage = styled.div`
-    position: relative;
-    z-index: 1;
-    height: 164px;
-    width: 164px;
-    border-radius: 50%;
-    overflow: hidden;
-    border: 2px solid ${p => p.theme.colors.background};
-    box-shadow: 0px 15.619px 31.2381px rgba(0, 0, 0, 0.15);
-    flex-shrink: 0;
-    ${mediaqueries.tablet`
+  position: relative;
+  z-index: 1;
+  height: 164px;
+  width: 164px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid ${p => p.theme.colors.background};
+  box-shadow: 0px 15.619px 31.2381px rgba(0, 0, 0, 0.15);
+  flex-shrink: 0;
+  ${mediaqueries.tablet`
 width: 146px;
 height: 146px;
 `}
@@ -104,15 +104,15 @@ justify-content: center;
 `;
 
 const Heading = styled.h1`
-    font-size: 38px;
-    font-family: ${p => p.theme.fonts.monospace};
-    color: ${p => p.theme.colors.primary};
-    margin-top: 5px;
-    margin-bottom: 5px;
-    font-weight: 600;
-    margin: auto 50px;
+  font-size: 38px;
+  font-family: ${p => p.theme.fonts.monospace};
+  color: ${p => p.theme.colors.primary};
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-weight: 600;
+  margin: auto 50px;
 
-    ${mediaqueries.phone`
+  ${mediaqueries.phone`
 padding-top: 15px;
 text-align: center;
 `}

@@ -63,6 +63,8 @@ export interface IAuthor {
   name: string;
   slug: string;
   bio: string;
+  email?: string;
+  pgp_keyid?: string;
   avatar: {
     image: IGatsbyImageFluid;
     full: IGatsbyImageFluid;

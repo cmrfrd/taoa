@@ -9,7 +9,7 @@ import Section from '@components/Section';
 import { mediaquery, mediaqueryup } from '@styles/media';
 import { Template, TTemplate, ITAOAThemeUIContext } from '@types';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import { SerializedStyles } from '@emotion/serialize';
 import styled from '@emotion/styled';
 import { Link } from 'gatsby';

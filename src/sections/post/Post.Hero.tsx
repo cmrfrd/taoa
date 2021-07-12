@@ -29,9 +29,7 @@ const PostHero: React.FC<IPostHeroProps> = ({ post, authors }: IPostHeroProps) =
           </PostMeta>
         </HeroSubtitle>
       </Header>
-      <HeroImage id="PostImage__Hero">
-        {hasHeroImage ? <Image src={post.hero.full} /> : <ImagePlaceholder />}
-      </HeroImage>
+      <HeroImage>{hasHeroImage ? <Image src={post.hero.full} /> : <ImagePlaceholder />}</HeroImage>
     </Hero>
   );
 };
@@ -43,7 +41,7 @@ const Hero = styled.div(
   padding-top: 8rem;
   ${mediaquery.phablet()} {
             &::before {
-                content: ' ';
+                content: '" "';
                 width: 100%;
                 height: 20px;
                 background: ${p.theme.colors.primary};
@@ -54,7 +52,7 @@ const Hero = styled.div(
             }
 
             &::after {
-                content: ' ';
+                content: '" "';
                 width: 100%;
                 height: 10px;
                 background: ${p.theme.colors.background};
@@ -149,7 +147,7 @@ const HeroSubtitle = styled.div(
          ${
            p.hasCoAUthors &&
            `&::before {
-        content: ' ';
+        content: '" "';
         position: absolute;
         left: -5px;
         right: -10px;
@@ -180,7 +178,7 @@ const HeroImage = styled.div({
   overflow: 'hidden',
   margin: '0 auto',
   boxShadow: '0 30px 60px -10px rgba(0, 0, 0, 0.2), 0 18px 36px -18px rgba(0, 0, 0, 0.22)',
-  width: '70vw',
+  width: '50vw',
 
   [mediaquery.desktop()]: {
     width: 'calc(60vw + 20px)'

@@ -115,7 +115,7 @@ const HeadingContainer = styled.div({
   }
 });
 
-const HeroHeading = styled(Headings.h2)`
+const HeroHeading = styled.div`
   font-family: ${p => p.theme.fonts.serif};
   font-style: normal;
   font-weight: 600;

@@ -6,7 +6,7 @@ import Image, { ImagePlaceholder } from '@components/Image';
 import mediaqueries, { mediaquery } from '@styles/media';
 import { IPost, ITAOAThemeUIContext } from '@types';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Link, graphql, useStaticQuery } from 'gatsby';
 import React, { useContext } from 'react';
@@ -393,7 +393,7 @@ const PostLink = styled(Link)((p: ITAOAThemeUIContext) => ({
   },
 
   [`&[data-a11y='true']:focus::after`]: {
-    content: ' ',
+    content: '" "',
     position: 'absolute',
     left: '-1.5%',
     top: '-2%',
@@ -440,7 +440,7 @@ const PostLink = styled(Link)((p: ITAOAThemeUIContext) => ({
  *   }
  *
  *   &[data-a11y='true']:focus::after {
- *     content: ' ';
+ *     content: '" "';
  *     position: absolute;
  *     left: -1.5%;
  *     top: -2%;

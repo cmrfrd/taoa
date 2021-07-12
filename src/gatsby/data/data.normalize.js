@@ -12,15 +12,15 @@ function normalizeHero(post) {
     full: {},
     regular: {},
     narrow: {},
-    seo: {},
+    seo: {}
   };
 
   if (post.hero) {
     hero = {
-      full: post.hero.full.fluid,
-      regular: post.hero.regular.fluid,
-      narrow: post.hero.narrow.fluid,
-      seo: post.hero.seo.fixed,
+      full: post.hero.full,
+      regular: post.hero.regular,
+      narrow: post.hero.narrow,
+      seo: post.hero.seo
     };
   } else {
     console.log('\u001B[33m', `Missing hero for "${post.title}"`);
@@ -33,14 +33,14 @@ function normalizeAvatar(author) {
   let avatar = {
     small: {},
     medium: {},
-    large: {},
+    large: {}
   };
 
   if (author.avatar) {
     avatar = {
-      small: author.avatar.small.fluid,
-      medium: author.avatar.medium.fluid,
-      large: author.avatar.large.fluid,
+      small: author.avatar.small,
+      medium: author.avatar.medium,
+      large: author.avatar.large
     };
   } else {
     console.log('\u001B[33m', `Missing avatar for "${author.name}"`);
@@ -53,13 +53,13 @@ module.exports.local = {
   posts: ({ node: post }) => {
     return {
       ...post,
-      hero: normalizeHero(post),
+      hero: normalizeHero(post)
     };
   },
   authors: ({ node: author }) => {
     return {
       ...author,
-      avatar: normalizeAvatar(author),
+      avatar: normalizeAvatar(author)
     };
-  },
+  }
 };

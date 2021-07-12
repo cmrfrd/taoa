@@ -156,7 +156,7 @@ const CopyButton = styled.button((p: ITAOAThemeUIContext) => ({
   },
 
   "&[data-a11y='true']:focus::after": {
-    content: ' ',
+    content: '" "',
     position: 'absolute',
     left: '-2%',
     top: '-2%',

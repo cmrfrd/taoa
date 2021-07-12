@@ -1,6 +1,6 @@
 import theme from '../gatsby-plugin-theme-ui';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import { SerializedStyles } from '@emotion/serialize';
 
 const toEm = (size: number): string => size / 16 + 'em';

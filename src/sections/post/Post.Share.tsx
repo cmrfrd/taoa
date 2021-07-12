@@ -7,7 +7,7 @@ import {
   getBreakpointFromTheme
 } from '@utils';
 
-import { keyframes } from '@emotion/core';
+import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import React, { useState, useEffect } from 'react';
 import { useColorMode } from 'theme-ui';
@@ -246,7 +246,7 @@ const MenuFloat = styled.div<{ isDark: boolean }>`
   animation: ${popUpwards} 200ms forwards;
 
   &::after {
-    content: ' ';
+    content: '" "';
     position: absolute;
     left: 0;
     right: 0;

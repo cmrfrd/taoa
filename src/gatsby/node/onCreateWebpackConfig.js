@@ -3,7 +3,7 @@
 const path = require('path');
 const LoadablePlugin = require('@loadable/webpack-plugin');
 
-module.exports = ({ actions }) => {
+module.exports = ({ stage, actions, getConfig }) => {
   actions.setWebpackConfig({
     plugins: [new LoadablePlugin()],
     resolve: {

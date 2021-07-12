@@ -3,7 +3,7 @@ import Image from '@components/Image';
 import mediaqueries from '@styles/media';
 import { IPost } from '@types';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Link } from 'gatsby';
 import React from 'react';
@@ -221,7 +221,7 @@ const PostLink = styled(Link)<{ narrow: string }>`
   }
 
   &[data-a11y='true']:focus::after {
-    content: ' ';
+    content: '" "';
     position: absolute;
     left: -2%;
     top: -2%;

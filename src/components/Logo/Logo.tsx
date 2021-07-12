@@ -4,7 +4,7 @@ import { Icon } from '@types';
 import { ITAOAThemeUIContext } from '@types';
 import { theme } from '@utils';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import * as CSS from 'csstype';
 import { graphql, useStaticQuery } from 'gatsby';

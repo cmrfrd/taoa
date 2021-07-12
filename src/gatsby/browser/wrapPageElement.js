@@ -4,7 +4,7 @@ import Layout from '@components/Layout';
 
 import React from 'react';
 
-export const wrapPageElement = ({ element, props }): React.ReactNode => {
+export const wrapPageElement = ({ element, props }) => {
   const { enableGridRow } = props.pageContext;
 
   return (

@@ -103,10 +103,6 @@ const AuthorAvatar = styled.div((p: ITAOAThemeUIContext) => ({
   marginRight: '14px',
   background: p.theme.colors.grey as CSS.ColorProperty,
 
-  '.gatsby-image-wrapper > div': {
-    paddingBottom: '100% !important'
-  },
-
   [mediaqueries.phablet()]: {
     overflow: 'visible',
     marginTop: '10px'
@@ -259,7 +255,7 @@ const CoAuthorsContainer = styled.div(
   cursor: pointer;
 
   &::before {
-    content: ' ';
+    content: '" "';
     position: absolute;
     left: -20px;
     right: -8px;

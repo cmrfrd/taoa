@@ -1,7 +1,7 @@
 import { mediaquery } from '@styles/media';
 import { ITAOAThemeUIContext } from '@types';
 
-import { css } from '@emotion/core';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
 /* This component is a simple horizontal line

@@ -30,7 +30,9 @@ const postQuery = graphql`
  * Post page layout. Every post's content comes from MDX
  * and suggests next posts, comments, and how to email subscribe
  */
-const Post: Template = ({ pageContext, location }: TTemplate) => {
+const Post: Template = props => {
+
+  const { children, pageContext, location } = props;
   const contentSectionRef = useRef<HTMLElement>(null);
 
   const { post, authors, next, postPageData } = pageContext;
@@ -43,6 +45,7 @@ const Post: Template = ({ pageContext, location }: TTemplate) => {
       <PostHero post={post} authors={authors} />
       <PostBody ref={contentSectionRef}>
         <MDX content={post.body}>
+          {children}
           <PostShare />
         </MDX>
       </PostBody>
