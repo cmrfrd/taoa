@@ -1,14 +1,14 @@
 import Caption from '@components/Caption';
 
 import styled from '@emotion/styled';
-import GatsbyImg from 'gatsby-image';
+import { GatsbyImage, getImage } from 'gatsby-plugin-image';
 import React from 'react';
 
 /**
  * To soften the blur-up we get from the default configuration of gatbsy image
  * we're adding a CSS blur to the image. This makes it smoother!
  */
-const StyledGatsbyImag = styled(GatsbyImg)`
+const StyledGatsbyImag = styled(GatsbyImage)`
   & > img {
     filter: blur(8px);
   }
@@ -35,11 +35,12 @@ interface IImg {
  *
  * todo : lazyload the default img tag
  */
-const Image: React.FC<IImg> = ({ src, alt, ...props }: IImg) => {
+const Image: React.FC<IImg> = ({ src, alt = '', ...props }: IImg) => {
   // We're going to build our final component's props dynamically.
   // So create a nice default set of props that are relevant to Gatsby and non Gatsby images
   const imgProps = {
     alt,
+    image: getImage(src),
     ...props
   };
 
@@ -62,10 +63,9 @@ const Image: React.FC<IImg> = ({ src, alt, ...props }: IImg) => {
   // todo : throw an exception if it is neither src nor fixed nor fluid
 
   // Now set either src, fixed or fluid to the src prop
-  imgProps[keyForSrc] = src;
 
   // We don't want to CSS blur tracedSVG images! Only regular blur-ups.
-  const Component = src.tracedSVG ? GatsbyImg : StyledGatsbyImag;
+  const Component = src.tracedSVG ? GatsbyImage : StyledGatsbyImag;
 
   // Return either the GatsbyImg component or a regular img tag with the spread props
   // with a caption
