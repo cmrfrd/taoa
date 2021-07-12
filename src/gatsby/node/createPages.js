@@ -170,10 +170,10 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
     // Match the Author to the one specified in the post
     let authorsThatWroteThePost;
     try {
-      authorsThatWroteThePost = authors.filter(author => {
-        const allAuthors = post.author.split(',').map(a => a.trim().toLowerCase());
-        return allAuthors.some(a => a === author.name.toLowerCase());
-      });
+        authorsThatWroteThePost = authors.filter(author => {
+            const allAuthors = post.parent.frontmatter.author.map(a => a.trim().toLowerCase());
+            return allAuthors.some(a => a === author.name.toLowerCase());
+        });
     } catch (error) {
       throw new Error(`
         We could not find the Author for: "${post.title}".
