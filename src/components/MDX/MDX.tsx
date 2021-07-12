@@ -16,12 +16,15 @@ import { ITAOAThemeUIContext } from '@types';
 import { theme } from '@utils';
 
 import styled from '@emotion/styled';
+import { css } from '@emotion/react';
 import { MDXProvider } from '@mdx-js/react';
 import * as CSS from 'csstype';
 import { MDXRenderer } from 'gatsby-plugin-mdx';
 import React from 'react';
 import { useColorMode } from 'theme-ui';
 import { ThemeProvider } from 'theme-ui';
+
+import 'katex/dist/katex.min.css';
 
 type ComponentType =
   | 'img'
@@ -75,7 +78,7 @@ const components: Components = {
   SmallButton,
   MediumButton,
   LargeButton,
-  ConfettiButton
+  ConfettiButton,
   /*   CodeEditorWithOutput */
 };
 
@@ -92,11 +95,8 @@ const MDX: React.FC<IMDXProps> = ({ content, children }: IMDXProps) => {
   const [colorMode] = useColorMode();
 
   return (
-    <MDXProvider components={components}>
-      <MDXBody>
-        <MDXRenderer isDark={colorMode === 'dark'}>{content}</MDXRenderer>
-        <ThemeProvider theme={theme}>{children}</ThemeProvider>
-      </MDXBody>
+    <MDXProvider components={components} isDark={colorMode === 'dark'}>
+      <MDXBody>{children}</MDXBody>
     </MDXProvider>
   );
 };
@@ -344,6 +344,12 @@ const ImageCSS = (): IStringMap => ({
  */
 const MDXBody = styled.div(
   (p: ITAOAThemeUIContext): IStringMap => ({
+    // using this css class shim so dark mode
+    // with katex display mode works
+    '.katex-display': {
+      color: p.theme.colors.postText
+    },
+
     position: 'relative',
     zIndex: 10,
     display: 'flex',
