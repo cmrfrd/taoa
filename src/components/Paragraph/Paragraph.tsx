@@ -13,7 +13,8 @@ const Paragraph = styled.p((p: ITAOAThemeUIContext) => ({
   margin: '0 auto 25px',
   width: '100%',
   maxWidth: '800px',
-  paddingBottom: '20px',
+  paddingTop: '10px',
+  paddingBottom: '10px',
 
   b: {
     fontWeight: 800
