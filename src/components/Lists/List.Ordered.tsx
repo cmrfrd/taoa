@@ -7,10 +7,11 @@ import * as CSS from 'csstype';
 const OrderedList = styled.ol((p: ITAOAThemeUIContext) => ({
   listStyleType: 'decimal',
   listStylePosition: 'outside',
-  color: p.theme.colors.postText as CSS.ColorProperty,
+  color: p.theme.colors.postText,
+  fontFamily: p.theme.fonts.sansSerif,
+  transition: p.theme.colorModeTransition,
   paddingTop: '10px !important',
   margin: '0 auto',
-  transition: p.theme.colorModeTransition,
   position: 'relative',
   width: '100%',
   paddingLeft: '20px',
@@ -44,16 +45,16 @@ const OrderedList = styled.ol((p: ITAOAThemeUIContext) => ({
   },
 
   li: {
-    fontSize: '19px',
+    fontSize: '18px',
     marginLeft: '0px',
     paddingLeft: '0px',
 
     [mediaquery.tablet()]: {
-      fontSize: '17px'
+      fontSize: '16px'
     },
 
     [mediaquery.phablet()]: {
-      fontSize: '15px'
+      fontSize: '14px'
     },
 
     p: {

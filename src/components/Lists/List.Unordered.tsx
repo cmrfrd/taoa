@@ -10,6 +10,7 @@ const UnorderedList = styled.ul((p: ITAOAThemeUIContext) => ({
   color: p.theme.colors.postText as CSS.ColorProperty,
   padding: '0px 0 0px 0px',
   paddingTop: '10px !important',
+  paddingBottom: '10px !important',
   margin: '0 auto',
   transition: p.theme.colorModeTransition,
   position: 'relative',
@@ -41,6 +42,17 @@ const UnorderedList = styled.ul((p: ITAOAThemeUIContext) => ({
   },
 
   li: {
+    fontSize: '18px',
+    marginLeft: '0px',
+    paddingLeft: '0px',
+
+    [mediaquery.tablet()]: {
+      fontSize: '16px'
+    },
+
+    [mediaquery.phablet()]: {
+      fontSize: '14px'
+    },
     p: {
       paddingLeft: '0px',
       fontSize: '18px',
