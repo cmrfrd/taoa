@@ -33,7 +33,7 @@ module.exports = {
     social: [
       {
         name: `twitter`,
-        url: `https://https://twitter.com/alexjcomerford`
+        url: `https://twitter.com/alexjcomerford`
       },
       {
         name: `github`,
@@ -188,7 +188,7 @@ module.exports = {
             resolve: `gatsby-remark-katex`,
             options: {
               // Add any KaTeX options from https://github.com/KaTeX/KaTeX/blob/master/docs/options.md here
-              throwOnError: true,
+              throwOnError: true
             }
           }
         ]
@@ -296,22 +296,22 @@ module.exports = {
         extensions: ['css', 'html', 'js', 'svg'],
         path: 'brotli'
       }
-    },
-    {
-      resolve: `gatsby-plugin-csp`,
-      options: {
-        disableOnDev: true,
-        reportOnly: false, // Changes header to Content-Security-Policy-Report-Only for csp testing purposes
-        mergeScriptHashes: true, // you can disable scripts sha256 hashes
-        mergeStyleHashes: true, // you can disable styles sha256 hashes
-        mergeDefaultDirectives: true,
-        directives: {
-          'script-src': "'self' www.google-analytics.com",
-          'style-src': "'self' 'unsafe-inline'",
-          'img-src': "'self' data: www.google-analytics.com"
-          // you can add your directives or override defaults
-        }
-      }
     }
+    // {
+    //   resolve: `gatsby-plugin-csp`,
+    //   options: {
+    //     disableOnDev: true,
+    //     reportOnly: false, // Changes header to Content-Security-Policy-Report-Only for csp testing purposes
+    //     mergeScriptHashes: true, // you can disable scripts sha256 hashes
+    //     mergeStyleHashes: true, // you can disable styles sha256 hashes
+    //     mergeDefaultDirectives: true,
+    //     directives: {
+    //       'script-src': "'self' www.google-analytics.com",
+    //       'style-src': "'self' 'unsafe-inline'",
+    //       'img-src': "'self' data: www.google-analytics.com"
+    //       // you can add your directives or override defaults
+    //     }
+    //   }
+    // }
   ]
 };
