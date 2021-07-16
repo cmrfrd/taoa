@@ -1,79 +1,46 @@
 {
-  "errors": [],
-  "warnings": [
-    "./.cache/static-entry.js\nModule not found: Error: Can't resolve '../src/html' in '/home/node/work/.cache'\n @ ./.cache/static-entry.js"
-  ],
-  "version": "4.44.2",
-  "hash": "d59e1df7d99b9de9a114",
+  "hash": "8571a9509fcd2aed0984",
   "publicPath": "/",
   "outputPath": "/home/node/work/public",
   "assetsByChunkName": {
     "main": [
-      "render-page.js",
-      "render-page.js.map"
+      "render-page.js"
     ]
   },
   "assets": [
     {
-      "name": "render-page.js",
-      "size": 4733994,
-      "chunks": [
-        "main"
-      ],
-      "chunkNames": [
-        "main"
-      ],
-      "info": {},
-      "emitted": false
-    },
-    {
-      "name": "render-page.js.map",
-      "size": 5186009,
-      "chunks": [
-        "main"
-      ],
-      "chunkNames": [
-        "main"
-      ],
-      "info": {
-        "development": true
-      },
-      "emitted": false
+      "type": "assets by status",
+      "cached": true,
+      "filteredChildren": 1,
+      "size": 5907381
     }
   ],
-  "filteredAssets": 0,
-  "entrypoints": {
-    "main": {
-      "chunks": [
-        "main"
-      ],
-      "assets": [
-        "render-page.js",
-        "render-page.js.map"
-      ],
-      "children": {},
-      "childAssets": {}
-    }
-  },
   "namedChunkGroups": {
     "main": {
+      "name": "main",
       "chunks": [
         "main"
       ],
       "assets": [
-        "render-page.js",
-        "render-page.js.map"
+        {
+          "name": "render-page.js"
+        }
       ],
+      "filteredAssets": 0,
+      "assetsSize": null,
+      "filteredAuxiliaryAssets": 1,
+      "auxiliaryAssetsSize": null,
       "children": {},
       "childAssets": {}
     }
   },
-  "logging": {
-    "webpack.buildChunkGraph.visitModules": {
-      "entries": [],
-      "filteredEntries": 2,
-      "debug": false
+  "generator": "loadable-components",
+  "chunks": [
+    {
+      "id": "main",
+      "files": [
+        "render-page.js"
+      ]
     }
-  },
-  "children": []
+  ]
 }
