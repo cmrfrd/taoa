@@ -1,3 +1,11 @@
+### [1.2.17](https://github.com/cmrfrd/taoa/compare/v1.2.16...v1.2.17) (2021-07-16)
+
+
+### Bug Fixes
+
+* Prevent race condition when loading scroll bar ([74ecc6b](https://github.com/cmrfrd/taoa/commit/74ecc6b9d52f080429e6d8965c62a0c450846c07))
+* Update gatsby config ([18fc564](https://github.com/cmrfrd/taoa/commit/18fc56431febeeec0084e8e68c9fe7acbcce064b))
+
 ### [1.2.16](https://github.com/cmrfrd/taoa/compare/v1.2.15...v1.2.16) (2020-12-02)
 
 
