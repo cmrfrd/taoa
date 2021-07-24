@@ -1,6 +1,6 @@
 # Project dependencies
 .cache/
-node_modules/
+node_modules
 yarn-error.log
 package-lock.json
 yarn.lock
@@ -11,3 +11,4 @@ public
 certs/
 old_site/
 .git/
+static/emojis/
