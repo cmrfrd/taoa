@@ -98,7 +98,7 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
   log('Sorted posts', '');
   log(`${posts.length}`, 'total posts');
 
-  const postsThatArentSecret = posts.filter(post => !post.secret);
+  const postsThatArentSecret = posts.filter(post => !post.parent.frontmatter.secret);
   log('Filtered secret posts', '');
   log(`${postsThatArentSecret.length}`, 'total posts that are not secret');
 
@@ -170,10 +170,10 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
     // Match the Author to the one specified in the post
     let authorsThatWroteThePost;
     try {
-        authorsThatWroteThePost = authors.filter(author => {
-            const allAuthors = post.parent.frontmatter.author.map(a => a.trim().toLowerCase());
-            return allAuthors.some(a => a === author.name.toLowerCase());
-        });
+      authorsThatWroteThePost = authors.filter(author => {
+        const allAuthors = post.parent.frontmatter.author.map(a => a.trim().toLowerCase());
+        return allAuthors.some(a => a === author.name.toLowerCase());
+      });
     } catch (error) {
       throw new Error(`
         We could not find the Author for: "${post.title}".

@@ -1,12 +1,14 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
+import { Link } from 'gatsby';
+
 import Image from '@components/Image';
 
 import Paragraph from '@components/Paragraph';
 
 import mediaqueries, { mediaquery } from '@styles/media';
-import { IAuthor } from '@types';
+import { IAuthor, ITAOAThemeUIContext } from '@types';
 
 import SocialLinks from '@components/SocialLinks';
 
@@ -15,6 +17,7 @@ interface AuthorHeroProps {
 }
 
 const AuthorHero: React.FC<AuthorHeroProps> = ({ author }) => {
+  const pgp_keyid = author.pgp_keyid.replaceAll(' ', '');
   return (
     <Hero>
       <HeroDiv>
@@ -24,18 +27,44 @@ const AuthorHero: React.FC<AuthorHeroProps> = ({ author }) => {
           </HeroImage>
           <Heading>{author.name}</Heading>
         </HeroHeadings>
+        {author.pgp_keyid && <PGPLink href={`/gpg/${pgp_keyid}`}>{author.pgp_keyid}</PGPLink>}
         {author.bio.map((para: string, i: number) => {
           return <AuthorParagraph key={i}>{para}</AuthorParagraph>;
         })}
       </HeroDiv>
       {/* <Social>
-                <SocialLinks links={author.social} />
-                </Social> */}
+              <SocialLinks links={author.social} />
+              </Social> */}
     </Hero>
   );
 };
 
 export default AuthorHero;
+
+const PGPLink = styled.a((p: ITAOAThemeUIContext) => ({
+  transition: p.theme.colorModeTransition,
+  textDecoration: 'none',
+  color: p.theme.colors.grey as CSS.ColorProperty,
+
+  '&:hover': {
+    color: p.theme.colors.grey as CSS.ColorProperty,
+    fontWeight: 'bold',
+    textShadow: '0 0 .01px black'
+  },
+
+  ':visited': {
+    color: p.theme.colors.grey as CSS.ColorProperty,
+    textDecoration: 'none'
+  },
+
+  [mediaquery.tablet()]: {
+    marginBottom: '80px'
+  },
+
+  [mediaquery.phablet()]: {
+    margin: '120px auto 100px'
+  }
+}));
 
 const Hero = styled.div`
   position: relative;
