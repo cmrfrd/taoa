@@ -118,6 +118,8 @@ module.exports.local = {
         name
         bio
         featured
+        pgp_keyid
+        email
         social {
           url
         }
