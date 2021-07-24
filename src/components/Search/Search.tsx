@@ -70,9 +70,6 @@ const Search: React.FC<{}> = (props: any) => {
         type="text"
         placeholder={placeholder}
         onChange={handleChange}
-        onFocus={e => {
-          console.log('focus', e);
-        }}
         onScroll={e => {
           e.preventDefault();
         }}
