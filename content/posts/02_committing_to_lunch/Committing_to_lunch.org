@@ -1,0 +1,467 @@
+#+TITLE: Committing to Lunch
+#+CREATED: [2021-07-11 Sun 00:48]
+#+LAST_MODIFIED: [2021-07-24 Sat 11:44]
+#+ROAM_TAGS: cryptography composition
+#+OPTIONS: toc:nil
+#+OPTIONS: tex:t
+#+OPTIONS: _:nil ^:nil p:nil
+
+#+HUGO_BASE_DIR: ./
+#+hugo_front_matter_format: yaml
+#+HUGO_CUSTOM_FRONT_MATTER: :date (org-to-blog-date (org-global-prop-value "CREATED"))
+#+HUGO_CUSTOM_FRONT_MATTER: :hero ./images/hero.jpg
+#+HUGO_CUSTOM_FRONT_MATTER: :secret false
+#+HUGO_CUSTOM_FRONT_MATTER: :excerpt A story about how to use commitment schemes
+
+#+begin_src emacs-lisp :exports none
+(org-babel-do-load-languages
+  'org-babel-load-languages
+  '((shell . t)
+    (python . t)))
+#+end_src
+
+#+RESULTS:
+
+#+BEGIN_SRC emacs-lisp :exports none
+  (add-to-list 'org-export-filter-latex-fragment-functions
+               'sub-paren-for-dollar-sign)
+  (add-to-list 'org-export-filter-headline-functions
+               'remove-regexp-curly-braces)
+  (add-to-list 'org-export-filter-latex-environment-functions
+               'sub-paren-for-dollar-sign)
+  (export-to-mdx-on-save)
+#+END_SRC
+
+#+RESULTS:
+: Enabled mdx on save
+
+Alice and Bob are close friends that have known each other for years. Recently
+they decided that they wanted to schedule a weekly Saturday lunch together to
+catch up on their lives and shoot the shit. They enjoy their discussions as
+well as the food. Sometimes Alice chooses where to eat, sometimes Bob chooses,
+and sometimes they just return to their favorite spots. Several weeks go by
+and the constant debate they always revisit is where are they going to eat
+next. Sometimes both of them want to choose, and sometimes neither of them
+wants to choose. Eventually they agreed that in those circumstances, they need
+a systematic way to decide where they are going to partake in their next meal.
+
+They both agree on two processes to settle their lunch dilemma. The first
+process is applied when each wants to go to a different restaurant. In this
+circumstance one of them is randomly chosen to become /the decider/ for that
+week. The second process is applied when neither party has a preference on a
+set of places. In this circumstance, a random place is chosen (no
+decider).
+
+They want the processes to be fair, so sometime during the week, they meet up
+in person and either flip a coin to see who becomes /the decider/, or they
+roll a die to choose a place from a list. Both of these methods work for
+them. Happy with the coin and the die, Alice and Bob enjoy several more weeks
+of lunches.
+
+Unfortunately, this doesn't last. Alice and Bob's schedules start to get busy
+and they don't get a lot of time to see each other in person during the
+week. Therefore they can never find time to meet up to flip a coin or roll a
+die. This puts Alice and Bob in a pickle. How will they decide where to go to
+lunch if they can't meet up?!
+
+They found it most convenient with their busy schedules to communicate online.
+One of them would have to do the flip/roll and tell the other the result. But
+this puts both of them in a tough spot. Despite being great friends, they
+don't trust each other to be honest when it comes to lunch. One of them could
+easily lie without the other knowing. They both agree that they want a way to
+ensure the authenticity of a flip/roll when they can't directly see it.
+
+Alice and Bob need a virtual coin/die so when one of them flips/rolls the
+other can verify that no cheating took place.
+
+This problem could be solved by trusting a third person to flip/roll for
+them. However they avoid this option to eliminate the risk that they would
+bribed with an egg-roll.
+
+Overall they need a scheme that satisfies a few requirements
+
+1. If someone cheats, the other one can prove it
+2. If there is no cheating, then they can prove that the process was fair
+3. Cheating should be hard and therefore disincentivized and unlikely
+
+* Creating a virtual coin
+
+  Alice and Bob both do some research on finding a solution to their
+  problem. After a few days of digging, Alice comes back to Bob with a solution
+  to the "virtual coin" problem that is fair for the both of them. She proposes
+  a hash-based commitment scheme used by Manuel Blum to build a secure coin flip
+  and sends Bob [[https://www.cs.cmu.edu/~mblum/research/pdf/coin/][the paper]].
+
+  Alice is really excited about this protocol because not only is it simple to
+  execute, but it is hard to cheat under the random oracle model. Bob upon
+  hearing this looks a little puzzled and inquires about the random oracle
+  model. Alice begins to explain ...
+
+** What is a random oracle?
+
+   The random oracle model is a cryptographic abstraction assuming the existence
+   of a function where given some arbitrary input, the output of the function is
+   'truly' random from the random oracle's output domain. Additionally if the
+   same input were given to the random oracle, it would respond with the same
+   output every time.
+
+   If this sounds familiar, that's because the definition of a random oracle is
+   similar to that of an ideal hash function commonly used when programming. To
+   understand why Alice's commitment scheme is hard to cheat and possible to
+   prove fair, we need to understand what is a hash function.
+
+   To learn more about random oracles check out [[https://blog.cryptographyengineering.com/2011/09/29/what-is-random-oracle-model-and-why-3/][Matthew Green's blog post]] about
+   it.
+
+** What is a hash function?
+
+   The simplest definition of a hash function is a function that inputs an
+   arbitrary amount of data, and outputs a fixed sized amount of data. This is
+   very generic and many functions can satisfy this. However in order to make a
+   hash function behave like a random oracle, they need to have some additional
+   'ideal' properties.
+
+   The first property our hash function needs to have is one-way
+   determinism. This means that no matter where or who you are, the same input
+   to a hash function yields the same output and that output is hard to
+   invert. This is important because non-determinism leads to varying results
+   which makes our function inconsistent (which we don't want). It also means
+   that given some arbitrary output from the hash function's range, it is hard
+   to find the input that can produce it.
+
+   Alice and Bob both want their results to be consistent and hard to
+   invert. This means they need this one-way determinism property so they both
+   can trust that they can compute the same things.
+
+   The second property, that will prevent cheating in Alice's proposed
+   commitment scheme, is called "collision resistance."
+
+** What is collision resistance?
+
+   This will be the deepest we will go before we return to Alice and Bob's
+   lunch conundrum.
+
+   A hash function $h$ is said to be 'collision resistant' when it is hard to
+   find two differing inputs $a$, $b$ that produce the same hash value such that
+   $$h(a) \stackrel{?}{=} h(b)$$.
+
+   In the real world, perfect collision resistance (and therefore random
+   oracles) are impossible to construct due to the /pigeonhole principle/.
+   However, a lot of research has been done to make the possibility of finding
+   collisions really, *really* hard. So hard that we can assume that it's not
+   worth the time and effort for any adversary to try and break it.
+
+   There are several popular hash functions that have been made (such as BLAKE
+   or Keccack) that are so trusted, they are often the underlying foundation of
+   several other cryptographic systems like HMACs, password storage, and POW
+   blockchains.
+
+   Now that we know more about hash functions and collision resistance, we can
+   rejoin Alice and Bob.
+
+** The coin flipping protocol
+
+   Now that Alice and Bob both understand hash functions and collision
+   resistance, Alice can lay the protocol out to Bob. In this protocol there will
+   be two roles.
+
+   - Guesser: The one who guesses the coin flip
+   - Flipper: The one who performs the coin flip
+
+   The role of the /Guesser/ will be played by Bob, and the role of
+   the /Flipper/ will be played by Alice. The ground rules / assumptions are:
+
+   1. Cheating with proof will result in an immediate loss for the cheater
+   2. Both parties will use the same hash function and agree on a format for
+      exchanging data
+   3. Both parties are talking over a secure channel that can't be intercepted
+      or tampered with
+   4. If the /Guesser/ correctly predicts the flip, they will become /the
+      decider/. Otherwise, the /Flipper/ will become /the decider/
+
+   With these ground rules in place, Alice tells Bob the protocol operates in a
+   sequence of steps.
+
+   1. Alice and Bob each creates a one time password (OTP) (call them $p_a$ and $p_b$)
+
+      $$
+      \def\arraystretch{0.9}
+       \begin{array}{c:c}
+        alice & bob \\ \hline
+        p_a & p_b \\[0.1cm]
+       \end{array}
+      $$
+
+   2. Bob sends Alice his OTP
+
+      $$
+      \def\arraystretch{1}
+       \begin{array}{c:}
+        alice & bob \\ \hline
+        p_a, p_b & \larr p_b \\[0.1cm]
+       \end{array}
+      $$
+
+   3. Alice creates a commitment that will 'commit' her flip for the rest of the
+      protocol
+      * She flips a coin (call it $f_a \isin \{0, 1\}$)
+      * She computes her commitment $c_a = h(f_a, p_a, p_b)$ (where $h$ is the collision resistant hash function)
+      * She sends her commitment $c_a$ to Bob
+
+      $$
+      \def\arraystretch{1}
+       \begin{array}{c:}
+        alice & bob \\ \hline
+        p_a, p_b & p_b \\[0.1cm]
+        f_a, h(f_a, p_a, p_b) \rarr & c_a \\[0.1cm]
+       \end{array}
+      $$
+
+   4. Bob guesses the flip (call it $g_b \isin \{0, 1\}$) and sends this to Alice
+
+      $$
+      \def\arraystretch{1}
+       \begin{array}{c:}
+        alice & bob \\ \hline
+        p_a, p_b & p_b \\[0.1cm]
+        f_a, c_a & c_a \\[0.1cm]
+        g_b & \larr g_b\\[0.1cm]
+       \end{array}
+      $$
+
+   5. Alice reveals her flip and OTP by sending them to Bob
+
+      $$
+      \def\arraystretch{1}
+       \begin{array}{c:}
+        alice & bob \\ \hline
+        p_a, p_b & p_b \\[0.1cm]
+        f_a, c_a & c_a \\[0.1cm]
+        g_b & g_b \\[0.1cm]
+        (f_a, p_a) \rarr & (f_a, p_a) \\[0.1cm]
+       \end{array}
+      $$
+
+   6. Bob now verifies that Alice 'committed' to her flip and OTP with the
+      following equality
+
+      $$
+      \begin{CD}
+        h(f_a, p_a, p_b) \stackrel{?}{=} c_a
+      \end{CD}
+      $$
+
+   7. If the equality holds true, both Alice and Bob can now agree on the
+      outcome of the toss with the final equality
+
+      $$
+      \begin{CD}
+        f_a \stackrel{?}{=} g_b
+      \end{CD}
+      $$
+
+   Now that Alice has explained the coin flipping protocol, Bob is immediately
+   skeptical and asks why he should trust that this scheme can't be cheated?
+   Alice then explains why cheating is hard.
+
+** Why is the coin flipping protocol hard to cheat?
+
+   To figure out why this protocol is hard to cheat, Alice lays out some of the
+   possible ways to cheat, and how the other party can catch them.
+
+*** Cheating as the /Guesser/
+
+    In Bob's role as the /Guesser/ there isn't much room for cheating. The only
+    way he can cheat (and win) is if he has pre-knowledge of Alice's flip before
+    he guesses (in step 4) which we will assume he doesn't.
+
+*** Cheating as the /Flipper/
+
+    In Alice's role as the /Flipper/ there are a few places where she can try to
+    cheat: in step 3 (when she sends her commitment) or step 5 (revealing her
+    flip and OTP). Successfully cheating for Alice means that she must be able
+    to convince Bob that he guessed incorrectly no matter which outcome he
+    chooses!
+
+    To do this requires Alice, in step 4, to reveal her flip as the opposite of
+    Bob's guess. The problem for her is that this flip (and OTP) must coincide
+    with the commitment she sent in step 3.3 or Bob will know she is
+    cheating. To continue with her ruse, Alice needs to craft a special commitment
+    in step 3 such that either possible flip (and OTP) that she reveals can be
+    successfully verified by Bob without suspicion. This means that Alice needs
+    to satisfy the equality
+
+      $$
+      \begin{CD}
+        h(0, p_{a0}, p_b) = h(1, p_{a1}, p_b)
+      \end{CD}
+      $$
+
+    If Alice is able to satisfy this equality then she can take the following
+    measures to ensure she wins no matter how Bob guesses.
+
+    - When Bob guesses "0", then Alice can reveal a flip of "1" and $p_{a1}$ to
+      show Bob she is abiding by her earlier commitment and that he lost
+
+    - When Bob guesses "1", then Alice can reveal a flip of "0" and $p_{a0}$ to
+      show Bob she is abiding by her earlier commitment and that he lost
+
+    This is terrible news for Bob as no matter how he guesses he will lose! Then
+    Alice will have a 100% chance of choosing where to go to lunch!
+
+    Luckily if we require that the hash function $h$ being used has the
+    "collision resistance" property, Alice will not be able to find such a
+    commitment that relies on this hash collision and would have to find some
+    other way to cheat.
+
+    - Footnote: You might be wondering why Bob would need to generate an OTP at
+      the start at all. Bob does this so he isn't vulnerable to a /pre-image
+      attack/.
+
+    With the collision resistance property in place, Alice has the incentive to
+    honestly reveal her flip and one time password. If she doesn't, she risks
+    being caught cheating and forfeits the game. Bob has enough assurance that
+    he won't be a victim to foul play.
+
+  Alice and Bob both agree on this scheme and when they can't agree where to go
+  to lunch, they bring out the coin flipping protocol, find out who is "the
+  decider," then delegate them with the responsibility of deciding where they go.
+
+* Creating a virtual die
+
+  Alice and Bob enjoy several more lunches with the aid of their arbiter the
+  "virtual coin." But as their next lunch comes around, Bob gets recommended a
+  top 10 ramen list for the area. Bob loves ramen and recommends to Alice that
+  they should go somewhere on that list for their next lunch. Alice is in the
+  mood for ramen and agrees. They read over the list and can't agree on just one
+  place as all of them look delicious! Even though they have their trusty
+  "virtual coin," they both agree that neither one of them wants to be "the
+  decider" as they don't want to be forced to choose. They would rather have
+  their old die that would "decide" for them.
+
+  Alice and Bob's "virtual coin" solves their problem of establishing who is
+  /the decider/ of their lunch spot. However it doesn't solve their problem of
+  choosing a set place from a list like their die did. What they want, just like
+  their "virtual coin," is a "virtual die" with some arbitrary amount of sides.
+  And just like their coin, they want the die to have the same security guarantees.
+
+  Alice and Bob do some more research, read a few more papers, and Bob comes
+  back to Alice with a solution to the "virtual die" problem. He proposes a
+  modified scheme of the one Alice introduced.
+
+  Instead of a /Guesser/ and a /Flipper/, both will play the role of a /Roller/.
+
+  Bob lays out the protocol as follows
+
+   1. Alice and Bob each create a one time password (OTP) and (with the same
+      names as before). They also each create a random value within some agreed
+      upon range (call them $v_a$ and $v_b$)
+
+      $$
+      \def\arraystretch{0.9}
+       \begin{array}{c:c}
+        alice & bob \\ \hline
+        p_a,v_a & p_b,v_b \\[0.1cm]
+       \end{array}
+      $$
+
+   2. Both Alice and Bob create commitments for their respective values by
+      computing $h(p, v)$ (call them $c_a$ and
+      $c_b$), then they exchange them
+
+      $$
+      \def\arraystretch{0.9}
+       \begin{array}{c:c}
+        alice & bob \\ \hline
+        p_a,v_a & p_b,v_b \\[0.1cm]
+        h(p_a,v_a) \rarr & \larr h(p_a,v_a) \\[0.1cm]
+       \end{array}
+      $$
+
+   3. Alice and Bob reveal their OTP and random value ($p$ and $v$ respectively)
+      to each other
+
+      $$
+      \def\arraystretch{0.9}
+       \begin{array}{c:c}
+        alice & bob \\ \hline
+        p_a,v_a & p_b,v_b \\[0.1cm]
+        c_a,c_b & c_a,c_b \\[0.1cm]
+        (p_a,v_a) \rarr & \larr (p_b,v_b) \\[0.1cm]
+       \end{array}
+      $$
+
+   4. Alice and Bob verify that the other has 'committed' to their random value
+
+      $$
+      \begin{CD}
+        h(p, v) \stackrel{?}{=} c
+      \end{CD}
+      $$
+
+   5. Alice and Bob both compute $h(v_a, v_b) \pmod n$ as the output of
+      the roll (where $n$ is the number of restaurants)
+
+  Now that Bob has explained the die rolling protocol, Alice is suspicious if
+  this new protocol is just as hard to cheat as the coin flipping protocol. Bob
+  explains why the die rolling protocol is hard to cheat.
+
+** Why is the die rolling protocol hard to cheat?
+
+   Bob explains that this protocol is hard to cheat for the same reasons the
+   coin flipping protocol. This is because they both use the same underlying
+   commitment mechanism.
+
+   In order for a /Roller/ (we'll say Bob in this case) to successfully cheat,
+   he would need to successfully manipulate the output without Alice being able
+   to catch him.
+
+   To do this, Bob would first need to wait to see Alice's revealed value in
+   step 5.
+
+   Next, using Alice's revealed value, Bob can determine the output of the roll
+   by performing steps 6 & 7 without communicating to Alice. He can then
+   manipulate $v_b$ to find his desired output (call this new value
+   $v_b^{\prime}$). Once he finds his desired output, Bob now needs to find
+   a new OTP (call this $p_b^{\prime}$) such that the following equality is
+   met.
+
+      $$
+      \begin{CD}
+        c_b \stackrel{?}{=} h(p_b^{\prime}, v_b^{\prime})
+      \end{CD}
+      $$
+
+   If Bob can satisfy this equality then he can reveal a convincing OTP and
+   value in step 5 that can be verified by Alice and confince her of his desired
+   output.
+
+   Unfortunately for Bob (or fortunately for Alice), the hash function $h$ they
+   previously agreed upon is collision resistant. This means Alice can trust
+   that finding a collision is hard and that Bob won't manipulate the output of
+   the roll.
+
+ Alice and Bob agree on this new /virtual die/ scheme so when they jointly need
+ to decide on a single spot from a set of restaurants, they break out the die
+ rolling protocol.
+
+ With the /virtual coin/ and /virtual die/ both of Alice and Bobs lunch
+ conundrums are solved. They enjoy many more lunches at ease knowing they have a
+ trustless way to agree on a place to eat.
+
+* Committing to lunch
+
+  Hearing the phrase "flipping a coin over the telephone" at first seems
+  paradoxical and impossible. But once you frame the problem in the form of
+  commitments, suddenly it doesn't seem impossible at all.
+
+  Commitment schemes / protocols are an eye opening concept that are just the
+  tip of the cryptography iceberg as they are the basis for even more incredible
+  concepts like zero knowledge proofs and secure computation. Although Alice and
+  Bob's construction of commitments is simple, they use it to reach a trustless
+  agreement which is an incredibly powerful tool.
+
+  Cryptography always keeps me in a consistent state of awe as whole collections
+  of seemingly paradoxical problems are defeated again and again with elegant
+  logical solutions. I hope commitments can be your gateway to learning more
+  about this amazing world.
