@@ -1,16 +1,16 @@
+#+TITLE: Why start a blog?
+#+CREATED: [2020-11-02 Mon 00:48]
+#+LAST_MODIFIED: [2021-07-24 Sat 11:08]
+#+ROAM_TAGS: intro docs
+#+OPTIONS: tex:verbatim
 #+OPTIONS: toc:nil
-#+STARTUP: overview
 
-#+begin_export md
----
-title: Why start a blog?
-author: Alexander Comerford
-date: 2020-11-02
-hero: ./images/cover.jpg
-secret: false
-excerpt: What is this blog, and why does it exist?
----
-#+end_export
+#+HUGO_BASE_DIR: ./
+#+hugo_front_matter_format: yaml
+#+HUGO_CUSTOM_FRONT_MATTER: :date (org-to-blog-date (org-global-prop-value "CREATED"))
+#+HUGO_CUSTOM_FRONT_MATTER: :hero ./images/cover.jpg
+#+HUGO_CUSTOM_FRONT_MATTER: :secret false
+#+HUGO_CUSTOM_FRONT_MATTER: :excerpt What is this blog, and why does it exist?
 
 #+begin_src emacs-lisp :exports none
 (org-babel-do-load-languages
@@ -22,28 +22,11 @@ excerpt: What is this blog, and why does it exist?
 #+RESULTS:
 
 #+BEGIN_SRC emacs-lisp :exports none
-  (defun save-to-mdx ()
-    (interactive)
-    (let ((export-filename (concat
-                            (file-name-sans-extension
-                             (file-name-nondirectory buffer-file-name)) ".mdx")))
-      (message export-filename)
-      (org-export-to-file 'gfm export-filename)))
-
-  (defun export-on-save ()
-    (interactive)
-    (if (memq 'save-to-mdx after-save-hook)
-        (progn
-          (remove-hook 'after-save-hook 'save-to-mdx t)
-            (message "Disabled"))
-      (add-hook 'after-save-hook 'save-to-mdx nil t)
-      (message "Enabled")))
-
-  (export-on-save)
+  (export-to-mdx-on-save)
 #+END_SRC
 
 #+RESULTS:
-: Enabled
+: Enabled mdx on save
 
 * Motivation
 
@@ -188,7 +171,7 @@ excerpt: What is this blog, and why does it exist?
 </div>
 #+end_export
 
-* The tech 🖥
+* The tech 💻
 
   If you want to build any technology-based product, you need to choose the
   right giants to stand on, and the right [[https://en.wikipedia.org/wiki/Solution_stack][stack]] for you.
