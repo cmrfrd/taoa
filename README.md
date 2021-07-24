@@ -8,7 +8,7 @@
 
 # The Art of Abstraction
 
-By: Alex Comerford (alexanderjcomerford@gmail.com)
+By: Alex Comerford (alex@taoa.io)
 
 This repo contains the source code, posts, and configuration for `taoa.io` or `TheArtofAbstraction.com`.
 
