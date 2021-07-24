@@ -31,7 +31,7 @@ interface IImg {
  * @example
  * <Img src={...fixed Gatsby image} />
  * <Img src={...fluid Gatsby image} />
- * <Img src="https://..." />
+ * <Img src="..." />
  *
  * todo : lazyload the default img tag
  */
