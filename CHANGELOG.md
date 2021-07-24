@@ -1,3 +1,10 @@
+### [1.2.18](https://github.com/cmrfrd/taoa/compare/v1.2.17...v1.2.18) (2021-07-24)
+
+
+### Bug Fixes
+
+* update email ([dc27d87](https://github.com/cmrfrd/taoa/commit/dc27d875fa060160f882cd9e0230879097c86753))
+
 ### [1.2.17](https://github.com/cmrfrd/taoa/compare/v1.2.16...v1.2.17) (2021-07-16)
 
 
