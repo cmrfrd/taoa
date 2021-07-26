@@ -1,9 +1,10 @@
 #+TITLE: Why start a blog?
 #+CREATED: [2020-11-02 Mon 00:48]
-#+LAST_MODIFIED: [2021-07-24 Sat 11:08]
+#+LAST_MODIFIED: [2021-07-26 Mon 10:48]
 #+ROAM_TAGS: intro docs
-#+OPTIONS: tex:verbatim
 #+OPTIONS: toc:nil
+#+OPTIONS: tex:t
+#+OPTIONS: _:nil ^:nil p:nil
 
 #+HUGO_BASE_DIR: ./
 #+hugo_front_matter_format: yaml
@@ -22,6 +23,8 @@
 #+RESULTS:
 
 #+BEGIN_SRC emacs-lisp :exports none
+  (add-to-list 'org-export-filter-headline-functions
+               'remove-regexp-curly-braces)
   (export-to-mdx-on-save)
 #+END_SRC
 
