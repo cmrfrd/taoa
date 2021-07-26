@@ -1,3 +1,10 @@
+### [1.2.19](https://github.com/cmrfrd/taoa/compare/v1.2.18...v1.2.19) (2021-07-26)
+
+
+### Bug Fixes
+
+* bad build of initial blog post ([a524912](https://github.com/cmrfrd/taoa/commit/a524912faa19ccb03d23bfa65e91381b3445d6b6))
+
 ### [1.2.18](https://github.com/cmrfrd/taoa/compare/v1.2.17...v1.2.18) (2021-07-24)
 
 
