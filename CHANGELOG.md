@@ -1,3 +1,11 @@
+### [1.2.21](https://github.com/cmrfrd/taoa/compare/v1.2.20...v1.2.21) (2021-08-28)
+
+
+### Bug Fixes
+
+* add missing formula ([e1c6d9b](https://github.com/cmrfrd/taoa/commit/e1c6d9b9f92df140af6e7843c11ffba5c5597972))
+* Add unimported ([7db651b](https://github.com/cmrfrd/taoa/commit/7db651b3c09a2ebbe6855450c0aeae90d0e28730))
+
 ### [1.2.20](https://github.com/cmrfrd/taoa/compare/v1.2.19...v1.2.20) (2021-08-28)
 
 
