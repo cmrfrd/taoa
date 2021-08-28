@@ -1,3 +1,10 @@
+### [1.2.20](https://github.com/cmrfrd/taoa/compare/v1.2.19...v1.2.20) (2021-08-28)
+
+
+### Bug Fixes
+
+* Add optimal compounding article ([f2eba7e](https://github.com/cmrfrd/taoa/commit/f2eba7ea682c3ab3fab750bd41282735f1f827e7))
+
 ### [1.2.19](https://github.com/cmrfrd/taoa/compare/v1.2.18...v1.2.19) (2021-07-26)
 
 
