@@ -1,6 +1,6 @@
 #+TITLE: Optimal compounding with penalties
 #+CREATED: [2021-08-11 Wed 00:48]
-#+LAST_MODIFIED: [2021-08-28 Sat 01:55]
+#+LAST_MODIFIED: [2021-08-28 Sat 02:10]
 #+ROAM_TAGS: money composition
 #+STARTUP: showall indent
 #+OPTIONS: toc:nil
@@ -385,6 +385,10 @@ at this
 :  \begin{alignedat}{2}
 :  P_{n} = {P_{n-1}} + \frac{{P_{n-1}} r}{{\rm ciwip}\left({P_{n-1}}, f, r\right)}
 :  \end{alignedat}
+
+#+MACRO: compound-interest-with-iterative-penalty-through-time (eval (latex-display-wrap (org-sbe compound-interest-with-iterative-penalty-through-time)))
+
+{{{compound-interest-with-iterative-penalty-through-time()}}}
 
 We'll stop here for now but take a guess on how much extra performance we can
 squeeze out compared to the naive compounding strategy.
