@@ -1,5 +1,5 @@
 {
-  "hash": "0e536495bc4ea65418a8",
+  "hash": "198ef4af99e935cfeece",
   "publicPath": "/",
   "outputPath": "/home/node/work/public",
   "assetsByChunkName": {
@@ -12,7 +12,7 @@
       "type": "assets by status",
       "cached": true,
       "filteredChildren": 1,
-      "size": 5910748
+      "size": 5908154
     }
   ],
   "namedChunkGroups": {
