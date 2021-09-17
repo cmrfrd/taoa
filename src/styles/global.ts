@@ -135,22 +135,22 @@ export const globalStyles = css`
     background: transparent !important;
   }
 
-  // html {
-  //   --SBBG: ${theme.colors.scrollbar};
-  //   --SB: ${theme.colors.grey};
-  // }
-  // *::-webkit-scrollbar {
-  //   width: 11px;
-  //   height: 11px;
-  //   scrollbar-width: thin;
-  //   scrollbar-color: var(--SBBG) var(--SB);
-  // }
-  // *::-webkit-scrollbar-track {
-  //   background: var(--SBBG);
-  // }
-  // *::-webkit-scrollbar-thumb {
-  //   background-color: var(--SB);
-  //   border-radius: 6px;
-  //   border: 3px solid var(--SBBG);
-  // }
+  html {
+    --SBBG: ${theme.colors.scrollbar};
+    --SB: ${theme.colors.grey};
+  }
+  *::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--SBBG) var(--SB);
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: var(--SB);
+    border-radius: 6px;
+    border: 1px solid var(--SB);
+  }
 `;
