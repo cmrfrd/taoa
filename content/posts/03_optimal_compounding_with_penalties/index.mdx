@@ -8,42 +8,47 @@ secret: false
 excerpt: "Making money with your money's money"
 ---
 
-```text
-compounder
-```
+## Cryptocurrency dividends? 🤔
 
-This is just some filler text for this post before I clean it up. I just wanted
-to be able to post something to keep myself accountable for posting somewhat
-frequently.
+Most people who are "in the know" of the cryptocurrency world have probobaly
+heard of the various ways to make a return from their tokens. People can deposit
+their tokens via staking, lending, or Liquidity Pools and sit back to earn
+additional tokens, increasing their portfolios value. This is starkly different
+from the norm which is HODLing tokens and waiting for their prices to increase.
 
-The problem this post lays out is the idea of compound interest with a
-twist. The twist is that every time you decide to compound, you must suffer a
-penalty taken from your balance. You might think this problem is contrived out
-of thin air but it actually exists in the world of cryptocurrencies. Some tokens
-out there allow you to "stake" your token and be given a reward/dividend for
-doing so. Some tokens however require you to "claim" your rewards to be added to
-your balance, however the act of doing so means you must send a "transaction"
-which costs fees from your balance. So the natural question arrives as to what
-is the optimal times you should compound so you can profit from compound
-interest but not be eaten away by fees by compounding too frequently.
+If these earners continually invest their returns back into these earning
+protocols, they benefit from the :sparkles:magic:sparkles: that is compound
+interest. Unfortunately most cryptocurrency/blockchain projects are pay to play,
+meaning that if you want to interact with any of these earning protocols, you
+need to spend tokens to make tokens. This begs the question: what's the most
+efficent way to spend the least amount of tokens too make the most returns?
 
-Lets talk abstractly for a moment and lay some ground terms.
 
--   $n$ - number of compounds per year
--   $P$ - initial balance
--   $f$ - fee per compound
+## <span class="org-todo done DONE">DONE</span> Abstracting the earning process
+
+There are many methods to earn "dividends" from cryptocurrency. However most
+earning protocols expose the same metrics which we will use to our advantage. To
+start, we will lay out the following paramaters for the earning process:
+
+-   $n$ - Number of compounds per year
+-   $P$ - Initial balance
 -   $r$ - APY
+-   $f$ - Fee per compound
 
-This will be our base layer before we start adding more concepts ontop.
-
-First we will define compound interest
+The following paramaters give us the foundation of compound interest.
 
 $$\begin{alignedat}{2}
  P {\left(\frac{r}{n} + 1\right)}^{n}
  \end{alignedat}$$
 
-Now we can add on the idea of iterative penalties which is the summation
-of fees across every compounding instance (known as $n$)
+While this is all well and good, we want to account for the fact that whenever
+we want to "compound" our pending earnings, we need pay a fee to do so. With
+this in mind we need to come up with an expression to account for each
+penalization fee $f$ over each compounding instance
+$n$.
+
+To do this we will add on the idea of iterative penalties which is the summation
+of fees across every compounding instance.
 
 $$\begin{alignedat}{2}
  f {\sum_{i=0}^{n - 1} {\left(\frac{r}{n} + 1\right)}^{i}}
@@ -52,21 +57,30 @@ $$\begin{alignedat}{2}
 By subtracting the two ideas we can get the expression
 
 $$\begin{alignedat}{2}
- P {\left(\frac{r}{n} + 1\right)}^{n} - f {\sum_{i=0}^{n - 1} {\left(\frac{r}{n} + 1\right)}^{i}} = P {\left(\frac{r}{n} + 1\right)}^{n} - \frac{{\left(n \left(\frac{n + r}{n}\right)^{n} - n\right)} f}{r}
+ P {\left(\frac{r}{n} + 1\right)}^{n} - f {\sum_{i=0}^{n - 1} {\left(\frac{r}{n} + 1\right)}^{i}}
+ \end{alignedat}$$
+
+Simplifying we can get the function
+
+$$\begin{alignedat}{2}
+ {\rm ciwip}\left(P, f, r, n\right) = P {\left(\frac{r}{n} + 1\right)}^{n} - \frac{{\left(n \left(\frac{n + r}{n}\right)^{n} - n\right)} f}{r}
  \end{alignedat}$$
 
 Now lets pause and try to intuitively think about this expression and what it
-means. If we compound $n \rightarrow \infin$ we will end up with a $-\infin$
-amount of money due to the right hand component blowing up. If we compound at
-least 1 time (since $n=0$ is undefined), it is not hard to see how under the
-right circumstances we could have increased $n$ such that we could have earned
-more. This is a poor explanation and there is a better proof to describe this
-but take my word that under the right circumstances there is an optimum from
-compounding between 1 and infinity. To understand where this maximum is we need
-to understand this function a little deeper.
+means. If we compound $n \rightarrow +\infty$ we will end up with
+a $+\infty$ amount of money due to the right hand
+component blowing up. This also makes sense as we will be paying the fee an
+infinite amount of times. If we compound at least 1 time (since
+$n = 0$ is undefined), it is not hard to see
+how under the right circumstances we could have increased $n$ such that we
+could have earned more. This is a poor explanation and there is a better proof
+to describe this but take my word that under the right circumstances there is an
+optimum from compounding between 1 and infinity. To understand where this
+maximum is we need to understand this function a little deeper.
 
 To learn a little more about the 'shape' of this function, lets unify all the
-paramaters we can't 'control' under some var $C$ and plot what we have left in 3D.
+paramaters we can't 'control' under some var $C$ and plot what we have left in
+3D.
 
 $$\begin{alignedat}{2}
  -n \left(\frac{C + n}{n}\right)^{n} + C {\left(\frac{C}{n} + 1\right)}^{n} + n
@@ -81,19 +95,38 @@ us the highest yield. And if we minimize this function we can get our optimal
 number of compounds
 
 If we look at the opaque plane cross section we see that it forms something that
-looks like a parabola. This "parabola" like shape holds (for reasons I won't
-explain) for all constraints of the paramaters meaning that we will always find
-a maximum for this function that lies in the first quadrant.
+looks convex. This means that we will be able to find an optimal number of
+compounds to give us an optimal reward. Here is what the opaque plane looks like
+graphed
 
-The next most natural question to ask is how does this strategy perform compared
-to a naive one? To check how performant we are to a naive strategy (like
-compounding once a month/week/day) we must first track based on time (how long
-until we compound) do we earn. To do this with our derived formula we can look
-at this
+![img](./f.png "2D view of compound interest with iterative penalties")
+
+Something interesting to note is that if we can perform a bit of limit analysis
+on the derivative of this function, we can see that the slope of this function
+reaches a constant value.
 
 $$\begin{alignedat}{2}
- P_{n} = {P_{n-1}} + \frac{{P_{n-1}} r}{{\rm ciwip}\left({P_{n-1}}, f, r\right)}
+ \lim\limits_{ n \rightarrow +\infty } \frac{\partial}{\partial n}{\rm ciwip}\left(P, f, r, n\right) = -\frac{f e^{r} - f}{r}
  \end{alignedat}$$
 
-We'll stop here for now but take a guess on how much extra performance we can
-squeeze out compared to the naive compounding strategy.
+In order to find out if this function is truley convex, we can leverage Jensen's
+inequality to check if the inequality is true.
+
+$$
+
+\begin{CD}
+  g( \alpha x + ( 1 - \alpha ) y ) \geq \alpha g( x ) + ( 1 - \alpha ) g( y )
+\end{CD}
+
+$$
+
+With this inequality we can plug in our function $c$ and check this inequality
+evaluated at $0$ and $c(n)=P$, the reason we choose these bounds is because
+
+$$\begin{alignedat}{2}
+ 3 \, P {\left({\alpha} - 1\right)} - 3 \, {\left(P {\left({\alpha} - 1\right)} - \left(1 \times 10^{-08}\right) \, {\alpha}\right)} \left(\frac{P {\left({\alpha} - 1\right)} - \left(1 \times 10^{-08}\right) \, {\alpha} - 1}{P {\left({\alpha} - 1\right)} - \left(1 \times 10^{-08}\right) \, {\alpha}}\right)^{-P {\left({\alpha} - 1\right)} + \left(1 \times 10^{-08}\right) \, {\alpha}} - \left(3.0000000000000004 \times 10^{-08}\right) \, {\alpha} - 70 \, {\left(-\frac{1}{P {\left({\alpha} - 1\right)} - \left(1 \times 10^{-08}\right) \, {\alpha}} + 1\right)}^{-P {\left({\alpha} - 1\right)} + \left(1 \times 10^{-08}\right) \, {\alpha}} \geq -{\left(3 \, P \left(\frac{P + 1}{P}\right)^{P} - 3 \, P - 70 \, {\left(\frac{1}{P} + 1\right)}^{P}\right)} {\left({\alpha} - 1\right)} - 70.0000128944777 \, {\alpha}
+ \end{alignedat}$$
+
+Now it might not look like it, but graphing both sides of this inequality shows
+that this expression is true for $0 \lt \alpha \lt 1$ meaning that this function
+IS convex.

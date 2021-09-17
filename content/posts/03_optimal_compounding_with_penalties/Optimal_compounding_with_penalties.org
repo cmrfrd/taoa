@@ -1,6 +1,6 @@
 #+TITLE: Optimal compounding with penalties
 #+CREATED: [2021-08-11 Wed 00:48]
-#+LAST_MODIFIED: [2021-08-28 Sat 02:10]
+#+LAST_MODIFIED: [2021-09-17 Fri 13:33]
 #+ROAM_TAGS: money composition
 #+STARTUP: showall indent
 #+OPTIONS: toc:nil
@@ -14,16 +14,29 @@
 #+HUGO_CUSTOM_FRONT_MATTER: :secret false
 #+HUGO_CUSTOM_FRONT_MATTER: :excerpt Making money with your money's money
 
+* Forward for the author                                           :noexport:
+
+This post has a heavy focus on technical literate programming. This documents
+goal is too produce two products. One for the author/developer and one for the
+reader. The author's version gets to view the document in full, while the
+reader's view is only the exported version. The explicit pieces that not
+exported (and therefore hidden from the reader's view) are those which are not
+directly relevant to the content of the article. This includes tools for the
+author, exporting functionality, tests, configuration, etc.
+
+** Exporting
+
 #+BEGIN_SRC emacs-lisp :exports none
+  ;; All inline code blocks will be latex
+  (setq org-babel-inline-result-wrap "$%s$")
+
+  ;; Configure languages
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((shell . t)
      (python . t)))
-#+END_SRC
 
-#+RESULTS:
-
-#+BEGIN_SRC emacs-lisp :exports none
+  ;; Setup org/latex exporting
   (add-to-list 'org-export-filter-latex-fragment-functions
                'sub-paren-for-dollar-sign)
   (add-to-list 'org-export-filter-headline-functions
@@ -36,43 +49,63 @@
 #+RESULTS:
 : Enabled mdx on save
 
-#+begin_src emacs-lisp :exports none
-  (setq ob-ipython-command "ipython")
-  (setq org-babel-python-command "ipython")
-  (setq py-default-interpreter "ipython")
-#+end_src
+** Configuration
 
-#+RESULTS:
-: ipython
+The primary language we will be using is python inside of a container, org mode
+(with TRAMP) has the fantastic feature of being able to execute src code blocks
+inside a container which we will be leveraging for this post to the purpose of
+isolation.
 
-
-#+NAME: container-name
-: compounder
+#+CONSTANTS: container_name=compounder
 
 #+NAME: container-dir-str
 #+HEADER: :exports none
 #+begin_src emacs-lisp
-(setq container-dir-str (format "/docker:sage@%s:/mnt" (org-sbe container-name)))
+  (setq shutdown-env nil)
+  (setq docker-tramp-docker-executable "podman")
+  (docker-tramp-add-method)
+  (setq ob-ipython-command "ipython")
+  (setq org-babel-python-command "ipython")
+  (setq py-default-interpreter "ipython")
+  (setq container-dir-str (format "/docker:sage@%s:/mnt" (org-table-get-constant "container_name")))
 #+end_src
 
 #+RESULTS: container-dir-str
 : /docker:sage@compounder:/mnt
 
+** Environment setup
+
+As mentioned we will be running the following code inside a container. Here we
+setup our base container as sagemath, install some necessary package, and a
+interactive python session with the starting variables
+
 #+HEADER: :exports none
-#+begin_src bash :var NAME=(org-sbe container-name)
-  docker pull sagemath/sagemath
-  [ ! "$(docker ps -a | grep $NAME)" ] && \
-    docker run -d --name $NAME --rm -v $(pwd):/mnt -w /mnt -it sagemath/sagemath || \
+#+begin_src bash :results verbatim :var NAME=(org-table-get-constant "container_name")
+  echo "Pulling image ..."
+  podman pull docker.io/sagemath/sagemath:latest
+
+  echo "Running container if not already running ..."
+  [ ! "$(podman ps | grep $NAME)" ] && \
+    podman run \
+           -d \
+           -u $(id -u):$(id -g) \
+           --userns keep-id \
+           --name $NAME \
+           --rm \
+           -v $(pwd):/mnt \
+           -w /mnt \
+           -it sagemath/sagemath:latest; \
+    echo "Container starting..." \
+    || \
     echo "Container already running..."
 #+end_src
 
 #+RESULTS:
-| Using                              | default                                                                 | tag:       | latest            |    |      |     |                          |
-| latest:                            | Pulling                                                                 | from       | sagemath/sagemath |    |      |     |                          |
-| Digest:                            | sha256:cc13600987d9ff4385fa2f22620d05c0ec7ebf2ff4722aa660d35c592ba33ada |            |                   |    |      |     |                          |
-| Status:                            | Image                                                                   | is         | up                | to | date | for | sagemath/sagemath:latest |
-| docker.io/sagemath/sagemath:latest |                                                                         |            |                   |    |      |     |                          |
-| Container                          | already                                                                 | running... |                   |    |      |     |                          |
+: Pulling image ...
+: b08484514181283508800a0d573948f6e1f50b32cc2f0ebb765d428f511d4017
+: Running container if not already running ...
+: 52a4c7d619062f72088203e5586233d2924847f94e95b1a9cd4366520cface5b
+: Container starting...
 
 #+HEADER: :exports none
 #+HEADER: :dir (org-sbe container-dir-str)
@@ -82,7 +115,7 @@
 #+end_src
 
 #+RESULTS:
-: Sat Aug 28 04:23:00 UTC 2021: Done!
+: Fri Sep 17 03:24:43 UTC 2021: Done!
 
 #+BEGIN_SRC python :exports none :results output :dir (org-sbe container-dir-str) :session
   import sympy
@@ -95,10 +128,22 @@
     '\n' + \
     LatexExpr("\\begin{alignedat}{2}") + \
     '\n' + \
-    latex(expr) + \
+    expr + \
     '\n' + \
     LatexExpr("\\end{alignedat}") + \
     '\n'
+
+  latex_right = lambda a, b: \
+    a + LatexExpr(" \\rightarrow ") + b
+
+  latex_lim = lambda expr, a, b: \
+    LatexExpr("\\lim\\limits_{") + \
+    a + \
+    LatexExpr("\\rightarrow") + \
+    b + \
+    LatexExpr("}") + \
+    expr
+
   print("imported")
 #+END_SRC
 
@@ -108,49 +153,54 @@
 #+HEADER: :exports none :results output :session
 #+HEADER: :dir (org-sbe container-dir-str)
 #+BEGIN_SRC python
-n = var('n')
+  n = var('n')
 
-P, f, r, i = var("P f r i")
-assume(P > 0)
-assume(f > 0)
-assume(1 >= r >= 0)
+  P, f, r, i = var("P f r i")
+  assume(P > 0)
+  assume(f > 0)
+  assume(r > 0)
+  print("Variables created")
 #+END_SRC
 
 #+RESULTS:
+: Variables created
 
-This is just some filler text for this post before I clean it up. I just wanted
-to be able to post something to keep myself accountable for posting somewhat
-frequently.
+* Cryptocurrency dividends? 🤔
 
-The problem this post lays out is the idea of compound interest with a
-twist. The twist is that every time you decide to compound, you must suffer a
-penalty taken from your balance. You might think this problem is contrived out
-of thin air but it actually exists in the world of cryptocurrencies. Some tokens
-out there allow you to "stake" your token and be given a reward/dividend for
-doing so. Some tokens however require you to "claim" your rewards to be added to
-your balance, however the act of doing so means you must send a "transaction"
-which costs fees from your balance. So the natural question arrives as to what
-is the optimal times you should compound so you can profit from compound
-interest but not be eaten away by fees by compounding too frequently.
+Most people who are "in the know" of the cryptocurrency world have probobaly
+heard of the various ways to make a return from their tokens. People can deposit
+their tokens via staking, lending, or Liquidity Pools and sit back to earn
+additional tokens, increasing their portfolios value. This is starkly different
+from the norm which is HODLing tokens and waiting for their prices to increase.
 
-Lets talk abstractly for a moment and lay some ground terms.
+If these earners continually invest their returns back into these earning
+protocols, they benefit from the :sparkles:magic:sparkles: that is compound
+interest. Unfortunately most cryptocurrency/blockchain projects are pay to play,
+meaning that if you want to interact with any of these earning protocols, you
+need to spend tokens to make tokens. This begs the question: what's the most
+efficent way to spend the least amount of tokens too make the most returns?
 
-- $n$ - number of compounds per year
-- $P$ - initial balance
-- $f$ - fee per compound
-- $r$ - APY
+* DONE Abstracting the earning process
+CLOSED: [2021-09-17 Fri 13:10]
 
-This will be our base layer before we start adding more concepts ontop.
+There are many methods to earn "dividends" from cryptocurrency. However most
+earning protocols expose the same metrics which we will use to our advantage. To
+start, we will lay out the following paramaters for the earning process:
 
-First we will define compound interest
+- src_python[:results output :session :dir (org-sbe container-dir-str)]{print(latex(n))} - Number of compounds per year
+- src_python[:results output :session :dir (org-sbe container-dir-str)]{print(latex(P))} - Initial balance
+- src_python[:results output :session :dir (org-sbe container-dir-str)]{print(latex(r))} - APY
+- src_python[:results output :session :dir (org-sbe container-dir-str)]{print(latex(f))} - Fee per compound
+
+The following paramaters give us the foundation of compound interest.
 
 #+NAME: compound-interest
 #+HEADER: :exports none :results output :session
 #+HEADER: :dir (org-sbe container-dir-str)
 #+BEGIN_SRC python
-compound_interest = ( P * ( 1 + ( r / n ) ) ** n )
-compound_interest_latex = latex_center(compound_interest)
-print(compound_interest_latex)
+  compound_interest = ( P * ( 1 + ( r / n ) ) ** n )
+  compound_interest_latex = latex_center(latex(compound_interest))
+  print(compound_interest_latex)
 #+END_SRC
 
 #+RESULTS: compound-interest
@@ -163,15 +213,23 @@ print(compound_interest_latex)
 
 {{{compound-interest()}}}
 
-Now we can add on the idea of iterative penalties which is the summation
-of fees across every compounding instance (known as $n$)
+While this is all well and good, we want to account for the fact that whenever
+we want to "compound" our pending earnings, we need pay a fee to do so. With
+this in mind we need to come up with an expression to account for each
+penalization fee src_python[:results output :session :dir (org-sbe
+container-dir-str)]{print(latex(f))} over each compounding instance
+src_python[:results output :session :dir (org-sbe
+container-dir-str)]{print(latex(n))}.
+
+To do this we will add on the idea of iterative penalties which is the summation
+of fees across every compounding instance.
 
 #+NAME: iterative-penalty
 #+HEADER: :exports none :results output :session
 #+HEADER: :dir (org-sbe container-dir-str)
 #+BEGIN_SRC python
 iterative_penalty = ( f * sum( (1 + (r / n))**i , i, 0, n-1, hold=True) )
-print(latex_center(iterative_penalty))
+print(latex_center(latex(iterative_penalty)))
 #+END_SRC
 
 #+RESULTS: iterative-penalty
@@ -186,37 +244,65 @@ print(latex_center(iterative_penalty))
 
 By subtracting the two ideas we can get the expression
 
-#+NAME: compound-interest-with-iterative-penalty
+#+NAME: compound-interest-with-iterative-penalty-verbose
 #+HEADER: :exports none :results output :session
 #+HEADER: :dir (org-sbe container-dir-str)
 #+BEGIN_SRC python
   compound_interest_with_iterative_penalty = compound_interest - iterative_penalty
-  print(latex_center(compound_interest_with_iterative_penalty == compound_interest - iterative_penalty.unhold()))
-  compound_interest_with_iterative_penalty = compound_interest - iterative_penalty.unhold()
+  print(latex_center(latex(compound_interest_with_iterative_penalty)))
 #+END_SRC
 
-#+RESULTS: compound-interest-with-iterative-penalty
+#+RESULTS: compound-interest-with-iterative-penalty-verbose
 :
 :  \begin{alignedat}{2}
-:  P {\left(\frac{r}{n} + 1\right)}^{n} - f {\sum_{i=0}^{n - 1} {\left(\frac{r}{n} + 1\right)}^{i}} = P {\left(\frac{r}{n} + 1\right)}^{n} - \frac{{\left(n \left(\frac{n + r}{n}\right)^{n} - n\right)} f}{r}
+:  P {\left(\frac{r}{n} + 1\right)}^{n} - f {\sum_{i=0}^{n - 1} {\left(\frac{r}{n} + 1\right)}^{i}}
 :  \end{alignedat}
 
-#+MACRO: compound-interest-with-iterative-penalty (eval (latex-display-wrap (org-sbe compound-interest-with-iterative-penalty)))
+#+MACRO: compound-interest-with-iterative-penalty-verbose (eval (latex-display-wrap (org-sbe compound-interest-with-iterative-penalty-verbose)))
 
-{{{compound-interest-with-iterative-penalty()}}}
+{{{compound-interest-with-iterative-penalty-verbose()}}}
+
+Simplifying we can get the function
+
+#+NAME: compound-interest-with-iterative-penalty-simple
+#+HEADER: :exports none :results output :session
+#+HEADER: :dir (org-sbe container-dir-str)
+#+BEGIN_SRC python
+  compound_interest_with_iterative_penalty = compound_interest - iterative_penalty.unhold()
+  ciwip, c = function('ciwip'), function('c')
+  print(latex_center(latex(ciwip(P,f,r,n) == compound_interest - iterative_penalty.unhold())))
+#+END_SRC
+
+#+RESULTS: compound-interest-with-iterative-penalty-simple
+:
+:  \begin{alignedat}{2}
+:  {\rm ciwip}\left(P, f, r, n\right) = P {\left(\frac{r}{n} + 1\right)}^{n} - \frac{{\left(n \left(\frac{n + r}{n}\right)^{n} - n\right)} f}{r}
+:  \end{alignedat}
+
+#+MACRO: compound-interest-with-iterative-penalty-simple (eval (latex-display-wrap (org-sbe compound-interest-with-iterative-penalty-simple)))
+
+{{{compound-interest-with-iterative-penalty-simple()}}}
 
 Now lets pause and try to intuitively think about this expression and what it
-means. If we compound $n \rightarrow \infin$ we will end up with a $-\infin$
-amount of money due to the right hand component blowing up. If we compound at
-least 1 time (since $n=0$ is undefined), it is not hard to see how under the
-right circumstances we could have increased $n$ such that we could have earned
-more. This is a poor explanation and there is a better proof to describe this
-but take my word that under the right circumstances there is an optimum from
-compounding between 1 and infinity. To understand where this maximum is we need
-to understand this function a little deeper.
+means. If we compound src_python[:results output :session :dir (org-sbe
+container-dir-str)]{print(latex_right(latex(n), latex(oo)))} we will end up with
+a src_python[:results output :session :dir (org-sbe
+container-dir-str)]{print(latex(oo))} amount of money due to the right hand
+component blowing up. This also makes sense as we will be paying the fee an
+infinite amount of times. If we compound at least 1 time (since
+src_python[:results output :session :dir (org-sbe
+container-dir-str)]{print(latex(n == 0))} is undefined), it is not hard to see
+how under the right circumstances we could have increased src_python[:results
+output :session :dir (org-sbe container-dir-str)]{print(latex(n))} such that we
+could have earned more. This is a poor explanation and there is a better proof
+to describe this but take my word that under the right circumstances there is an
+optimum from compounding between 1 and infinity. To understand where this
+maximum is we need to understand this function a little deeper.
 
 To learn a little more about the 'shape' of this function, lets unify all the
-paramaters we can't 'control' under some var $C$ and plot what we have left in 3D.
+paramaters we can't 'control' under some var src_python[:results output :session
+:dir (org-sbe container-dir-str)]{print(latex(C))} and plot what we have left in
+3D.
 
 #+NAME: homogenized-compound-interest-with-iterative-penalty
 #+HEADER: :exports none :results output :session
@@ -226,10 +312,14 @@ paramaters we can't 'control' under some var $C$ and plot what we have left in 3
   homogenized_compound_interest_with_iterative_penalty = compound_interest_with_iterative_penalty.substitute(P=C, f=C, r=C)
   const_sympy = homogenized_compound_interest_with_iterative_penalty._sympy_()
   const_sympy_vars = {str(i): i for i in const_sympy.free_symbols}
-  print(latex_center(homogenized_compound_interest_with_iterative_penalty))
+  print(latex_center(latex(homogenized_compound_interest_with_iterative_penalty)))
 #+END_SRC
 
 #+RESULTS: homogenized-compound-interest-with-iterative-penalty
+:
+:  \begin{alignedat}{2}
+:  -n \left(\frac{C + n}{n}\right)^{n} + C {\left(\frac{C}{n} + 1\right)}^{n} + n
+:  \end{alignedat}
 
 #+MACRO: homogenized-compound-interest-with-iterative-penalty (eval (latex-display-wrap (org-sbe homogenized-compound-interest-with-iterative-penalty)))
 
@@ -327,17 +417,15 @@ number of compounds
       ## Formula for ciwip
       n = var('n')
       P, f, r, i = var("P f r i")
-      assume(P > 0)
-      assume(f > 0)
-      assume(1 >= r >= 0)
+      #assume(P > 0)
+      #assume(f > 0)
+      #assume(r >= 0)
       compound_interest = ( P * ( 1 + ( r / n ) ) ** n )
       iterative_penalty = ( f * sum( (1 + (r / n))**i , i, 0, n-1) )
       compound_interest_with_iterative_penalty = compound_interest - iterative_penalty
 
       ## Compute ciwip from params and minimize
       ciwip_min_ = -1.0 * compound_interest_with_iterative_penalty.substitute(P=P_, f=f_, r=r_)
-      ciwip_min_sympy = ciwip_min_._sympy_()
-      ciwip_sympy_vars = {str(i): i for i in ciwip_min_sympy.free_symbols}
       ciwip_min_result = sage.numerical.optimize.minimize(
           ciwip_min_,
           [1e-10],
@@ -353,49 +441,147 @@ number of compounds
 #+end_src
 
 #+RESULTS:
-:
-: In [83]:
 
 If we look at the opaque plane cross section we see that it forms something that
-looks like a parabola. This "parabola" like shape holds (for reasons I won't
-explain) for all constraints of the paramaters meaning that we will always find
-a maximum for this function that lies in the first quadrant.
+looks convex. This means that we will be able to find an optimal number of
+compounds to give us an optimal reward. Here is what the opaque plane looks like
+graphed
 
-The next most natural question to ask is how does this strategy perform compared
-to a naive one? To check how performant we are to a naive strategy (like
-compounding once a month/week/day) we must first track based on time (how long
-until we compound) do we earn. To do this with our derived formula we can look
-at this
-
-#+NAME: compound-interest-with-iterative-penalty-through-time
+#+NAME: tmp
 #+HEADER: :exports none :results output :session
 #+HEADER: :dir (org-sbe container-dir-str)
 #+BEGIN_SRC python
-  P = var('P')
-  P_n = var('P_n')
-  P_n_1 = var('P_n1', latex_name="P_{n-1}")
-  ciwip = function('ciwip')
-
-  ciwip_time = (P_n == P_n_1 + ( (P_n_1 * r) / (ciwip(P_n_1, f, r)) ) )
-  print(latex_center(ciwip_time))
+  filename = '/mnt/f.png'
+  n = var('n')
+  P, f, r, i = var("P f r i")
+  compound_interest = ( P * ( 1 + ( r / n ) ) ** n )
+  iterative_penalty = ( f * sum( (1 + (r / n))**i , i, 0, n-1) )
+  compound_interest_with_iterative_penalty = compound_interest - iterative_penalty
+  s = {
+      f: 3,
+      r: 1,
+      P: 70
+  }
+  g = Graphics()
+  g += plot(compound_interest_with_iterative_penalty.subs(s), (0, 60))
+  g.save(filename=filename)
+  print(f"Filename: {filename}")
 #+END_SRC
 
-#+RESULTS: compound-interest-with-iterative-penalty-through-time
+#+RESULTS: tmp
+: Filename: /mnt/f.png
+
+#+CAPTION: 2D view of compound interest with iterative penalties
+[[./f.png]]
+
+Something interesting to note is that if we can perform a bit of limit analysis
+on the derivative of this function, we can see that the slope of this function
+reaches a constant value.
+
+#+NAME: compound-interest-with-iterative-penalty-diff-limit-analysis
+#+HEADER: :exports none :results output :session
+#+HEADER: :dir (org-sbe container-dir-str)
+#+BEGIN_SRC python
+  print(
+      latex_center(
+          latex_lim(
+              latex(
+                  ciwip(P,f,r,n).derivative(n) == \
+                  limit(compound_interest_with_iterative_penalty.diff(n),n=oo)
+              ),
+              latex(n),
+              latex(oo)
+          )
+      )
+  )
+#+END_SRC
+
+#+RESULTS: compound-interest-with-iterative-penalty-diff-limit-analysis
 :
 :  \begin{alignedat}{2}
-:  P_{n} = {P_{n-1}} + \frac{{P_{n-1}} r}{{\rm ciwip}\left({P_{n-1}}, f, r\right)}
+:  \lim\limits_{ n \rightarrow +\infty } \frac{\partial}{\partial n}{\rm ciwip}\left(P, f, r, n\right) = -\frac{f e^{r} - f}{r}
 :  \end{alignedat}
 
-#+MACRO: compound-interest-with-iterative-penalty-through-time (eval (latex-display-wrap (org-sbe compound-interest-with-iterative-penalty-through-time)))
+#+MACRO: compound-interest-with-iterative-penalty-diff-limit-analysis (eval (latex-display-wrap (org-sbe compound-interest-with-iterative-penalty-diff-limit-analysis)))
 
-{{{compound-interest-with-iterative-penalty-through-time()}}}
+{{{compound-interest-with-iterative-penalty-diff-limit-analysis()}}}
 
-We'll stop here for now but take a guess on how much extra performance we can
-squeeze out compared to the naive compounding strategy.
+In order to find out if this function is truley convex, we can leverage Jensen's
+inequality to check if the inequality is true.
+
+$$
+\begin{CD}
+  g( \alpha x + ( 1 - \alpha ) y ) \geq \alpha g( x ) + ( 1 - \alpha ) g( y )
+\end{CD}
+$$
+
+With this inequality we can plug in our function $c$ and check this inequality
+evaluated at $0$ and $c(n)=P$, the reason we choose these bounds is because
+
+#+NAME: tmp2
+#+HEADER: :exports none :results output :session
+#+HEADER: :dir (org-sbe container-dir-str)
+#+BEGIN_SRC python
+  s = {
+      f: 3,
+      r: 1,
+      P: 70
+  }
+  var('lam', latex_name="\\alpha")
+  var('x_p')
+  var('y_p')
+
+  cc = -1 * compound_interest_with_iterative_penalty
+  cc = cc.subs(s)
+
+  def jensins_inequality(func, a, b):
+      return func.subs({n: lam * a + (1 - lam) * b}) >= lam * func.subs({n:a}) + (1 - lam) * func.subs({n:b})
+
+  a = 1e-8
+  b = P # solve((compound_interest_with_iterative_penalty==P).subs(s), n)[0].rhs()
+  ji = jensins_inequality(cc, a, b)
+  print(
+      latex_center(
+          latex(ji)
+      )
+  )
+
+  #beep = c(lam * x_p + (1 - lam) * y_p) <= lam * c(x_p) + (1 - lam) * c(y_p)
+  #print(beep)
+  #assume(n, 'real')
+  #print(solve(simplify(cc.subs({n: (1 - lam) * (70/3.0)}).subs(s) <= (lam * -P + (1 - lam) * -P).subs(s)), lam, domain='real'))
+  #asdfasdf = simplify(cc.subs({n: (1 - lam) * (70/3.0)}).subs(s) - (lam * -P + (1 - lam) * -P).subs(s))
+  #print(asdfasdf)
+  #filename = '/mnt/g.png'
+  #g = Graphics()
+  #g += plot(asdfasdf, (lam, 0, 1))
+  #g.save(filename=filename)
+  #print(f"Filename: {filename}")
+  #print(simplify(cc.subs({n: (1 - lam) * (70/3.0)}).subs(s) <= (lam * -P + (1 - lam) * -P).subs(s)).subs({lam: 0}))
+  #print(simplify(cc.subs({n: (1 - lam) * (70/3.0)}).subs(s) <= (lam * -P + (1 - lam) * -P).subs(s)).subs({lam: 0.5}))
+  #print(simplify(cc.subs({n: (1 - lam) * (70/3.0)}).subs(s) <= (lam * -P + (1 - lam) * -P).subs(s)).subs({lam: 0.999}))
+#+END_SRC
+
+#+RESULTS: tmp2
+:
+:  \begin{alignedat}{2}
+:  3 \, P {\left({\alpha} - 1\right)} - 3 \, {\left(P {\left({\alpha} - 1\right)} - \left(1 \times 10^{-08}\right) \, {\alpha}\right)} \left(\frac{P {\left({\alpha} - 1\right)} - \left(1 \times 10^{-08}\right) \, {\alpha} - 1}{P {\left({\alpha} - 1\right)} - \left(1 \times 10^{-08}\right) \, {\alpha}}\right)^{-P {\left({\alpha} - 1\right)} + \left(1 \times 10^{-08}\right) \, {\alpha}} - \left(3.0000000000000004 \times 10^{-08}\right) \, {\alpha} - 70 \, {\left(-\frac{1}{P {\left({\alpha} - 1\right)} - \left(1 \times 10^{-08}\right) \, {\alpha}} + 1\right)}^{-P {\left({\alpha} - 1\right)} + \left(1 \times 10^{-08}\right) \, {\alpha}} \geq -{\left(3 \, P \left(\frac{P + 1}{P}\right)^{P} - 3 \, P - 70 \, {\left(\frac{1}{P} + 1\right)}^{P}\right)} {\left({\alpha} - 1\right)} - 70.0000128944777 \, {\alpha}
+:  \end{alignedat}
+
+#+MACRO: tmp2 (eval (latex-display-wrap (org-sbe tmp2)))
+
+{{{tmp2()}}}
+
+Now it might not look like it, but graphing both sides of this inequality shows
+that this expression is true for $0 \lt \alpha \lt 1$ meaning that this function
+IS convex.
+
+* Environment teardown                                             :noexport:
 
 #+HEADER: :exports none
-#+begin_src sh :var NAME=(org-sbe container-name)
-# docker kill $NAME
+#+begin_src sh :var NAME=(org-table-get-constant "container_name") :var SHUTDOWN=(org-table-get-constant "shutdown-env")
+# [[ $SHUTDOWN ]] && podman kill $NAME; podman rm $NAME
 #+end_src
 
 #+RESULTS:
+: compounder
