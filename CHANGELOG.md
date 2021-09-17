@@ -1,3 +1,10 @@
+### [1.2.22](https://github.com/cmrfrd/taoa/compare/v1.2.21...v1.2.22) (2021-09-17)
+
+
+### Bug Fixes
+
+* Add cname ([51ed623](https://github.com/cmrfrd/taoa/commit/51ed6236874db99e06ec613ee9152b06910f4044))
+
 ### [1.2.21](https://github.com/cmrfrd/taoa/compare/v1.2.20...v1.2.21) (2021-08-28)
 
 
