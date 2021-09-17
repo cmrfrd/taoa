@@ -78,7 +78,7 @@ const components: Components = {
   SmallButton,
   MediumButton,
   LargeButton,
-  ConfettiButton,
+  ConfettiButton
   /*   CodeEditorWithOutput */
 };
 
@@ -347,7 +347,8 @@ const MDXBody = styled.div(
     // using this css class shim so dark mode
     // with katex display mode works
     '.katex-display': {
-      color: p.theme.colors.postText
+      color: p.theme.colors.postText,
+      overflow: 'auto hidden'
     },
 
     position: 'relative',
