@@ -1,3 +1,10 @@
+### [1.2.23](https://github.com/cmrfrd/taoa/compare/v1.2.22...v1.2.23) (2021-09-17)
+
+
+### Bug Fixes
+
+* Service worker updates ([3b67ac3](https://github.com/cmrfrd/taoa/commit/3b67ac3db806055bb28b0e0773da9c9ea768b6c8))
+
 ### [1.2.22](https://github.com/cmrfrd/taoa/compare/v1.2.21...v1.2.22) (2021-09-17)
 
 
