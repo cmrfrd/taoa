@@ -4,3 +4,5 @@ exports.shouldUpdateScroll = require('./src/gatsby/browser/shouldUpdateScroll');
 exports.wrapPageElement = require('./src/gatsby/browser/wrapPageElement').wrapPageElement;
 exports.onClientEntry = require('./src/gatsby/browser/onClientEntry');
 exports.onServiceWorkerUpdateReady = require('./src/gatsby/browser/onServiceWorkerUpdateReady');
+exports.onServiceWorkerUpdateFound = () => window.location.reload(true);
+exports.onServiceWorkerUpdateReady= () => window.location.reload(true);
