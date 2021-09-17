@@ -1,3 +1,10 @@
+### [1.2.24](https://github.com/cmrfrd/taoa/compare/v1.2.23...v1.2.24) (2021-09-17)
+
+
+### Bug Fixes
+
+* Update browser config ([7a41324](https://github.com/cmrfrd/taoa/commit/7a4132486fccb8856edd1a220bae25ccdf7ca452))
+
 ### [1.2.23](https://github.com/cmrfrd/taoa/compare/v1.2.22...v1.2.23) (2021-09-17)
 
 
