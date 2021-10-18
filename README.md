@@ -42,6 +42,7 @@ Once the necessary dependencies are installed, download emojis and generate dev
 TLS certificates (don't forget to add the root CA signature to your browser!)
 
 ``` shell
+$ ./bin/local_create_static_symlinks.sh
 $ ./bin/container_download_emojis.sh
 $ ./bin/container_generate_certs.sh
 ```
