@@ -8,34 +8,38 @@ secret: false
 excerpt: "Making money with your money's money"
 ---
 
-## Cryptocurrency dividends? 🤔
+## Cryptocurrency "dividends"? 🤔
 
 Most people who are "in the know" of the cryptocurrency world have probobaly
-heard of the various ways to make a return from their tokens. People can deposit
-their tokens via staking, lending, or Liquidity Pools and sit back to earn
-additional tokens, increasing their portfolios value. This is starkly different
-from the norm which is HODLing tokens and waiting for their prices to increase.
+heard of the various ways to earn "dividends" from their holdings. By leveraging
+earning protocols such as staking, lending, or Liquidity Pools fees, people can
+just sit back and accrue tokens, increasing their portfolios value. This is
+starkly different from the norm, which is just to HODL too the moon.
 
-If these earners continually invest their returns back into these earning
-protocols, they benefit from the :sparkles:magic:sparkles: that is compound
-interest. Unfortunately most cryptocurrency/blockchain projects are pay to play,
-meaning that if you want to interact with any of these earning protocols, you
-need to spend tokens to make tokens. This begs the question: what's the most
-efficent way to spend the least amount of tokens too make the most returns?
+Earners that continually invest their returns back into these earning protocols
+benefit from the :sparkles:magic:sparkles: that is compound interest.
+
+Unfortunately since cryptocurrency/blockchain projects are pay to play, every
+time an earner wants to interact with an earning protocol, they need to pay a fee to
+do so. In short: You need to spend tokens, to make tokens ...
+
+This begs the question: How do we spend the least to make the most?
 
 
-## <span class="org-todo done DONE">DONE</span> Abstracting the earning process
+## Abstracting earning protocols
 
 There are many methods to earn "dividends" from cryptocurrency. However most
 earning protocols expose the same metrics which we will use to our advantage. To
-start, we will lay out the following paramaters for the earning process:
+start, we will abstract out the following paramaters for an earning protocol:
 
--   $n$ - Number of compounds per year
+-   $n$ - Number of compounds
+    per year
 -   $P$ - Initial balance
--   $r$ - APY
+-   $r$ - APR
 -   $f$ - Fee per compound
 
-The following paramaters give us the foundation of compound interest.
+Using these base paramaters we can start with a foundation of compound interest
+defined as follows.
 
 $$\begin{alignedat}{2}
  P {\left(\frac{r}{n} + 1\right)}^{n}
@@ -44,8 +48,8 @@ $$\begin{alignedat}{2}
 While this is all well and good, we want to account for the fact that whenever
 we want to "compound" our pending earnings, we need pay a fee to do so. With
 this in mind we need to come up with an expression to account for each
-penalization fee $f$ over each compounding instance
-$n$.
+penalization fee $f$ over each compounding
+instance $n$.
 
 To do this we will add on the idea of iterative penalties which is the summation
 of fees across every compounding instance.
@@ -54,77 +58,96 @@ $$\begin{alignedat}{2}
  f {\sum_{i=0}^{n - 1} {\left(\frac{r}{n} + 1\right)}^{i}}
  \end{alignedat}$$
 
-By subtracting the two ideas we can get the expression
+By subtracting the interative penalty fees from compound interest, we get the
+following expression.
 
 $$\begin{alignedat}{2}
  P {\left(\frac{r}{n} + 1\right)}^{n} - f {\sum_{i=0}^{n - 1} {\left(\frac{r}{n} + 1\right)}^{i}}
  \end{alignedat}$$
 
-Simplifying we can get the function
+Simplifying we can define the function $ciwip$ as the following expression
 
 $$\begin{alignedat}{2}
  {\rm ciwip}\left(P, f, r, n\right) = P {\left(\frac{r}{n} + 1\right)}^{n} - \frac{{\left(n \left(\frac{n + r}{n}\right)^{n} - n\right)} f}{r}
  \end{alignedat}$$
 
-Now lets pause and try to intuitively think about this expression and what it
-means. If we compound $n \rightarrow +\infty$ we will end up with
-a $+\infty$ amount of money due to the right hand
-component blowing up. This also makes sense as we will be paying the fee an
-infinite amount of times. If we compound at least 1 time (since
-$n = 0$ is undefined), it is not hard to see
-how under the right circumstances we could have increased $n$ such that we
-could have earned more. This is a poor explanation and there is a better proof
-to describe this but take my word that under the right circumstances there is an
-optimum from compounding between 1 and infinity. To understand where this
-maximum is we need to understand this function a little deeper.
 
-To learn a little more about the 'shape' of this function, lets unify all the
-paramaters we can't 'control' under some var $C$ and plot what we have left in
-3D.
+## Visualization!
 
-$$\begin{alignedat}{2}
- -n \left(\frac{C + n}{n}\right)^{n} + C {\left(\frac{C}{n} + 1\right)}^{n} + n
- \end{alignedat}$$
+Now that we have an expression to model an earning protocol, lets try to gain
+some intuition about how they work with some visualizations! It seems most
+reasonable to start with a 2D plot dependent on $n$ because it's the
+only paramater that we can control once we put a deposit into an earning
+protocol. Holding all the other parameters constant with some random values, we
+get the following plot.
 
-![img](./homogenized-compound-interest-with-iterative-penalty.png "A surface 3d plot of constant compound interest with iterative penalties")
+![img](./compound-interest-with-iterative-penalty-plot.png "2D view of compound interest with iterative penalties")
 
-The interesting thing we can see here is that if we hold the variables we can't
-control constant and slice the space with a plane (shown by the slightly opaque
-vertical plane) we see that there is an optimal number of compounds that gives
-us the highest yield. And if we minimize this function we can get our optimal
-number of compounds
+With this 2D view we can now get a better understanding of what optimal
+compounding really means.
 
-If we look at the opaque plane cross section we see that it forms something that
-looks convex. This means that we will be able to find an optimal number of
-compounds to give us an optimal reward. Here is what the opaque plane looks like
-graphed
+The first intuition we can take away is that as we tend $n \rightarrow +\infty$ we see that our output value
+tends towards negative infinity meaning we lose more than we are gaining (which
+we don't want). However there is an inflection point at (around
+$n = 2.45$) where
+we make **more** than we lose. This means that by compounding at the right
+frequency we can profit from the accrued rewards than the fee we need to pay to
+claim them.
 
-![img](./f.png "2D view of compound interest with iterative penalties")
+Now we can return to original question at the begginning: "how do we spend the
+least too make the most?". The answer we can infer from this plot if "choose the
+right $n$".
 
-Something interesting to note is that if we can perform a bit of limit analysis
-on the derivative of this function, we can see that the slope of this function
-reaches a constant value.
+**Aside** - Something interesting to note is that as we tend $n \rightarrow +\infty$ it looks like our function starts to becomes linear. We can prove
+this if we take the limit of the derivative of our function. We can see it's
+independent of $n$ meaning that even though
+compounding to infinity means we will keep losing, we will eventually lose at a
+constant rate.
 
 $$\begin{alignedat}{2}
  \lim\limits_{ n \rightarrow +\infty } \frac{\partial}{\partial n}{\rm ciwip}\left(P, f, r, n\right) = -\frac{f e^{r} - f}{r}
  \end{alignedat}$$
 
+For the example above we used fixed parameters, but what if we changed them to
+be higher or lower? How would our plot change? Would we still see the same
+shape? To learn a little more about the shape of this function, lets unify all
+the paramaters we can't control under some var $C$
+and plot what we have left in 3D.
+
+Doing so will give us the following expression:
+
+$$\begin{alignedat}{2}
+ -n \left(\frac{C + n}{n}\right)^{n} + C {\left(\frac{C}{n} + 1\right)}^{n} + n
+ \end{alignedat}$$
+
+![img](./homogenized-compound-interest-with-iterative-penalty-plot.png "A surface 3d plot of homogenized compound interest with iterative penalties")
+
+The interesting thing we can observe is that if we hold the variables we can't
+control constant (via $C$) and represent some
+choice $C$ by slicing the space with a plane (shown by
+the slightly opaque vertical plane), the corresponding cross section is the
+space of possibile results of our balance as a consequence of choosing some
+$n$. Looking closely, there seems to be a
+similar shape between the intersection and the 2D plot, and if we slide the
+opaque plane up and down the $C$ axis, the shape seems consistant. However
+this empirical observation doesn't prove anything. Instead let's define a narrow
+problem we want to solve for, and prove a property about the problem.
+
+
+## Optimality! ⛰
+
+We showed in the previous section that when we chose some fixed parameters for
+our ${\rm ciwip}\left(\right)$ function, there was an optimal $n$ that enables
+us to earn more than we lose. This is obviously an ideal case which we want to
+happen all the time! Unfortunately, in reality, our "fixed" parameters aren't so
+"fixed". What we really want to know is for any reasonable set of parameters,
+can we find an optimal value that is greater than our initial balance
+
 In order to find out if this function is truley convex, we can leverage Jensen's
 inequality to check if the inequality is true.
 
-$$
-
-\begin{CD}
-  g( \alpha x + ( 1 - \alpha ) y ) \geq \alpha g( x ) + ( 1 - \alpha ) g( y )
-\end{CD}
-
-$$
-
-With this inequality we can plug in our function $c$ and check this inequality
-evaluated at $0$ and $c(n)=P$, the reason we choose these bounds is because
-
 $$\begin{alignedat}{2}
- 3 \, P {\left({\alpha} - 1\right)} - 3 \, {\left(P {\left({\alpha} - 1\right)} - \left(1 \times 10^{-08}\right) \, {\alpha}\right)} \left(\frac{P {\left({\alpha} - 1\right)} - \left(1 \times 10^{-08}\right) \, {\alpha} - 1}{P {\left({\alpha} - 1\right)} - \left(1 \times 10^{-08}\right) \, {\alpha}}\right)^{-P {\left({\alpha} - 1\right)} + \left(1 \times 10^{-08}\right) \, {\alpha}} - \left(3.0000000000000004 \times 10^{-08}\right) \, {\alpha} - 70 \, {\left(-\frac{1}{P {\left({\alpha} - 1\right)} - \left(1 \times 10^{-08}\right) \, {\alpha}} + 1\right)}^{-P {\left({\alpha} - 1\right)} + \left(1 \times 10^{-08}\right) \, {\alpha}} \geq -{\left(3 \, P \left(\frac{P + 1}{P}\right)^{P} - 3 \, P - 70 \, {\left(\frac{1}{P} + 1\right)}^{P}\right)} {\left({\alpha} - 1\right)} - 70.0000128944777 \, {\alpha}
+ f\left({\alpha} x_{1} - {\left({\alpha} - 1\right)} x_{2}\right) \leq {\alpha} f\left(x_{1}\right) - {\left({\alpha} - 1\right)} f\left(x_{2}\right)
  \end{alignedat}$$
 
 Now it might not look like it, but graphing both sides of this inequality shows
