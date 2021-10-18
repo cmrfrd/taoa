@@ -1,4 +1,4 @@
-FROM node:16-alpine
+FROM node:current-alpine
 
 ENV USER node
 ENV HOME /home/$USER
