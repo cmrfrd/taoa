@@ -1,11 +1,12 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 set -e
+source development.env
 
 POSTS_DIR=content/posts
 STATIC_DIR=static
 
-echo "Creating static dir symlinks in posts directories ... "
-for post_dir in $(find ${POSTS_DIR} -maxdepth 1 -type d -not -path ${POSTS_DIR}); do
+echo "Creating static dir symlinks in posts directories ..."
+for post_dir in $(find ${POSTS_DIR} -maxdepth 1 -type d -not -path ${POSTS_DIR} | sort); do
 
   POST_STATIC_DIR=${post_dir}/${STATIC_DIR}
 
@@ -16,3 +17,6 @@ for post_dir in $(find ${POSTS_DIR} -maxdepth 1 -type d -not -path ${POSTS_DIR})
   [[ ! -h ${POST_STATIC_DIR} ]] && ln -rs ${STATIC_DIR} ${POST_STATIC_DIR}
 
 done
+
+echo "Creating static image directory ..."
+mkdir -p $STATIC_IMAGE_DIR
