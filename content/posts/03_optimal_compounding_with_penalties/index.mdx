@@ -10,76 +10,137 @@ excerpt: "Making money with your money's money"
 
 ## Cryptocurrency "dividends"? 🤔
 
-Most people who are "in the know" of the cryptocurrency world have probobaly
+Most people who are "in the know" of the cryptocurrency world have probably
 heard of the various ways to earn "dividends" from their holdings. By leveraging
-earning protocols such as staking, lending, or Liquidity Pools fees, people can
-just sit back and accrue tokens, increasing their portfolios value. This is
-starkly different from the norm, which is just to HODL too the moon.
+earning protocols such as staking, lending, or being a liquidity provider,
+people can just sit back and accrue tokens, increasing their portfolios
+value. This is starkly different from the norm, which is just to HODL until the
+price hits the moon.
 
-Earners that continually invest their returns back into these earning protocols
-benefit from the :sparkles:magic:sparkles: that is compound interest.
+Unlike those who strictly HODL, earners that continually invest their returns
+back into earning protocols benefit from the :sparkles:magic:sparkles: that is
+compound interest.
 
 Unfortunately since cryptocurrency/blockchain projects are pay to play, every
 time an earner wants to interact with an earning protocol, they need to pay a fee to
 do so. In short: You need to spend tokens, to make tokens ...
 
-This begs the question: How do we spend the least to make the most?
+This begs the question: How do we spend the least to make the most with respect
+to these earning protocols?
 
 
 ## Abstracting earning protocols
 
-There are many methods to earn "dividends" from cryptocurrency. However most
-earning protocols expose the same metrics which we will use to our advantage. To
-start, we will abstract out the following paramaters for an earning protocol:
+There are many methods to earn "dividends" from cryptocurrency, however almost
+all of them intended for you to follow the same basic procedure:
 
+1.  Deposit tokens into the earning protocol
+2.  Wait for "dividends" to accrue
+3.  Claim "dividends"
+
+This procedure, while simple, can be very risky as it doesn't take into account
+the price of the underlying token. Let's take a closer look at these earning
+protocols and see if we can come up with an expression to calculate potential
+earnings.
+
+To start, let's abstract out some overarching parameters (since most earning
+protocols are similar to one another).
+
+-   $t$ - Time until each
+    compound (in years)
 -   $n$ - Number of compounds
     per year
 -   $P$ - Initial balance
 -   $r$ - APR
 -   $f$ - Fee per compound
 
-Using these base paramaters we can start with a foundation of compound interest
-defined as follows.
+> **Aside** - We will assume that every time earnings are "claimed", they are
+> automatically reinvested back into the protocol effectively making this a
+> compounding process.
+
+<!--quoteend-->
+
+> **Aside Aside** - There are plenty of earning protocols that automatically compound
+> earnings for free (meaning we don't need to account for $f$ or
+> $n$), but for the rest of this post we will
+> only be taking into account those that don't auto-compound.
+
+
+## Deriving compound interest with iterative penalties
+
+Now that we have some basic parameters, lets create an expression to model our
+earnings are after we compound once.
+
+$$\begin{alignedat}{2}
+ P_{0} r t + P_{0} - f = P_{1}
+ \end{alignedat}$$
+
+This is the base case where $P_{0}$ is our initial balance and
+$P_{1}$ is the balance after compounding. Now
+what does this expression look like if we compound again? Compounding for a
+second time means we follow the same formula but substitute our second balance
+with our balance **after** the first compound. This can described this as follows:
+
+$$\begin{alignedat}{2}
+ P_{0} r t + P_{0} - f = P_{1} \\ P_{1} r t + P_{1} - f = P_{2} \\ P_{0} r^{2} t^{2} + {\left(2 \, P_{0} - f\right)} r t + P_{0} - 2 \, f = P_{2}
+ \end{alignedat}$$
+
+Now if we want to compound many times, we can define our balance
+${P_n}$ recursively as follows:
+
+$$\begin{alignedat}{2}
+ P_{0} r t + P_{0} - f = P_{1} \\ {P_{n-1}} r t + {P_{n-1}} - f = {P_n}
+ \end{alignedat}$$
+
+This recursive definition is great! But it would be nicer if we had a closed
+form expression. Backing up to the $n = 2$ case, if we re-arrange a few of
+the terms, and substitute $t = \frac{1}{n}$, we can
+start to see a familiar formula pop out at us.
+
+$$\begin{alignedat}{2}
+ {\left(P_{0} r t + P_{0} - f\right)} r t + P_{0} r t + P_{0} - 2 \, f \\ {\left(r t + 1\right)}^{2} P_{0} - f r t - 2 \, f \\ P_{0} {\left(\left(\frac{1}{2} \, r\right) + 1\right)}^{2} - \frac{1}{2} \, f r - 2 \, f
+ \end{alignedat}$$
+
+If we look closely at the final expression we can see that the leftmost
+component looks eerily like compound interest. That's because it is! And if we look
+at the direct formula for compound interest we can see that there is a direct
+comparison.
 
 $$\begin{alignedat}{2}
  P {\left(\frac{r}{n} + 1\right)}^{n}
  \end{alignedat}$$
 
-While this is all well and good, we want to account for the fact that whenever
-we want to "compound" our pending earnings, we need pay a fee to do so. With
-this in mind we need to come up with an expression to account for each
-penalization fee $f$ over each compounding
-instance $n$.
-
-To do this we will add on the idea of iterative penalties which is the summation
-of fees across every compounding instance.
+Now this is all well and good, but there are additional terms we aren't
+accounting for related to the fees that are paid each compounding. This can be
+expressed via the idea of iterative penalties which is the summation of fees for
+each compounding instance.
 
 $$\begin{alignedat}{2}
  f {\sum_{i=0}^{n - 1} {\left(\frac{r}{n} + 1\right)}^{i}}
  \end{alignedat}$$
 
-By subtracting the interative penalty fees from compound interest, we get the
-following expression.
+By subtracting the iterative penalty fees from compound interest, we get the
+following expression which is equivalent to our recursive definition.
 
 $$\begin{alignedat}{2}
  P {\left(\frac{r}{n} + 1\right)}^{n} - f {\sum_{i=0}^{n - 1} {\left(\frac{r}{n} + 1\right)}^{i}}
  \end{alignedat}$$
 
-Simplifying we can define the function $ciwip$ as the following expression
+Simplifying iterative penalties as a geometric series, we arrive at our final
+function, compound interest with iterative penalties (or $ciwip$)
 
 $$\begin{alignedat}{2}
  {\rm ciwip}\left(P, f, r, n\right) = P {\left(\frac{r}{n} + 1\right)}^{n} - \frac{{\left(n \left(\frac{n + r}{n}\right)^{n} - n\right)} f}{r}
  \end{alignedat}$$
 
 
-## Visualization!
+## Understanding via visualization!
 
 Now that we have an expression to model an earning protocol, lets try to gain
 some intuition about how they work with some visualizations! It seems most
 reasonable to start with a 2D plot dependent on $n$ because it's the
-only paramater that we can control once we put a deposit into an earning
-protocol. Holding all the other parameters constant with some random values, we
-get the following plot.
+only parameter that we can control once we put in a deposit. Holding all the
+other parameters constant with some random values, we get the following plot.
 
 ![img](./compound-interest-with-iterative-penalty-plot.png "2D view of compound interest with iterative penalties")
 
@@ -89,29 +150,29 @@ compounding really means.
 The first intuition we can take away is that as we tend $n \rightarrow +\infty$ we see that our output value
 tends towards negative infinity meaning we lose more than we are gaining (which
 we don't want). However there is an inflection point at (around
-$n = 2.45$) where
+$n = 2.79$) where
 we make **more** than we lose. This means that by compounding at the right
-frequency we can profit from the accrued rewards than the fee we need to pay to
-claim them.
+frequency, we can profit from the accrued rewards more than the fee we need to
+pay to claim them.
 
-Now we can return to original question at the begginning: "how do we spend the
-least too make the most?". The answer we can infer from this plot if "choose the
+Now we can return to original question at the beginning: "how do we spend the
+least too make the most?". The answer we can infer from this plot is "choose the
 right $n$".
 
-**Aside** - Something interesting to note is that as we tend $n \rightarrow +\infty$ it looks like our function starts to becomes linear. We can prove
-this if we take the limit of the derivative of our function. We can see it's
-independent of $n$ meaning that even though
-compounding to infinity means we will keep losing, we will eventually lose at a
-constant rate.
-
-$$\begin{alignedat}{2}
- \lim\limits_{ n \rightarrow +\infty } \frac{\partial}{\partial n}{\rm ciwip}\left(P, f, r, n\right) = -\frac{f e^{r} - f}{r}
- \end{alignedat}$$
+> **Aside** - Something interesting to note is that as we tend $n \rightarrow +\infty$ it looks like our function starts to becomes linear. We can prove
+> this by taking the limit of the derivative of our function. We can see it's
+> independent of $n$ meaning that even though
+> compounding to infinity means we will keep losing, we will eventually lose at a
+> constant rate.
+>
+> $$\begin{alignedat}{2}
+>  \lim\limits_{ n \rightarrow +\infty } \frac{\partial}{\partial n}{\rm ciwip}\left(P, f, r, n\right) = -\frac{f e^{r} - f}{r}
+>  \end{alignedat}$$
 
 For the example above we used fixed parameters, but what if we changed them to
 be higher or lower? How would our plot change? Would we still see the same
 shape? To learn a little more about the shape of this function, lets unify all
-the paramaters we can't control under some var $C$
+the parameters we can't control under some var $C$
 and plot what we have left in 3D.
 
 Doing so will give us the following expression:
@@ -126,30 +187,164 @@ The interesting thing we can observe is that if we hold the variables we can't
 control constant (via $C$) and represent some
 choice $C$ by slicing the space with a plane (shown by
 the slightly opaque vertical plane), the corresponding cross section is the
-space of possibile results of our balance as a consequence of choosing some
+space of possible results of our balance as a consequence of choosing some
 $n$. Looking closely, there seems to be a
 similar shape between the intersection and the 2D plot, and if we slide the
-opaque plane up and down the $C$ axis, the shape seems consistant. However
+opaque plane up and down the $C$ axis, the shape seems consistent. However
 this empirical observation doesn't prove anything. Instead let's define a narrow
 problem we want to solve for, and prove a property about the problem.
 
 
-## Optimality! ⛰
+## In search of optimality! ⛰
 
 We showed in the previous section that when we chose some fixed parameters for
-our ${\rm ciwip}\left(\right)$ function, there was an optimal $n$ that enables
-us to earn more than we lose. This is obviously an ideal case which we want to
-happen all the time! Unfortunately, in reality, our "fixed" parameters aren't so
-"fixed". What we really want to know is for any reasonable set of parameters,
-can we find an optimal value that is greater than our initial balance
+our $ciwip$ function, there was an
+optimal $n$ that enables us to earn more than we
+lose. This is obviously an ideal case which we want to happen all the time!
+Unfortunately, in reality, our "fixed" parameters aren't so "fixed". What we
+really want to know is for any reasonable set of parameters, can we find the
+optimal value that is greater than our initial balance?
 
-In order to find out if this function is truley convex, we can leverage Jensen's
-inequality to check if the inequality is true.
+
+### Using the gradient
+
+One initial approach we can take is by using the gradient. If we find where the
+gradient is equal to zero that we can find the extrema of our function which
+will allow us to find our inflection point. Unfortunately this isn't really
+tractable so we will need to find another way.
 
 $$\begin{alignedat}{2}
- f\left({\alpha} x_{1} - {\left({\alpha} - 1\right)} x_{2}\right) \leq {\alpha} f\left(x_{1}\right) - {\left({\alpha} - 1\right)} f\left(x_{2}\right)
+ -P {\left(\frac{r}{n} + 1\right)}^{n} {\left(\frac{r}{n {\left(\frac{r}{n} + 1\right)}} - \log\left(\frac{r}{n} + 1\right)\right)} + \frac{{\left({\left(\frac{n^{2} {\left(\frac{n + r}{n^{2}} - \frac{1}{n}\right)}}{n + r} - \log\left(\frac{n + r}{n}\right)\right)} n \left(\frac{n + r}{n}\right)^{n} - \left(\frac{n + r}{n}\right)^{n} + 1\right)} f}{r} = \frac{\partial}{\partial n}{\rm ciwip}\left(P, f, r, n\right)
  \end{alignedat}$$
 
-Now it might not look like it, but graphing both sides of this inequality shows
-that this expression is true for $0 \lt \alpha \lt 1$ meaning that this function
-IS convex.
+
+### Avoiding losses
+
+Another direction we can take to simplify our problem is to find all the
+places where we lose more than we gain.
+
+We know that the space of possible compounds is from $0 \rightarrow +\infty$ and we've already established
+that as we compound more and more we get diminishing returns, then eventually
+substantial losses. To avoid these losses we need to see where
+${\rm ciwip}\left(P, r, f, n\right) < P$. We can observe from our 2D graph of
+$ciwip$ that $P$ is intersected
+twice, first at $0$ and second at
+$n = 20.0$. Now based on what we know about this function, it makes sense that
+there will always be two points where ${\rm ciwip}\left(P, r, f, n\right) = P$. One for when we
+don't compound at all and stay at our initial balance, and one for when we are
+compounding too much to the point where we end up "net even". This second "net
+even" point is important because with it we can show that compounding past it
+will always lead to losses. To find this point we can take ${\rm ciwip}\left(P, r, f, n\right) = P$, and simply solve for
+$n$. Doing so gets us the expression.
+
+$$\begin{alignedat}{2}
+ n = \frac{P r}{f}
+ \end{alignedat}$$
+
+Which means all we need to do it show is that if we compound above this "net
+even" point with some positive ${\epsilon}$, we will
+always get less than our initial balance $P$. If we put this into an
+expression we get:
+
+$$\begin{alignedat}{2}
+ {\rm ciwip}\left(P, f, r, {\epsilon} + \frac{P r}{f}\right) < P
+ \end{alignedat}$$
+
+And if we follow the substitution and replacement we get the expression:
+
+$$\begin{alignedat}{2}
+ \left(-\frac{{\epsilon} f}{r}\right) {\left(\left(\frac{{\epsilon} f + {\left(P + f\right)} r}{{\epsilon} f + P r}\right)^{{\epsilon} + \frac{P r}{f}} - 1\right)} < 0
+ \end{alignedat}$$
+
+This expression will always hold true as long as all the components are positive
+real values (which we've already established is true in our framing of our
+problem). This is due to the fact that the left hand component will always be
+negative, and the right hand component will always be positive. This means the
+result will always be negative.
+
+This allows us to conclude that compounding for ${\epsilon} + \frac{P r}{f}$ for any
+${\epsilon} > 0$ we will always end up with less than
+our original balance.
+
+
+### Concavity
+
+Instead of trying to find a closed form way of getting the maximum of our
+function, maybe there is a property we can prove about our function to make
+finding it easier. The most ideal property we would want to prove is concavity.
+
+If we can show that our function is concave, then we will know two important things:
+
+1.  All local maxima are global maxima
+2.  A descent optimizer will find a local maxima
+
+In order to find out if this function is truly convex, we can leverage Jensen's
+inequality and check if the inequality is true.
+
+$$\begin{alignedat}{2}
+ g\left({\lambda} x_{1} + x_{2} {\left| {\lambda} - 1 \right|}\right) > {\lambda} g\left(x_{1}\right) + {\left| {\lambda} - 1 \right|} g\left(x_{2}\right)
+ \end{alignedat}$$
+
+If we substitute our function into Jensen's inequality and supply our bounds
+(ignoring everything but the $n$ parameter we get:
+
+$$\begin{alignedat}{2}
+ {\rm ciwip}\left(\frac{P r {\left| {\lambda} - 1 \right|}}{f}\right) > {\lambda} {\rm ciwip}\left(0\right) + {\left| {\lambda} - 1 \right|} {\rm ciwip}\left(\frac{P r}{f}\right)
+ \end{alignedat}$$
+
+substituting further and reducing we get the expression:
+
+$$\begin{alignedat}{2}
+ -{\left(P {\left| {\lambda} - 1 \right|} - P\right)} {\left(\left(\frac{P {\left| {\lambda} - 1 \right|} + f}{P {\left| {\lambda} - 1 \right|}}\right)^{\frac{P r {\left| {\lambda} - 1 \right|}}{f}} - 1\right)} > 0
+ \end{alignedat}$$
+
+This final inequality will tell us if our function $ciwip$ is convex or
+not. It may not seem like it right away but this inequality will always be true
+if our components are positive real values. Let's break down this expression a
+bit more to see why.
+
+First lets decompose the left hand side of our expression into two components
+${\alpha}$ and ${\beta}$ as follows:
+
+$$\begin{alignedat}{2}
+ -P {\left| {\lambda} - 1 \right|} + P = {\alpha} \\ \left(\frac{P {\left| {\lambda} - 1 \right|} + f}{P {\left| {\lambda} - 1 \right|}}\right)^{\frac{P r {\left| {\lambda} - 1 \right|}}{f}} - 1 = {\beta} \\ {\alpha} {\beta} > 0
+ \end{alignedat}$$
+
+Looking at our decomposition we can first observe that ${\alpha} > 0$ because
+$P > P {\left| {\lambda} - 1 \right|}$.
+
+We can also infer that ${\beta} > 0$. Since $P {\left| {\lambda} - 1 \right|} + f > P {\left| {\lambda} - 1 \right|}$, we know the base of the exponent
+is greater than 1. We also know that any number greater than one raised to a
+positive power will also be greater than one. This means that
+${\beta}$ must be positive.
+
+Now that we have inferred that ${\alpha}$ and ${\beta}$ are both positive we can
+finally affirm that ${\alpha} {\beta} > 0$ must also be true!
+
+Finally since we have shown that ${\alpha} {\beta} > 0$ must be true, we have
+shown that Jensen's inequality must always be true, and that our function is
+always concave. Knowing this, and being paired with the knowledge of a bound on
+our search space, we can perform a naive linear search to find our maximum like
+so:
+
+```python
+P0, r0, f0 = 100, 0.8, 0.01
+balance = P0
+ciwip = lambda P,r,f,n: P*(r/abs(n) + 1)**abs(n) - (((r + abs(n))/abs(n))**abs(n)*abs(n) - abs(n))*f/r if n != 0 else P
+for n_ in range(0, int(round(P0*r0/f0))):
+   new_balance = ciwip(P0, r0, f0, n_)
+   if new_balance >= balance:
+       balance = new_balance
+   else:
+       break
+
+print(f"Best number of compounds: {n_}/yr with a final balance of {balance}")
+```
+
+```text
+Best number of compounds: 68/yr with a final balance of 220.48444917429077
+```
+
+Using this simple algorithm and equipped with the knowledge that we will always
+be able to find the maximum of $ciwip$, we can be rest assured that we are
+getting the most out of our earning protocols.
