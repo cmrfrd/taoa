@@ -1,6 +1,6 @@
 #+TITLE: Optimal compounding with penalties
-#+CREATED: [2021-08-11 Wed 00:48]
-#+LAST_MODIFIED: [2021-11-11 Thu 00:01]
+#+CREATED: [2021-11-13 Sat 00:07]
+#+LAST_MODIFIED: [2021-11-13 Sat 23:14]
 #+ROAM_TAGS: money composition
 #+STARTUP: showall indent
 #+OPTIONS: toc:nil
@@ -49,7 +49,7 @@ author, exporting functionality, tests, configuration, etc.
 #+END_SRC
 
 #+RESULTS:
-: Disabled mdx on save
+: Enabled mdx on save
 
 ** Configuration
 
@@ -133,36 +133,37 @@ print("init")
 
 * Cryptocurrency "dividends"? 🤔
 
-Most people who are "in the know" of the cryptocurrency world have probably
+Most people who are "in the know" of the cryptocurrency/defi world have probably
 heard of the various ways to earn "dividends" from their holdings. By leveraging
-earning protocols such as staking, lending, or being a liquidity provider,
+earning protocols such as staking, lending, or by being a liquidity provider,
 people can just sit back and accrue tokens, increasing their portfolios
-value. This is starkly different from the norm, which is just to HODL until the
-price of their assets hits the moon.
+value. This is starkly different from the norm, which is to HODL until the price
+of their assets hits the moon.
 
 Unlike those who strictly HODL, earners that continually invest their returns
 back into earning protocols benefit from the :sparkles:magic:sparkles: that is
 compound interest.
 
-Unfortunately, since cryptocurrency/blockchain projects are pay to play (due to
-gas fees), every time an earner wants to interact with an earning protocol, they
-need to pay a fee to do so. In short: You need to spend tokens to make tokens
-...
+Unfortunately, since most cryptocurrency/blockchain projects are pay to play
+(due to gas fees), every time an earner wants to interact with an earning
+protocol, they need to pay a fee to do so. In short: You need to spend tokens to
+make tokens ...
 
 This begs the question: How do we spend the least to make the most with respect
-to these earning protocols?
+to these earning protocols and compound interest?
 
 * Abstracting earning protocols
 
 There are many methods to earn "dividends" from cryptocurrency; however, most
-fall into one of two compounding types:
+fall into one of two types:
 
 1. Auto compounding
 2. Manual compounding
 
-Auto compounding protocols will compound frequently but usually do so for a
-percentage fee of your earnings. Manual compounding protocols, instead, require
-you to compound your own earnings for gas fees.
+Auto compounding earning protocols will compound frequently and automatically,
+but usually do so for a percentage fee of your earnings. Manual compounding
+earning protocols, instead, require *you* to compound your own earnings for the
+cost of gas fees.
 
 Despite both flavors, they both intend for you to follow the same steps:
 
@@ -170,10 +171,15 @@ Despite both flavors, they both intend for you to follow the same steps:
 2. Wait for "dividends" to accrue
 3. Recieve/claim "dividends"
 
-This procedure, while simple, can be very risky as price isn't taken into
-account. Instead of blindly following this procedure, let's take a closer look
-at both of these types of earning protocols and see if we can come up with an
-expression to model potential earnings.
+It might seem obvious at first just to choose the auto compounding type as it's
+simpler and easier, but just because it seems obvious *does not* mean it's the
+most profitable.
+
+Instead of blindly following this procedure, let's take a closer look at both of
+these types of earning protocols and see if we can come up with an expression to
+model potential earnings. This will allow us to better understand the
+differences between both types and be better informed before investing in one of
+them.
 
 To start, let's abstract out some overarching parameters (since most earning
 protocols can be modeled similarly to one another).
@@ -189,6 +195,7 @@ protocols can be modeled similarly to one another).
 
   P, r, i, n, t = var("P r i n t")
   f = var("f", latex_name="f_{gas}")
+  f_p = var("f_p", latex_name="f_{perc}")
   Ps = var('P', n=5)
   Pn = var('P_n', latex_name="P_n")
   Pn1 = var('P_n1', latex_name="P_{n-1}")
@@ -240,24 +247,50 @@ protocols can be modeled similarly to one another).
 - src_python[:results output :session :dir (org-sbe
   container-dir-str)]{print(latex(r))} {{{results($r$)}}} - APR
 - src_python[:results output :session :dir (org-sbe
-  container-dir-str)]{print(latex(f))} {{{results($f$)}}} - Fee per compound
+  container-dir-str)]{print("$f$")} {{{results($$f$$)}}} - Fee per compound
 
 #+begin_quote
-*Aside* - We will assume that every time earnings are "claimed," they are
-automatically reinvested back into the protocol, effectively making this a
-compounding process.
+*Aside* - We will assume, in the manual compounding case, that every time earnings
+are "claimed," they are automatically reinvested back into the protocol,
+effectively making it a compounding process.
 #+end_quote
 
 * Modeling auto compounding
 
 Although most auto compounding earning protocols charge a fee, they have the
-nice added benefit of zero interaction. I can sit back and stack token knowing
-everything is managed for me.
+nice added benefit of zero interaction. We can sit back and stack tokens knowing
+everything is managed for us. Predicting our future earnings in this category is
+simple as we can model future earnings with the compound interest formula (with
+some modifications):
+
+#+NAME: auto-compounding-interest
+#+HEADER: :exports none :results output
+#+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
+  compound_interest_with_auto_fee = ( P * ( 1 + ( r / n ) - (f_p/n) ) ** (n*t) )
+  print(latex_center(latex(compound_interest_with_auto_fee)))
+#+END_SRC
+
+#+RESULTS: auto-compounding-interest
+:
+:  \begin{alignedat}{2}
+:  P {\left(-\frac{{f_{perc}}}{n} + \frac{r}{n} + 1\right)}^{n t}
+:  \end{alignedat}
+
+#+MACRO: auto-compounding-interest (eval (latex-display-wrap (org-sbe auto-compounding-interest)))
+
+{{{auto-compounding-interest()}}}
+
+As long as we take into account the percentage fee and APR, calculating future
+earnings is simple and direct.
 
 * Modeling Manual compounding
 
-Now that we have some basic parameters, let's create an expression to model what
-our earnings will be after compounding once.
+Manual compounding earning protocols are more nuanced when calculating potential
+earnings than their auto counterparts (and are the primary focus of this
+post). Since we compound at our own schedule, we get to choose how fast or slow
+we want to do so. The obvious next question to ask is, "what is the best
+compounding schedule?" But before we get there, let's start from square one and
+create an expression to model earnings after compounding just once:
 
 #+NAME: earning-over-time-1
 #+HEADER: :exports none :results output
@@ -279,14 +312,17 @@ our earnings will be after compounding once.
 
 {{{earning-over-time-1()}}}
 
-This is the base case where src_python[:results output :session :dir (org-sbe
+This is our base case where src_python[:results output :session :dir (org-sbe
 container-dir-str)]{print(latex(Ps[0]))} is our initial balance and
 src_python[:results output :session :dir (org-sbe
 container-dir-str)]{print(latex(Ps[1]))} is our balance after compounding. Now
 the obvious next question is what does this expression look like if we compound
 again? Compounding for a second time means we follow the same formula as before,
 except we substitute our second balance with our balance *after* the first
-compound. This can described as follows:
+compound. We will also assume our compounding schedule is at a constant rate,
+represented by time src_python[:results output :session :dir (org-sbe
+container-dir-str)]{print(latex(t))} between comounds. This can described as
+follows:
 
 #+NAME: earning-over-time-2
 #+HEADER: :exports none :results output
@@ -335,12 +371,13 @@ container-dir-str)]{print(latex(Pn))} recursively as follows:
 
 {{{earning-over-time-n()}}}
 
-This recursive definition is great! But it would be nicer if we had a closed
-form expression. Backing up to the src_python[:results output :session :dir
-(org-sbe container-dir-str)]{print(latex(n==2))} case, if we re-arrange a few of
-the terms, and substitute src_python[:results output :session :dir (org-sbe
+This recursive definition is great! But it would be nicer (and simpler to
+compute) if we had a closed form expression. Backing up to the
+src_python[:results output :session :dir (org-sbe
+container-dir-str)]{print(latex(n==2))} case, if we re-arrange a few of the
+terms, and substitute src_python[:results output :session :dir (org-sbe
 container-dir-str)]{print(latex(t==1/n))} {{{results(t = \frac{1}{n})}}}, we can
-start to see a familiar formula appear.
+start to see a familiar formula appear:
 
 #+NAME: n2-compound-interest
 #+HEADER: :exports none :results output
@@ -368,10 +405,11 @@ start to see a familiar formula appear.
 
 {{{n2-compound-interest()}}}
 
-Looking closely at the final expression, we can see that the leftmost
-component looks eerily like compound interest. That's because it is! And if we look
-at the direct formula for compound interest we can see that there is a direct
-comparison.
+Looking closely at the final expression, we can see that the leftmost component
+looks eerily like compound interest. That's because it is! And if we compare the
+formula for compound interest against this term we can see that there is a
+direct comparison that will be embedded for every positive src_python[:results
+output :session :dir (org-sbe container-dir-str)]{print(latex(n))}.
 
 #+NAME: compound-interest
 #+HEADER: :exports none :results output
@@ -435,16 +473,15 @@ following expression which is equivalent to our recursive definition:
 {{{compound-interest-with-iterative-penalty-verbose()}}}
 
 Simplifying iterative penalties as a geometric series, we arrive at our final
-function, compound interest with iterative penalties (or $ciwip$). With this
-expression we can now model the behavior of an earning protocol while
-continually compounding rewards.
+function, compound interest with iterative penalties (or src_python[:results
+output :session :dir (org-sbe container-dir-str)]{print(latex(ciwip))}).
 
 #+NAME: compound-interest-with-iterative-penalty-simple
 #+HEADER: :exports none :results output
 #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
   compound_interest_with_iterative_penalty = compound_interest - iterative_penalty.unhold()
   ciwip = function('ciwip')
-  print(latex_center(latex(ciwip(P,f,r,n) == compound_interest - iterative_penalty.unhold())))
+  print(latex_center(latex(ciwip(P,r,f,n) == compound_interest - iterative_penalty.unhold())))
 #+END_SRC
 
 #+RESULTS[92dcf708f6a8d7e37d1096957d942ffc9645a2ff]: compound-interest-with-iterative-penalty-simple
@@ -457,14 +494,19 @@ continually compounding rewards.
 
 {{{compound-interest-with-iterative-penalty-simple()}}}
 
-* Understanding via visualization                  :chart_with_upwards_trend:
+With this expression we can now model the behavior of a manual compounding
+earning protocol with a compounding schedule of src_python[:results output
+:session :dir (org-sbe container-dir-str)]{print(latex(n))}. With this model,
+let's try to gain some insight into how they work with some visualizations. This
+will allow us to understand them better before we find the best schedule.
 
-Now that we have an expression to model an earning protocol, let's try to gain
-some insight into how they work with some visualizations. It seems most
-reasonable to start with a 2D plot dependent on src_python[:results output
-:session :dir (org-sbe container-dir-str)]{print(latex(n))} because it's the
-only parameter that we can control once we put in a deposit. Holding all the
-other parameters constant using random values, we get the following plot:
+* Understanding via visualization 📈
+
+It seems most reasonable to start with a 2D plot dependent on
+src_python[:results output :session :dir (org-sbe
+container-dir-str)]{print(latex(n))} because it's the only parameter that we can
+control once we put in a deposit. Holding all the other parameters constant
+using some arbitrary values, we get the following plot:
 
 #+NAME: ciwip-func-def
 #+HEADER: :exports none :results output
@@ -514,10 +556,10 @@ other parameters constant using random values, we get the following plot:
   }
   upper_bound = params[P] * params[r] / params[f]
   params_by_str = {str(k): v for k,v in params.items()}
-  params_tex_str = ' | '.join(f'{p}={v}' for p,v in params.items())
+  params_tex_str = ' \ | \ '.join(f'{latex(p)}={v}' for p,v in params.items())
   pl = spb_plot(
       (compound_interest_with_iterative_penalty.subs(params), (n, 0, upper_bound + (upper_bound * 0.1))),
-      title=f"$\\text{{{title}}} \\\\ \\text{{{params_tex_str}}}$",
+      title=f"$\\text{{{title}}} \\\\ {{{params_tex_str}}}$",
       show=False,
       use_latex=True,
       legend=False,
@@ -543,6 +585,10 @@ other parameters constant using random values, we get the following plot:
 #+END_SRC
 
 #+RESULTS: compound-interest-with-iterative-penalty-plot
+: /tmp/python-fGxzl7:13: DeprecationWarning:
+:
+: invalid escape sequence \
+:
 : Filename: compound-interest-with-iterative-penalty-plot.png
 
 #+CAPTION: 2D view of compound interest with iterative penalties
@@ -560,12 +606,12 @@ output :session :dir (org-sbe
 container-dir-str)]{print(latex(n==round(optimal_compound_interest_with_iterative_penalty(params_by_str['P'],
 params_by_str['f'], params_by_str['r']), 2)))} {{{results($n = 2.79$)}}}) where
 we make *more* than we lose. This means that by compounding at the right
-frequency, the accrued rewards are greater than the fee we need to
-pay to claim them.
+frequency, the accrued rewards are greater than the fees we need to pay to claim
+them.
 
-Now we can return to our original question: "how do we spend the
-least to make the most?". The answer we can infer from this plot is "choose the
-right src_python[:results output :session :dir (org-sbe
+Now we can return to our original question: "how do we spend the least to make
+the most?". The answer we can infer from this plot for manual compounding is
+"choose the optimal src_python[:results output :session :dir (org-sbe
 container-dir-str)]{print(latex(n))} {{{results($n$)}}}".
 
 #+NAME: compound-interest-with-iterative-penalty-zero-limit-analysis
@@ -575,7 +621,7 @@ container-dir-str)]{print(latex(n))} {{{results($n$)}}}".
       latex_center(
           latex_lim(
               latex(
-                  ciwip(P,f,r,n).derivative(n) == \
+                  ciwip(P,r,f,n).derivative(n) == \
                   limit(compound_interest_with_iterative_penalty.derivative(n),n=oo)
               ),
               latex(n),
@@ -636,6 +682,8 @@ Doing so will give us the following expression:
 #+MACRO: homogenized-compound-interest-with-iterative-penalty (eval (latex-display-wrap (org-sbe homogenized-compound-interest-with-iterative-penalty)))
 
 {{{homogenized-compound-interest-with-iterative-penalty()}}}
+
+visualizing this expression gives us the following plot:
 
 #+NAME: homogenized-compound-interest-with-iterative-penalty-plot
 #+HEADER: :exports none :results output
@@ -726,39 +774,50 @@ src_python[:results output :session :dir (org-sbe
 container-dir-str)]{print(latex(n))}. Looking closely, there seems to be a
 similar shape between the intersection and the 2D plot, and if we slide the
 opaque plane up and down the src_python[:results output :session :dir (org-sbe
-container-dir-str)]{print(latex(C))} axis, the shape seems consistent. However
-this empirical observation doesn't prove anything. Instead, let's define a narrow
-problem we want to solve for, and prove a property about the problem.
+container-dir-str)]{print(latex(C))} axis, the shape seems consistent. However,
+this empirical observation doesn't prove anything. Instead, in search of our
+optimal src_python[:results output :session :dir (org-sbe
+container-dir-str)]{print(latex(n))}, let's explore some of the mathematical
+properties of our problem.
 
 * In search of optimality ⛰
 
 We showed in the previous section that when we chose some fixed parameters for
 our src_python[:results output :session :dir (org-sbe
-container-dir-str)]{print(latex(ciwip))} {{{results()}}} function, there was an
+container-dir-str)]{print(latex(ciwip))} {{{results($ciwip$)}}} function, there was an
 optimal src_python[:results output :session :dir (org-sbe
 container-dir-str)]{print(latex(n))} that enables us to earn more than we
 lose. This is obviously an ideal case which we want to happen all the time!
-Unfortunately, in reality, our "fixed" parameters aren't so "fixed." What we
-really want to know is for any reasonable set of parameters, can we find the
-optimal value that is greater than our initial balance?
+Unfortunately, in reality, our "fixed" parameters aren't so "fixed" and fees and
+APRs can change by the second. What we really want to know is: for any
+reasonable set of parameters, can we find the optimal number of compounds that
+get's us a balance greater than what we started with?
 
 ** Using the gradient
 
-One initial approach we can take is by using the gradient. If we find where the
+One initial approach we can take is to use the gradient. If we find where the
 gradient is equal to zero then we can find the extrema of our function which
-will allow us to find our inflection point. Unfortunately this isn't really
-tractable so we will need to find another way.
+will allow us to find our inflection point and optimal number of
+compounds. Unfortunately this isn't really tractable so we will need to find
+another way.
 
 #+NAME: gradient-compound-interest-with-iterative-penalty
 #+HEADER: :exports none :results output
 #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
-  print(latex_center(latex(compound_interest_with_iterative_penalty.diff(n).simplify() == ciwip(P,f,r,n).derivative(n))))
+  print(
+      latex_center(
+          latex(
+              compound_interest_with_iterative_penalty.diff(n).simplify() == \
+              ciwip(P,r,f,n).derivative(n)
+          )
+      )
+  )
 #+END_SRC
 
 #+RESULTS: gradient-compound-interest-with-iterative-penalty
 :
 :  \begin{alignedat}{2}
-:  -P {\left(\frac{r}{n} + 1\right)}^{n} {\left(\frac{r}{n {\left(\frac{r}{n} + 1\right)}} - \log\left(\frac{r}{n} + 1\right)\right)} + \frac{{\left({\left(\frac{n^{2} {\left(\frac{n + r}{n^{2}} - \frac{1}{n}\right)}}{n + r} - \log\left(\frac{n + r}{n}\right)\right)} n \left(\frac{n + r}{n}\right)^{n} - \left(\frac{n + r}{n}\right)^{n} + 1\right)} f}{r} = \frac{\partial}{\partial n}{\rm ciwip}\left(P, f, r, n\right)
+:  -P {\left(\frac{r}{n} + 1\right)}^{n} {\left(\frac{r}{n {\left(\frac{r}{n} + 1\right)}} - \log\left(\frac{r}{n} + 1\right)\right)} + \frac{{\left({\left(\frac{n^{2} {\left(\frac{n + r}{n^{2}} - \frac{1}{n}\right)}}{n + r} - \log\left(\frac{n + r}{n}\right)\right)} n \left(\frac{n + r}{n}\right)^{n} - \left(\frac{n + r}{n}\right)^{n} + 1\right)} {f_{gas}}}{r} = \frac{\partial}{\partial n}{\rm ciwip}\left(P, r, {f_{gas}}, n\right)
 :  \end{alignedat}
 
 #+MACRO: gradient-compound-interest-with-iterative-penalty (eval (latex-display-wrap (org-sbe gradient-compound-interest-with-iterative-penalty)))
@@ -767,8 +826,8 @@ tractable so we will need to find another way.
 
 ** Avoiding losses
 
-Another direction we can take to simplify our problem is to find all the
-places where we lose more than we gain.
+Another direction we can take is to simplify our problem by finding all the
+places where we lose more than we gain, and ignoring them.
 
 We know that the space of possible compounds is from src_python[:results output
 :session :dir (org-sbe container-dir-str)]{print(latex_right(latex(0),
@@ -824,7 +883,7 @@ expression we get:
 #+HEADER: :exports none :results output
 #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
   eps = var("eps", latex_name="\\epsilon")
-  print(latex_center(latex(ciwip(P,f,r,net_even_n.rhs() + eps) < P)))
+  print(latex_center(latex(ciwip(P,r,f,net_even_n.rhs() + eps) < P)))
 #+END_SRC
 
 #+RESULTS: net-loss
@@ -865,25 +924,35 @@ problem). This is due to the fact that the left hand component will always be
 negative, and the right hand component will always be positive. This means the
 result will always be negative.
 
-This allows us to conclude that compounding for src_python[:results output :session :dir
-(org-sbe container-dir-str)]{print(latex(net_even_n.rhs() + eps))} for any
-src_python[:results output :session :dir (org-sbe
+This allows us to conclude that compounding greater than src_python[:results
+output :session :dir (org-sbe container-dir-str)]{print(latex(net_even_n.rhs() +
+eps))} for any src_python[:results output :session :dir (org-sbe
 container-dir-str)]{print(latex(eps>0))} we will always end up with less than
 our original balance.
 
+Now we know that our optimal value must lie in between src_python[:results
+output :session :dir (org-sbe container-dir-str)]{print(latex(0))}
+{{{results($0$)}}} and src_python[:results output :session :dir (org-sbe
+container-dir-str)]{print(latex(net_even_n.rhs()))} {{{results($\frac{P
+r}{f}$)}}}, let's try to see if we will always be able to find this optimal
+point.
+
 ** Concavity
 
-Instead of trying to find a closed form way of getting the maximum of our
-function, maybe there is a property we can prove about our function to make
-finding it easier. The most ideal property we would want to prove is concavity.
+Now that we know our optimal value is bounded, instead of trying to find a
+closed form way of getting the maximum of our function, maybe we can search for
+it. The only problem we have now is how do we know our optimal value is easily
+findable? Luckily there is a property we can try to prove about our function to
+make finding it easier. The most ideal property we would want to prove is
+concavity.
 
 If we can show that our function is concave, then we will know two important things:
 
 1. All local maxima are global maxima
 2. An optimizer will find a local maxima
 
-In order to find out if this function is truly concave, we can leverage Jensen's
-inequality and check if the inequality is true.
+In order to find out if this function is truly concave, we can leverage [[https://en.wikipedia.org/wiki/Jensen%27s_inequality][Jensen's
+inequality]] and check if it is true in all cases.
 
 #+NAME: jensins-inequality
 #+HEADER: :exports none :results output
@@ -969,7 +1038,7 @@ Substituting further and reducing we get the expression:
 #+RESULTS: substituted-ciwip-jensins-inequality
 :
 :  \begin{alignedat}{2}
-:  -{\left(P {\left| {\lambda} - 1 \right|} - P\right)} {\left(\left(\frac{P {\left| {\lambda} - 1 \right|} + f}{P {\left| {\lambda} - 1 \right|}}\right)^{\frac{P r {\left| {\lambda} - 1 \right|}}{f}} - 1\right)} > 0
+:  -{\left(P {\left| {\lambda} - 1 \right|} - P\right)} {\left(\left(\frac{P {\left| {\lambda} - 1 \right|} + {f_{gas}}}{P {\left| {\lambda} - 1 \right|}}\right)^{\frac{P r {\left| {\lambda} - 1 \right|}}{{f_{gas}}}} - 1\right)} > 0
 :  \end{alignedat}
 
 #+MACRO: substituted-ciwip-jensins-inequality (eval (latex-display-wrap (org-sbe substituted-ciwip-jensins-inequality)))
@@ -1025,14 +1094,15 @@ container-dir-str)]{print(latex(P>(P*abs(lam - 1))))} {{{results(P > P {\left|
 {\lambda} - 1 \right|})}}}.
 
 We can also infer that src_python[:results output :session :dir (org-sbe
-container-dir-str)]{print(latex(bet>0))}. Since src_python[:results output
-:session :dir (org-sbe container-dir-str)]{print(latex(((P*abs(lam - 1))+f) >
-(P*abs(lam - 1))))} {{{results($100 \\\, {\left| {\lambda} - 1 \right|} + 0.01 >
-100 \\\, {\left| {\lambda} - 1 \right|}$)}}}, we know the base of the exponent
-is greater than 1. We also know that any number greater than 1 raised to a
-positive power will also be greater than 1. This means that
-src_python[:results output :session :dir (org-sbe
-container-dir-str)]{print(latex(bet))} must be positive.
+container-dir-str)]{print(latex(bet>0))}.
+
+Since src_python[:results output :session :dir (org-sbe
+container-dir-str)]{print(latex(((P*abs(lam - 1))+f) > (P*abs(lam - 1))))}
+{{{results($P {\left| {\lambda} - 1 \right|} + {f_{gas}} > P {\left| {\lambda} -
+1 \right|}$)}}}, we know the base of the exponent is greater than 1. We also
+know that any number greater than 1 raised to a positive power will also be
+greater than 1. This means that src_python[:results output :session :dir
+(org-sbe container-dir-str)]{print(latex(bet))} must be positive.
 
 Now that we have inferred that src_python[:results output :session :dir (org-sbe
 container-dir-str)]{print(latex(alph))} and src_python[:results output :session
@@ -1044,61 +1114,82 @@ Finally since we have shown that src_python[:results output :session :dir
 (org-sbe container-dir-str)]{print(latex((alph*bet)>0))} must be true, we have
 shown that Jensen's inequality must always be true, and that our function is
 always concave. Knowing this, and being paired with the knowledge of a bound on
-our search space, we can refreme our formula as an optmization problem:
+our search space, we can refreme our formula as an optimization problem:
 
-#+HEADER: :exports both :results output
+#+NAME: optimization-ciwip
+#+HEADER: :exports none :results output
 #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
-  n_star = var("n_star", latex_name="n^*")
-  P_star = var("P_star", latex_name="P^*")
+  n_star = var("n_star", latex_name="n^\\prime")
+  P_star = var("P_star", latex_name="P_{n^\\prime}")
   ubound = P*r/f
-  katex_str = f"""
-  \\argmax_{{ {latex(n_star)} \\isin \\mathbb{{Z}}^+ < {latex(ubound)} }} {latex(ciwip(P,r,f,n_star) == P_star)}
-  """
+  katex_str = f"""\\argmax_{{ {latex(n_star)} \\isin \\mathbb{{Z}}^+ < {latex(ubound)} }} {latex(ciwip(P,r,f,n_star) == P_star)}"""
   print(latex_center(katex_str))
 #+END_SRC
 
-#+RESULTS:
+#+RESULTS: optimization-ciwip
 :
 :  \begin{alignedat}{2}
-:
-: \argmax_{ {n^*} \isin \mathbb{Z}^+ < \frac{P r}{f} } {\rm ciwip}\left(P, r, f, {n^*}\right) = {P^*}
-:
+:  \argmax_{ {n^\prime} \isin \mathbb{Z}^+ < \frac{P r}{{f_{gas}}} } {\rm ciwip}\left(P, r, {f_{gas}}, {n^\prime}\right) = {P_{n^\prime}}
 :  \end{alignedat}
+
+#+MACRO: optimization-ciwip (eval (latex-display-wrap (org-sbe optimization-ciwip)))
+
+{{{optimization-ciwip()}}}
 
 In this framing, src_python[:results output :session :dir (org-sbe
 container-dir-str)]{print(latex(n_star))} represents our optimal
 src_python[:results output :session :dir (org-sbe
 container-dir-str)]{print(latex(n))} and since we know our problem is convex, we
-know we will always find it.
+know we will always find it. Using our optimal src_python[:results output
+:session :dir (org-sbe container-dir-str)]{print(latex(n_star))} allows us now
+to predict future earnings for src_python[:results output :session :dir (org-sbe
+container-dir-str)]{print(latex(ciwip))} with the optimal compounding schedule.
 
-** Compare and contrast
+#+begin_quote
+*Aside* - You will notice that we are optimizing src_python[:results output
+:session :dir (org-sbe container-dir-str)]{print(latex(n_star))} over the
+integers and not real values. We have to do this as there is no way we can
+compound a "fractional" number of times. However, we can do this and preserve
+concavity (from [[https://www-ljk.imag.fr/membres/Anatoli.Iouditski/cours/convex/chapitre_3.pdf][theorum 3.5.6 of Anatoli Iouditski Convex Optimization course]])
+if we say the integers are a "subset" of the reals.
+#+end_quote
 
+* Compare and contrast
 
+Now that we have an expression to predict future earnings for optimal
+src_python[:results output :session :dir (org-sbe
+container-dir-str)]{print(latex(ciwip))}, which models manual compounding
+earning protocols, and an expression for auto compounding earning protocols,
+let's see how they compare against one another with some hand picked parameters:
 
-#+HEADER: :exports both :results output
+#+HEADER: :exports none :results output
 #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
   from spb.backends.plotly import PB
   from spb import plot as spb_plot
 
-  title = "Earning protocol strategies over time"
+  title = "Earning protocols over time"
   filename = f'{title.lower().replace(" ","-")}-plot.png'
   params = {
-      P: 100,
+      P: 1000,
       r: 0.8,
-      f: 0.01
+      f: 0.03
   }
   params_by_str = {str(k): v for k,v in params.items()}
-  params_tex_str = ' | '.join(f'{p}={v}' for p,v in params.items())
+  params_tex_str = ' \ | \ '.join(f'{latex(p)}={v}' for p,v in params.items())
 
   def ciwip_over_time(input_params):
 
       # Get params for calculating the range of balances
-      opt_n = optimal_compound_interest_with_iterative_penalty(
-          input_params[P],
-          input_params[f],
-          input_params[r],
-          astype=int
-      )
+      if n not in input_params:
+          opt_n = optimal_compound_interest_with_iterative_penalty(
+              params[P],
+              params[f],
+              params[r],
+              astype=int
+          )
+      else:
+          opt_n = input_params[n]
+
       t_diff = 1.0 / opt_n
       ranges = []
       P_init = input_params[P]
@@ -1112,20 +1203,19 @@ know we will always find it.
           P_init = compound(P_init, r, t, f).subs({**input_params, P: P_init, t:t_diff})
       return piecewise(ranges, var=t)
 
-  f_p = var("f_p", latex_name="f_pool")
   compound_interest_with_auto_fee = ( P * ( 1 + ( r / n ) - (f_p/n) ) ** (n*t) )
   axis_range = (t, 0.6, 1.01)
   pl = spb_plot(
-      (compound_interest_with_auto_fee.subs({**params, n: 5000*365, f_p: 0}),
+      (compound_interest_with_auto_fee.subs({**params, n: 1e5, f_p: 0}),
        axis_range,
-       "$Compound \ interest$"),
+       "$Continuous \ compounding \ interest$"),
       (ciwip_over_time(params),
        axis_range,
        "$Optimal \ ciwip$"),
-      (compound_interest_with_auto_fee.subs({**params, n: 5000*365, f_p:0.03}),
+      (compound_interest_with_auto_fee.subs({**params, n: 5000*365, f_p:0.02}),
        (t, 0.6, 1.01),
-       "$3\% \ fee \ auto \ pool$"),
-      title=f"$\\text{{{title}}} \\\\ \\text{{{params_tex_str}}}$",
+       "$2\% \ auto \ compounding \ fee$"),
+      title=f"$\\text{{{title}}} \\\\ {{{params_tex_str}}}$",
       show=False,
       process_piecewise=False,
       use_latex=True,
@@ -1159,47 +1249,79 @@ know we will always find it.
 
 #+RESULTS:
 #+begin_example
-/tmp/python-PprODU:42: DeprecationWarning:
+/tmp/python-OGzUt9:12: DeprecationWarning:
 
 invalid escape sequence \
 
-/tmp/python-PprODU:45: DeprecationWarning:
+/tmp/python-OGzUt9:45: DeprecationWarning:
 
 invalid escape sequence \
 
-/tmp/python-PprODU:48: DeprecationWarning:
+/tmp/python-OGzUt9:48: DeprecationWarning:
+
+invalid escape sequence \
+
+/tmp/python-OGzUt9:51: DeprecationWarning:
 
 invalid escape sequence \%
 
-/tmp/python-PprODU:55: DeprecationWarning:
+/tmp/python-OGzUt9:58: DeprecationWarning:
 
 invalid escape sequence \
 
-/tmp/python-PprODU:56: DeprecationWarning:
+/tmp/python-OGzUt9:59: DeprecationWarning:
 
 invalid escape sequence \
 
-Filename: earning-protocol-strategies-over-time-plot.png
+Filename: earning-protocols-over-time-plot.png
 #+end_example
 
-#+HEADER: :exports both :results output
-#+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
-  P0, r0, f0 = 100, 0.8, 0.01
-  balance = P0
-  ciwip = lambda P,r,f,n: P*(r/abs(n) + 1)**abs(n) - (((r + abs(n))/abs(n))**abs(n)*abs(n) - abs(n))*f/r if n != 0 else P
-  for n_ in range(0, int(round(P0*r0/f0))):
-     new_balance = ciwip(P0, r0, f0, n_)
-     if new_balance >= balance:
-         balance = new_balance
-     else:
-         break
+#+CAPTION: Different earning protocols modeled over time
+[[./earning-protocols-over-time-plot.png]]
 
-  print(f"Best number of compounds: {n_}/yr with a final balance of {balance}")
-#+END_SRC
+The interesting thing to take away from this plot is that given the following
+set of paramaters, manual compounding via optimal src_python[:results output
+:session :dir (org-sbe container-dir-str)]{print(latex(ciwip))} performs better
+than the auto compounding counterpart (with continuous compound interest
+performing the best). This means that if we were to assume, at the start, that
+auto compounding earning protocols were better and invested in them, we could be
+missing out on potential profits by not using optimal src_python[:results output
+:session :dir (org-sbe container-dir-str)]{print(latex(ciwip))}. However, if we
+increased the gas fee, our auto compounding variety would perform better (we
+will save the theory for which scenarios cause one to perform better over the
+other for another post).
 
-#+RESULTS:
-: Best number of compounds: 68/yr with a final balance of 220.48444917429077
+Armed with the tools to model earnings for both compounding types, we can now
+make an informed decision about maximizing our profits.
 
+* Future directions
+
+Despite the depth of this post in exploring earning protocols, we only scratched
+the surface as there are plenty of potentially interesting areas to explore:
+
+1. Statistically representing earning protocol parameters
+
+   As mentioned earlier in this post, fees and APRs can change by the second
+   based on a myriad of factors. If we were to represent these parameters as
+   distributions, how would our compounding schedule or future earnings change?
+   How could we use outside knowledge to update our hypotheses about this
+   problem?
+
+2. Earning protocol rebalancing strategies
+
+   There are many earning protocols to choose from. How should we associate risk
+   with them? When do we leave one for another? Where do we redirect streams of
+   earnings?
+
+* Conclusion
+
+The world of defi and cryptocurrency continues to fascinate me as new economic
+experiments and protocols get launched every day. Despite the negative press, I
+truly believe these experiments will yield novel results and change the way we
+move value between one another. It also could all go to zero, but I'll enjoy the
+ride either way.
+
+I hope you enjoyed and learned something new 🖐
 
 * Environment teardown                                             :noexport:
 
