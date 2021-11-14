@@ -1,6 +1,6 @@
 #+TITLE: Optimal compounding with penalties
 #+CREATED: [2021-11-13 Sat 00:07]
-#+LAST_MODIFIED: [2021-11-13 Sat 23:14]
+#+LAST_MODIFIED: [2021-11-13 Sat 23:26]
 #+ROAM_TAGS: money composition
 #+STARTUP: showall indent
 #+OPTIONS: toc:nil
@@ -49,7 +49,7 @@ author, exporting functionality, tests, configuration, etc.
 #+END_SRC
 
 #+RESULTS:
-: Enabled mdx on save
+: Disabled mdx on save
 
 ** Configuration
 
