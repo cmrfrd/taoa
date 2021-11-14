@@ -13,7 +13,7 @@ excerpt: "Making money with your money's money"
 Most people who are "in the know" of the cryptocurrency/defi world have probably
 heard of the various ways to earn "dividends" from their holdings. By leveraging
 earning protocols such as staking, lending, or by being a liquidity provider,
-people can just sit back and accrue tokens, increasing their portfolios
+people can just sit back and accrue tokens, increasing their portfolio's
 value. This is starkly different from the norm, which is to HODL until the price
 of their assets hits the moon.
 
@@ -40,14 +40,14 @@ fall into one of two types:
 
 Auto compounding earning protocols will compound frequently and automatically,
 but usually do so for a percentage fee of your earnings. Manual compounding
-earning protocols, instead, require **you** to compound your own earnings for the
-cost of gas fees.
+earning protocols, instead, require **you** to compound your own earnings, only
+having to pay for gas fees.
 
 Despite both flavors, they both intend for you to follow the same steps:
 
 1.  Deposit tokens into the earning protocol
 2.  Wait for "dividends" to accrue
-3.  Recieve/claim "dividends"
+3.  Receive/claim "dividends"
 
 It might seem obvious at first just to choose the auto compounding type as it's
 simpler and easier, but just because it seems obvious **does not** mean it's the
@@ -110,7 +110,7 @@ the obvious next question is what does this expression look like if we compound
 again? Compounding for a second time means we follow the same formula as before,
 except we substitute our second balance with our balance **after** the first
 compound. We will also assume our compounding schedule is at a constant rate,
-represented by time $t$ between comounds. This can described as
+represented by time $t$ between compounds. This can be described as
 follows:
 
 $$\begin{alignedat}{2}
@@ -186,7 +186,7 @@ compounding really means.
 
 The first intuition we can take away is that as we tend $n \rightarrow +\infty$ we see that our output value
 tends towards negative infinity meaning we lose more than we are gaining (which
-we don't want). However there is an inflection point (around $n = 2.79$) where
+we don't want). However, there is an inflection point (around $n = 2.79$) where
 we make **more** than we lose. This means that by compounding at the right
 frequency, the accrued rewards are greater than the fees we need to pay to claim
 them.
@@ -220,7 +220,7 @@ $$\begin{alignedat}{2}
  -n \left(\frac{C + n}{n}\right)^{n} + C {\left(\frac{C}{n} + 1\right)}^{n} + n
  \end{alignedat}$$
 
-visualizing this expression gives us the following plot:
+Visualizing this expression gives us the following plot:
 
 ![img](./homogenized-compound-interest-with-iterative-penalty-plot.png "A surface 3D plot of homogenized compound interest with iterative penalties")
 
@@ -246,15 +246,15 @@ lose. This is obviously an ideal case which we want to happen all the time!
 Unfortunately, in reality, our "fixed" parameters aren't so "fixed" and fees and
 APRs can change by the second. What we really want to know is: for any
 reasonable set of parameters, can we find the optimal number of compounds that
-get's us a balance greater than what we started with?
+gets us a balance greater than what we started with?
 
 
 ### Using the gradient
 
 One initial approach we can take is to use the gradient. If we find where the
-gradient is equal to zero then we can find the extrema of our function which
+gradient is equal to zero, then we can find the extrema of our function which
 will allow us to find our inflection point and optimal number of
-compounds. Unfortunately this isn't really tractable so we will need to find
+compounds. Unfortunately, this isn't really tractable so we will need to find
 another way.
 
 $$\begin{alignedat}{2}
@@ -269,7 +269,7 @@ places where we lose more than we gain, and ignoring them.
 
 We know that the space of possible compounds is from $0 \rightarrow +\infty$ and we've already established
 that as we compound more and more we get diminishing returns, and eventually
-substantial losses. To avoid these losses we need to see where
+substantial losses. To avoid these losses, we need to see where
 ${\rm ciwip}\left(P, r, {f_{gas}}, n\right) < P$. We can observe from our 2D graph of
 $ciwip$ that $P$ is intersected
 twice, first at $0$ and second at
@@ -277,8 +277,8 @@ $n = 20.0$. Now based on what we know about this function, it makes sense that
 there will always be two points where ${\rm ciwip}\left(P, r, {f_{gas}}, n\right) = P$, one when we don't
 compound at all, and one when we are compounding too much to the point where we
 end up "net even." This second "net even" point is important because with it we
-can show that compounding beyond it will always lead to losses. To find this point
-we can take ${\rm ciwip}\left(P, r, {f_{gas}}, n\right) = P$, and simply solve for
+can show that compounding beyond it will always lead to losses. To find this
+point we can take ${\rm ciwip}\left(P, r, {f_{gas}}, n\right) = P$, and simply solve for
 $n$. Doing so gets us the expression.
 
 $$\begin{alignedat}{2}
@@ -288,7 +288,7 @@ $$\begin{alignedat}{2}
 This means all we need to do is show that if we compound beyond this "net
 even" point with some positive ${\epsilon}$, we will
 always get less than our initial balance $P$. If we put this into an
-expression we get:
+expression, we get:
 
 $$\begin{alignedat}{2}
  {\rm ciwip}\left(P, r, {f_{gas}}, {\epsilon} + \frac{P r}{{f_{gas}}}\right) < P
@@ -373,10 +373,10 @@ greater than 1. This means that ${\beta}$ must be positive.
 Now that we have inferred that ${\alpha}$ and ${\beta}$ are both positive we can
 finally affirm that ${\alpha} {\beta} > 0$ must also be true!
 
-Finally since we have shown that ${\alpha} {\beta} > 0$ must be true, we have
+Finally, since we have shown that ${\alpha} {\beta} > 0$ must be true, we have
 shown that Jensen's inequality must always be true, and that our function is
 always concave. Knowing this, and being paired with the knowledge of a bound on
-our search space, we can refreme our formula as an optimization problem:
+our search space, we can reframe our formula as an optimization problem:
 
 $$\begin{alignedat}{2}
  \argmax_{ {n^\prime} \isin \mathbb{Z}^+ < \frac{P r}{{f_{gas}}} } {\rm ciwip}\left(P, r, {f_{gas}}, {n^\prime}\right) = {P_{n^\prime}}
@@ -390,7 +390,7 @@ to predict future earnings for $ciwip$ with the optimal compounding schedule.
 > **Aside** - You will notice that we are optimizing ${n^\prime}$ over the
 > integers and not real values. We have to do this as there is no way we can
 > compound a "fractional" number of times. However, we can do this and preserve
-> concavity (from [theorum 3.5.6 of Anatoli Iouditski Convex Optimization course](https://www-ljk.imag.fr/membres/Anatoli.Iouditski/cours/convex/chapitre_3.pdf))
+> concavity (from [theorem 3.5.6 of Anatoli Iouditski Convex Optimization course](https://www-ljk.imag.fr/membres/Anatoli.Iouditski/cours/convex/chapitre_3.pdf))
 > if we say the integers are a "subset" of the reals.
 
 
@@ -399,12 +399,12 @@ to predict future earnings for $ciwip$ with the optimal compounding schedule.
 Now that we have an expression to predict future earnings for optimal
 $ciwip$, which models manual compounding
 earning protocols, and an expression for auto compounding earning protocols,
-let's see how they compare against one another with some hand picked parameters:
+let's see how they compare against one another with some hand-picked parameters:
 
 ![img](./earning-protocols-over-time-plot.png "Different earning protocols modeled over time")
 
 The interesting thing to take away from this plot is that given the following
-set of paramaters, manual compounding via optimal $ciwip$ performs better
+set of parameters, manual compounding via optimal $ciwip$ performs better
 than the auto compounding counterpart (with continuous compound interest
 performing the best). This means that if we were to assume, at the start, that
 auto compounding earning protocols were better and invested in them, we could be
@@ -422,7 +422,7 @@ make an informed decision about maximizing our profits.
 Despite the depth of this post in exploring earning protocols, we only scratched
 the surface as there are plenty of potentially interesting areas to explore:
 
-1.  Statistically representing earning protocol parameters
+1.  Statistically representing earning protocol parameters:
 
     As mentioned earlier in this post, fees and APRs can change by the second
     based on a myriad of factors. If we were to represent these parameters as
@@ -430,7 +430,7 @@ the surface as there are plenty of potentially interesting areas to explore:
     How could we use outside knowledge to update our hypotheses about this
     problem?
 
-2.  Earning protocol rebalancing strategies
+2.  Earning protocol rebalancing strategies:
 
     There are many earning protocols to choose from. How should we associate risk
     with them? When do we leave one for another? Where do we redirect streams of
