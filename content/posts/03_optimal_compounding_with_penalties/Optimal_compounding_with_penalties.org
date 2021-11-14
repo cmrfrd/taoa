@@ -1,6 +1,6 @@
 #+TITLE: Optimal compounding with penalties
 #+CREATED: [2021-11-13 Sat 00:07]
-#+LAST_MODIFIED: [2021-11-13 Sat 23:26]
+#+LAST_MODIFIED: [2021-11-13 Sat 23:38]
 #+ROAM_TAGS: money composition
 #+STARTUP: showall indent
 #+OPTIONS: toc:nil
