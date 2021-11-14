@@ -1,3 +1,10 @@
+### [1.2.29](https://github.com/cmrfrd/taoa/compare/v1.2.28...v1.2.29) (2021-11-14)
+
+
+### Bug Fixes
+
+* update 03 post, spelling mistakes ([ea2e0c3](https://github.com/cmrfrd/taoa/commit/ea2e0c3925672456973d122684371cdf7cefa15e))
+
 ### [1.2.28](https://github.com/cmrfrd/taoa/compare/v1.2.27...v1.2.28) (2021-11-14)
 
 
