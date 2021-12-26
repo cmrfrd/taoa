@@ -1,6 +1,6 @@
-#+TITLE: Committing to Lunch
+#+TITLE: Committing to lunch
 #+CREATED: [2021-07-11 Sun 00:48]
-#+LAST_MODIFIED: [2021-07-24 Sat 11:44]
+#+LAST_MODIFIED: [2021-11-21 Sun 15:21]
 #+ROAM_TAGS: cryptography composition
 #+OPTIONS: toc:nil
 #+OPTIONS: tex:t
@@ -11,7 +11,7 @@
 #+HUGO_CUSTOM_FRONT_MATTER: :date (org-to-blog-date (org-global-prop-value "CREATED"))
 #+HUGO_CUSTOM_FRONT_MATTER: :hero ./images/hero.jpg
 #+HUGO_CUSTOM_FRONT_MATTER: :secret false
-#+HUGO_CUSTOM_FRONT_MATTER: :excerpt A story about how to use commitment schemes
+#+HUGO_CUSTOM_FRONT_MATTER: :excerpt Solving common problems with commitment schemes
 
 #+begin_src emacs-lisp :exports none
 (org-babel-do-load-languages
