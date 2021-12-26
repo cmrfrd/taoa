@@ -27,7 +27,7 @@ workbox.core.clientsClaim();
  */
 self.__precacheManifest = [
   {
-    "url": "webpack-runtime-bd7b097ccc1fbb0ead51.js"
+    "url": "webpack-runtime-27043e8198be1d3d52eb.js"
   },
   {
     "url": "styles.070c350f0ae413c4f804.css"
@@ -36,32 +36,32 @@ self.__precacheManifest = [
     "url": "framework-45db5759c8af4104a4dc.js"
   },
   {
-    "url": "2600c6e7-79ed63ab35eb68738d9f.js"
+    "url": "2600c6e7-462af28eba3975b02ec3.js"
   },
   {
-    "url": "app-3ca867f7a06c8241e50a.js"
+    "url": "app-508ca4c465c0c8df4e11.js"
   },
   {
     "url": "offline-plugin-app-shell-fallback/index.html",
-    "revision": "b2d29e1d4b9601930798cad14ef57bde"
+    "revision": "8f489d611e4c93bf67404dd87243e399"
   },
   {
-    "url": "static/webfonts/s/heebo/v12/NGSpv5_NC0k9P_v6ZUCbLRAHxK1E1yycdw.woff2"
+    "url": "static/webfonts/s/heebo/v15/NGSpv5_NC0k9P_v6ZUCbLRAHxK1E1yycdw.woff2"
   },
   {
-    "url": "static/webfonts/s/heebo/v12/NGSpv5_NC0k9P_v6ZUCbLRAHxK1EiSycdw.woff2"
+    "url": "static/webfonts/s/heebo/v15/NGSpv5_NC0k9P_v6ZUCbLRAHxK1EiSycdw.woff2"
   },
   {
-    "url": "static/webfonts/s/heebo/v12/NGSpv5_NC0k9P_v6ZUCbLRAHxK1Euyycdw.woff2"
+    "url": "static/webfonts/s/heebo/v15/NGSpv5_NC0k9P_v6ZUCbLRAHxK1Euyycdw.woff2"
   },
   {
-    "url": "static/webfonts/s/heebo/v12/NGSpv5_NC0k9P_v6ZUCbLRAHxK1EVyucdw.woff2"
+    "url": "static/webfonts/s/heebo/v15/NGSpv5_NC0k9P_v6ZUCbLRAHxK1EVyucdw.woff2"
   },
   {
     "url": "component---cache-caches-gatsby-plugin-offline-app-shell-js-381ff50c31b1d8789f74.js"
   },
   {
-    "url": "polyfill-f966bebcfae56ae4a799.js"
+    "url": "polyfill-a771e53cde1f7a5496a7.js"
   },
   {
     "url": "manifest.webmanifest",
@@ -157,7 +157,7 @@ const navigationRoute = new NavigationRoute(async ({ event }) => {
   // Check for resources + the app bundle
   // The latter may not exist if the SW is updating to a new version
   const resources = await idbKeyval.get(`resources:${pathname}`)
-  if (!resources || !(await caches.match(`/app-3ca867f7a06c8241e50a.js`))) {
+  if (!resources || !(await caches.match(`/app-508ca4c465c0c8df4e11.js`))) {
     return await fetch(event.request)
   }
 
