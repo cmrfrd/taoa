@@ -1,5 +1,6 @@
 {
   "plugins": ["@babel/plugin-proposal-optional-chaining", "@loadable/babel-plugin"],
+  "compact": true,
   "presets": [
     [
       "babel-preset-gatsby",
