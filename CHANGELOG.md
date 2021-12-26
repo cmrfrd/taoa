@@ -1,3 +1,10 @@
+### [1.2.30](https://github.com/cmrfrd/taoa/compare/v1.2.29...v1.2.30) (2021-12-26)
+
+
+### Bug Fixes
+
+* Add thoughts on emacsconf ([6b11bd3](https://github.com/cmrfrd/taoa/commit/6b11bd376bae34d1811248f303916cdd1997824c))
+
 ### [1.2.29](https://github.com/cmrfrd/taoa/compare/v1.2.28...v1.2.29) (2021-11-14)
 
 
