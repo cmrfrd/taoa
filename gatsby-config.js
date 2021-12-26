@@ -151,16 +151,16 @@ module.exports = {
         name: 'content/pages/not_found'
       }
     },
-    // {
-    //   resolve: `gatsby-plugin-google-analytics`,
-    //   options: {
-    //     trackingId: 'UA-126839741-1',
-    //     head: false,
-    //     anonymize: false,
-    //     respectDNT: true,
-    //     defer: true
-    //   }
-    // },
+    {
+      resolve: `gatsby-plugin-google-analytics`,
+      options: {
+        trackingId: 'UA-126839741-1',
+        head: false,
+        anonymize: false,
+        respectDNT: true,
+        defer: true
+      }
+    },
     {
       resolve: 'gatsby-plugin-offline'
     },
