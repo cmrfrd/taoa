@@ -1,5 +1,5 @@
 {
-  "name": "The_Art_of_Abstraction",
+  "name": "TAOA",
   "author": "alexanderjcomerford@gmail.com",
   "repository": {
     "type": "git",
@@ -7,7 +7,9 @@
   },
   "version": "0.0.0-development",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "watch": "tsc --watch --noEmit --project './tsconfig.json'"
+  },
   "resolutions": {
     "remark": "13.0.0"
   },
