@@ -3,9 +3,6 @@
 module.exports = {
   flags: {
     PRESERVE_WEBPACK_CACHE: true
-    // FAST_DEV: true,
-    // DEV_SSR: true,
-    // PARALLEL_SOURCING: true
   },
   siteMetadata: {
     siteName: `The Art of Abstraction`,
