@@ -4,5 +4,5 @@ home:
   postsHeadingText: "Most recent posts"
   morePostsText: "More Posts ➡ "
   hero:
-    heading: "A blog about first principles, system design, and software"
+    heading: "A blog about first principles, simplification, and software"
     maxWidth: 900
