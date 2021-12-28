@@ -7,6 +7,7 @@ import Headings from '@components/Headings';
 import LoadingContainer from '@components/Loading';
 import MDX from '@components/MDX';
 import Section from '@components/Section';
+import Utterances from '@components/Utterances';
 import { mediaquery } from '@styles/media';
 import { Template, TTemplate, ITAOAThemeUIContext } from '@types';
 
@@ -31,7 +32,6 @@ const postQuery = graphql`
  * and suggests next posts, comments, and how to email subscribe
  */
 const Post: Template = props => {
-
   const { children, pageContext, location } = props;
   const contentSectionRef = useRef<HTMLElement>(null);
 
@@ -49,6 +49,7 @@ const Post: Template = props => {
           <PostShare />
         </MDX>
       </PostBody>
+      <Utterances />
       {next.length > 0 && (
         <NextPost narrow>
           <FooterNext>
