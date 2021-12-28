@@ -1,3 +1,15 @@
+## [1.3.0](https://github.com/cmrfrd/taoa/compare/v1.2.30...v1.3.0) (2021-12-28)
+
+
+### Features
+
+* update descriptions, and bump feature, time to update ([e849822](https://github.com/cmrfrd/taoa/commit/e849822889f39c3a8c9a73cd4bec3b61b4460df8))
+
+
+### Bug Fixes
+
+* bump version, update autor css ([25f5052](https://github.com/cmrfrd/taoa/commit/25f5052c6388a13049ca90999231c2faff4d3f8e))
+
 ### [1.2.30](https://github.com/cmrfrd/taoa/compare/v1.2.29...v1.2.30) (2021-12-26)
 
 
