@@ -2,7 +2,6 @@ import Anchor from '@components/Anchor';
 import Blockquote from '@components/Blockquote';
 import Button, { SmallButton, MediumButton, LargeButton } from '@components/Button';
 import Code from '@components/Code';
-/* import CodeEditorWithOutput from '@components/CodeEditor'; */
 import ConfettiButton from '@components/ConfettiButton';
 import Figcaption from '@components/Figcaption';
 import Headings from '@components/Headings';
@@ -13,16 +12,11 @@ import Paragraph from '@components/Paragraph';
 import Tables from '@components/Tables';
 import { mediaquery } from '@styles/media';
 import { ITAOAThemeUIContext } from '@types';
-import { theme } from '@utils';
 
 import styled from '@emotion/styled';
-import { css } from '@emotion/react';
 import { MDXProvider } from '@mdx-js/react';
-import * as CSS from 'csstype';
-import { MDXRenderer } from 'gatsby-plugin-mdx';
 import React from 'react';
 import { useColorMode } from 'theme-ui';
-import { ThemeProvider } from 'theme-ui';
 
 import 'katex/dist/katex.min.css';
 
@@ -95,7 +89,7 @@ const MDX: React.FC<IMDXProps> = ({ content, children }: IMDXProps) => {
   const [colorMode] = useColorMode();
 
   return (
-    <MDXProvider components={components} isDark={colorMode === 'dark'}>
+    <MDXProvider components={components}>
       <MDXBody>{children}</MDXBody>
     </MDXProvider>
   );
@@ -123,8 +117,8 @@ const POST_WIDTH = (): IStringMap => ({
 });
 
 const BodyCSS = (): IStringMap => ({
-  'h1, h2, h3, h4, h5, h6, p, ul, ol': {
-    margin: '0 auto',
+  'h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote': {
+    margin: '10px auto',
     ...POST_WIDTH()
   },
 
@@ -158,7 +152,7 @@ const PrismCSS = (p: ITAOAThemeUIContext): IStringMap => ({
     margin: '15px auto 50px',
     borderRadius: '5px',
     fontFamily: p.theme.fonts.monospace,
-    background: p.theme.colors.prism.background as CSS.ColorProperty,
+    background: p.theme.colors.prism.background,
 
     '.token-line': {
       borderLeft: '3px solid transparent',
@@ -167,7 +161,7 @@ const PrismCSS = (p: ITAOAThemeUIContext): IStringMap => ({
         .map((key: string) => {
           return {
             [`.${key}`]: {
-              color: p.theme.colors.prism[key] as CSS.ColorProperty
+              color: p.theme.colors.prism[key]
             }
           };
         })
@@ -192,7 +186,7 @@ const PrismCSS = (p: ITAOAThemeUIContext): IStringMap => ({
     '.token-line.highlight-line': {
       margin: '0 -32px',
       padding: '0 32px',
-      background: p.theme.colors.prism.highlight as CSS.ColorProperty,
+      background: p.theme.colors.prism.highlight,
       borderLeft: `3px solid p.theme.colors.prism.highlightBorder`,
 
       [mediaquery.tablet()]: {
