@@ -27,23 +27,26 @@ workbox.core.clientsClaim();
  */
 self.__precacheManifest = [
   {
-    "url": "webpack-runtime-27043e8198be1d3d52eb.js"
+    "url": "webpack-runtime-d52ae7a8d0a442c3f0ae.js"
   },
   {
-    "url": "styles.070c350f0ae413c4f804.css"
+    "url": "styles.300907f14dfb8a744d99.css"
   },
   {
-    "url": "framework-45db5759c8af4104a4dc.js"
+    "url": "framework-d97de5b877fdacb127a1.js"
   },
   {
-    "url": "2600c6e7-462af28eba3975b02ec3.js"
+    "url": "2600c6e7-a387b7be9a74f404ce3d.js"
   },
   {
-    "url": "app-508ca4c465c0c8df4e11.js"
+    "url": "dc6a8720040df98778fe970bf6c000a41750d3ae-94aa71d48dc6b8565b3a.js"
+  },
+  {
+    "url": "app-235c50fc3aaf48e293a2.js"
   },
   {
     "url": "offline-plugin-app-shell-fallback/index.html",
-    "revision": "8f489d611e4c93bf67404dd87243e399"
+    "revision": "228fd5fc5437e8db53238ebd80e40b61"
   },
   {
     "url": "static/webfonts/s/heebo/v15/NGSpv5_NC0k9P_v6ZUCbLRAHxK1E1yycdw.woff2"
@@ -58,10 +61,10 @@ self.__precacheManifest = [
     "url": "static/webfonts/s/heebo/v15/NGSpv5_NC0k9P_v6ZUCbLRAHxK1EVyucdw.woff2"
   },
   {
-    "url": "component---cache-caches-gatsby-plugin-offline-app-shell-js-381ff50c31b1d8789f74.js"
+    "url": "component---cache-caches-gatsby-plugin-offline-app-shell-js-d79825d632e08eb800de.js"
   },
   {
-    "url": "polyfill-a771e53cde1f7a5496a7.js"
+    "url": "polyfill-80c0bbe572c4f31c044e.js"
   },
   {
     "url": "manifest.webmanifest",
@@ -157,7 +160,7 @@ const navigationRoute = new NavigationRoute(async ({ event }) => {
   // Check for resources + the app bundle
   // The latter may not exist if the SW is updating to a new version
   const resources = await idbKeyval.get(`resources:${pathname}`)
-  if (!resources || !(await caches.match(`/app-508ca4c465c0c8df4e11.js`))) {
+  if (!resources || !(await caches.match(`/app-235c50fc3aaf48e293a2.js`))) {
     return await fetch(event.request)
   }
 

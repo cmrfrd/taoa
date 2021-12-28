@@ -1,5 +1,5 @@
 {
-  "hash": "8767a49b83e5e67b11d6",
+  "hash": "4b98a768d0b29101d472",
   "publicPath": "/",
   "outputPath": "/home/node/work/public",
   "assetsByChunkName": {
@@ -9,17 +9,36 @@
   },
   "assets": [
     {
-      "type": "assets by status",
+      "type": "asset",
+      "name": "render-page.js",
+      "size": 5322380,
+      "emitted": false,
+      "comparedForEmit": false,
       "cached": true,
-      "filteredChildren": 1,
-      "size": 6583018
+      "info": {
+        "javascriptModule": false,
+        "related": {
+          "sourceMap": "render-page.js.map"
+        }
+      },
+      "chunkNames": [
+        "main"
+      ],
+      "chunkIdHints": [],
+      "auxiliaryChunkNames": [],
+      "auxiliaryChunkIdHints": [],
+      "filteredRelated": 1,
+      "chunks": [
+        179
+      ],
+      "auxiliaryChunks": []
     }
   ],
   "namedChunkGroups": {
     "main": {
       "name": "main",
       "chunks": [
-        "main"
+        179
       ],
       "assets": [
         {
@@ -37,7 +56,7 @@
   "generator": "loadable-components",
   "chunks": [
     {
-      "id": "main",
+      "id": 179,
       "files": [
         "render-page.js"
       ]
