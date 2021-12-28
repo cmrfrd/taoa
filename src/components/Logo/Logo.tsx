@@ -71,7 +71,7 @@ const LogoFont = styled.h1((p: ITAOAThemeUIContext) => ({
   fontFamily: p.theme.fonts.heebo,
   transition: p.theme.colorModeTransition,
   color: p.theme.colors.background,
-  background: p.theme.colors.invbackground as CSS.ColorProperty,
+  background: p.theme.colors.invbackground,
   padding: '4px 8px 2px 8px',
 
   fontStyle: 'normal',
@@ -79,10 +79,8 @@ const LogoFont = styled.h1((p: ITAOAThemeUIContext) => ({
   fontSize: '30px',
 
   '&:hover': {
-    color: p.theme.colors.invbackground as CSS.ColorProperty,
-    background: `${
-      p.stickyHeader ? p.theme.colors.tintBackground : p.theme.colors.background
-    }` as CSS.ColorProperty
+    color: p.theme.colors.invbackground,
+    background: `${p.stickyHeader ? p.theme.colors.tintBackground : p.theme.colors.background}`
   },
 
   [mediaquery.desktop()]: {
