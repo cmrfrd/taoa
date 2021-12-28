@@ -17,7 +17,7 @@ interface AuthorHeroProps {
 }
 
 const AuthorHero: React.FC<AuthorHeroProps> = ({ author }) => {
-  const pgp_keyid = author.pgp_keyid.replaceAll(' ', '');
+  const pgp_keyid = author.pgp_keyid.replace(' ', '');
   return (
     <Hero>
       <HeroDiv>
@@ -44,16 +44,16 @@ export default AuthorHero;
 const PGPLink = styled.a((p: ITAOAThemeUIContext) => ({
   transition: p.theme.colorModeTransition,
   textDecoration: 'none',
-  color: p.theme.colors.grey as CSS.ColorProperty,
+  color: p.theme.colors.grey,
 
   '&:hover': {
-    color: p.theme.colors.grey as CSS.ColorProperty,
+    color: p.theme.colors.grey,
     fontWeight: 'bold',
     textShadow: '0 0 .01px black'
   },
 
   ':visited': {
-    color: p.theme.colors.grey as CSS.ColorProperty,
+    color: p.theme.colors.grey,
     textDecoration: 'none'
   },
 
@@ -90,7 +90,7 @@ const HeroImage = styled.div`
   width: 164px;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid ${p => p.theme.colors.background};
+  border: 2px solid ${(p: ITAOAThemeUIContext) => p.theme.colors.background};
   box-shadow: 0px 15.619px 31.2381px rgba(0, 0, 0, 0.15);
   flex-shrink: 0;
   ${mediaqueries.tablet`
@@ -134,8 +134,8 @@ justify-content: center;
 
 const Heading = styled.h1`
   font-size: 38px;
-  font-family: ${p => p.theme.fonts.monospace};
-  color: ${p => p.theme.colors.primary};
+  font-family: ${(p:ITAOAThemeUIContext) => p.theme.fonts.monospace};
+  color: ${(p:ITAOAThemeUIContext) => p.theme.colors.primary};
   margin-top: 5px;
   margin-bottom: 5px;
   font-weight: 600;
@@ -163,9 +163,9 @@ text-align: center;
 const Subheading = styled.p`
   margin: 0 auto;
   max-width: 500px;
-  color: ${p => p.theme.colors.grey};
+  color: ${(p:ITAOAThemeUIContext) => p.theme.colors.grey};
   font-size: 18px;
-  font-family: ${p => p.theme.fonts.sansSerif};
+  font-family: ${(p:ITAOAThemeUIContext) => p.theme.fonts.sansSerif};
   line-height: 1.4;
   text-align: left;
 
