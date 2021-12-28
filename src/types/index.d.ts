@@ -1,5 +1,6 @@
 import React from 'react';
 import { Theme, ColorMode } from 'theme-ui';
+import * as CSS from 'csstype';
 
 export interface IStringMap {
   [key: string]: string | number | boolean;
@@ -9,22 +10,20 @@ export interface ITAOAFonts {
   [K: string]: string;
 }
 
-export interface ITAOAColorMode extends ColorMode {
-  [key: string]: any;
+export interface ITAOAColorMode {
+  [key: string]: CSS.Property.Color;
 }
 
-export interface ITAOATheme extends Theme {
+export interface ITAOATheme {
   colorModeTransition: string;
   fonts: ITAOAFonts;
-  colors: ITAOAColorMode & {
-    modes?: {
-      [k: string]: ITAOAColorMode;
-    };
-  };
+  colors: {[k: string]: ITAOAColorMode} & ITAOAColorMode
 }
 
 export interface ITAOAThemeUIContext {
-  theme: ITAOATheme;
+  theme?: ITAOATheme;
+  isDark?: boolean;
+  narrow?: boolean;
   colorMode?: string;
   setColorMode?: React.Dispatch<React.SetStateAction<string>>;
   stickyHeader?: boolean;
@@ -34,8 +33,9 @@ export interface ITAOAThemeUIContext {
 
 export interface IPaginator {
   pageCount: number;
-  index: number;
   pathPrefix: string;
+  currentPage: number;
+  setCurrentPage: (a: number) => void;
 }
 
 interface IGatsbyImage {
@@ -62,7 +62,7 @@ export interface IAuthor {
   featured?: boolean;
   name: string;
   slug: string;
-  bio: string;
+  bio: string[];
   email: string;
   pgp_keyid: string;
   avatar: {
