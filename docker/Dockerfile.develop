@@ -37,6 +37,8 @@ RUN \
     autoconf \
     automake \
     bash \
+    curl \
+    parallel \
     g++ \
     libc6-compat \
     libjpeg-turbo-dev \
