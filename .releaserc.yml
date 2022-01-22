@@ -18,5 +18,6 @@ plugins:
       ${nextRelease.notes}
 - - "@semantic-release/exec"
   - publishCmd: |
+       ./bin/container_check_dead_links.sh &&
        ./bin/container_build.sh &&
        ./bin/container_publish.sh "Publish version ${nextRelease.version} at ${Date.now()}"
