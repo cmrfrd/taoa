@@ -257,16 +257,7 @@ const NavigationHeader: React.FC<INavigationHeader> = (props: INavigationHeader)
                     <MenuContainer>
                       <MenuNav>
                         <NavLinks arrow={showArrow}>
-                          <NavLink
-                            to={'/'}
-                            arrow={showArrow}
-                            state={{ arrowUp: arrowUp }}
-                            data-a11y={false}
-                            title="Navigate back to the homepage"
-                            aria-label="Navigate back to the homepage"
-                          >
-                            <NavLinkText arrow={showArrow}>Home</NavLinkText>
-                          </NavLink>
+                          <VSpacer />
                           <NavLink
                             to={'/about'}
                             arrow={showArrow}
@@ -305,16 +296,7 @@ const NavigationHeader: React.FC<INavigationHeader> = (props: INavigationHeader)
           ) : (
             <>
               <NavLinks arrow={showArrow}>
-                <NavLink
-                  to={'/'}
-                  arrow={showArrow}
-                  state={{ arrowUp: arrowUp }}
-                  data-a11y={false}
-                  title="Navigate back to the homepage"
-                  aria-label="Navigate back to the homepage"
-                >
-                  <NavLinkText arrow={showArrow}>Home</NavLinkText>
-                </NavLink>
+                <HSpacer />
                 <NavLink
                   to={'/about'}
                   arrow={showArrow}
@@ -408,12 +390,11 @@ const HeaderSection = styled(Section)({
 
 const Horizontal = styled.div((p: ITAOAThemeUIContext) => ({
   position: 'relative',
-  margin: '5px 15px 50px',
   borderBottom: `1px solid ${p.theme.colors.horizontalNav}`,
   zIndex: 0,
 
   [mediaquery.tablet()]: {
-    margin: '10px 15px 5px'
+    margin: '5px 15px 5px'
   }
 }));
 
@@ -434,7 +415,7 @@ const MenuContainer = styled.div({
 });
 
 const MenuNav = styled.nav((p: ITAOAThemeUIContext) => ({
-  backgroundColor: p.theme.colors.tintBackground as CSS.ColorProperty,
+  backgroundColor: p.theme.colors.tintBackground,
   borderRadius: '5px',
   boxShadow: `rgba(0,0,0,.11) 0 0 0 1px, rgba(0,0,0,.05) 0 10px 10px -5px`,
   border: '0px',
@@ -495,6 +476,14 @@ const NavControls = styled.div(() => ({
   alignItems: 'center'
 }));
 
+const VSpacer = styled.div({
+  height: '5px'
+});
+
+const HSpacer = styled.div({
+  width: '5px'
+});
+
 interface INavLink extends ITAOAThemeUIContext {
   arrow: number;
 }
@@ -503,14 +492,19 @@ const NavLink = styled(Link)((p: INavLink) => ({
   position: 'relative',
   alignItems: 'center',
   display: 'flex',
-  justifyContent: 'center',
   flexDirection: 'column',
+  transition: 'all 0.25s ease-in-out 0s',
+  margin: '0px 4px 0px 4px',
+  borderRadius: '2px',
 
   paddingBottom: p.arrow ? '6px' : '0px',
   paddingTop: p.arrow ? '5px' : '0px',
   [mediaquery.phablet()]: {
     marginLeft: 'auto',
     marginRight: 'auto'
+  },
+  '&:hover': {
+    backgroundColor: `${p.theme.colors.hoverGrey}`
   }
 }));
 
@@ -524,7 +518,8 @@ const NavLinkText = styled(Headings.h2)(
     transition: ${p.theme.colorModeTransition};
     font-size: 20px;
     font-weight: 600;
-    padding: 0 15px;
+    padding: 0 12px;
+    margin: auto auto;
 
     ${mediaquery.desktop_large()} {
         font-size: 20px;
@@ -544,30 +539,6 @@ const NavLinkText = styled(Headings.h2)(
     };
     ${mediaquery.phone_large()} {
     };
-
-                   &::before {
-                       content: ' ';
-        display: block;
-        position: relative;
-        width: 100%;
-        height: ${p.arrow ? '2px' : '3px'};
-        top: 1.3em;
-        left: 0;
-        background-color: ${p.theme.colors.primary};
-        visibility: visible;
-        -webkit-transform: scaleX(1);
-        transform: scaleX(1);
-        -webkit-transition: all 0.25s ease-in-out 0s;
-        transition: all 0.25s ease-in-out 0s;
-    }
-
-    &:hover:before {
-        height: ${p.arrow ? '2px' : '3px'};
-        color: ${p.theme.colors.grey};
-        visibility: none;
-        -webkit-transform: scaleX(0);
-        transform: scaleX(0);
-    }
     `
 );
 
@@ -672,7 +643,7 @@ const GridButton = styled.button((p: ITAOAThemeUIContext) => ({
   },
 
   '&:hover': {
-    background: p.theme.colors.hover as CSS.ColorProperty
+    background: p.theme.colors.hover
   },
 
   "&[data-a11y='true']:focus::after": {
