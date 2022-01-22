@@ -1,6 +1,6 @@
 #+TITLE: Optimal compounding with penalties
 #+CREATED: [2021-11-13 Sat 00:07]
-#+LAST_MODIFIED: [2021-11-14 Sun 00:18]
+#+LAST_MODIFIED: [2022-01-08 Sat 00:25]
 #+ROAM_TAGS: money composition
 #+STARTUP: showall indent
 #+OPTIONS: toc:nil
@@ -87,8 +87,9 @@ interactive python session with the starting variables
 #+BEGIN_SRC podman-build :dir "." :tangle (make-temp-name "Dockerfile-") :tag (org-table-get-constant "image_name")
   FROM sagemath/sagemath:latest
   USER root
+  ENV DEBIAN_FRONTEND=noninteractive
   RUN apt-get update && \
-      apt install vtk6 libvtk6.2 cmake -y && \
+      apt install vtk7 libvtk7-dev cmake -y && \
       rm -rf /var/lib/apt/lists/*
   USER sage
   RUN sage -python3 -m pip install sympy_plot_backends kaleido cvxpy
@@ -1150,9 +1151,10 @@ container-dir-str)]{print(latex(ciwip))} with the optimal compounding schedule.
 :session :dir (org-sbe container-dir-str)]{print(latex(n_star))} over the
 integers and not real values. We have to do this as there is no way we can
 compound a "fractional" number of times. However, we can do this and preserve
-concavity (from [[https://www-ljk.imag.fr/membres/Anatoli.Iouditski/cours/convex/chapitre_3.pdf][theorem 3.5.6 of Anatoli Iouditski Convex Optimization course]])
+concavity (from [[https://web.stanford.edu/~boyd/cvxbook/bv_cvxbook.pdf][section 3.2.2 of Stephen Boyd's convex optimization book]])
 if we say the integers are a "subset" of the reals.
 #+end_quote
+
 
 * Compare and contrast
 
