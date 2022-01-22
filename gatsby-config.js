@@ -30,7 +30,7 @@ module.exports = {
     social: [
       {
         name: `twitter`,
-        url: `https://twitter.com/alexjcomerford`
+        url: `https://twitter.com/thecmrfrd`
       },
       {
         name: `github`,
@@ -198,12 +198,7 @@ module.exports = {
         defaultLayouts: {
           default: require.resolve('./src/templates/post.template.tsx')
         },
-        remarkPlugins: [
-          require('remark-math'),
-          // require('remark-html-katex'),
-          require(`remark-slug`),
-          require('remark-emoji')
-        ], // eslint-disable-line global-require
+        remarkPlugins: [require('remark-math'), require(`remark-slug`), require('remark-emoji')], // eslint-disable-line global-require
         rehypePlugins: [require('rehype-katex')],
         gatsbyRemarkPlugins: [
           {
@@ -222,30 +217,7 @@ module.exports = {
               withWebp: true
             }
           }
-          // {
-          //   resolve: `@raae/gatsby-remark-oembed`,
-          //   options: {
-          //     providers: {
-          //       include: ['Instagram']
-          //     }
-          //   }
-          // },
-          // {
-          //   resolve: 'gatsby-remark-embed-video',
-          //   options: {
-          //     width: 680,
-          //     ratio: 1.77, // Optional: Defaults to 16/9 = 1.77
-          //     height: 400, // Optional: Overrides optional.ratio
-          //     related: false, //Optional: Will remove related videos from the end of an embedded YouTube video.
-          //     noIframeBorder: true, //Optional: Disable insertion of <style> border: 0
-          //     urlOverrides: [
-          //       {
-          //         id: 'youtube',
-          //         embedURL: videoId => `https://www.youtube-nocookie.com/embed/${videoId}`
-          //       }
-          //     ] //Optional: Override URL of a service provider, e.g to enable youtube-nocookie support
-          //   }
-          // },
+
           // { resolve: `gatsby-remark-copy-linked-files` },
           // { resolve: `gatsby-remark-numbered-footnotes` },
           // { resolve: `gatsby-remark-smartypants` },
@@ -293,22 +265,27 @@ module.exports = {
         extensions: ['css', 'html', 'js', 'svg'],
         path: 'brotli'
       }
+    },
+    {
+      resolve: `gatsby-plugin-csp`,
+      options: {
+        disableOnDev: true,
+        mergeScriptHashes: false, // you can disable scripts sha256 hashes
+        mergeStyleHashes: false, // you can disable styles sha256 hashes
+        mergeDefaultDirectives: true,
+        directives: {
+          'default-src': "'self'",
+          'block-all-mixed-content': '',
+          'manifest-src': "'self'",
+          'base-uri': 'none',
+          'object-src': 'none',
+          'script-src': "'self' 'unsafe-inline' 'unsafe-eval' www.google-analytics.com",
+          'frame-src': "'self' https://utteranc.es",
+          'style-src': "'self' 'unsafe-inline'",
+          'img-src': "'self' data: www.google-analytics.com"
+          // you can add your directives or override defaults
+        }
+      }
     }
-    // {
-    //   resolve: `gatsby-plugin-csp`,
-    //   options: {
-    //     disableOnDev: true,
-    //     reportOnly: false, // Changes header to Content-Security-Policy-Report-Only for csp testing purposes
-    //     mergeScriptHashes: true, // you can disable scripts sha256 hashes
-    //     mergeStyleHashes: true, // you can disable styles sha256 hashes
-    //     mergeDefaultDirectives: true,
-    //     directives: {
-    //       'script-src': "'self' www.google-analytics.com",
-    //       'style-src': "'self' 'unsafe-inline'",
-    //       'img-src': "'self' data: www.google-analytics.com"
-    //       // you can add your directives or override defaults
-    //     }
-    //   }
-    // }
   ]
 };
