@@ -1,11 +1,12 @@
 - name: Alexander Comerford
   bio:
     - |
-      Hi! I'm a Programmer living in New York. I spend most of my time coding,
+      Hi! I'm a programmer living in New York. I spend most of my time coding,
       reading, or trying to solve math problems. Other things I'm interested in
-      are juggling, Hebrew, and philosophy.
+      are juggling, hebrew, and philosophy.
     - |
       I love solving hard problems and blowing people's minds!
+      If you want to talk, reach out to me at alex@taoa.io or on twitter @thecmrfrd
   avatar: ./avatars/Alex.png
   email: 'alex@taoa.io'
   pgp_keyid: '23F6 FE4B 0B41 EF3D 81CF CE17 64DF 35FA 2BAD 3764'
