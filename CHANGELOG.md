@@ -1,3 +1,10 @@
+### [1.3.4](https://github.com/cmrfrd/taoa/compare/v1.3.3...v1.3.4) (2022-01-27)
+
+
+### Bug Fixes
+
+* Just say thank you ([0e00df6](https://github.com/cmrfrd/taoa/commit/0e00df68caff13e77148c56762047610c897fef1))
+
 ### [1.3.3](https://github.com/cmrfrd/taoa/compare/v1.3.2...v1.3.3) (2022-01-27)
 
 
