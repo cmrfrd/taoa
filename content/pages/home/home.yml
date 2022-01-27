@@ -1,8 +1,5 @@
 name: "home"
 home:
-  numberOfPosts: 4
-  postsHeadingText: "Most recent posts"
-  morePostsText: "More Posts ➡ "
   hero:
-    heading: "A blog about first principles, simplification, and software"
+    heading: "A blog about exploring and building the hidden abstractions that run our world"
     maxWidth: 900
