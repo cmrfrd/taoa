@@ -1,3 +1,10 @@
+### [1.3.2](https://github.com/cmrfrd/taoa/compare/v1.3.1...v1.3.2) (2022-01-27)
+
+
+### Bug Fixes
+
+* check dead links ([e068a1d](https://github.com/cmrfrd/taoa/commit/e068a1d62daf0e09d27fd1ef5296a8fd9a2adb3a))
+
 ### [1.3.1](https://github.com/cmrfrd/taoa/compare/v1.3.0...v1.3.1) (2022-01-22)
 
 
