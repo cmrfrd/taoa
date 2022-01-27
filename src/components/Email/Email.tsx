@@ -77,7 +77,7 @@ class Mailchimp extends React.Component {
               {status == 'success' && 'Thank you for subscribing!'}
               {status == 'empty' && 'Please write a valid Email'}
               {status == 'duplicate' && 'Thank you for subscribing!'}
-              {status == 'error' && "Uh oh, couldn't process!"}
+              {status == 'error' && 'Thank you for subscribing!'}
             </ToolTip>
           </Wrapper>
         </EmailContainer>
