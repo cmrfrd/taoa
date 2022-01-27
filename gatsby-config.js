@@ -279,7 +279,8 @@ module.exports = {
           'manifest-src': "'self'",
           'base-uri': 'none',
           'object-src': 'none',
-          'script-src': "'self' 'unsafe-inline' 'unsafe-eval' www.google-analytics.com",
+          'script-src':
+            "'self' 'unsafe-inline' 'unsafe-eval' www.google-analytics.com taoa.us14.list-manage.com",
           'frame-src': "'self' https://utteranc.es",
           'style-src': "'self' 'unsafe-inline'",
           'img-src': "'self' data: www.google-analytics.com"
