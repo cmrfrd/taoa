@@ -1,3 +1,10 @@
+### [1.3.3](https://github.com/cmrfrd/taoa/compare/v1.3.2...v1.3.3) (2022-01-27)
+
+
+### Bug Fixes
+
+* Update csp for mailchimp ([ff9568b](https://github.com/cmrfrd/taoa/commit/ff9568b258a270e326211b815f80384f2b2d0e18))
+
 ### [1.3.2](https://github.com/cmrfrd/taoa/compare/v1.3.1...v1.3.2) (2022-01-27)
 
 
