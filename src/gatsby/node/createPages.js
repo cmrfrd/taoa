@@ -74,9 +74,9 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
     const localPost = await graphql(query.local.post);
     var postPageData = localPost.data.post;
 
-    log('Mapping', 'Home edge');
-    const localHome = await graphql(query.local.home);
-    var homePageData = localHome.data.home;
+    // log('Mapping', 'Home edge');
+    // const localHome = await graphql(query.local.home);
+    // var homePageData = localHome.data.home;
 
     log('Mapping', 'About edge');
     const localAbout = await graphql(query.local.about);
@@ -122,8 +122,8 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
     path: basePath,
     component: templates.home,
     context: {
-      basePath,
-      homePageData: homePageData,
+      authors,
+      searchPageData: searchPageData,
       posts: postsThatArentSecret,
       enableGridRow: true
     }
@@ -142,22 +142,6 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
       slug: aboutPath,
       id: '123',
       enableGridRow: false
-    }
-  });
-
-  log('Creating', 'search posts page');
-
-  // Creating the about page
-  const postsPath = '/posts';
-  createPage({
-    path: postsPath,
-    component: templates.search,
-    context: {
-      authors,
-      postsPath,
-      searchPageData: searchPageData,
-      posts: postsThatArentSecret,
-      enableGridRow: true
     }
   });
 
