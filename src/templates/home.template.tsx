@@ -1,50 +1,97 @@
 import Hero from '../sections/posts/Hero';
 import PostsList from '../sections/posts/Posts.List';
+import { GridLayoutContext } from '../sections/posts/Posts.List.Context';
 
 import { MediumButton } from '@components/Button';
 import Headings from '@components/Headings';
+import Email from '@components/Email';
 import LoadingContainer from '@components/Loading';
 import SEO from '@components/SEO';
 import Section from '@components/Section';
+import Search from '@components/Search';
+import Paginator from '@components/Navigation/Navigation.Paginator';
 import { mediaquery, mediaqueryup } from '@styles/media';
 import { Template, TTemplate, ITAOAThemeUIContext } from '@types';
 
 import { css } from '@emotion/react';
 import { SerializedStyles } from '@emotion/serialize';
 import styled from '@emotion/styled';
-import { Link } from 'gatsby';
-import React from 'react';
+import React, { useState, useContext } from 'react';
+
+import { ThemeProvider } from 'theme-ui';
+import { theme } from '@utils';
 
 const HomePage: Template = ({ location, pageContext }: TTemplate) => {
-  const {
-    numberOfPosts,
-    morePostsText,
-    postsHeadingText
-  } = pageContext.homePageData.edges[0].node.home;
-
   const { posts } = pageContext;
-  const postsToShow = posts.slice(0, numberOfPosts);
+  const { search } = pageContext.searchPageData.edges[0].node;
+
+  const [searchResults, setSearchResults] = useState(posts);
+  const pages = Math.ceil([...searchResults].length / search.pageLength);
+
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const [searching, setSearching] = useState(true);
+
+  const [numSearchResults, setNumSearchResults] = useState(posts.length);
+
+  const { gridLayout } = useContext(GridLayoutContext);
 
   return (
     <LoadingContainer>
       <SEO pathname={location.pathname} />
       <Hero />
       <Section narrow>
-        <Container>
-          <PostsHeading>{postsHeadingText}</PostsHeading>
-          <PostsList posts={postsToShow} />
-          <LinkContainer>
-            <Link to={'/posts'}>
-              <MediumButton text={morePostsText} />
-            </Link>
-          </LinkContainer>
-        </Container>
+        <Horizontal />
+        <SubscribeHeading>{'Subscribe to The Art of Abstraction'}</SubscribeHeading>
+        <Email />
+        <SearchContainer gridLayout={gridLayout}>
+          <VSpacer />
+          <SearchHeading>{search.heading}</SearchHeading>
+          <Search
+            setNumSearchResults={setNumSearchResults}
+            searchResults={searchResults}
+            setSearchResults={setSearchResults}
+            setCurrentPage={setCurrentPage}
+            searching={searching}
+            setSearching={setSearching}
+            elements={posts}
+            placeholder={search.placeholder}
+          />
+          <NumPostsHeader>{numSearchResults} results found</NumPostsHeader>
+          <PostsList
+            posts={searchResults.slice(
+              currentPage * search.pageLength,
+              (currentPage + 1) * search.pageLength
+            )}
+            currentPage={currentPage}
+            searching={searching}
+          />
+        </SearchContainer>
+        <PostsPaginator show={pageContext.pageCount > 1}>
+          <Paginator
+            {...{
+              pageCount: pages,
+              count: searchResults.slice(
+                (currentPage - 1) * search.pageLength,
+                currentPage * search.pageLength
+              ).length,
+              pathPrefix: '/',
+              setCurrentPage: setCurrentPage,
+              currentPage: currentPage,
+              ...pageContext
+            }}
+          />
+        </PostsPaginator>
       </Section>
     </LoadingContainer>
   );
 };
 
 export default HomePage;
+
+const VSpacer = styled.div({
+  height: '10px'
+});
 
 const Container = styled.div((p: ITAOAThemeUIContext) => ({
   position: 'relative',
@@ -67,11 +114,12 @@ const PostsHeading = styled(Headings.h2)((p: ITAOAThemeUIContext) => ({
   },
 
   [mediaquery.desktop()]: {
-    fontSize: '20px'
+    fontSize: '26px'
   },
 
   [mediaquery.phablet()]: {
-    padding: '0 10px'
+    fontSize: '22px',
+    padding: '0 10px 10px'
   }
 }));
 
@@ -112,3 +160,64 @@ const LinkContainer = styled.div({
     textAlign: 'center'
   }
 });
+
+///////////////////////////////
+
+interface ISearchContainerProps extends ITAOAThemeUIContext {
+  gridLayout: string;
+}
+
+const SearchContainer = styled.div((p: ISearchContainerProps) => ({
+  position: 'relative',
+  bottom: 0,
+  left: 0,
+  zIndex: 1,
+  width: '100%',
+  padding: '50px 0px 0px',
+  transition: p.theme.colorModeTransition,
+  minHeight: p.gridLayout ? '1600px' : '1000px',
+
+  [mediaquery.phablet()]: {
+    padding: '20px 30px 0'
+  }
+}));
+
+const SearchHeading = styled(Headings.h2)({
+  [mediaquery.phablet()]: {
+    padding: 0
+  }
+});
+
+const SubscribeHeading = styled(Headings.h4)({
+  [mediaquery.phablet()]: {
+    padding: 0
+  }
+});
+
+const NumPostsHeader = styled(Headings.h5)({
+  [mediaquery.phablet()]: {
+    padding: 0
+  }
+});
+
+interface IPostsPaginator extends ITAOAThemeUIContext {
+  show: boolean;
+}
+const PostsPaginator = styled.div((p: IPostsPaginator) => ({
+  ...(p.show && { marginTop: '95px' }),
+  width: '100%'
+}));
+
+const Horizontal = styled.div((p: ITAOAThemeUIContext) => ({
+  position: 'relative',
+  margin: '90px auto 50px',
+  borderBottom: `1px solid ${p.theme.colors.horizontalRule}`,
+
+  [mediaquery.tablet()]: {
+    margin: '60px auto'
+  },
+
+  [mediaquery.phone()]: {
+    display: 'none'
+  }
+}));
