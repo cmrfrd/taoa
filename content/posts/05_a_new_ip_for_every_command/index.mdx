@@ -1,0 +1,112 @@
+---
+title: "A new IP for every command"
+author: ["Alexander Comerford"]
+draft: false
+date: 2022-01-21
+hero: "./images/cover.jpg"
+secret: false
+excerpt: "Switching it up one IP at a time"
+---
+
+## The normal way to change IPs
+
+It's very handy as a programmer to change your public facing IP. Whether you
+want to pretend your computer is in a different country or just want to get
+around an IP ban, being able to masquerade your IP has many utilities.
+
+The "normal" way I've always done this is to run `openvpn` as a background
+process, do what I want to do, then kill the process.
+
+When I was testing some IP banning tooling I quickly came across the problem
+that switching locations/IPs multiple times gets annoying. So I wanted to
+build a utility to make it easier.
+
+The ideal experience I wanted was to be able to run command isolated from the
+rest of my local network, yet be connected to a VPN whose location I can
+change with a single argument.
+
+
+## Coding it up
+
+Since I wanted isolation for this tool, I chose `podman` as it's my goto
+container engine for my one off isolation needs. The simplest place I started
+was with a quick script to build an `ovpn` alpine image like so:
+
+```bash
+NAME=ovpn
+cat << EOF > /tmp/Dockerfile.${NAME}
+FROM alpine:3.12
+RUN apk add --no-cache openvpn bash
+EOF
+EMPTY=$(mktemp -d)
+podman build -q -t ${NAME} -f /tmp/Dockerfile.${NAME} $EMPTY 2>&1 > /dev/null
+```
+
+The immediate problem that I had with this approach was that the container
+image doesn't include any of my local tools. It also doesn't seem practical to
+keep adding dependencies as needed to this image. This would cause image bloat
+and I would have to rebuild the image any time I want to add
+something. Instead I wanted a way to run this image as a conduit for my other
+tools.
+
+The solution I eventually reached was to simply **run** the isolated `openvpn`
+container as normal, **then** run a command in the containers **network
+namespace**. That way I get the network isolation I want, **with** the ability to
+isolate the entire execution of a command behind a VPN.
+
+To do this I ran the container with privileges to create a `tun` interface
+like so:
+
+```bash
+podman run --rm --cap-add NET_ADMIN,NET_RAW --device /dev/net/tun \
+       --name ${CONTAINER_NAME} \
+       -v /tmp/ovpn/:/tmp/ovpn/ \
+       -it -d ${NAME} \
+       bash -c "
+       openvpn \
+       --config $FILE \
+       --auth-nocache \
+       --auth-retry nointeract \
+       --dev $tun \
+       --dev-type tun \
+       --errors-to-stderr \
+       --auth-user-pass <(echo -e '$USERNAME\n$PASSWORD')
+       " 1>&2
+```
+
+Then I used `nsenter` to run a command in the context of the containers
+network namespace:
+
+```bash
+...
+PID=$(podman inspect ${CONTAINER_NAME} | jq -r '.[0] | .State.Pid')
+nsenter -U -n -t $PID $@
+```
+
+This worked just as expected, and when the command finishes, the container can
+be stopped and removed for seamless cleanup.
+
+Hooray containers and namespaces! 📦🎊
+
+Wrapping this all together in a script `run_behind_vpn`, I can now run a
+command masquerading as different IPs like so:
+
+```bash
+#!/usr/bin/env bash
+export USERNAME=$USERNAME
+export PASSWORD=$PASSWORD
+export US=$(find /tmp/ovpn/*us* -print -quit) # find a US ovpn file
+export JAPAN=$(find /tmp/ovpn/*jp* -print -quit) # find a JP ovpn file
+run_behind_vpn $US -- curl -s ipinfo.io | jq -r '.country'
+run_behind_vpn $JAPAN -- curl -s ipinfo.io | jq -r '.country'
+```
+
+```text
+US
+JP
+```
+
+Now if I ever need to pretend that I'm running my computer from a different
+country or need a new IP, I have a method to do so.
+
+Try the script out for yourself [here](https://github.com/cmrfrd/dotfiles/blob/master/scripts/run%5Fbehind%5Fvpn) and thanks for reading!
