@@ -1,3 +1,10 @@
+### [1.3.6](https://github.com/cmrfrd/taoa/compare/v1.3.5...v1.3.6) (2022-03-10)
+
+
+### Bug Fixes
+
+* Update mdx to show overflow and remove latex wrap ([4aa118e](https://github.com/cmrfrd/taoa/commit/4aa118ee73409a117cd8356993c5baa16fc4ec77))
+
 ### [1.3.5](https://github.com/cmrfrd/taoa/compare/v1.3.4...v1.3.5) (2022-03-10)
 
 
