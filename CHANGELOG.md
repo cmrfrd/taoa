@@ -1,3 +1,10 @@
+### [1.3.5](https://github.com/cmrfrd/taoa/compare/v1.3.4...v1.3.5) (2022-03-10)
+
+
+### Bug Fixes
+
+* Remove home promql query and bump versino minor ([9966ef0](https://github.com/cmrfrd/taoa/commit/9966ef0a735508c0ac9408f7b27fdf51eb5e907b))
+
 ### [1.3.4](https://github.com/cmrfrd/taoa/compare/v1.3.3...v1.3.4) (2022-01-27)
 
 
