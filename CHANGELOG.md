@@ -1,3 +1,10 @@
+### [1.3.7](https://github.com/cmrfrd/taoa/compare/v1.3.6...v1.3.7) (2022-03-10)
+
+
+### Bug Fixes
+
+* Update csp and remove unnecessary import ([2ad3d61](https://github.com/cmrfrd/taoa/commit/2ad3d61c0645fe055c474ba235fee0f186a4435e))
+
 ### [1.3.6](https://github.com/cmrfrd/taoa/compare/v1.3.5...v1.3.6) (2022-03-10)
 
 
