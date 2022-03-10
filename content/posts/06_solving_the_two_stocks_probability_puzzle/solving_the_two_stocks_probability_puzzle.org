@@ -1,0 +1,1007 @@
+#+TITLE: Solving the two stocks probability puzzle
+#+CREATED: [2022-03-08 Tue 20:13]
+#+LAST_MODIFIED: [2022-03-09 Wed 23:15]
+#+ROAM_TAGS: composition
+#+OPTIONS: toc:nil
+#+OPTIONS: tex:t
+#+OPTIONS: _:nil ^:nil p:nil
+
+#+HUGO_BASE_DIR: ./
+#+hugo_front_matter_format: yaml
+#+HUGO_CUSTOM_FRONT_MATTER: :date (org-to-blog-date (org-global-prop-value "CREATED"))
+#+HUGO_CUSTOM_FRONT_MATTER: :hero ./images/cover.png
+#+HUGO_CUSTOM_FRONT_MATTER: :secret false
+#+HUGO_CUSTOM_FRONT_MATTER: :excerpt A Profitable Probability Puzzle
+
+#+BEGIN_SRC emacs-lisp :exports none
+  (defun org-hugo-link (link contents info) (org-md-link link contents info))
+
+  ;; Setup org/latex exporting
+  (add-to-list 'org-export-filter-latex-fragment-functions
+               'sub-paren-for-dollar-sign)
+  (add-to-list 'org-export-filter-headline-functions
+               'remove-regexp-curly-braces)
+  (add-to-list 'org-export-filter-latex-environment-functions
+               'sub-paren-for-dollar-sign)
+  (export-to-mdx-on-save)
+#+END_SRC
+
+#+RESULTS:
+: Enabled mdx on save
+
+* Forward :noexport:
+
+  #+CONSTANTS: image_name=stonk container_name=stonk
+
+  #+NAME: container-dir-str
+  #+HEADER: :exports none
+  #+begin_src emacs-lisp
+    (setq org-babel-inline-result-wrap "$%s$")
+    (setq shutdown-env nil)
+    (setq docker-tramp-docker-executable "podman")
+    (docker-tramp-add-method)
+    (setq ob-ipython-command "ipython")
+    ;;(setq org-babel-python-command "ipython --no-banner --classic --no-confirm-exit")
+    (setq org-babel-python-command "ipython")
+    (setq py-default-interpreter "ipython")
+    (setq container-dir-str (format "/docker:sage@%s:/mnt" (org-table-get-constant "container_name")))
+  #+end_src
+
+  #+RESULTS: container-dir-str
+  : /docker:sage@stonk:/mnt
+
+  #+NAME: stonk-environment-build
+  #+HEADER: :exports code :padline no
+  #+BEGIN_SRC podman-build :dir "." :tangle (make-temp-name "Dockerfile-") :tag (org-table-get-constant "image_name")
+    FROM sagemath/sagemath:latest
+    USER root
+    ENV DEBIAN_FRONTEND=noninteractive
+    RUN apt-get update && \
+    apt install vtk7 libvtk7-dev cmake git -y && \
+        rm -rf /var/lib/apt/lists/*
+    RUN git clone https://github.com/sagemath/sagelib /sagelib
+    USER sage
+    RUN sage -python3 -m pip install sympy_plot_backends==1.0.2 kaleido==0.2.1
+  #+END_SRC
+
+  #+RESULTS: stonk-environment-build
+  : #<window 18 on /tmp/babel-Szprh7/ob-podman-build-out-YDMnNO>
+
+  #+NAME: stonk-environment-start
+  #+HEADER: :exports none
+  #+begin_src bash :results verbatim :var NAME=(org-table-get-constant "container_name")
+    echo "Running container if not already running ..."
+    [ ! "$(podman ps | grep $NAME)" ] && \
+      (podman run \
+              -d \
+              -u $(id -u):$(id -g) \
+              --userns keep-id \
+              --name $NAME \
+              --rm \
+              --net host \
+              -v $(pwd):/mnt \
+              -w /mnt \
+              -it stonk:latest; \
+       echo "Container starting...") \
+        || \
+        echo "Container already running..."
+  #+end_src
+
+  #+RESULTS: stonk-environment-start
+  : Running container if not already running ...
+  : Container already running...
+
+#+NAME: stonk-session-start
+#+HEADER: :exports none :results output
+#+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
+import sympy as S
+from sympy.core.rules import Transform
+from sage.all import *
+from sage.symbolic.constants import Constant
+from sage.plot.plot3d.plot3d import axes
+from sage.numerical.optimize import minimize
+from sage.manifolds.utilities import set_axes_labels
+
+import warnings
+warnings.filterwarnings("ignore")
+
+latex_centers = lambda *exprs: \
+  '\n' + \
+  LatexExpr("\\begin{alignedat}{2}") + \
+  '\n' + \
+  ' \\\\ '.join(exprs) + \
+  ' \n' + \
+  LatexExpr("\\end{alignedat}") + \
+  '\n'
+#+END_SRC
+
+#+RESULTS: stonk-session-start
+: Python 3.9.5 (default, Dec  9 2021, 01:35:22)
+: Type 'copyright', 'credits' or 'license' for more information
+: IPython 7.16.1 -- An enhanced Interactive Python. Type '?' for help.
+: Using matplotlib backend: <object object at 0x7f7594723e20>
+:
+: In [1]:
+
+* The puzzle
+
+  Last year I attended a multi lecture series "Math Explorations" at [[https://momath.org/][MoMath]]
+  hosted by [[https://www.stevenstrogatz.com/][Steven Strogatz]]. During the final lecture, Steve showed us this
+  [[https://twitter.com/10kdiver/status/1459494549919703041][interesting tweet]] by the creator known as ~@10kdiver~. I encourage you to take
+  a stab at the puzzle! Keep in mind the highlighted answer is the highest voted
+  and not necessarily the right answer.
+
+  #+CAPTION: 10K Divers two stocks puzzle as a tweet
+  [[./images/twitter_puzzle.png]]
+
+* The solution
+
+  Attacking this puzzle *seems* simple at first glance, but has an interesting
+  non-intuitive line of probabilistic reasoning (as most probability puzzles do)
+  that will get us the answer. In order to work towards the solution, lets start
+  by formalize everything we know starting with stock A.
+
+  Stock A has predictable returns, meaning we can easily calculate the future
+  price (represented as src_python[:results output :session :dir (org-sbe
+  container-dir-str)]{print(latex(a_10))} {{{results(${a_{10}}$)}}}) as follows:
+
+  #+NAME: problem-future
+  #+HEADER: :exports none :results output
+  #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
+    a_perc = 1.1
+    total_years = 10
+    start_price = 100
+    a_0, a_1, *a_, a_9, a_10 = [var(f'a_{i}', latex_name=f'a_{{{i}}}') for i in range(11)]
+
+    print(
+        latex_centers(
+            latex(a_0 == start_price),
+            latex(a_1 == a_0* a_perc),
+            '...',
+            latex(a_10 == (a_9 * a_perc)),
+            latex(a_10 == round(start_price * a_perc ** total_years, 2))
+        )
+    )
+  #+end_src
+
+  #+RESULTS: problem-future
+  :
+  :  \begin{alignedat}{2}
+  :  {a_{0}} = 100 \\ {a_{1}} = 1.1 \, {a_{0}} \\ ... \\ {a_{10}} = 1.1 \, {a_{9}} \\ {a_{10}} = 259.37
+  :  \end{alignedat}
+
+  #+MACRO: problem-future (eval (latex-display-wrap (org-sbe problem-future)))
+
+  {{{problem-future()}}}
+
+  It's safe to conclude that Stock A is awesome! It gets us over 2.5x our
+  initial investment after 10 years guaranteed!
+
+  Stock B on the other hand isn't so clean cut as it's depends on how "lucky" we
+  are and how many "wins" and "losses" occur. Without thinking about "luck" or
+  probability, let's create an expression for stock B's future price
+  parameterized on a single win:
+
+  #+NAME: problem-definition
+  #+HEADER: :exports none :results output
+  #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
+    b_perc_win = 1.3
+    b_perc_lose = 0.9
+
+    b_0, b_1, *b_, b_9, b_10 = [var(f'b_{i}', latex_name=f'b_{{{i}}}') for i in range(11)]
+
+    n = var("n")
+
+    a_n = var("a_n")
+    a_n_minus_1 = var("a_n_1", latex_name="a_{n-1}")
+    a_expr = a_n_minus_1 * a_perc == a_n
+
+    r_var = var("r")
+    r_n_var = var("r_n")
+
+    b_n = var("b_n")
+    b_n_minus_1 = var("b_n_1", latex_name="b_{n-1}")
+    b_expr = (((r_n_var).mul(b_perc_win, hold=True)) + ((1-r_n_var).mul(b_perc_lose, hold=True))).mul(b_n_minus_1, hold=True)
+
+    print(latex_centers(
+        latex(r_n_var) + " \\isin \\text{\\textbraceleft} 0, 1 \\text{\\textbraceright}",
+        latex(start_price == b_0),
+        latex(b_expr == b_n)
+    ))
+  #+end_src
+
+  #+RESULTS: problem-definition
+  :
+  :  \begin{alignedat}{2}
+  :  r_{n} \isin \text{\textbraceleft} 0, 1 \text{\textbraceright} \\ {b_{0}} = 100 \\ {b_{n-1}} {\left(1.3 \, r_{n} + 0.9 \, {\left(-r_{n} + 1\right)}\right)} = b_{n}
+  :  \end{alignedat}
+
+  #+MACRO: problem-definition (eval (latex-display-wrap (org-sbe problem-definition)))
+
+  {{{problem-definition()}}}
+
+  For reference, src_python[:results output :session :dir (org-sbe
+  container-dir-str)]{print(latex(r_n_var))} {{{results($r_{n}$)}}} represents
+  the result of a single year (1 or 0 meaning "win" or "lose") at year
+  src_python[:results output :session :dir (org-sbe
+  container-dir-str)]{print(latex(n))} {{{results($n$)}}}. src_python[:results
+  output :session :dir (org-sbe container-dir-str)]{print(latex(b_n))}
+  {{{results($b_{n}$)}}} represents the price of B at year src_python[:results
+  output :session :dir (org-sbe container-dir-str)]{print(latex(n))}
+  {{{results($n$)}}}. But we can simplify this recursive definition of stock B's
+  price into a singular formula based on the number of wins and losses after
+  src_python[:results output :session :dir (org-sbe
+  container-dir-str)]{print(latex(total_years))} {{{results($10$)}}} years.
+
+  #+NAME: stock-b-expression
+  #+HEADER: :exports none :results output
+  #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
+  w_var, l_var = var('w l', domain='positive')
+  w_val, l_val = 9, total_years-9
+
+  stock_b_price_expr = start_price * ((b_perc_win) ** w_var) * (b_perc_lose ** l_var)
+  print(latex_centers(
+      latex(stock_b_price_expr == b_10)
+  ))
+  #+end_src
+
+  #+RESULTS: stock-b-expression
+  :
+  :  \begin{alignedat}{2}
+  :  100 \cdot 1.3^{w} 0.9^{l} = {b_{10}}
+  :  \end{alignedat}
+
+  #+MACRO: stock-b-expression (eval (latex-display-wrap (org-sbe stock-b-expression)))
+
+  {{{stock-b-expression()}}}
+
+  Now that we have the tooling to calculate stock A and stock B's future price,
+  the next step is to figure out in what scenarios does stock B overtake A. It's
+  clear to see that after 10 years, stock B can reach multiple prices. For
+  example, if stock B "wins" 9 years out of the 10, the future price can be
+  calculated as:
+
+  #+NAME: problem-b-win-scenario-1
+  #+HEADER: :exports none :results output
+  #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
+  sub_dict = { w_var: w_val, l_var: l_val, b_0: start_price}
+  symbol_sub_dict = dict((k,S.Symbol(str(v))) for k, v in sub_dict.items())
+  print(latex_centers(
+      " = ".join([
+          S.latex(stock_b_price_expr._sympy_().subs(symbol_sub_dict)),
+          latex(round(stock_b_price_expr.subs(sub_dict), 2))
+      ])
+  ))
+  #+end_src
+
+  #+RESULTS: problem-b-win-scenario-1
+  :
+  :  \begin{alignedat}{2}
+  :  100 \cdot 0.9^{1} \cdot 1.3^{9} = 954.4
+  :  \end{alignedat}
+
+  #+MACRO: problem-b-win-scenario-1 (eval (latex-display-wrap (org-sbe problem-b-win-scenario-1)))
+
+  {{{problem-b-win-scenario-1()}}}
+
+  Wawaweewa! This is almost 10x our initial investment! Albeit rare as there are
+  only a few ways to "win" 9 times.
+
+  Stock B /could/ also "lose" 9 years out of 10, which results in a price of:
+
+  #+NAME: problem-b-win-scenario-2
+  #+HEADER: :exports none :results output
+  #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
+  sub_dict = { w_var: 1, l_var: 9, b_0: start_price}
+  symbol_sub_dict = dict((k,S.Symbol(str(v))) for k, v in sub_dict.items())
+  print(latex_centers(
+      " = ".join([
+          S.latex(stock_b_price_expr._sympy_().subs(symbol_sub_dict)),
+          latex(round(stock_b_price_expr.subs(sub_dict), 2))
+      ])
+  ))
+  #+end_src
+
+  #+RESULTS: problem-b-win-scenario-2
+  :
+  :  \begin{alignedat}{2}
+  :  100 \cdot 0.9^{9} \cdot 1.3^{1} = 50.36
+  :  \end{alignedat}
+
+  #+MACRO: problem-b-win-scenario-2 (eval (latex-display-wrap (org-sbe problem-b-win-scenario-2)))
+
+  {{{problem-b-win-scenario-2()}}}
+
+  Boooo! We lose almost half of our investment! But just like our first scenario
+  this is also rare as there are few ways to "lose" 9 times.
+
+  The next question we should ask ourselves is how many "wins" will it take for
+  stock B to overtake stock A? To get the answer, we can use our previous price
+  formulation of stock B, set it equal to stock A's final price and solve for
+  the number of "wins" it will take for B to equal A:
+
+  #+NAME: problem-b-prob-winning
+  #+HEADER: :exports none :results output
+  #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
+    a_final = round(start_price * (a_perc) ** total_years, 2)
+    print(
+        latex_centers(
+            latex(
+                start_price * ((b_perc_win) ** w) * (b_perc_lose ** (total_years-w)) == \
+                a_final
+            )
+        )
+    )
+  #+end_src
+
+  #+RESULTS: problem-b-prob-winning
+  :
+  :  \begin{alignedat}{2}
+  :  100 \cdot 1.3^{w} 0.9^{-w + 10} = 259.37
+  :  \end{alignedat}
+
+  #+MACRO: problem-b-prob-winning (eval (latex-display-wrap (org-sbe problem-b-prob-winning)))
+
+  {{{problem-b-prob-winning()}}}
+
+  Simplifying and solving we get:
+
+  #+NAME: problem-b-num-wins
+  #+HEADER: :exports none :results output
+  #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
+    def round_all(expr, num=2):
+        return (
+            expr._sympy_()
+                .xreplace(
+                    Transform(
+                        lambda x: x.round(2),
+                        lambda x: (isinstance(x, S.Float))
+                    )
+                )._sage_().full_simplify()
+        )
+
+    def apply_both_sides(expr, func):
+        return round_all(
+            expr.operator()(
+                func(expr.lhs()),
+                func(expr.rhs())
+            ).simplify_log()
+        )
+
+    b_num_wins_expr = (
+        start_price * ((b_perc_win) ** w) * (b_perc_lose ** (total_years-w)) == \
+        round(start_price * (1.1) ** total_years, 2)
+    )
+    b_num_wins_expr_simp1 = apply_both_sides(b_num_wins_expr, log)
+    b_num_wins_expr_ans = (
+        round(
+            solve(
+                apply_both_sides(b_num_wins_expr, log).canonicalize_radical(),
+                w,
+                solution_dict=True
+            )[0][w].n(),
+        2)
+    )
+    print(
+        latex_centers(
+            latex(b_num_wins_expr),
+            latex(b_num_wins_expr_simp1),
+            latex(b_num_wins_expr_ans == w)
+        )
+    )
+  #+end_src
+
+  #+RESULTS: problem-b-num-wins
+  :
+  :  \begin{alignedat}{2}
+  :  100 \cdot 1.3^{w} 0.9^{-w + 10} = 259.37 \\ \log\left(\frac{34.87 \cdot 1.3^{w}}{0.9^{w}}\right) = 5.56 \\ 5.46 = w
+  :  \end{alignedat}
+
+  #+MACRO: problem-b-num-wins (eval (latex-display-wrap (org-sbe problem-b-num-wins)))
+
+  {{{problem-b-num-wins()}}}
+
+  Now we know that after src_python[:results output :session :dir (org-sbe
+  container-dir-str)]{print(latex(b_num_wins_expr_ans))} {{{results($5.46$)}}}
+  wins, stock B will overtake stock A. But this doesn't make sense. We don't
+  have a way to define what a "partial" win means. To remedy this we *must*
+  round up to the nearest number of wins because we are only interested in where
+  stock B "beats" stock A.
+
+  Let's get a better understanding by visualizing this "overtake":
+
+  #+NAME: problem-b-num-wins-bar
+  #+HEADER: :exports none :results output
+  #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
+    import plotly.graph_objects as go
+    from plotly.subplots import make_subplots
+
+    price_expr = start_price * ((b_perc_win) ** w) * (b_perc_lose ** (total_years-w))
+    wins = list(range(total_years+1))
+    price = [price_expr.subs({w:win_num}) for win_num in wins]
+    fig = go.Figure(
+        data=[
+            go.Bar(
+                x=wins,
+                y=price,
+                name="Stock B final price"
+            ),
+            go.Line(
+                x=wins,
+                y=[a_final]*len(wins),
+                name="Stock A final price",
+                mode="lines",
+                line = dict(dash='solid')
+            )
+        ],
+        layout=go.Layout(
+            title={
+                'text': f"Stock prices A vs B after {total_years} years",
+                'y':0.9,
+                'x':0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'
+            },
+            xaxis={
+                "title": f"Stock B number of wins (out of {total_years} years)",
+                "tickmode": "linear"
+            },
+            yaxis={
+                "title": "Price",
+            },
+        )
+    )
+    fig.update_layout(showlegend=True)
+    fig.write_image("A_vs_B_final_price_compare.png")
+    print("done!")
+  #+end_src
+
+  #+RESULTS: problem-b-num-wins-bar
+  : done!
+
+  #+CAPTION: Figure to compare both stocks final prices
+  [[file:A_vs_B_final_price_compare.png]]
+
+  By looking at this graph we can see that stock B only starts "beating" stock A
+  once it gets 6 wins or more.
+
+  Moving forward, knowing that we need *at least* 6 wins, we can now
+  start to narrow in on our final answer by asking the next natural question,
+  "what are the odds of winning 6 or more times". The initial urge one might say
+  would be to perform a "sum" like so $0.5 ^ 6 + 0.5 ^ 7 + 0.5 ^ 8 + 0.5 ^ 9 +
+  0.5 ^ {10} = 0.03$, but this is a *mistake*! With this result we are instead
+  answering the question "What is the sum of probabilities of a *sequence* of
+  $6,7,8,9,10$ wins/losses?" Instead the underlying question we *really* want to
+  answer is "Out of *all* the possible sequences of wins/losses, what is the
+  probability of B getting 6 wins or more?"
+
+  To answer this analytically, we need to think in terms of combinatorics! Our
+  answer will come to us if we determine the count of *all winning* sequences
+  divided by *all possible* sequences. We can formulate this idea by using the
+  formula "n choose k" (commonly known as the binomial coefficient formula), sum
+  up all the ways to make $6, 7, 8, 9, 10$ wins, then divide by the number of
+  all possible sequences of "wins" and "losses":
+
+  #+NAME: problem-n-c-k
+  #+HEADER: :exports none :results output :wrap latex
+  #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
+    n, k, i, y, n_wins = var('n k i y n_wins')
+    C = function('C')
+    y_val = total_years
+    n_wins_val = 6
+    sub_dict = {y:y_val, n_wins:n_wins_val}
+    symbol_sub_dict = dict((k,S.Symbol(str(v))) for k, v in sub_dict.items())
+    all_combs = 2**y
+    num_possible_wins_expr = ((1 / all_combs) * sum(binomial(y,i,hold=True), i, n_wins, y, hold=True))
+    prob_B_gt_A = num_possible_wins_expr.subs(sub_dict).simplify().n(digits=2)
+    print(
+        latex_centers(
+            latex(factorial(n) / factorial(n-k)*factorial(k) ==  binomial(n,k,hold=True)),
+            " = ".join([
+                S.latex(num_possible_wins_expr._sympy_().subs(symbol_sub_dict)),
+                latex(prob_B_gt_A)
+            ])
+        )
+    )
+  #+end_src
+
+  #+RESULTS: problem-n-c-k
+  #+begin_latex
+
+   \begin{alignedat}{2}
+   \frac{k! n!}{\left(-k + n\right)!} = {n \choose k} \\ 2^{- 10} \sum_{i=6}^{10} {\binom{10}{i}} = 0.38
+   \end{alignedat}
+  #+end_latex
+
+  #+MACRO: problem-n-c-k (eval (latex-display-wrap (org-sbe problem-n-c-k)))
+
+  {{{problem-n-c-k()}}}
+
+  So src_python[:results output :session :dir (org-sbe
+  container-dir-str)]{print(latex(num_possible_wins_expr.subs(sub_dict).simplify().n(digits=2)))}
+  {{{results($0.38$)}}} or ">= 25%, < 40%" is our final answer!
+
+  What I find most interesting about this puzzle is that most peoples "gut"
+  answer is no where close to the actual answer. The puzzle definitely puts into
+  perspective the non intuitive results of calculated probabilities vs "gut"
+  probability.
+
+* Extra credit: Stock C
+
+  Now that we solved the two stocks probability puzzle, let's extend the puzzle
+  to make it more interesting! Call it "extra credit" 😂.
+
+  This extension was not covered by 10K Diver and is my personal contribution
+  to the puzzle:
+
+  #+begin_quote
+  Along with stock A and B, we now introduce stock C.
+
+  Stock C is very similar to stock B, except alongside the possibilities of a
+  "win" or a "lose", there is an additional equal chance of a "none" year
+  occurring, meaning no loss or gain.
+
+  Overall Stock C has an equal chance of rising 30%, falling 10%, or
+  staying the same.
+
+  After 10 years, what's the probability that C is higher than A?
+
+  What about C being higher than B?
+  #+end_quote
+
+  Take a stab at this extension to the puzzle and continue reading for the answers.
+
+  ---
+
+  At first one might think that we need a whole different approach to getting
+  the solution, but we can actually just build on top of the tooling we already
+  used to solve the original puzzle.
+
+  The first piece we need to understand is that the formula for stock C is no
+  different than that of stock B, it's just a change of constraints.
+
+  #+NAME: stockC
+  #+HEADER: :exports none :results output
+  #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
+    N, tmp, c_10 = var("N tmp c_10")
+    def stock_C_price(w_var=w, l_var=l, hold=False):
+        assert w_var + l_var + (10-w_var-l_var) == 10, "All elements must add to 10"
+        return (
+            stock_b_price_expr.subs({w:w_var, l:l_var}) *
+            (tmp/tmp).power(10-w-l, hold=hold)
+        )
+
+    print(
+        latex_centers(
+            latex(
+                ( stock_C_price(hold=True) == c_10 )
+            ),
+            latex(w + l + N == 10)
+        )
+    )
+  #+END_SRC
+
+  #+RESULTS: stockC
+  :
+  :  \begin{alignedat}{2}
+  :  100 \cdot 1.3^{w} 1^{-l - w + 10} 0.9^{l} = c_{10} \\ N + l + w = 10
+  :  \end{alignedat}
+
+  #+MACRO: stockC (eval (latex-display-wrap (org-sbe stockC)))
+
+  {{{stockC()}}}
+
+  *Note*: We are using src_python[:results output :session :dir (org-sbe
+  container-dir-str)]{print(latex(N))} instead of src_python[:results output
+  :session :dir (org-sbe container-dir-str)]{print(latex(n))} to indicate the
+  number of "none" years.
+
+  If we look at the formula for the future price for stock C above, we can see
+  that it's equivalent to stock B (because multiplying anything by 1 keeps the
+  result the same)! However, this doesn't mean that stock C is equivalent
+  overall to stock B. Unlike stock B, the second formula underneath is the
+  constraint that stock C must have satisfied *before* calculating price.
+
+  Building on top of this new information, the next piece we need to understand
+  is how many possible future prices can stock C reach after 10 years? We know
+  that stock A has only 1 possible future price and stock B has 11, but what
+  about stock C?
+
+  This can be easily calculated via combinations with replacement (aka multiset
+  binomial coefficients). We can do this by representing stock C's final prices as
+  unique "objects", and years be represented as "sample size" (combinatorially
+  speaking):
+
+  #+NAME: stockC_prices
+  #+HEADER: :exports none :results output
+  #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
+    o, r = var('o r')
+    nCr_expr = factorial(o + r - 1) / ( factorial(r) * factorial(o - 1) )
+    print(
+        latex_centers(
+            latex(o == 3),
+            latex(r == 10),
+            latex(function('nCr')(o, r) == nCr_expr),
+            latex(function('nCr')(o, r) == nCr_expr.subs({o:3, r:10}))
+        )
+    )
+  #+END_SRC
+
+  #+RESULTS: stockC_prices
+  :
+  :  \begin{alignedat}{2}
+  :  o = 3 \\ r = 10 \\ {\rm nCr}\left(o, r\right) = \frac{\left(o + r - 1\right)!}{\left(o - 1\right)! r!} \\ {\rm nCr}\left(o, r\right) = 66
+  :  \end{alignedat}
+
+  #+MACRO: stockC_prices (eval (latex-display-wrap (org-sbe stockC_prices)))
+
+  {{{stockC_prices()}}}
+
+  We can now see that stock C has src_python[:results output :session :dir (org-sbe
+  container-dir-str)]{print(latex(nCr_expr.subs({o:3, r:10})))}
+  {{{results($66$)}}} potential future prices, woweee! But how many of those
+  future prices beat stock A?
+
+  To get a better understanding when stock C beats stock A, let's plot all the
+  combinations of wins, losses, and nones, then color the situations where stock
+  C beats stock A.
+
+  #+NAME: stockC_price_3d
+  #+HEADER: :exports none :results output
+  #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
+    from sympy import Point3D
+    from spb import plot_geometry
+    from spb.backends.plotly import PB
+    from collections import Counter
+    from itertools import combinations_with_replacement as cr
+
+    states = ["win", "lose", "none"]
+    exceed = lambda i: stock_C_price(i['win'], i['lose']) > a_final
+    exceed_A = list(filter(lambda i: exceed(i), map(Counter, cr(states,total_years))))
+    not_exceed_A = list(filter(lambda i: not exceed(i), map(Counter, cr(states,total_years))))
+    title = "Stock C win, loss, and none combinations that beat stock A"
+    filename = "stock_C_price_3d"
+
+    fig = go.Figure(
+        data=[
+            go.Scatter3d(
+                x=[i['win'] for i in exceed_A],
+                y=[i['lose'] for i in exceed_A],
+                z=[i['none'] for i in exceed_A],
+                mode="markers",
+                marker=dict(
+                    size=5,
+                    color='#00FF00'
+                ),
+                name="Beats stock A"
+            ),
+            go.Scatter3d(
+                x=[i['win'] for i in not_exceed_A],
+                y=[i['lose'] for i in not_exceed_A],
+                z=[i['none'] for i in not_exceed_A],
+                mode='markers',
+                marker=dict(
+                    size=5,
+                    color='#FF0000'
+                ),
+                name="Does not beat stock A"
+            )
+        ],
+        layout=go.Layout(
+            title={
+                'text': title,
+                'y':0.9,
+                'x':0.5,
+                'xanchor': 'center',
+                'yanchor': 'top'
+            },
+        )
+    )
+
+    fig.update_layout(
+        margin=dict(l=0, r=0, b=0, t=0),
+        scene_camera=dict(
+            eye=dict(x=1.5, y=1.5, z=1.3)
+        ),
+        scene = dict(
+            xaxis_title='wins',
+            yaxis_title='loses',
+            zaxis_title='nones'
+        ),
+        legend=dict(
+            yanchor="top",
+            y=0.75,
+            xanchor="left",
+            x=0.8
+        ),
+        showlegend=True
+    )
+
+    fig.write_image(f"{filename}.png")
+    print("done!")
+  #+END_SRC
+
+  #+RESULTS: stockC_price_3d
+  : done!
+
+  #+CAPTION: 3d plot of outcomes of stock C that beat stock A
+  [[file:stock_C_price_3d.png]]
+
+  In this plot every point is a particular combination (or multiset) of "wins",
+  "losses", and "nones" colored to indicate which final prices "beat" stock
+  A. It's quite clear to see that there are more final prices that result in
+  stock C losing to stock A. At this point, one might think that the answer is
+  just the ratio between the number of dots that are green divided by the total
+  number of dots (which is src_python[:results output :session :dir (org-sbe
+  container-dir-str)]{print(f"\\frac{{{len(exceed_A)}}}{{{len(not_exceed_A)+len(exceed_A)}}}" +
+  " = " + str(round(len(exceed_A)/(len(not_exceed_A)+len(exceed_A)),3)))}
+  {{{results($\frac{20}{66} = 0.303$)}}}). Unfortunately this *isn't* the right
+  answer. We need to remember (from the first part of this puzzle) that we need
+  to take into account all the possible /ways/ we can reach these final prices
+  opposed to *just* looking at final prices. To count the number *ways* to reach
+  these final prices, we will build on top of the previous tool we used (the
+  binomial coefficient formula) with its natural extension: the /trinomial/
+  coefficient formula 🤓📐!
+
+  #+NAME: trinomial_expansion
+  #+HEADER: :exports none :results output :wrap latex
+  #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
+    def trinomial_expansion(n, i, j, k, hold=False, evaluate=False, sympy=False):
+        if sympy:
+            return (
+                S.factorial(n, evaluate=evaluate)
+                /
+                ( S.factorial(i) * S.factorial(j) * S.factorial(k) )
+            )
+        else:
+            return (
+                factorial(n, hold=hold)
+                /
+                ( factorial(i) * factorial(j) * factorial(k) )
+            )
+
+    n, i, j, k = var('n i j k')
+    katex_simp = "\\dbinom{n}{i, j, k}"
+    print(
+        latex_centers(
+            katex_simp + " = " +
+            latex(
+                trinomial_expansion(n, i, j, k)
+            )
+        )
+    )
+  #+END_SRC
+
+  #+RESULTS: trinomial_expansion
+  #+begin_latex
+
+   \begin{alignedat}{2}
+   \dbinom{n}{i, j, k} = \frac{n!}{i! j! k!}
+   \end{alignedat}
+  #+end_latex
+
+  #+MACRO: trinomial_expansion (eval (latex-display-wrap (org-sbe trinomial_expansion)))
+
+  {{{trinomial_expansion()}}}
+
+  With this /new/ tool, we can now determine the number of *ways* stock C can
+  beat stock A and compare that against the total number of *ways* stock C can
+  reach any final price. Pulling this all together with some summations and a
+  piecewise function we can express our final answer as follows:
+
+  #+NAME: probability_C_beat_A_sym
+  #+HEADER: :exports none :results output :wrap latex
+  #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
+    def make_sum(func, bounds, sympy=True):
+        if sympy:
+            ret = S.Sum(func, *bounds)
+        else:
+            ret = None
+            for b in bounds[::-1]:
+                if ret == None:
+                    ret = sage.all.sum(func, *b)
+                else:
+                    ret = sage.all.sum(ret, *b)
+        return ret
+
+    w_symp = w._sympy_()
+    l_symp = l._sympy_()
+    piece_sympy = S.Piecewise(
+        (
+            trinomial_expansion(
+                total_years, w_symp, l_symp, 10 - w_symp - l_symp,
+                sympy=True, evaluate=False
+            ),
+            stock_C_price(w, l)._sympy_() >= a_final
+        ),
+        (0, True),
+    )
+
+    print(
+        latex_centers(
+            S.latex(
+                make_sum(
+                    piece_sympy,
+                    [(w_symp, 0, 10), (l_symp, 0, 10-w_symp)]
+                ) / make_sum(
+                    trinomial_expansion(
+                        total_years, w_symp, l_symp, 10 - w_symp - l_symp,
+                        sympy=True, evaluate=False
+                    ),
+                    [(w_symp, 0, 10), (l_symp, 0, 10-w_symp)]
+                )
+            ).replace("\\\\", "\\\\\\\\")
+        )
+    )
+  #+END_SRC
+
+  #+RESULTS: probability_C_beat_A_sym
+  #+begin_latex
+  \frac{\sum_{\substack{0 \leq w \leq 10\\\\0 \leq l \leq 10 - w}} \begin{cases} \frac{10!}{l! w! \left(- l - w + 10\right)!} & \text{for}\: 100 \cdot 0.9^{l} 1.3^{w} \geq 259.37 \\\\0 & \text{otherwise} \end{cases}}{\sum_{\substack{0 \leq w \leq 10\\\\0 \leq l \leq 10 - w}} \frac{10!}{l! w! \left(- l - w + 10\right)!}}
+  #+end_latex
+
+  #+MACRO: probability_C_beat_A_sym (eval (latex-display-wrap (org-sbe probability_C_beat_A_sym)))
+
+  {{{probability_C_beat_A_sym()}}}
+
+  #+NAME: probability_C_beat_A_calc
+  #+HEADER: :exports none :results output
+  #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
+    prob_C_gt_A = (
+         make_sum(
+             piece_sympy._sage_(),
+             [(w, 0, 10), (l, 0, 10-w)],
+             sympy=False
+         ) /
+         make_sum(
+             trinomial_expansion(total_years, w, l, 10 - w - l),
+             [(w, 0, 10), (l, 0, 10-w)],
+             sympy=False
+         )
+        ).n(2)
+    print(prob_C_gt_A)
+  #+END_SRC
+
+  #+RESULTS: probability_C_beat_A_calc
+  : 0.19
+
+  #+MACRO: probability_C_beat_A_calc (eval (latex-display-wrap (org-sbe probability_C_beat_A_calc)))
+
+  This expression is pretty daunting, so let's break it down.
+
+  1. Each summation iterates across all possible "wins" and "losses" that
+     satisfy stock C's constraint. We don't need to explicitly iterate by
+     src_python[:results output :session :dir (org-sbe
+     container-dir-str)]{print(latex(N))} {{{results($N$)}}} because we can
+     calculate it from src_python[:results output :session :dir (org-sbe
+     container-dir-str)]{print(latex(w_var))} {{{results($w$)}}} and
+     src_python[:results output :session :dir (org-sbe
+     container-dir-str)]{print(latex(l_var))} {{{results($l$)}}}.
+  2. The denominator is summing up *all* the possible ways stock C can reach any
+     of its final prices.
+  3. The numerator is summing up *only* the number ways stock C beats stock A
+
+  Performing this computation gets us a final result of src_python[:results
+  output :session :dir (org-sbe container-dir-str)]{print(prob_C_gt_A)}
+  {{{results($0.19$)}}} 😮. To put this into context, that's *half* as much as
+  stock B! What a terrible investment opportunity!
+
+  The interesting insight to take away here is that just because we added a new
+  *seemingly* innocuous outcome (adapting stock B to stock C), doesn't mean an
+  innocuous change in results.
+
+* Verification via Monte Carlo
+
+  So far we have done all of our probability calculations analytically (using
+  just formulas and algebra). Another way to calculate the answers to these
+  puzzles is to use Monte Carlo simulation!
+
+  #+begin_quote
+  Monte Carlo methods, or Monte Carlo experiments, are a broad class of
+  computational algorithms that rely on repeated random sampling to obtain
+  numerical results. The underlying concept is to use randomness to solve
+  problems that might be deterministic in principle
+
+  -- Wikipedia
+  #+end_quote
+
+  In simpler terms, the Monte Carlo methodology is used when we just want to
+  throw a computer at a statistical problem, and get an approximate answer. So
+  by throwing some Monte Carlo at our puzzle (via some Python / Numpy) we get
+  the following results:
+
+  #+NAME: extra-credit-3
+  #+HEADER: :exports both :results output :eval yes
+  #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
+    import numpy as np
+
+    stock_B = np.vectorize(
+        lambda sample: \
+        start_price * \
+        (b_perc_win ** (sample == 0).sum()) * \
+        (b_perc_lose ** (sample == 1).sum()),
+        signature="(n)->()"
+    )
+    stock_C = np.vectorize(
+        lambda sample: \
+        start_price * \
+        (b_perc_win ** (sample == 0).sum()) * \
+        (b_perc_lose ** (sample == 1).sum()) * \
+        (1.0 ** (sample == 2).sum()),
+        signature="(n)->()"
+    )
+
+    samples, years = 10_000, total_years
+    stock_A_samples = (start_price * a_perc**total_years)
+    stock_B_samples = np.apply_along_axis(stock_B, 1, np.random.randint(0, 2, size=[samples,years]))
+    stock_C_samples = np.apply_along_axis(stock_C, 1, np.random.randint(0, 3, size=[samples,years]))
+
+    print("B > A:", (stock_B_samples > stock_A_samples).mean().round(2))
+    print("C > A:", (stock_C_samples > stock_A_samples).mean().round(2))
+    print("C > B:", (stock_C_samples > stock_B_samples).mean().round(2))
+  #+END_SRC
+
+  #+RESULTS: extra-credit-3
+  : B > A: 0.38
+  : C > A: 0.19
+  : C > B: 0.36
+
+  And BABAM! Our Monte Carlo simulations have verified our first two answers
+  *and* gave us an approximate answer for our third! See if you can find an
+  analytical solution to the probability of stock C beating stock B!
+
+* Conclusion
+
+  Why is this puzzle worth talking about?
+
+  What makes this puzzle special is that right out of the gate you are prompted
+  with a contradiction, namely that both stocks "average" the same. At first
+  this is just confusing, but it's secretly a hint! The puzzle is essentially
+  telling you "*don't* think in averages, try something else!"
+
+  I usually don't like puzzles that give you hints right away, but this one is
+  an exception. It's hidden in plane sight and it's the first thing your brain
+  gravitates too.
+
+  One of the most beautiful things I love about puzzles like these (and
+  statistics in general) is how innately unintuitive they can be. Often times
+  our gut instinct is starkly different than the real solution and thats *OKAY*!
+  When I first saw this puzzle/tweet from Steve my first and second gut answers
+  were wrong! Only after being given a hint from Steve to "think
+  combinatorially" did I start to realize how to approach and solve it.
+
+  Thanks for getting this far down statistics boulevard 🎊, let me know what you
+  think of this post in the comments below!
+
+#+HEADER: :exports none
+#+begin_src sh :var NAME=(org-table-get-constant "container_name") :var SHUTDOWN=(org-table-get-constant "shutdown-env")
+podman kill $NAME; podman rm $NAME
+#+end_src
+
+#+RESULTS:
+| stonk                                                            |
+| 1a6c9d97cf9e21e737d9a64aa03fbbd32923ee55fca7e8d4842274d838ee8092 |
+
+
+
+#+NAME: expectation
+#+HEADER: :exports none :results output :eval no
+#+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
+    # Are stock A and B the same in terms of expectation?
+    B(0) = 100
+    B(n) = sum(B(n-1) * p(outcome) * outcome, outcomes)
+    B(n+1) = sum(B(n) * p(outcome) * outcome, outcomes)
+
+    # simplification 1
+    B(n) = sum(B(n-1) * p(outcome) * outcome, outcomes)
+         = (B(n-1) * 0.5 * 1.3) +
+           (B(n-1) * 0.5 * 0.9)
+         = 0.65 * B(n-1) + 0.45 * B(n-1)
+         = 0.1 * B(n-1)
+    B(n+1) = sum(B(n) * p(outcome) * outcome, outcomes)
+           = ( 0.1 * B(n-1) * 0.5 * 1.3 ) +
+             ( 0.1 * B(n-1) * 0.5 * 0.9 )
+           = 0.11 * B(n-1)
+
+    C(n) = sum(C(n-1) * p(outcome) * outcome, outcomes)
+#+END_SRC

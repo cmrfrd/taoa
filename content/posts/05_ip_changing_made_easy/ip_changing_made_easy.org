@@ -1,6 +1,6 @@
-#+TITLE: A new IP for every command
+#+TITLE: IP Changing Made Easy
 #+CREATED: [2022-01-21 Fri 21:56]
-#+LAST_MODIFIED: [2022-01-27 Thu 17:53]
+#+LAST_MODIFIED: [2022-02-02 Wed 10:07]
 #+FILETAGS: fleeting
 
 #+OPTIONS: toc:nil
@@ -36,16 +36,21 @@
 
   It's very handy as a programmer to change your public facing IP. Whether you
   want to pretend your computer is in a different country or just want to get
-  around an IP ban, being able to masquerade your IP has many utilities.
+  around an IP ban, being able to masquerade your IP has many uses.
 
-  The "normal" way I've always done this is to run ~openvpn~ as a background
-  process, do what I want to do, then kill the process.
+  The workflow *I've* always used to achieve this is:
 
-  When I was testing some IP banning tooling I quickly came across the problem
-  that switching locations/IPs multiple times gets annoying. So I wanted to
-  build a utility to make it easier.
+  1. running ~openvpn~ as a background process
+  2. do what I want to do
+  3. kill the ~openvpn~ process
 
-  The ideal experience I wanted was to be able to run command isolated from the
+  When I was testing some IP banning tooling I was using this workflow and
+  quickly came across the problem that switching locations/IPs multiple times
+  gets annoying as I have to kill and start ~openvpn~ multiple times. So I
+  wanted to build a utility to make it easier by collapsing this workflow into
+  just one step.
+
+  The ideal experience I wanted was to run a command isolated from the
   rest of my local network, yet be connected to a VPN whose location I can
   change with a single argument.
 
@@ -66,16 +71,16 @@
     podman build -q -t ${NAME} -f /tmp/Dockerfile.${NAME} $EMPTY 2>&1 > /dev/null
   #+end_src
 
-  The immediate problem that I had with this approach was that the container
-  image doesn't include any of my local tools. It also doesn't seem practical to
-  keep adding dependencies as needed to this image. This would cause image bloat
-  and I would have to rebuild the image any time I want to add
-  something. Instead I wanted a way to run this image as a conduit for my other
-  tools.
+  The immediate problem I saw with this approach was that the container image
+  doesn't include any of my local tools. It didn't seem practical to keep
+  adding dependencies as needed to this image. This would cause image bloat and
+  I would have to rebuild the image any time I want to add something.
+
+  I wanted a way to run this image as a conduit for my other tools.
 
   The solution I eventually reached was to simply *run* the isolated ~openvpn~
-  container as normal, *then* run a command in the containers *network
-  namespace*. That way I get the network isolation I want, *with* the ability to
+  container, *then* run a command I wanted *in* the containers network
+  namespace. That way I get the network isolation I want, *with* the ability to
   isolate the entire execution of a command behind a VPN.
 
   To do this I ran the container with privileges to create a ~tun~ interface
