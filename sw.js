@@ -27,7 +27,7 @@ workbox.core.clientsClaim();
  */
 self.__precacheManifest = [
   {
-    "url": "webpack-runtime-03b4bd479f9db27feff7.js"
+    "url": "webpack-runtime-82faef2b348f96faa2c7.js"
   },
   {
     "url": "styles.300907f14dfb8a744d99.css"
@@ -46,19 +46,19 @@ self.__precacheManifest = [
   },
   {
     "url": "offline-plugin-app-shell-fallback/index.html",
-    "revision": "6b4a4fc856bad33a39a8e5744f1a23cf"
+    "revision": "15e62f2593f538f01fd704d10fbe6dac"
   },
   {
-    "url": "static/webfonts/s/heebo/v15/NGSpv5_NC0k9P_v6ZUCbLRAHxK1E1yycdw.woff2"
+    "url": "static/webfonts/s/heebo/v18/NGSpv5_NC0k9P_v6ZUCbLRAHxK1E1yycdw.woff2"
   },
   {
-    "url": "static/webfonts/s/heebo/v15/NGSpv5_NC0k9P_v6ZUCbLRAHxK1EiSycdw.woff2"
+    "url": "static/webfonts/s/heebo/v18/NGSpv5_NC0k9P_v6ZUCbLRAHxK1EiSycdw.woff2"
   },
   {
-    "url": "static/webfonts/s/heebo/v15/NGSpv5_NC0k9P_v6ZUCbLRAHxK1Euyycdw.woff2"
+    "url": "static/webfonts/s/heebo/v18/NGSpv5_NC0k9P_v6ZUCbLRAHxK1Euyycdw.woff2"
   },
   {
-    "url": "static/webfonts/s/heebo/v15/NGSpv5_NC0k9P_v6ZUCbLRAHxK1EVyucdw.woff2"
+    "url": "static/webfonts/s/heebo/v18/NGSpv5_NC0k9P_v6ZUCbLRAHxK1EVyucdw.woff2"
   },
   {
     "url": "component---cache-caches-gatsby-plugin-offline-app-shell-js-d79825d632e08eb800de.js"
