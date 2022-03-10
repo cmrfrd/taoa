@@ -1,6 +1,6 @@
 #+TITLE: Optimal compounding with penalties
 #+CREATED: [2021-11-13 Sat 00:07]
-#+LAST_MODIFIED: [2022-01-08 Sat 00:25]
+#+LAST_MODIFIED: [2022-02-04 Fri 13:49]
 #+ROAM_TAGS: money composition
 #+STARTUP: showall indent
 #+OPTIONS: toc:nil
@@ -1227,7 +1227,6 @@ let's see how they compare against one another with some hand-picked parameters:
       ylabel=f"$Balance \ (tokens)$",
       backend=PB
   )
-  pl._update_layout()
   pl._fig.update_layout(
       title_x=0.09,
       margin=dict(
@@ -1244,7 +1243,6 @@ let's see how they compare against one another with some hand-picked parameters:
           x=0.01
       )
   )
-  pl._process_series(pl._series)
   pl._fig.write_image(filename)
   print(f"Filename: {filename}")
 #+END_SRC
