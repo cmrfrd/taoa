@@ -1,6 +1,6 @@
 #+TITLE: Solving the two stocks probability puzzle
 #+CREATED: [2022-03-08 Tue 20:13]
-#+LAST_MODIFIED: [2022-03-09 Wed 23:15]
+#+LAST_MODIFIED: [2022-03-10 Thu 00:03]
 #+ROAM_TAGS: composition
 #+OPTIONS: toc:nil
 #+OPTIONS: tex:t
@@ -483,7 +483,7 @@ latex_centers = lambda *exprs: \
   all possible sequences of "wins" and "losses":
 
   #+NAME: problem-n-c-k
-  #+HEADER: :exports none :results output :wrap latex
+  #+HEADER: :exports none :results output
   #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
     n, k, i, y, n_wins = var('n k i y n_wins')
     C = function('C')
@@ -506,12 +506,10 @@ latex_centers = lambda *exprs: \
   #+end_src
 
   #+RESULTS: problem-n-c-k
-  #+begin_latex
-
-   \begin{alignedat}{2}
-   \frac{k! n!}{\left(-k + n\right)!} = {n \choose k} \\ 2^{- 10} \sum_{i=6}^{10} {\binom{10}{i}} = 0.38
-   \end{alignedat}
-  #+end_latex
+  :
+  :  \begin{alignedat}{2}
+  :  \frac{k! n!}{\left(-k + n\right)!} = {n \choose k} \\ 2^{- 10} \sum_{i=6}^{10} {\binom{10}{i}} = 0.38
+  :  \end{alignedat}
 
   #+MACRO: problem-n-c-k (eval (latex-display-wrap (org-sbe problem-n-c-k)))
 
@@ -744,7 +742,7 @@ latex_centers = lambda *exprs: \
   coefficient formula 🤓📐!
 
   #+NAME: trinomial_expansion
-  #+HEADER: :exports none :results output :wrap latex
+  #+HEADER: :exports none :results output
   #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
     def trinomial_expansion(n, i, j, k, hold=False, evaluate=False, sympy=False):
         if sympy:
@@ -773,12 +771,10 @@ latex_centers = lambda *exprs: \
   #+END_SRC
 
   #+RESULTS: trinomial_expansion
-  #+begin_latex
-
-   \begin{alignedat}{2}
-   \dbinom{n}{i, j, k} = \frac{n!}{i! j! k!}
-   \end{alignedat}
-  #+end_latex
+  :
+  :  \begin{alignedat}{2}
+  :  \dbinom{n}{i, j, k} = \frac{n!}{i! j! k!}
+  :  \end{alignedat}
 
   #+MACRO: trinomial_expansion (eval (latex-display-wrap (org-sbe trinomial_expansion)))
 
@@ -790,7 +786,7 @@ latex_centers = lambda *exprs: \
   piecewise function we can express our final answer as follows:
 
   #+NAME: probability_C_beat_A_sym
-  #+HEADER: :exports none :results output :wrap latex
+  #+HEADER: :exports none :results output
   #+BEGIN_SRC python :dir (org-sbe container-dir-str) :session
     def make_sum(func, bounds, sympy=True):
         if sympy:
@@ -836,9 +832,10 @@ latex_centers = lambda *exprs: \
   #+END_SRC
 
   #+RESULTS: probability_C_beat_A_sym
-  #+begin_latex
-  \frac{\sum_{\substack{0 \leq w \leq 10\\\\0 \leq l \leq 10 - w}} \begin{cases} \frac{10!}{l! w! \left(- l - w + 10\right)!} & \text{for}\: 100 \cdot 0.9^{l} 1.3^{w} \geq 259.37 \\\\0 & \text{otherwise} \end{cases}}{\sum_{\substack{0 \leq w \leq 10\\\\0 \leq l \leq 10 - w}} \frac{10!}{l! w! \left(- l - w + 10\right)!}}
-  #+end_latex
+  :
+  :  \begin{alignedat}{2}
+  :  \frac{\sum_{\substack{0 \leq w \leq 10\\\\0 \leq l \leq 10 - w}} \begin{cases} \frac{10!}{l! w! \left(- l - w + 10\right)!} & \text{for}\: 100 \cdot 0.9^{l} 1.3^{w} \geq 259.37 \\\\0 & \text{otherwise} \end{cases}}{\sum_{\substack{0 \leq w \leq 10\\\\0 \leq l \leq 10 - w}} \frac{10!}{l! w! \left(- l - w + 10\right)!}}
+  :  \end{alignedat}
 
   #+MACRO: probability_C_beat_A_sym (eval (latex-display-wrap (org-sbe probability_C_beat_A_sym)))
 

@@ -342,8 +342,8 @@ const MDXBody = styled.div(
     // with katex display mode works
     '.katex-display': {
       color: p.theme.colors.postText,
-      overflow: 'auto hidden',
-      margin: '1em 1em'
+      padding: '1em 1em',
+      overflow: 'auto hidden'
     },
 
     position: 'relative',
