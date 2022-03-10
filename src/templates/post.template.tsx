@@ -9,7 +9,7 @@ import MDX from '@components/MDX';
 import Section from '@components/Section';
 import Utterances from '@components/Utterances';
 import { mediaquery } from '@styles/media';
-import { Template, TTemplate, ITAOAThemeUIContext } from '@types';
+import { Template, ITAOAThemeUIContext } from '@types';
 
 import styled from '@emotion/styled';
 import { graphql, useStaticQuery } from 'gatsby';
