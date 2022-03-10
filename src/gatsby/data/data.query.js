@@ -47,19 +47,6 @@ module.exports.local = {
       }
     }
   }`,
-  home: `{
-    home: allHomeYaml {
-      edges {
-        node {
-          home {
-            postsHeadingText
-            morePostsText
-            numberOfPosts
-          }
-        }
-      }
-    }
-  }`,
   about: `{
     about: aboutYaml {
       name
