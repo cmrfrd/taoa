@@ -76,8 +76,6 @@ const PostSEO: React.FC<PostSEOProps> = ({ post, authors, location }) => {
    * https://stackoverflow.com/a/23667311
    */
 
-  console.log(siteUrl + image);
-
   return (
     <SEO
       title={post.title}

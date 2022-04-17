@@ -18,7 +18,6 @@ interface AuthorHeroProps {
 
 const AuthorHero: React.FC<AuthorHeroProps> = ({ author }) => {
   const pgp_keyid = author.pgp_keyid.replace(' ', '');
-  console.log(author);
   return (
     <Hero>
       <HeroDiv>
