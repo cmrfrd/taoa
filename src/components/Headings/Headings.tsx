@@ -2,6 +2,7 @@ import { mediaquery } from '@styles/media';
 import { ITAOAThemeUIContext } from '@types';
 
 import styled from '@emotion/styled';
+import { SerializedStyles } from '@emotion/serialize';
 import { Theme } from 'theme-ui';
 
 /**
@@ -9,7 +10,7 @@ import { Theme } from 'theme-ui';
  * <Heading.h1>Lorem Ipsum</Heading.h1>
  */
 
-const commonStyles = (p: ITAOAThemeUIContext): Theme => ({
+const commonStyles = (p: ITAOAThemeUIContext): any => ({
   fontWeight: 'bold',
   color: p.theme.colors.primary,
   fontFamily: p.theme.fonts.monospace,
@@ -124,5 +125,6 @@ export default {
   h3,
   h4,
   h5,
-  h6
+  h6,
+  commonStyles
 };

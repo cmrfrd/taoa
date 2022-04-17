@@ -72,8 +72,8 @@ const ButtonContainer = styled.div(
             --button-large-height: ${p.height || '60px'};
             --button-large-font-size: ${p.fontSize || '22px'};
             --button-font-family: ${p.theme.fonts.serif};
-            --button-font-color: ${p.theme.colors.invTintBackground as CSS.ColorProperty};
-            --button-font-color-hover: ${p.theme.colors.invTintBackground as CSS.ColorProperty};
+            --button-font-color: ${p.theme.colors.invTintBackground};
+            --button-font-color-hover: ${p.theme.colors.invTintBackground};
             --button-font-weight: 600;
             --button-font-style: normal;
             --button-hover-darken-opacity: 0.1;
@@ -86,10 +86,10 @@ const ButtonContainer = styled.div(
             --loading-transition-end-speed: 0.3s;
             --transform-speed: 0.25s;
             --button-primary-color-light: ${p.theme.colors.background};
-            --button-primary-color: ${p.theme.colors.invTintBackground as CSS.ColorProperty};
-            --button-primary-color-dark: ${p.theme.colors.grey as CSS.ColorProperty};
-            --button-primary-color-hover: ${p.theme.colors.tintBackground as CSS.ColorProperty};
-            --button-primary-color-active: ${p.theme.colors.tintBackground as CSS.ColorProperty};
+            --button-primary-color: ${p.theme.colors.invTintBackground};
+            --button-primary-color-dark: ${p.theme.colors.grey};
+            --button-primary-color-hover: ${p.theme.colors.tintBackground};
+            --button-primary-color-active: ${p.theme.colors.tintBackground};
             --button-primary-border: none;
             --button-secondary-color: #f2f6f9;
             --button-secondary-color-dark: #1360a4;

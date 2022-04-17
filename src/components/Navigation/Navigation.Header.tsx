@@ -268,16 +268,6 @@ const NavigationHeader: React.FC<INavigationHeader> = (props: INavigationHeader)
                           >
                             <NavLinkText arrow={showArrow}>About</NavLinkText>
                           </NavLink>
-                          <NavLink
-                            to={'/posts'}
-                            arrow={showArrow}
-                            state={{ arrowUp: arrowUp }}
-                            data-a11y={false}
-                            title="Navigate to the posts page"
-                            aria-label="Navigate to the posts page"
-                          >
-                            <NavLinkText arrow={showArrow}>Posts</NavLinkText>
-                          </NavLink>
                         </NavLinks>
                         <Horizontal />
                         <NavControls>
@@ -306,16 +296,6 @@ const NavigationHeader: React.FC<INavigationHeader> = (props: INavigationHeader)
                   aria-label="Navigate to the about page"
                 >
                   <NavLinkText arrow={showArrow}>About</NavLinkText>
-                </NavLink>
-                <NavLink
-                  to={'/posts'}
-                  arrow={showArrow}
-                  state={{ arrowUp: arrowUp }}
-                  data-a11y={false}
-                  title="Navigate to the posts page"
-                  aria-label="Navigate to the posts page"
-                >
-                  <NavLinkText arrow={showArrow}>Posts</NavLinkText>
                 </NavLink>
               </NavLinks>
               <NavControls>

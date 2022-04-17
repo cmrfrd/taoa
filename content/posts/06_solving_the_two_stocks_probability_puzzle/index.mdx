@@ -125,7 +125,7 @@ up all the ways to make $6, 7, 8, 9, 10$ wins, then divide by the number of
 all possible sequences of "wins" and "losses":
 
 $$\begin{alignedat}{2}
- \frac{k! n!}{\left(-k + n\right)!} = {n \choose k} \\ 2^{- 10} \sum_{i=6}^{10} {\binom{10}{i}} = 0.38
+ \frac{n!}{k! \left(-k + n\right)!} = {n \choose k} \\ 2^{- 10} \sum_{i=6}^{10} {\binom{10}{i}} = 0.38
  \end{alignedat}$$
 
 So
@@ -230,7 +230,7 @@ reach any final price. Pulling this all together with some summations and a
 piecewise function we can express our final answer as follows:
 
 $$\begin{alignedat}{2}
- \frac{\sum_{\substack{0 \leq w \leq 10\\\\0 \leq l \leq 10 - w}} \begin{cases} \frac{10!}{l! w! \left(- l - w + 10\right)!} & \text{for}\: 100 \cdot 0.9^{l} 1.3^{w} \geq 259.37 \\\\0 & \text{otherwise} \end{cases}}{\sum_{\substack{0 \leq w \leq 10\\\\0 \leq l \leq 10 - w}} \frac{10!}{l! w! \left(- l - w + 10\right)!}}
+ \frac{\sum_{\substack{0 \leq w \leq 10\\\\0 \leq l \leq 10 - w}} \begin{cases} \frac{10!}{l! w! \left(- l - w + 10\right)!} & \text{for}\: 0.9^{l} 1.3^{w} \geq 2.5937 \\\\0 & \text{otherwise} \end{cases}}{\sum_{\substack{0 \leq w \leq 10\\\\0 \leq l \leq 10 - w}} \frac{10!}{l! w! \left(- l - w + 10\right)!}}
  \end{alignedat}$$
 
 This expression is pretty daunting, so let's break it down.
@@ -271,6 +271,7 @@ throw a computer at a statistical problem, and get an approximate answer. So
 by throwing some Monte Carlo at our puzzle (via some Python / Numpy) we get
 the following results:
 
+<a id="code-snippet--extra-credit-3"></a>
 ```python
 import numpy as np
 

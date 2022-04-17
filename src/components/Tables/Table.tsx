@@ -8,10 +8,10 @@ import React from 'react';
 const StyledTable = styled.table((p: ITAOAThemeUIContext) => ({
   position: 'relative',
   lineHeight: 1.65,
-  color: p.theme.colors.grey as CSS.ColorProperty,
+  color: p.theme.colors.grey,
   fontFamily: p.theme.fonts.sansSerif,
   transition: p.theme.colorModeTransition,
-  background: p.theme.colors.card as CSS.ColorProperty,
+  background: p.theme.colors.card,
   margin: '45px auto 85px',
   width: '100%',
   maxWidth: '804px',

@@ -1,5 +1,5 @@
 import Icons from '@icons';
-import { ITAOAThemeUIContext } from '@types';
+import { ITAOAThemeUIContext, IPost } from '@types';
 import { theme } from '@utils';
 
 import styled from '@emotion/styled';
@@ -8,8 +8,33 @@ import { motion } from 'framer-motion';
 import React, { useEffect, useState, useRef } from 'react';
 import { useColorMode } from 'theme-ui';
 
-const Search: React.FC<{}> = (props: any) => {
-  const { elements, setSearchResults, placeholder, filter, sort } = props;
+interface ISearchProps {
+  setNumSearchResults: React.Dispatch<React.SetStateAction<number>>; 
+  searchResults: IPost[]
+  setSearchResults: React.Dispatch<React.SetStateAction<IPost[]>>
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+  searching: boolean;
+  setSearching: React.Dispatch<React.SetStateAction<boolean>>;
+  elements: IPost[];
+  placeholder: string;
+};
+
+const sort = (a: IPost, b: IPost): number => {
+  if (a.dateForSEO > b.dateForSEO) {
+    return -1;
+  }
+  if (a.dateForSEO < b.dateForSEO) {
+    return 1;
+  }
+  return 0;
+};
+
+const filter = (e: IPost, term: string): boolean => {
+  return e.title.toLowerCase().includes(term) || e.title.includes(term);
+};
+
+const Search = (props: ISearchProps) => {
+  const { elements, setSearchResults, placeholder } = props;
   const { setCurrentPage } = props;
   const { searching, setSearching } = props;
   const { setNumSearchResults } = props;
@@ -136,8 +161,8 @@ const LoaderContainer = styled.div(() => ({
 const Input = styled.input((p: ITAOAThemeUIContext) => ({
   outline: 0,
   borderWidth: '0 0 2px',
-  borderColor: p.theme.colors.invbackground as CSS.ColorProperty,
-  color: p.theme.colors.invbackground as CSS.ColorProperty,
+  borderColor: p.theme.colors.invbackground,
+  color: p.theme.colors.invbackground,
   background: 'transparent',
   height: '30px',
   paddingTop: '0.5rem',

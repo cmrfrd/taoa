@@ -12,7 +12,7 @@ const Caption = styled.span((p: ITAOAThemeUIContext) => ({
   textAlign: 'center',
   lineHeight: '1.756',
   fontSize: '14px',
-  color: p.theme.colors.grey as CSS.ColorProperty,
+  color: p.theme.colors.grey,
   fontFamily: p.theme.fonts.sansSerif,
   transition: p.theme.colorModeTransition,
   margin: '0 auto 25px',

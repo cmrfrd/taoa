@@ -7,7 +7,7 @@ import * as CSS from 'csstype';
 const UnorderedList = styled.ul((p: ITAOAThemeUIContext) => ({
   listStyleType: 'disc',
   listStylePosition: 'outside',
-  color: p.theme.colors.postText as CSS.ColorProperty,
+  color: p.theme.colors.postText,
   padding: '0px 0 0px 0px',
   paddingTop: '10px !important',
   paddingBottom: '10px !important',
@@ -69,7 +69,7 @@ const UnorderedList = styled.ul((p: ITAOAThemeUIContext) => ({
   }
 
   /* '> li::marker': {
-   *   color: p.theme.colors.postText as CSS.ColorProperty
+   *   color: p.theme.colors.postText
    * } */
 }));
 

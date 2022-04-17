@@ -18,6 +18,7 @@ interface AuthorHeroProps {
 
 const AuthorHero: React.FC<AuthorHeroProps> = ({ author }) => {
   const pgp_keyid = author.pgp_keyid.replace(' ', '');
+  console.log(author);
   return (
     <Hero>
       <HeroDiv>
@@ -31,6 +32,9 @@ const AuthorHero: React.FC<AuthorHeroProps> = ({ author }) => {
         {author.bio.map((para: string, i: number) => {
           return <AuthorParagraph key={i}>{para}</AuthorParagraph>;
         })}
+        {author.email && <SocialParagraph>{`📬 Email: ${author.email}`}</SocialParagraph>}
+        {author.github && <SocialParagraph>{`🐙 GitHub: ${author.github}`}</SocialParagraph>}
+        {author.twitter && <SocialParagraph>{`🐦 Twitter: ${author.twitter}`}</SocialParagraph>}
       </HeroDiv>
       {/* <Social>
               <SocialLinks links={author.social} />
@@ -134,8 +138,8 @@ justify-content: center;
 
 const Heading = styled.h1`
   font-size: 38px;
-  font-family: ${(p:ITAOAThemeUIContext) => p.theme.fonts.monospace};
-  color: ${(p:ITAOAThemeUIContext) => p.theme.colors.primary};
+  font-family: ${(p: ITAOAThemeUIContext) => p.theme.fonts.monospace};
+  color: ${(p: ITAOAThemeUIContext) => p.theme.colors.primary};
   margin-top: 5px;
   margin-bottom: 5px;
   font-weight: 600;
@@ -163,9 +167,9 @@ text-align: center;
 const Subheading = styled.p`
   margin: 0 auto;
   max-width: 500px;
-  color: ${(p:ITAOAThemeUIContext) => p.theme.colors.grey};
+  color: ${(p: ITAOAThemeUIContext) => p.theme.colors.grey};
   font-size: 18px;
-  font-family: ${(p:ITAOAThemeUIContext) => p.theme.fonts.sansSerif};
+  font-family: ${(p: ITAOAThemeUIContext) => p.theme.fonts.sansSerif};
   line-height: 1.4;
   text-align: left;
 
@@ -183,6 +187,8 @@ const Social = styled.div`
 font-size: 14px;
 `}
 `;
+
+const SocialParagraph = styled(Paragraph)({});
 
 const AuthorParagraph = styled(Paragraph)({
   margin: '25px 0 25px',

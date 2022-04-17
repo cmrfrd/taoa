@@ -28,20 +28,6 @@ const SearchPage: Template = ({ location, pageContext }: TTemplate) => {
 
   const { gridLayout } = useContext(GridLayoutContext);
 
-  const filter = (e: IPost, term: string): boolean => {
-    return e.title.toLowerCase().includes(term) || e.title.includes(term);
-  };
-
-  const sort = (a: IPost, b: IPost): number => {
-    if (a.dateForSEO > b.dateForSEO) {
-      return -1;
-    }
-    if (a.dateForSEO < b.dateForSEO) {
-      return 1;
-    }
-    return 0;
-  };
-
   return (
     <LoadingContainer>
       <SEO pathname={location.pathname} />
@@ -56,8 +42,6 @@ const SearchPage: Template = ({ location, pageContext }: TTemplate) => {
             searching={searching}
             setSearching={setSearching}
             elements={posts}
-            filter={filter}
-            sort={sort}
             placeholder={search.placeholder}
           />
           <Horizontal />
@@ -79,7 +63,7 @@ const SearchPage: Template = ({ location, pageContext }: TTemplate) => {
                 (currentPage - 1) * search.pageLength,
                 currentPage * search.pageLength
               ).length,
-              pathPrefix: '/bluh',
+              pathPrefix: '/',
               setCurrentPage: setCurrentPage,
               currentPage: currentPage,
               ...pageContext

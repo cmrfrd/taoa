@@ -1,6 +1,6 @@
 #+TITLE: Solving the two stocks probability puzzle
 #+CREATED: [2022-03-08 Tue 20:13]
-#+LAST_MODIFIED: [2022-03-10 Thu 00:03]
+#+LAST_MODIFIED: [2022-04-17 Sun 01:27]
 #+ROAM_TAGS: composition
 #+OPTIONS: toc:nil
 #+OPTIONS: tex:t
@@ -61,11 +61,11 @@
         rm -rf /var/lib/apt/lists/*
     RUN git clone https://github.com/sagemath/sagelib /sagelib
     USER sage
-    RUN sage -python3 -m pip install sympy_plot_backends==1.0.2 kaleido==0.2.1
+    RUN sage -python3 -m pip install sympy_plot_backends==1.0.2 kaleido==0.2.1 --ignore-installed
   #+END_SRC
 
   #+RESULTS: stonk-environment-build
-  : #<window 18 on /tmp/babel-Szprh7/ob-podman-build-out-YDMnNO>
+  : #<window 38 on /tmp/babel-pBBegz/ob-podman-build-out-txYbUV>
 
   #+NAME: stonk-environment-start
   #+HEADER: :exports none
@@ -89,7 +89,8 @@
 
   #+RESULTS: stonk-environment-start
   : Running container if not already running ...
-  : Container already running...
+  : bc24ef8dced6770bd43c3a273a834576d3177733cd9d14dbfe4d2e2975efb6bf
+  : Container starting...
 
 #+NAME: stonk-session-start
 #+HEADER: :exports none :results output
@@ -118,8 +119,8 @@ latex_centers = lambda *exprs: \
 #+RESULTS: stonk-session-start
 : Python 3.9.5 (default, Dec  9 2021, 01:35:22)
 : Type 'copyright', 'credits' or 'license' for more information
-: IPython 7.16.1 -- An enhanced Interactive Python. Type '?' for help.
-: Using matplotlib backend: <object object at 0x7f7594723e20>
+: IPython 8.2.0 -- An enhanced Interactive Python. Type '?' for help.
+: Using matplotlib backend: agg
 :
 : In [1]:
 
@@ -457,6 +458,13 @@ latex_centers = lambda *exprs: \
   #+end_src
 
   #+RESULTS: problem-b-num-wins-bar
+  : /home/sage/sage/local/lib/python3.9/site-packages/plotly/graph_objs/_deprecations.py:378: DeprecationWarning: plotly.graph_objs.Line is deprecated.
+  : Please replace it with one of the following more specific types
+  :   - plotly.graph_objs.scatter.Line
+  :   - plotly.graph_objs.layout.shape.Line
+  :   - etc.
+  :
+  :   warnings.warn(
   : done!
 
   #+CAPTION: Figure to compare both stocks final prices
@@ -496,7 +504,7 @@ latex_centers = lambda *exprs: \
     prob_B_gt_A = num_possible_wins_expr.subs(sub_dict).simplify().n(digits=2)
     print(
         latex_centers(
-            latex(factorial(n) / factorial(n-k)*factorial(k) ==  binomial(n,k,hold=True)),
+            latex( ( factorial(n) / ( factorial(n-k)*factorial(k) ) ) ==  binomial(n,k,hold=True)),
             " = ".join([
                 S.latex(num_possible_wins_expr._sympy_().subs(symbol_sub_dict)),
                 latex(prob_B_gt_A)
@@ -508,7 +516,7 @@ latex_centers = lambda *exprs: \
   #+RESULTS: problem-n-c-k
   :
   :  \begin{alignedat}{2}
-  :  \frac{k! n!}{\left(-k + n\right)!} = {n \choose k} \\ 2^{- 10} \sum_{i=6}^{10} {\binom{10}{i}} = 0.38
+  :  \frac{n!}{k! \left(-k + n\right)!} = {n \choose k} \\ 2^{- 10} \sum_{i=6}^{10} {\binom{10}{i}} = 0.38
   :  \end{alignedat}
 
   #+MACRO: problem-n-c-k (eval (latex-display-wrap (org-sbe problem-n-c-k)))

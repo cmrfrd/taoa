@@ -62,8 +62,8 @@ RUN \
     rm -rf /tmp/mkcert
 
 ## Install yq for yml parsing
-RUN GO111MODULE=on go get github.com/mikefarah/yq/v4
-RUN echo $'\
-    export GOPATH=$HOME/go \n\
-    export PATH=$PATH:$GOROOT/bin:$GOPATH/bin \n'\
-    | sudo tee -a $HOME/.profile
+#RUN GO111MODULE=on go get github.com/mikefarah/yq/v4
+#RUN echo $'\
+#    export GOPATH=$HOME/go \n\
+#    export PATH=$PATH:$GOROOT/bin:$GOPATH/bin \n'\
+#    | sudo tee -a $HOME/.profile

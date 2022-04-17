@@ -73,6 +73,7 @@ const LogoFont = styled.h1((p: ITAOAThemeUIContext) => ({
   color: p.theme.colors.background,
   background: p.theme.colors.invbackground,
   padding: '4px 8px 2px 8px',
+  borderRadius: '2px',
 
   fontStyle: 'normal',
   fontWeight: 500,

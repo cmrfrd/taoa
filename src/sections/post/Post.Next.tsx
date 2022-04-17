@@ -1,7 +1,7 @@
 import Headings from '@components/Headings';
 import Image from '@components/Image';
 import mediaqueries from '@styles/media';
-import { IPost } from '@types';
+import { IPost, ITAOAThemeUIContext } from '@types';
 
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -65,7 +65,6 @@ const GridItem: React.FC<IGridItemProps> = ({ post, narrow }: IGridItemProps) =>
 };
 
 const wide = '1fr';
-/* const narrow = '527px'; */
 const narrow = '0.5fr';
 
 const limitToTwoLines = css`
@@ -109,8 +108,8 @@ grid-template-columns: 1fr;
 const ImageContainer = styled.div`
   position: relative;
   height: 240px;
-  box-shadow: 0 30px 60px -10px rgba(0, 0, 0, ${p => (p.narrow ? 0.22 : 0.3)}),
-    0 18px 36px -18px rgba(0, 0, 0, ${p => (p.narrow ? 0.25 : 0.33)});
+  box-shadow: 0 30px 60px -10px rgba(0, 0, 0, ${(p: ITAOAThemeUIContext) => (p.narrow ? 0.22 : 0.3)}),
+    0 18px 36px -18px rgba(0, 0, 0, ${(p: ITAOAThemeUIContext) => (p.narrow ? 0.25 : 0.33)});
   margin-bottom: 30px;
   transition: transform 0.3s var(--ease-out-quad), box-shadow 0.3s var(--ease-out-quad);
 

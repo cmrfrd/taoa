@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 import React, { useState } from 'react';
 import { useColorMode } from 'theme-ui';
 
-const ShareDarkModeOffIcon: React.FC<{}> = () => (
+const ShareDarkModeOffIcon: React.FC = () => (
   <svg width="24" height="20" viewBox="0 0 24 20" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
@@ -17,7 +17,7 @@ const ShareDarkModeOffIcon: React.FC<{}> = () => (
   </svg>
 );
 
-const ShareDarkModeOnIcon: React.FC<{}> = () => (
+const ShareDarkModeOnIcon: React.FC = () => (
   <svg width="24" height="20" viewBox="0 0 24 20" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       fillRule="evenodd"
@@ -28,7 +28,7 @@ const ShareDarkModeOnIcon: React.FC<{}> = () => (
   </svg>
 );
 
-const DarkModeToggle: React.FC<{}> = () => {
+const DarkModeToggle: React.FC = () => {
   const [colorMode, setColorMode] = useColorMode();
   const isDark = colorMode === `dark`;
 
@@ -45,7 +45,7 @@ const DarkModeToggle: React.FC<{}> = () => {
   );
 };
 
-const SharePageButton: React.FC<{}> = () => {
+const SharePageButton: React.FC = () => {
   const [hasCopied, setHasCopied] = useState<boolean>(false);
   const [colorMode] = useColorMode();
   const isDark = colorMode === `dark`;
@@ -156,7 +156,7 @@ const IconWrapper = styled.button`
 `;
 
 // This is based off a codepen! Much appreciated to: https://codepen.io/aaroniker/pen/KGpXZo
-const MoonOrSun = styled.div<{ isDark: boolean }>`
+const MoonOrSun = styled.div<ITAOAThemeUIContext>`
   position: relative;
   width: 24px;
   height: 24px;
@@ -203,7 +203,7 @@ const MoonOrSun = styled.div<{ isDark: boolean }>`
   }
 `;
 
-const MoonMask = styled.div<{ isDark: boolean }>`
+const MoonMask = styled.div<ITAOAThemeUIContext>`
   position: absolute;
   right: -1px;
   top: -8px;

@@ -41,9 +41,8 @@ const Layout: React.FC<TLayout> = ({
 }: TLayout) => {
   const [colorMode] = useColorMode();
 
-  const { pageAnimationDurationSeconds } = useStaticQuery(
-    durationQuery
-  ).site.edges[0].node.siteMetadata.transition;
+  const { pageAnimationDurationSeconds } =
+    useStaticQuery(durationQuery).site.edges[0].node.siteMetadata.transition;
 
   useEffect(() => {
     parent.postMessage({ theme: colorMode }, '*');

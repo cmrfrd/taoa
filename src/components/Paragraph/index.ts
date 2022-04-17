@@ -1,1 +1,1 @@
-export { default } from './Paragraph';
+export { default, commonStyles } from './Paragraph';

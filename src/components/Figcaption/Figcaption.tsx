@@ -5,7 +5,7 @@ import * as CSS from 'csstype';
 
 /** Figcaption */
 const Figcaption = styled.figcaption((p: ITAOAThemeUIContext) => ({
-  color: p.theme.colors.grey as CSS.ColorProperty,
+  color: p.theme.colors.grey,
   fontSize: '14px',
   textAlign: 'center',
   width: '100%',

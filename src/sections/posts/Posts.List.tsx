@@ -28,7 +28,8 @@ import React, { useContext } from 'react';
 interface IPostsListProps {
   posts: IPost[];
   alwaysShowAllDetails?: boolean;
-  currentPage: number;
+  currentPage?: number;
+  searching?: boolean;
 }
 
 const siteQuery = graphql`
@@ -56,9 +57,8 @@ const PostsList: React.FC<IPostsListProps> = ({
   if (!posts) return null;
 
   const { gridLayout } = useContext(GridLayoutContext);
-  const { gridRowAnimationDurationSeconds } = useStaticQuery(
-    siteQuery
-  ).allSite.edges[0].node.siteMetadata.transition;
+  const { gridRowAnimationDurationSeconds } =
+    useStaticQuery(siteQuery).allSite.edges[0].node.siteMetadata.transition;
 
   /*
    * Three transitions are here for three possible interactions that
@@ -81,7 +81,7 @@ const PostsList: React.FC<IPostsListProps> = ({
         >
           <FadeTransition
             animatePresenceProps={{ exitBeforeEnter: true }}
-            motionKey={searching}
+            motionKey={gridLayout}
             duration={gridRowAnimationDurationSeconds}
             motionProps={{
               animate: searching ? 'exit' : 'enter'
@@ -188,6 +188,9 @@ const PostsListContainer = styled.div<{ alwaysShowAllDetails?: boolean }>`
   padding-top: 20px;
   min-height: 300px;
   ${p => p.alwaysShowAllDetails && showDetails}
+  ${mediaqueries.phablet`
+                       padding: 0px 5px;
+`}
 `;
 
 const listTile = p => css`
@@ -244,7 +247,7 @@ border-bottom-left-radius: 5px;
 `}
 `;
 
-const listItemTile = p => css`
+const listItemTile = (p: ITAOAThemeUIContext) => css`
   position: relative;
 
   ${mediaqueries.tablet`
@@ -264,7 +267,7 @@ border-bottom-left-radius: 5px;
 `;
 
 // If only 1 post, dont create 2 rows.
-const listRow = p => css`
+const listRow = css`
   display: grid;
   grid-template-rows: '1fr 1fr';
 `;
@@ -281,54 +284,60 @@ const Item = styled.div<{ gridLayout: string }>`
   ${p => (p.gridLayout === 'rows' ? listItemRow : listItemTile)}
 `;
 
-const ImageContainer = styled.div<{ narrow: boolean; gridLayout: string }>`
-  background: ${p => p.theme.colors.invPrimary};
-  position: relative;
-  box-shadow: 0 30px 60px -10px rgba(0, 0, 0, ${p => (p.narrow ? 0.22 : 0.3)}),
-    0 18px 36px -18px rgba(0, 0, 0, ${p => (p.narrow ? 0.25 : 0.33)});
-  margin-bottom: ${p => (p.gridLayout === 'tiles' ? '30px' : 0)};
-  transition: transform 0.3s var(--ease-out-quad), box-shadow 0.3s var(--ease-out-quad);
+interface IImageContainerProps extends ITAOAThemeUIContext {
+  narrow: boolean;
+  gridLayout: string;
+}
 
-  & > div {
-    height: 100%;
+const ImageContainer = styled.div((p: IImageContainerProps) => ({
+  background: p.theme.colors.invPrimary,
+  position: 'relative',
+  boxShadow: `0 30px 60px -10px rgba(0, 0, 0, ${p => (p.narrow ? 0.22 : 0.3)})`,
+  marginBottom: p.gridLayout === 'tiles' ? '30px' : 0,
+  transition: 'transform 0.3s var(--ease-out-quad), box-shadow 0.3s var(--ease-out-quad)',
+
+  '& > div': {
+    height: '100%'
+  },
+
+  [mediaquery.tablet()]: {
+    height: '200px',
+    marginBottom: '35px'
+  },
+
+  [mediaquery.phablet()]: {
+    overflow: 'hidden',
+    marginBottom: 0,
+    boxShadow: 'none',
+    borderTopRightRadius: '5px',
+    borderTopLeftRadius: '5px'
   }
+}));
 
-  ${mediaqueries.tablet`
-height: 200px;
-margin-bottom: 35px;
-`}
+interface ITitleProps extends ITAOAThemeUIContext {
+  hasOverflow: boolean;
+  gridLayout: string;
+}
 
-  ${mediaqueries.phablet`
-overflow: hidden;
-margin-bottom: 0;
-box-shadow: none;
-border-top-right-radius: 5px;
-border-top-left-radius: 5px;
-`}
-`;
+const Title = styled(Headings.h2)((p: ITitleProps) => ({
+  marginBottom: p.hasOverflow && p.gridLayout === 'tiles' ? '35px' : '10px',
+  fontFamily: p.theme.fonts.serif,
+  transition: 'color 0.3s ease-in-out',
+  overflowWrap: 'normal',
+  WebkitLineClamp: 2,
+  WebkitBoxOrient: 'vertical',
+  display: '-webkit-box',
+  WhiteSpace: 'normal',
+  overflow: 'hidden',
 
-const Title = styled(Headings.h2)`
-  font-size: 21px;
-  font-family: ${p => p.theme.fonts.serif};
-  margin-bottom: ${p => (p.hasOverflow && p.gridLayout === 'tiles' ? '35px' : '10px')};
-  transition: color 0.3s ease-in-out;
-  ${limitToTwoLines};
-
-  ${mediaqueries.desktop`
-margin-bottom: 15px;
-`}
-
-  ${mediaqueries.tablet`
-font-size: 24px;
-`}
-
-  ${mediaqueries.phablet`
-font-size: 22px;
-padding: 15px 20px 0;
-margin-bottom: 10px;
-             -webkit-line-clamp: 3;
-`}
-`;
+  [mediaquery.phablet()]: {
+    padding: '20px 20px 0px'
+  },
+  [mediaquery.tablet()]: {
+    fontSize: '22px',
+    marginBottom: '10px'
+  }
+}));
 
 interface IExcerptProps extends ITAOAThemeUIContext {
   hasOverflow: boolean;
@@ -336,11 +345,10 @@ interface IExcerptProps extends ITAOAThemeUIContext {
   gridLayout: string;
 }
 
-//    ${limitToTwoLines};
 const Excerpt = styled.p((p: IExcerptProps) => ({
   fontSize: '16px',
   marginBottom: '10px',
-  color: `${p.theme.colors.grey}`,
+  color: p.theme.colors.grey,
   display: p.hasOverflow && p.gridLayout === 'tiles' ? 'none' : 'box',
   maxWidth: p.narrow ? '415px' : '515px',
 

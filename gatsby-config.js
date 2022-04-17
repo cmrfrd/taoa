@@ -158,8 +158,11 @@ module.exports = {
         defer: true
       }
     },
+    // {
+    //   resolve: 'gatsby-plugin-offline'
+    // },
     {
-      resolve: 'gatsby-plugin-offline'
+      resolve: 'gatsby-plugin-remove-serviceworker'
     },
     // {
     //   resolve: 'gatsby-plugin-webpack-bundle-analyser-v2',

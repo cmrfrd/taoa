@@ -17,7 +17,7 @@ export interface ITAOAColorMode {
 export interface ITAOATheme {
   colorModeTransition: string;
   fonts: ITAOAFonts;
-  colors: {[k: string]: ITAOAColorMode} & ITAOAColorMode
+  colors: { [k: string]: ITAOAColorMode } & ITAOAColorMode;
 }
 
 export interface ITAOAThemeUIContext {
@@ -63,7 +63,9 @@ export interface IAuthor {
   name: string;
   slug: string;
   bio: string[];
+  github: string;
   email: string;
+  twitter: string;
   pgp_keyid: string;
   avatar: {
     image: IGatsbyImageFluid;

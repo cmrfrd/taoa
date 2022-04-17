@@ -5,17 +5,9 @@ import { range } from '@utils';
 import { css } from '@emotion/react';
 import { SerializedStyles } from '@emotion/serialize';
 import styled from '@emotion/styled';
-import { ColorProperty } from 'csstype';
 import { Link } from 'gatsby';
 import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
-
-interface IPaginatorProps {
-  maxPages: number;
-  count: number;
-}
-
-const Pagin: React.FC<{}> = ({ children }) => {};
 
 /**
  * <Paginator />
@@ -33,6 +25,8 @@ class Paginator extends Component<IPaginator, {}> {
   maxPages: number = 3;
   count: number = this.props.pageCount;
   pageRoot: string = this.props.pathPrefix;
+  previousPath: string;
+  nextPath: string;
 
   /**
    * Utility function to return a 1 ... 5 6 7 ... 10 style pagination
@@ -189,7 +183,7 @@ const PageNumberBUtton = styled.div`
   font-weight: 400;
   font-size: 18px;
   text-decoration: none;
-  color: ${(p: ITAOAThemeUIContext): ColorProperty => p.theme.colors.primary};
+  color: ${(p: ITAOAThemeUIContext) => p.theme.colors.primary};
   ${(p: ITAOAThemeUIContext): SerializedStyles => paginationItemMixin(p)}
 
   &:hover,

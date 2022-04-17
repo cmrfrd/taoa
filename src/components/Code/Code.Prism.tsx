@@ -98,9 +98,9 @@ const CodePrism: React.FC<ICodePrismProps> = ({
       <Highlight {...defaultProps} code={codeString} language={language}>
         {({ className, tokens, getLineProps, getTokenProps }: any): React.ReactElement => {
           return (
-            <div style={{ overflow: 'auto', overflowY: 'hidden' }}>
+            <Container>
               <pre className={className} style={{ position: 'relative', marginBottom: '0px' }}>
-                <Copy toCopy={codeString} />
+                {/* <Copy toCopy={codeString} /> */}
                 {tokens.map((line: string[], index: number) => {
                   const { className } = getLineProps({
                     line,
@@ -127,7 +127,7 @@ const CodePrism: React.FC<ICodePrismProps> = ({
                   );
                 })}
               </pre>
-            </div>
+            </Container>
           );
         }}
       </Highlight>
@@ -142,7 +142,7 @@ const CopyButton = styled.button((p: ITAOAThemeUIContext) => ({
   padding: '8px 12px 7px',
   borderRadius: '5px',
   color: '#6f7177',
-  transition: 'background 0.3s ease',
+  transition: p.theme.colorModeTransition,
   right: '22px',
   top: '24px',
 
@@ -169,12 +169,13 @@ const CopyButton = styled.button((p: ITAOAThemeUIContext) => ({
 }));
 
 const Container = styled.div((p: ITAOAThemeUIContext) => ({
+  marginTop: '10px',
+  marginBottom: '10px',
   overflow: 'scroll',
   width: '100%',
   maxWidth: '750px',
-  margin: '0 auto',
+  margin: '10px auto 10px',
   fontSize: '13px',
-  borderRadius: '5px',
   fontFamily: `${p.theme.fonts.monospace} !important`,
 
   'textarea, pre': {
@@ -196,7 +197,6 @@ const Container = styled.div((p: ITAOAThemeUIContext) => ({
   },
 
   [mediaquery.phablet()]: {
-    borderRadius: 0,
     margin: '0 auto 25px',
     overflow: 'initial',
     width: 'unset',

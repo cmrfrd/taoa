@@ -11,6 +11,7 @@ import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import React, { useState, useEffect } from 'react';
 import { useColorMode } from 'theme-ui';
+import { ITAOAThemeUIContext } from '@types';
 
 interface MenuFloatState {
   x: number;
@@ -162,10 +163,10 @@ const PostShare: React.FC<{}> = () => {
     >
       <MenuText>Share: </MenuText>
       <ReferralLink disabled={!canTweet} share={share.twitter}>
-        <Icons.Twitter width="18px" height="15px" />
+        <Icons.Twitter />
       </ReferralLink>
       <ReferralLink disabled={false} share={share.linkedin}>
-        <Icons.LinkedIn width="16px" height="16px" />
+        <Icons.LinkedIn />
       </ReferralLink>
       <MenuDivider />
       <MenuButton onClick={handleCopyClick} aria-label="Copy selected text">
@@ -230,7 +231,7 @@ const popUpwards = keyframes`
   }
 `;
 
-const MenuFloat = styled.div<{ isDark: boolean }>`
+const MenuFloat = styled.div<ITAOAThemeUIContext>`
   position: absolute;
   align-items: center;
   z-index: 1;

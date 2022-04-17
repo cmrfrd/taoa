@@ -101,7 +101,7 @@ const AuthorAvatar = styled.div((p: ITAOAThemeUIContext) => ({
   width: '25px',
   borderRadius: '50%',
   marginRight: '14px',
-  background: p.theme.colors.grey as CSS.ColorProperty,
+  background: p.theme.colors.grey,
 
   [mediaqueries.phablet()]: {
     overflow: 'visible',
@@ -123,7 +123,7 @@ const AuthorLink = styled(Link)((p: ITAOAThemeUIContext) => ({
   },
 
   '&:hover strong': {
-    color: p.theme.colors.primary as CSS.ColorProperty
+    color: p.theme.colors.primary
   }
 }));
 
@@ -140,7 +140,7 @@ const CoAuthorsListOpen = styled.ul((p: ITAOAThemeUIContext) => ({
   right: '-21px',
   top: '-19px',
   padding: '21px',
-  background: p.theme.colors.card as CSS.ColorProperty,
+  background: p.theme.colors.card,
   boxShadow: '0px 0px 15px rgba(0, 0, 0, 0.1)',
   borderRadius: '5px',
   cursor: 'pointer',
@@ -163,7 +163,7 @@ const CoAuthorAvatarOpen = styled.div((p: ITAOAThemeUIContext) => ({
   width: '25px',
   borderRadius: '50%',
   marginRight: '15px',
-  background: p.theme.colors.grey as CSS.ColorProperty,
+  background: p.theme.colors.grey,
   overflow: 'hidden',
   pointerEvents: 'none',
 
@@ -179,7 +179,7 @@ const CoAuthorAvatar = styled.div((p: ITAOAThemeUIContext) => ({
   width: '25px',
   borderRadius: '50%',
   zIndex: 1,
-  background: p.theme.colors.grey as CSS.ColorProperty,
+  background: p.theme.colors.grey,
   boxShadow: `0 0 0 2px ${p.theme.colors.background}`,
   transition: 'box-shadow 0.25s ease',
   overflow: 'hidden',
@@ -216,7 +216,7 @@ const NameContainer = styled.strong({
 const AuthorNameOpen = styled.strong((p: ITAOAThemeUIContext) => ({
   position: 'relative',
   cursor: 'pointer',
-  color: p.theme.colors.secondary as CSS.ColorProperty,
+  color: p.theme.colors.secondary,
   fontWeight: 600
 }));
 

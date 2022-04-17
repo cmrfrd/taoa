@@ -106,10 +106,9 @@ module.exports.local = {
         bio
         featured
         pgp_keyid
+        github
         email
-        social {
-          url
-        }
+        twitter
         slug
         avatar {
           small: childImageSharp {

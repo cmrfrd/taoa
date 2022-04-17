@@ -48,7 +48,7 @@ const PostSEO: React.FC<PostSEOProps> = ({ post, authors, location }) => {
       "@id": "${siteUrl + location.pathname}"
     },
     "headline": "${post.title}",
-    "image": "${siteUrl + post.hero.seo.src}",
+    "image": "${siteUrl + post.hero.seo}",
     "datePublished": "${post.dateForSEO}",
     "dateModified": "${post.dateForSEO}",
     "author": ${JSON.stringify(authorsData)},
@@ -78,11 +78,10 @@ const PostSEO: React.FC<PostSEOProps> = ({ post, authors, location }) => {
     <SEO
       title={post.title}
       description={post.excerpt}
-      image={post.hero.seo.src}
+      image={post.hero.seo}
       timeToRead={post.timeToRead}
       published={post.date}
       pathname={location.href}
-      canonicalUrl={post.canonicalUrl}
     >
       <script type="application/ld+json">{microdata}</script>
     </SEO>

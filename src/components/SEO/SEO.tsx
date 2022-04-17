@@ -29,7 +29,7 @@ interface IHelmetProps {
   url?: string;
   canonicalUrl?: string;
   published?: string;
-  timeToRead?: string;
+  timeToRead?: number;
   children?: React.ReactNode;
 }
 
@@ -80,12 +80,9 @@ const SEO: React.FC<IHelmetProps> = ({
 }: IHelmetProps) => {
   const results = useStaticQuery(seoQuery);
   const site = results.allSite.edges[0].node.siteMetadata;
-  const twitter = site.social.find((option: object) => option.name === 'twitter') || {};
+  const twitter = site.social.find((option: any) => option.name === 'twitter') || {};
 
   const fullURL = (path: string): string => (path ? `${site.siteUrl}${path}` : site.siteUrl);
-
-  // If no image is provided lets looks for a default novela static image
-  image = image ? image : '/preview.jpg';
 
   const metaTags = [
     { charset: 'utf-8' },
@@ -125,11 +122,6 @@ const SEO: React.FC<IHelmetProps> = ({
 
   if (published) {
     metaTags.push({ name: 'post:published_time', content: published });
-  }
-
-  if (timeToRead) {
-    metaTags.push({ name: 'twitter:label1', value: 'Reading time' });
-    metaTags.push({ name: 'twitter:data1', value: `${timeToRead} min read` });
   }
 
   return (

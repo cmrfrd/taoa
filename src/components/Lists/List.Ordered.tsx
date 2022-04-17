@@ -41,7 +41,7 @@ const OrderedList = styled.ol((p: ITAOAThemeUIContext) => ({
   'li::marker': {
     paddingLeft: '20px',
     fontWeight: 'bold',
-    color: p.theme.colors.postText as CSS.ColorProperty
+    color: p.theme.colors.postText
   },
 
   li: {

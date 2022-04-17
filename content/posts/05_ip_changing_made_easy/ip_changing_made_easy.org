@@ -1,6 +1,6 @@
 #+TITLE: IP Changing Made Easy
 #+CREATED: [2022-01-21 Fri 21:56]
-#+LAST_MODIFIED: [2022-02-02 Wed 10:07]
+#+LAST_MODIFIED: [2022-04-09 Sat 00:17]
 #+FILETAGS: fleeting
 
 #+OPTIONS: toc:nil
@@ -13,6 +13,9 @@
 #+HUGO_CUSTOM_FRONT_MATTER: :hero ./images/cover.jpg
 #+HUGO_CUSTOM_FRONT_MATTER: :secret false
 #+HUGO_CUSTOM_FRONT_MATTER: :excerpt Switching it up one IP at a time
+
+#+PROPERTY:
+
 
 #+begin_src emacs-lisp :exports none
 (org-babel-do-load-languages
@@ -31,6 +34,12 @@
 
 #+RESULTS:
 : Enabled mdx on save
+
+#+begin_src python
+echo 123
+#+end_src
+
+#+RESULTS:
 
 * The normal way to change IPs
 
@@ -61,7 +70,7 @@
   was with a quick script to build an ~ovpn~ alpine image like so:
 
   #+HEADER: :exports code
-  #+begin_src bash :eval no
+  #+begin_src bash
     NAME=ovpn
     cat << EOF > /tmp/Dockerfile.${NAME}
     FROM alpine:3.12
@@ -87,7 +96,7 @@
   like so:
 
   #+HEADER: :exports code
-  #+begin_src bash :eval no
+  #+begin_src bash
     podman run --rm --cap-add NET_ADMIN,NET_RAW --device /dev/net/tun \
            --name ${CONTAINER_NAME} \
            -v /tmp/ovpn/:/tmp/ovpn/ \
@@ -140,6 +149,15 @@
   #+RESULTS:
   : US
   : JP
+
+  #+header: :exports code output
+  #+header: :results output replace
+  #+begin_src bash
+  echo 321
+  #+end_src
+
+  #+RESULTS:
+  : 321
 
   Now if I ever need to pretend that I'm running my computer from a different
   country or need a new IP, I have a method to do so.

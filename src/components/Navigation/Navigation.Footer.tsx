@@ -216,16 +216,16 @@ const SocialLinksContainer = styled.div({
 const FooterLink = styled.a((p: ITAOAThemeUIContext) => ({
   transition: p.theme.colorModeTransition,
   textDecoration: 'none',
-  color: p.theme.colors.grey as CSS.ColorProperty,
+  color: p.theme.colors.grey,
 
   '&:hover': {
-    color: p.theme.colors.grey as CSS.ColorProperty,
+    color: p.theme.colors.grey,
     fontWeight: 'bold',
     textShadow: '0 0 .01px black'
   },
 
   ':visited': {
-    color: p.theme.colors.grey as CSS.ColorProperty,
+    color: p.theme.colors.grey,
     textDecoration: 'none'
   },
 
@@ -246,6 +246,6 @@ const FooterGradient = styled.div((p: ITAOAThemeUIContext) => ({
   height: '590px',
   zIndex: 0,
   pointerEvents: 'none',
-  background: p.theme.colors.gradient as CSS.ColorProperty,
+  background: p.theme.colors.gradient,
   transition: p.theme.colorModeTransition
 }));

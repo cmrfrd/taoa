@@ -5,7 +5,7 @@ import Headings from '@components/Headings';
 import Section from '@components/Section';
 import Icons from '@icons';
 import mediaqueries, { mediaquery } from '@styles/media';
-import { IAuthor } from '@types';
+import { ITAOAThemeUIContext } from '@types';
 
 import styled from '@emotion/styled';
 import { graphql, useStaticQuery } from 'gatsby';
@@ -32,25 +32,18 @@ const Hero: React.FC = () => {
   const { hero } = useStaticQuery(homeHeroQuery).home.edges[0].node.home;
 
   return (
-    <Section relative>
+    <Section>
       <HeadingContainer style={{ maxWidth: `${hero.maxWidth}px` }}>
         <HeroHeading>
           <Name.h1 />
         </HeroHeading>
         <HeroHeading>{hero.heading}</HeroHeading>
       </HeadingContainer>
-      <Horizontal />
     </Section>
   );
 };
 
 export default Hero;
-
-const Horizontal = styled.div`
-  position: relative;
-  margin: 20px auto 20px;
-  border-bottom: 1px solid ${p => p.theme.colors.horizontalNav};
-`;
 
 const SubheadingContainer = styled.div`
   display: flex;
@@ -115,28 +108,27 @@ const HeadingContainer = styled.div({
   }
 });
 
-const HeroHeading = styled.div`
-  font-family: ${p => p.theme.fonts.serif};
-  font-style: normal;
-  font-weight: 600;
-  line-height: 1.15;
-  margin-top: 20px;
-  font-size: 26px;
-  color: ${p => p.theme.colors.primary};
+const HeroHeading = styled.div((p: ITAOAThemeUIContext) => ({
+  fontFamily: `${p => p.theme.fonts.serif}`,
+  fontStyle: 'normal',
+  fontWeight: 600,
+  lineHeight: 1.15,
+  marginTop: '20px',
+  fontSize: '26px',
+  color: `${p.theme.colors.primary}`,
+  a: {
+    color: `${p.theme.colors.accent}`
+  },
 
-  a {
-    color: ${p => p.theme.colors.accent};
+  [mediaquery.desktop()]: {
+    fontSize: '26px'
+  },
+
+  [mediaquery.tablet()]: {
+    fontSize: '18px'
+  },
+
+  [mediaquery.phablet()]: {
+    fontSize: '18px'
   }
-
-  ${mediaquery.desktop()} {
-    font-size: 26px;
-  }
-
-  ${mediaquery.tablet()} {
-    font-size: 18px;
-  }
-
-  ${mediaquery.phablet()} {
-    font-size: 18px;
-  } ;
-`;
+}));

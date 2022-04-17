@@ -8,7 +8,6 @@ import styled from '@emotion/styled';
 const Anchor = styled.a((p: ITAOAThemeUIContext) => ({
   transition: p.theme.colorModeTransition,
   color: p.theme.colors.accent,
-
   '&:visited': {
     color: p.theme.colors.accent,
     opacity: '0.85'
