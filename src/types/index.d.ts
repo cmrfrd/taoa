@@ -109,7 +109,7 @@ export interface IPost {
     preview: IGatsbyImageFluid;
     regular: IGatsbyImageFluid;
     narrow: IGatsbyImageFluid;
-    seo: string;
+    seo: any;
   };
   timeToRead: number;
   date: string;

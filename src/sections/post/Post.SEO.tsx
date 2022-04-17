@@ -36,6 +36,8 @@ const PostSEO: React.FC<PostSEOProps> = ({ post, authors, location }) => {
     name: author.name
   }));
 
+  const image = post.hero.seo.gatsbyImageData.images.fallback.src;
+
   /**
    * For some reason `location.href` is undefined here when using `yarn build`.
    * That is why I am using static query `allSite` to get needed fields: name & siteUrl.
@@ -48,7 +50,7 @@ const PostSEO: React.FC<PostSEOProps> = ({ post, authors, location }) => {
       "@id": "${siteUrl + location.pathname}"
     },
     "headline": "${post.title}",
-    "image": "${siteUrl + post.hero.seo}",
+    "image": "${siteUrl + image}",
     "datePublished": "${post.dateForSEO}",
     "dateModified": "${post.dateForSEO}",
     "author": ${JSON.stringify(authorsData)},
@@ -62,7 +64,7 @@ const PostSEO: React.FC<PostSEOProps> = ({ post, authors, location }) => {
       }
     }
   }
-`.replace(/"[^"]+"|(\s)/gm, function (matched, group1) {
+    `.replace(/"[^"]+"|(\s)/gm, function (matched, group1) {
     if (!group1) {
       return matched;
     } else {
@@ -74,11 +76,13 @@ const PostSEO: React.FC<PostSEOProps> = ({ post, authors, location }) => {
    * https://stackoverflow.com/a/23667311
    */
 
+  console.log(siteUrl + image);
+
   return (
     <SEO
       title={post.title}
       description={post.excerpt}
-      image={post.hero.seo}
+      image={image}
       timeToRead={post.timeToRead}
       published={post.date}
       pathname={location.href}

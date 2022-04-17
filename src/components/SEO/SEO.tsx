@@ -82,7 +82,7 @@ const SEO: React.FC<IHelmetProps> = ({
   const site = results.allSite.edges[0].node.siteMetadata;
   const twitter = site.social.find((option: any) => option.name === 'twitter') || {};
 
-  const fullURL = (path: string): string => (path ? `${site.siteUrl}${path}` : site.siteUrl);
+  const fullURL = (path: string): string => (path ? `${site.siteUrl}${path}` : '');
 
   const metaTags = [
     { charset: 'utf-8' },
