@@ -1,3 +1,11 @@
+### [1.3.10](https://github.com/cmrfrd/taoa/compare/v1.3.9...v1.3.10) (2022-04-17)
+
+
+### Bug Fixes
+
+* big ol pile of updates ([819ed29](https://github.com/cmrfrd/taoa/commit/819ed29b002c43cbd1d0ea5fa2d996619c443feb))
+* fix seo and keep service worker ([b612970](https://github.com/cmrfrd/taoa/commit/b612970f5d7292cf5cb9dade6cfa3f75f4391164))
+
 ### [1.3.9](https://github.com/cmrfrd/taoa/compare/v1.3.8...v1.3.9) (2022-03-10)
 
 
