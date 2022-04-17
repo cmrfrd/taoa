@@ -1,3 +1,10 @@
+### [1.3.11](https://github.com/cmrfrd/taoa/compare/v1.3.10...v1.3.11) (2022-04-17)
+
+
+### Bug Fixes
+
+* remove logs ([df2ab56](https://github.com/cmrfrd/taoa/commit/df2ab566ebd068e949f8b9c55cf64cf110e48fc8))
+
 ### [1.3.10](https://github.com/cmrfrd/taoa/compare/v1.3.9...v1.3.10) (2022-04-17)
 
 
