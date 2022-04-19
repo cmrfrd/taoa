@@ -2,8 +2,6 @@ import { mediaquery } from '@styles/media';
 import { ITAOAThemeUIContext } from '@types';
 
 import styled from '@emotion/styled';
-import { SerializedStyles } from '@emotion/serialize';
-import { Theme } from 'theme-ui';
 
 /**
  * Example:
@@ -13,7 +11,7 @@ import { Theme } from 'theme-ui';
 const commonStyles = (p: ITAOAThemeUIContext): any => ({
   fontWeight: 'bold',
   color: p.theme.colors.primary,
-  fontFamily: p.theme.fonts.monospace,
+  fontFamily: p.theme.fonts.sansSerif,
   width: '100%',
 
   [mediaquery.desktop_large()]: {
