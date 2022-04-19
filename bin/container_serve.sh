@@ -2,7 +2,7 @@
 set -e
 source development.env
 
-npx http-server \
+yes | npx http-server \
     -S \
     -p 9000 \
     -C $(find $CERTS_DIR/ -name "$DOMAIN*" -not -name "*key*") \
