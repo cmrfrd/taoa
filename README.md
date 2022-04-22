@@ -75,4 +75,4 @@ When this command is run the following checks are run
 
 ## Contributing
 
-If you would like to help contribute to future posts or help build the site, reach out to my email `alex@taoa.io` or submit a PR.
+If you would like to help contribute to future posts or help build the site, reach out to my email `alex@taoa.io` or submit a PR!
