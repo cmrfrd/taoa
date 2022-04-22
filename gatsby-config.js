@@ -266,29 +266,29 @@ module.exports = {
         extensions: ['css', 'html', 'js', 'svg'],
         path: 'brotli'
       }
-    },
-    {
-      resolve: `gatsby-plugin-csp`,
-      options: {
-        disableOnDev: true,
-        mergeScriptHashes: false, // you can disable scripts sha256 hashes
-        mergeStyleHashes: false, // you can disable styles sha256 hashes
-        mergeDefaultDirectives: true,
-        directives: {
-          'default-src': "'self'",
-          'block-all-mixed-content': '',
-          'manifest-src': "'self'",
-          'base-uri': 'none',
-          'object-src': 'none',
-          'connect-src': "'self' https://www.google-analytics.com www.google-analytics.com",
-          'script-src':
-            "'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com www.google-analytics.com taoa.us14.list-manage.com https://utteranc.es utteranc.es",
-          'frame-src': "'self' https://utteranc.es",
-          'style-src': "'self' 'unsafe-inline'",
-          'img-src': "'self' data: www.google-analytics.com"
-          // you can add your directives or override defaults
-        }
-      }
     }
+    // {
+    //   resolve: `gatsby-plugin-csp`,
+    //   options: {
+    //     disableOnDev: true,
+    //     mergeScriptHashes: false, // you can disable scripts sha256 hashes
+    //     mergeStyleHashes: false, // you can disable styles sha256 hashes
+    //     mergeDefaultDirectives: true,
+    //     directives: {
+    //       'default-src': "'self'",
+    //       'block-all-mixed-content': '',
+    //       'manifest-src': "'self'",
+    //       'base-uri': 'none',
+    //       'object-src': 'none',
+    //       'connect-src': "'self' https://www.google-analytics.com www.google-analytics.com",
+    //       'script-src':
+    //         "'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com www.google-analytics.com taoa.us14.list-manage.com https://utteranc.es utteranc.es",
+    //       'frame-src': "'self' https://utteranc.es",
+    //       'style-src': "'self' 'unsafe-inline'",
+    //       'img-src': "'self' data: www.google-analytics.com"
+    //       // you can add your directives or override defaults
+    //     }
+    //   }
+    // }
   ]
 };
