@@ -1,3 +1,10 @@
+### [1.3.12](https://github.com/cmrfrd/taoa/compare/v1.3.11...v1.3.12) (2022-04-22)
+
+
+### Bug Fixes
+
+* add color ([5f85f33](https://github.com/cmrfrd/taoa/commit/5f85f33fa2e4a4691c5e73c784460f0059d87924))
+
 ### [1.3.11](https://github.com/cmrfrd/taoa/compare/v1.3.10...v1.3.11) (2022-04-17)
 
 
