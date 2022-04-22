@@ -1,3 +1,10 @@
+### [1.3.13](https://github.com/cmrfrd/taoa/compare/v1.3.12...v1.3.13) (2022-04-22)
+
+
+### Bug Fixes
+
+* make it exciting ([7c243f1](https://github.com/cmrfrd/taoa/commit/7c243f139e7ba30840689c504b14a08b5adadd5c))
+
 ### [1.3.12](https://github.com/cmrfrd/taoa/compare/v1.3.11...v1.3.12) (2022-04-22)
 
 
