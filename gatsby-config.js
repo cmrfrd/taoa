@@ -1,9 +1,7 @@
 /* eslint-disable */
 
 module.exports = {
-  flags: {
-    PRESERVE_WEBPACK_CACHE: true
-  },
+  flags: {},
   siteMetadata: {
     siteName: `The Art of Abstraction`,
     title: `T·A·O·A`,
