@@ -3,7 +3,7 @@
 :END:
 #+TITLE: Optimal compounding with penalties
 #+CREATED: [2021-11-13 Sat 00:07]
-#+LAST_MODIFIED: [2022-04-28 Thu 09:15]
+#+LAST_MODIFIED: [2022-04-28 Thu 09:22]
 #+ROAM_TAGS: money composition
 #+STARTUP: showall indent
 #+OPTIONS: toc:nil
@@ -747,7 +747,7 @@ Visualizing this expression gives us the following plot:
 
 The interesting thing we can observe is that if we hold the variables we can't
 control constant (via src_python[:results output :session :dir (format "%s"
-container-dir-str-var)]{print(latex(C))} {{{results($$)}}}) and represent some
+container-dir-str-var)]{print(latex(C))} {{{results($C$)}}}) and represent some
 choice src_python[:results output :session :dir ]{print(latex(C))}
 {{{results($C$)}}} by slicing the space with a plane (shown by the slightly
 opaque vertical plane), the corresponding cross section is the space of possible
