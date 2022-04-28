@@ -3,6 +3,7 @@
 module.exports = {
   flags: {},
   siteMetadata: {
+    env: process.env.ENV || 'dev',
     siteName: `The Art of Abstraction`,
     title: `T·A·O·A`,
     name: `Alexander Comerford`,
