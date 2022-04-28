@@ -27,7 +27,7 @@ workbox.core.clientsClaim();
  */
 self.__precacheManifest = [
   {
-    "url": "webpack-runtime-18314a8d5969e711480d.js"
+    "url": "webpack-runtime-97f5cdb6bb1c6d7abcbc.js"
   },
   {
     "url": "styles.300907f14dfb8a744d99.css"
@@ -42,23 +42,23 @@ self.__precacheManifest = [
     "url": "dc6a8720040df98778fe970bf6c000a41750d3ae-94aa71d48dc6b8565b3a.js"
   },
   {
-    "url": "app-f2307fb503126128219f.js"
+    "url": "app-18fc4e76fcbfbebedee9.js"
   },
   {
     "url": "offline-plugin-app-shell-fallback/index.html",
-    "revision": "65469bb18b2ddb974ca7adac4774a33b"
+    "revision": "ee807d94ca215969e74c4a98840bd387"
   },
   {
-    "url": "static/webfonts/s/heebo/v19/NGSpv5_NC0k9P_v6ZUCbLRAHxK1E1yycdw.woff2"
+    "url": "static/webfonts/s/heebo/v20/NGSpv5_NC0k9P_v6ZUCbLRAHxK1E1yycdw.woff2"
   },
   {
-    "url": "static/webfonts/s/heebo/v19/NGSpv5_NC0k9P_v6ZUCbLRAHxK1EiSycdw.woff2"
+    "url": "static/webfonts/s/heebo/v20/NGSpv5_NC0k9P_v6ZUCbLRAHxK1EiSycdw.woff2"
   },
   {
-    "url": "static/webfonts/s/heebo/v19/NGSpv5_NC0k9P_v6ZUCbLRAHxK1Euyycdw.woff2"
+    "url": "static/webfonts/s/heebo/v20/NGSpv5_NC0k9P_v6ZUCbLRAHxK1Euyycdw.woff2"
   },
   {
-    "url": "static/webfonts/s/heebo/v19/NGSpv5_NC0k9P_v6ZUCbLRAHxK1EVyucdw.woff2"
+    "url": "static/webfonts/s/heebo/v20/NGSpv5_NC0k9P_v6ZUCbLRAHxK1EVyucdw.woff2"
   },
   {
     "url": "component---cache-caches-gatsby-plugin-offline-app-shell-js-d79825d632e08eb800de.js"
@@ -160,7 +160,7 @@ const navigationRoute = new NavigationRoute(async ({ event }) => {
   // Check for resources + the app bundle
   // The latter may not exist if the SW is updating to a new version
   const resources = await idbKeyval.get(`resources:${pathname}`)
-  if (!resources || !(await caches.match(`/app-f2307fb503126128219f.js`))) {
+  if (!resources || !(await caches.match(`/app-18fc4e76fcbfbebedee9.js`))) {
     return await fetch(event.request)
   }
 
