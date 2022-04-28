@@ -1,3 +1,10 @@
+### [1.3.15](https://github.com/cmrfrd/taoa/compare/v1.3.14...v1.3.15) (2022-04-28)
+
+
+### Bug Fixes
+
+* fix bad chars in post ([21f49b5](https://github.com/cmrfrd/taoa/commit/21f49b5c6745cfd3067ce9c0f3f634e5c4496543))
+
 ### [1.3.14](https://github.com/cmrfrd/taoa/compare/v1.3.13...v1.3.14) (2022-04-22)
 
 
