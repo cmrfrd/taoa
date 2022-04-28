@@ -3,7 +3,7 @@
 :END:
 #+TITLE: Optimal compounding with penalties
 #+CREATED: [2021-11-13 Sat 00:07]
-#+LAST_MODIFIED: [2022-04-19 Tue 11:41]
+#+LAST_MODIFIED: [2022-04-28 Thu 09:15]
 #+ROAM_TAGS: money composition
 #+STARTUP: showall indent
 #+OPTIONS: toc:nil
@@ -598,8 +598,6 @@ Now we can return to our original question: "how do we spend the least to make
 the most?". The answer we can infer from this plot for manual compounding is
 "choose the optimal src_python[:results output :session :dir (format "%s"
 container-dir-str-var)]{print(latex(n))} {{{results($n$)}}}".
-
-;#+MACRO: compound-interest-with-iterative-penalty-zero-limit-analysis (eval (latex-display-wrap (org-sbe compound-interest-with-iterative-penalty-zero-limit-analysis)))
 
 #+begin_quote
 *Aside* - Something interesting to note is that as we tend src_python[:results
