@@ -1,3 +1,10 @@
+### [1.3.17](https://github.com/cmrfrd/taoa/compare/v1.3.16...v1.3.17) (2022-05-02)
+
+
+### Bug Fixes
+
+* Add address and view of monero ([678689d](https://github.com/cmrfrd/taoa/commit/678689d91fdb4cb944983e19742111b52bf2bed4))
+
 ### [1.3.16](https://github.com/cmrfrd/taoa/compare/v1.3.15...v1.3.16) (2022-04-28)
 
 
