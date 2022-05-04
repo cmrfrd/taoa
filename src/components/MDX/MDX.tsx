@@ -12,7 +12,7 @@ import Paragraph from '@components/Paragraph';
 import Tables from '@components/Tables';
 import { mediaquery } from '@styles/media';
 import { ITAOAThemeUIContext } from '@types';
-import Miner from '@components/Miner';
+import { Miner, WalletState } from '@components/Miner';
 
 import styled from '@emotion/styled';
 import { MDXProvider } from '@mdx-js/react';
@@ -74,7 +74,8 @@ const components: Components = {
   MediumButton,
   LargeButton,
   ConfettiButton,
-  Miner
+  Miner,
+  WalletState
   /*   CodeEditorWithOutput */
 };
 
