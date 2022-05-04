@@ -1,0 +1,49 @@
+---
+title: "This post mines crypto"
+author: ["Alexander Comerford"]
+date: 2022-04-21
+hero: ./images/hero.jpg
+secret: false
+excerpt: Is it really feasible to mine in the browser
+---
+
+<Miner running={true} />
+
+<WalletState preText="This post has made $" />
+
+Thanks for coming to my site! If the box above shows 'running' then
+congratulations! You are actively contributing hash power to the Monero proof of
+work consensus algorithm!
+
+If you have no idea what that means, then don't worry about it! Just know that
+keeping this tab open supports me in writing more content online 💞
+
+For those of you that *do* know what this means, you are most likely thinking
+"how is this even possible?" You people are my target audience for this post.
+
+There are most likely a lot of questions you might be thinking so I'm going to
+try and pre-emptively answer as many as I can.
+
+## How did you make this?
+
+Webassembly and a little crypto knowledge (I'll elaborate more farther down)
+
+## But isn't this crypto-jacking?
+
+Kinda not really. Crypto-jacking implies I'm trying to actively steal your CPU
+power, instead I'm being upfront and enabling you to donate your CPU power as a
+way to support an up in coming creator.
+
+You also saw the title of this post and have read up until this point so you are
+obviously at least a little curious about how this works.
+
+## Is the $ this post has made live?
+
+It is! Come back in a few days to see the current revenue of this post is!
+
+## Aren't Monero wallets private? How are we seeing the wallet balance?
+
+That's a great question! Every Monero wallet comes with two sets of keys, one
+for spending and one for viewing. By publishing your wallet address and view
+key, anyone can transparently see your balance which is great for an application
+like this!
