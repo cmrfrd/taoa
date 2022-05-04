@@ -1,3 +1,10 @@
+### [1.3.18](https://github.com/cmrfrd/taoa/compare/v1.3.17...v1.3.18) (2022-05-04)
+
+
+### Bug Fixes
+
+* Add new post "this post mines crypto" ([33ac6cd](https://github.com/cmrfrd/taoa/commit/33ac6cd3304d359bfd2ae3db8f9fbc811bf2d4dc))
+
 ### [1.3.17](https://github.com/cmrfrd/taoa/compare/v1.3.16...v1.3.17) (2022-05-02)
 
 
