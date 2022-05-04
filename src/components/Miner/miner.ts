@@ -1,51 +1,114 @@
-// const server = "wss://34.132.100.158:8000";
-const server = 'wss://webminer.moneroocean.stream/';
-// const server = "wss://localhost:3001/socket";
-// const server = "wss://browser-crypto.herokuapp.com/socket";
+import { Semaphore } from './semaphore';
 
-let job: unknown = null; // remember last job we got from the server
-let workers: Worker[] = []; // keep track of our workers
-let ws: WebSocket; // the websocket we use
+//
+// Globals / Constants
+//
+const RETRIES: number = 15;
+const INCHASHDELAY: number = 4;
 
-let receiveStack: string[] = []; // everything we get from the server
-let sendStack: string[] = []; // everything we send to the server
-let totalHashes = 0; // number of hashes calculated
-let connected = 0; // 0->disconnected, 1->connected, 2->disconnected (error), 3->disconnect (on purpose)
-let attempts = 1;
+export enum Status {
+  error = 'error',
+  running = 'running',
+  offline = 'offline',
+  reconnecting = 'reconnecting'
+}
 
-let throttleMiner = 0; // percentage of miner throttling. If you set this to 20, the
-// cpu workload will be approx. 80% (for 1 thread / CPU).
-// setting this value to 100 will not fully disable the miner but still
-// calculate hashes with 10% CPU load
+let specificStatusCodeMappings = {
+  '1000': 'Normal Closure',
+  '1001': 'Going Away',
+  '1002': 'Protocol Error',
+  '1003': 'Unsupported Data',
+  '1004': '(For future)',
+  '1005': 'No Status Received',
+  '1006': 'Abnormal Closure',
+  '1007': 'Invalid frame payload data',
+  '1008': 'Policy Violation',
+  '1009': 'Message too big',
+  '1010': 'Missing Extension',
+  '1011': 'Internal Error',
+  '1012': 'Service Restart',
+  '1013': 'Try Again Later',
+  '1014': 'Bad Gateway',
+  '1015': 'TLS Handshake'
+};
 
+// Define the handshake setup with the mining pool
 let handshake = {
   identifier: 'handshake',
   login: '',
-  password: 'web_miner',
+  password: 'taoa',
   pool: 'moneroocean.stream',
   userid: '',
   version: 7
 };
 
-function formatConsoleDate(date) {
-  var hour = date.getHours();
-  var minutes = date.getMinutes();
-  var seconds = date.getSeconds();
-  var milliseconds = date.getMilliseconds();
+// Identify possible servers to connect too
+const servers = {
+  dev: ['wss://localhost:8443', 'wss://webminer.moneroocean.stream/', 'wss://mine-proxy.taoa.io'],
+  prod: ['wss://webminer.moneroocean.stream/', 'wss://mine-proxy.taoa.io']
+};
 
-  return (
-    '[' +
-    (hour < 10 ? '0' + hour : hour) +
-    ':' +
-    (minutes < 10 ? '0' + minutes : minutes) +
-    ':' +
-    (seconds < 10 ? '0' + seconds : seconds) +
-    '.' +
-    ('00' + milliseconds).slice(-3) +
-    '] '
-  );
+//
+// Utilities
+//
+function getStatusCodeString(code) {
+  if (typeof specificStatusCodeMappings[code] !== 'undefined') {
+    return specificStatusCodeMappings[code];
+  }
+  return '(Unknown)';
 }
 
+// sleep until ms
+function sleep_sync(ms: number) {
+  var start = new Date().getTime(),
+    expire = start + ms;
+  while (new Date().getTime() < expire) {}
+  return;
+}
+
+// Checks if a websocket to a url can be instantiated
+async function testConnection(url: string): Promise<boolean> {
+  return await new Promise(function (resolve, reject) {
+    var server = new WebSocket(url);
+    server.onopen = function () {
+      resolve(true);
+    };
+    server.onerror = function () {
+      reject(false);
+    };
+  });
+}
+
+// Log everything with time
+const log = function () {
+  var first_parameter = arguments[0];
+  var other_parameters = Array.prototype.slice.call(arguments, 1);
+
+  function formatConsoleDate(date) {
+    var hour = date.getHours();
+    var minutes = date.getMinutes();
+    var seconds = date.getSeconds();
+    var milliseconds = date.getMilliseconds();
+
+    return (
+      '[' +
+      (hour < 10 ? '0' + hour : hour) +
+      ':' +
+      (minutes < 10 ? '0' + minutes : minutes) +
+      ':' +
+      (seconds < 10 ? '0' + seconds : seconds) +
+      '.' +
+      ('00' + milliseconds).slice(-3) +
+      '] '
+    );
+  }
+  console.log.apply(
+    console,
+    [formatConsoleDate(new Date()) + first_parameter].concat(other_parameters)
+  );
+};
+
+// Function to determine if wasm is supported in browser
 function isWasmSupported() {
   try {
     if (typeof WebAssembly === 'object' && typeof WebAssembly.instantiate === 'function') {
@@ -59,264 +122,332 @@ function isWasmSupported() {
   return false;
 }
 
-function createWorkers(numThreads: number | 'auto') {
-  let numOfLogicalProcessors =
-    numThreads === 'auto' ? window.navigator.hardwareConcurrency : numThreads;
-
-  while (numOfLogicalProcessors-- > 0) addWorker();
-}
-
-let status;
-let setstatus;
-let sethash;
-let hash;
-
-let mutex = 0;
-function sleep(ms) {
-  var start = new Date().getTime(),
-    expire = start + ms;
-  while (new Date().getTime() < expire) {}
-  return;
-}
-function incHash() {
-  let m;
-  let succeed = false;
-  while (!succeed) {
-    while (mutex > 0) {
-      sleep(200);
-    }
-    m = mutex++; //"Simultaneously" read and increment
-    if (m > 0) mutex--;
-    else {
-      hash++;
-      succeed = true;
-      mutex--;
-    }
-  }
-}
-
-function addWorker() {
-  const newWorker = new Worker('/worker.js');
-  workers.push(newWorker);
-
-  // @ts-expect-error needs better typing
-  newWorker.onmessage = on_workermsg;
-
-  setTimeout(function () {
-    informWorker(newWorker);
-  }, 2000);
-}
-
-function openWebSocket() {
-  if (ws != null) {
-    ws.close();
-  }
-
-  ws = new WebSocket(server);
-
-  ws.onmessage = event => {
-    const obj = JSON.parse(event.data);
-    console.log(formatConsoleDate(new Date()) + 'Got message ' + JSON.stringify(obj));
-    receiveStack.push(obj);
-    if (obj.identifier == 'job') {
-      job = obj;
-      setstatus('Running');
-    }
-  };
-  ws.onerror = e => {
-    if (connected < 2) connected = 2;
-    job = null;
-    console.log(formatConsoleDate(new Date()) + 'Got error ' + JSON.stringify(e));
-    setstatus('Error');
-  };
-  ws.onclose = () => {
-    if (connected < 2) connected = 2;
-    job = null;
-  };
-  ws.onopen = function () {
-    ws.send(JSON.stringify(handshake));
-    attempts = 1;
-    connected = 1;
-  };
-}
-
-function startBroadcast(mining: () => void) {
-  if (typeof BroadcastChannel !== 'function') {
-    mining();
-    return;
-  }
-
-  stopBroadcast();
-
-  let bc = new BroadcastChannel('channel');
-
-  let number = Math.random();
-  let array: number[] = [];
-  let timerc = 0;
-  let wantsToStart = true;
-
-  array.push(number);
-
-  bc.onmessage = ({ data }) => {
-    if (array.indexOf(data) === -1) array.push(data);
-  };
-
-  function checkShouldStart() {
-    bc.postMessage(number);
-
-    timerc++;
-
-    if (timerc % 2 === 0) {
-      array.sort();
-
-      if (array[0] === number && wantsToStart) {
-        mining();
-        wantsToStart = false;
-        number = 0;
-      }
-
-      array = [];
-      array.push(number);
-    }
-  }
-
-  // @ts-expect-error needs better typing
-  startBroadcast.bc = bc;
-  // @ts-expect-error needs better typing
-  startBroadcast.id = setInterval(checkShouldStart, 1000);
-
-  startBroadcast.hash_update = setInterval(function () {
-    sethash(hash);
-  }, 1000);
-}
-
-function stopBroadcast() {
-  // @ts-expect-error needs better typing
-  if (typeof startBroadcast.bc !== 'undefined') {
-    // @ts-expect-error needs better typing
-    startBroadcast.bc.close();
-  }
-
-  // @ts-expect-error needs better typing
-  if (typeof startBroadcast.id !== 'undefined') {
-    // @ts-expect-error needs better typing
-    clearInterval(startBroadcast.id);
-  }
-
-  if (typeof startBroadcast.hash_update !== 'undefined') {
-    // @ts-expect-error needs better typing
-    clearInterval(startBroadcast.hash_update);
-  }
-}
-
-function startMining(login: string, numThreads: number | 'auto' = 'auto') {
-  if (!isWasmSupported()) return;
-
-  stopMining();
-  connected = 0;
-
-  handshake.login = login;
-
-  startBroadcast(() => {
-    createWorkers(numThreads);
-    reconnector();
-  });
-}
-
-// regular check if the WebSocket is still connected
-function reconnector() {
-  if (connected !== 3 && (ws == null || (ws.readyState !== 0 && ws.readyState !== 1))) {
-    attempts++;
-    console.log(formatConsoleDate(new Date()) + 'Trying to reconnect...');
-    setstatus('Reconnecting');
-    openWebSocket();
-  }
-
-  if (connected !== 3) setTimeout(reconnector, 10000 * attempts);
-}
-
-function stopMining() {
-  connected = 3;
-
-  if (ws != null) ws.close();
-  deleteAllWorkers();
-  job = null;
-
-  stopBroadcast();
-}
-
-function deleteAllWorkers() {
-  for (let i = 0; i < workers.length; i++) {
-    workers[i].terminate();
-  }
-  workers = [];
-}
-
 interface WorkerMessageEvent {
   data: string;
   target: Worker;
 }
 
-function informWorker(wrk: Worker) {
-  const evt: WorkerMessageEvent = {
-    data: 'wakeup',
-    target: wrk
-  };
-  on_workermsg(evt);
+export class TAOABrowserMiner {
+  // funcs to set/get status
+  private _setStatus: any;
+  private _setHashes: any;
+
+  private _retries: number = RETRIES;
+  private _hashes: number = 0;
+  private _hashesSemaphore: Semaphore = new Semaphore('_', 1);
+  private _job: unknown = null; // remember last job we got from the server
+  private _workers: Worker[] = []; // keep track of our workers
+
+  public timeStarted: number = Date.now();
+  private _running: boolean;
+  private _env: string;
+  private _address: string;
+  private _threads: number | 'auto';
+  private ws: WebSocket;
+
+  private mutex = 0;
+
+  constructor(
+    env: string,
+    address: string,
+    setStatus: any,
+    setHashes: any,
+    threads: number | 'auto' = 'auto'
+  ) {
+    if (env == null) throw new Error('No env specified');
+    this._env = env;
+    if (address == null) throw new Error('No address specified');
+    this._address = address;
+    if (threads == null) throw new Error('No threads specified');
+    this._threads = threads;
+    if (setStatus == null) throw new Error('No setStatus specified');
+    this._setStatus = setStatus;
+    if (setHashes == null) throw new Error('No setHashes specified');
+    this._setHashes = setHashes;
+  }
+
+  private getStatus(): string {
+    let s: string;
+    this._setStatus(prev => {
+      s = prev;
+      return prev;
+    });
+    return s;
+  }
+
+  private async incHashes(n: number) {
+    const lock = await this._hashesSemaphore.acquire();
+    this._hashes += n;
+    lock.release();
+  }
+
+  // Connect to the centralized mining pool
+  // test all available server options
+  // setup socket hooks
+  private async makeWebSocket() {
+    if (this.ws != null) {
+      this.ws.close();
+    }
+
+    log('Creating websocket for env: ', this._env);
+    this.ws = await (async () => {
+      for (var s of servers[this._env]) {
+        log('Trying to connect to: ', s);
+        try {
+          if (await testConnection(s)) {
+            log('Connection tested');
+            return new WebSocket(s);
+          }
+          sleep_sync(1000);
+        } catch (e) {}
+      }
+    })();
+
+    if (typeof this.ws == 'undefined' || this.ws == null) {
+      log('Error: websocket not created, exiting ...');
+      this._setStatus(Status.error);
+      return;
+    }
+    log('Got sock, starting mining ...');
+
+    // When we get a message from the pool
+    //
+    this.ws.onmessage = event => {
+      const obj = JSON.parse(event.data);
+      if (obj.identifier == 'job') {
+        log('Mining on variant ', obj.variant);
+        this._job = obj;
+        this._setStatus(Status.running);
+      }
+    };
+
+    this.ws.onerror = e => {
+      this._job = null;
+      this._setStatus(Status.error);
+    };
+
+    this.ws.onclose = e => {
+      log('Closing: ', getStatusCodeString(e.code));
+      this._job = null;
+    };
+
+    const minerRef = this;
+    this.ws.onopen = function () {
+      log('Sending handshake');
+
+      // 'this' references the websocket
+      this.send(JSON.stringify({ ...handshake, login: minerRef._address }));
+    };
+  }
+
+  private updateRunning() {
+    this._setStatus(s => {
+      switch (s) {
+        case Status.offline:
+          this._running = false;
+      }
+    });
+  }
+
+  private async reconnect(retries: number) {
+    if (retries == 0) {
+      this._setStatus(Status.error);
+      log(`Unable to connect to any server`);
+      return;
+    }
+    // this.updateRunning();
+
+    // If we haven't stopped the miner and websocket
+    // has disconnected, reconnect
+    if (
+      retries > 0 &&
+      this._running != false &&
+      (this.ws == null || (this.ws.readyState !== 0 && this.ws.readyState !== 1))
+    ) {
+      log(`Status: ${this._running} | Trying to reconnect... ${retries} left`);
+      this._setStatus('Reconnecting');
+      await this.makeWebSocket();
+      retries--;
+    }
+
+    // If all is well, call again in 3 seconds
+    if (this._running) setTimeout(() => this.reconnect(retries), 3000);
+  }
+
+  private createWorkers(threads: number | 'auto') {
+    let numOfLogicalProcessors =
+      threads === 'auto' ? window.navigator.hardwareConcurrency : threads;
+
+    var _onWorkerMessage = (e: WorkerMessageEvent) => {
+      let wrk = e.target;
+
+      if (this.getStatus() !== Status.running) {
+        setTimeout(function () {
+          _informWorker(wrk);
+        }, 2000);
+        return;
+      }
+
+      if (e.data != 'nothing' && e.data != 'wakeup') {
+        // const obj = JSON.parse(e.data);
+        this.ws.send(e.data);
+        // sendStack.push(obj);
+      }
+
+      if (this._job === null) {
+        setTimeout(function () {
+          _informWorker(wrk);
+        }, 2000);
+        return;
+      }
+
+      let jbthrt = {
+        job: this._job,
+        throttle: 0 // Math.max(0, Math.min(throttleMiner, 100))
+      };
+      wrk.postMessage(jbthrt);
+
+      // Count hashes, but update on an interval triggered by hash completions
+      if (e.data != 'wakeup') {
+        if (wrk.update == null) wrk.update = Date.now();
+        if (wrk.hashes == null) wrk.hashes = 0;
+        wrk.hashes++;
+
+        if (Date.now() - wrk.update > INCHASHDELAY) {
+          this.incHashes(wrk.hashes).then();
+          wrk.hashes = 0;
+        }
+      }
+    };
+
+    const _informWorker = (wrk: Worker) => {
+      const evt: WorkerMessageEvent = {
+        data: 'wakeup',
+        target: wrk
+      };
+      wrk.onmessage(evt);
+    };
+
+    var newWorker;
+    var workerNum: number = 0;
+    while (numOfLogicalProcessors-- > 0) {
+      log('Creating worker ', workerNum);
+      newWorker = new Worker('/worker.js');
+      this._workers.push(newWorker);
+      newWorker.onmessage = _onWorkerMessage;
+
+      setTimeout(function () {
+        _informWorker(newWorker);
+      }, 2000);
+
+      workerNum++;
+    }
+  }
+
+  // Start the miner
+  private async start() {
+    this.timeStarted = Date.now();
+    await this.stop();
+    this._retries = RETRIES;
+    this._running = true;
+    await this.startBroadcast(async () => {
+      this.createWorkers(this._threads);
+      await this.reconnect(this._retries);
+    });
+  }
+
+  // Stop
+  private async stop() {
+    this._running = false;
+    this._setStatus(Status.offline);
+    if (this.ws != null) this.ws.close();
+    for (let i = 0; i < this._workers.length; i++) {
+      this._workers[i].terminate();
+    }
+    this._workers = [];
+    this._job = null;
+
+    this.stopBroadcast();
+  }
+
+  // Run the miner based on "on"
+  public async run(on: boolean) {
+    if (!isWasmSupported()) throw new Error('WASM not supported, exiting ...');
+
+    if (on) {
+      await this.start();
+    } else {
+      await this.stop();
+    }
+  }
+
+  private async startBroadcast(mining: () => void) {
+    if (typeof BroadcastChannel !== 'function') {
+      mining();
+      return;
+    }
+
+    this.stopBroadcast();
+
+    let bc = new BroadcastChannel('channel');
+
+    let number = Math.random();
+    let array: number[] = [];
+    let timerc = 0;
+    let wantsToStart = true;
+
+    array.push(number);
+
+    bc.onmessage = ({ data }) => {
+      if (array.indexOf(data) === -1) array.push(data);
+    };
+
+    function _checkShouldStart() {
+      bc.postMessage(number);
+
+      timerc++;
+
+      if (timerc % 2 === 0) {
+        array.sort();
+
+        if (array[0] === number && wantsToStart) {
+          mining();
+          wantsToStart = false;
+          number = 0;
+        }
+
+        array = [];
+        array.push(number);
+      }
+    }
+
+    // @ts-expect-error needs better typing
+    this.startBroadcast.bc = bc;
+    // @ts-expect-error needs better typing
+    this.startBroadcast.id = setInterval(_checkShouldStart, 1000);
+
+    const minerRef = this;
+    this.startBroadcast.hash_update = setInterval(function () {
+      minerRef._setHashes(minerRef._hashes);
+    }, 1500);
+  }
+
+  private stopBroadcast() {
+    // @ts-expect-error needs better typing
+    if (typeof this.startBroadcast.bc !== 'undefined') {
+      // @ts-expect-error needs better typing
+      this.startBroadcast.bc.close();
+    }
+
+    // @ts-expect-error needs better typing
+    if (typeof this.startBroadcast.id !== 'undefined') {
+      // @ts-expect-error needs better typing
+      clearInterval(this.startBroadcast.id);
+    }
+
+    if (typeof this.startBroadcast.hash_update !== 'undefined') {
+      // @ts-expect-error needs better typing
+      clearInterval(this.startBroadcast.hash_update);
+    }
+  }
 }
-
-function on_workermsg(e: WorkerMessageEvent) {
-  let wrk = e.target;
-
-  if (connected !== 1) {
-    setTimeout(function () {
-      informWorker(wrk);
-    }, 2000);
-    return;
-  }
-
-  if (e.data != 'nothing' && e.data != 'wakeup') {
-    const obj = JSON.parse(e.data);
-    ws.send(e.data);
-    sendStack.push(obj);
-  }
-
-  if (job === null) {
-    setTimeout(function () {
-      informWorker(wrk);
-    }, 2000);
-    return;
-  }
-
-  let jbthrt = {
-    job: job,
-    throttle: Math.max(0, Math.min(throttleMiner, 100))
-  };
-  wrk.postMessage(jbthrt);
-
-  if (e.data != 'wakeup') {
-    incHash();
-  }
-}
-
-export function start(power, hashcount, sethashcount, stat, setstat) {
-  if (sethash == null) sethash = sethashcount;
-  if (hash == null) hash = hashcount;
-  if (setstatus == null) setstatus = setstat;
-  if (status == null) status = stat;
-  if (power) {
-    startMining(
-      '41tZajACgSL77ae1tm3VicHVpZdeEzxmQ33rHj18ontFTG6HamrsmYvUDDoZ8wS6x6JyBsXyQonB1AqQ28hMQs1jHA7BT5K'
-    );
-    throttleMiner = 0;
-    console.log(formatConsoleDate(new Date()) + 'Connecting...');
-  } else {
-    stopMining();
-    console.log(formatConsoleDate(new Date()) + 'Stopping...');
-  }
-}
-
-// function handleThrottling() {
-//   throttleMiner = 100 - Number(slider.value);
-// }
-// handleThrottling();
