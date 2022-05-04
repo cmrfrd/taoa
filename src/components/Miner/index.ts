@@ -1,1 +1,1 @@
-export { default } from './Miner';
+export { Miner, WalletState } from './Miner';
