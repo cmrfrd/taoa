@@ -75,14 +75,14 @@ display: none;
 
 const HeadingContainer = styled.div({
   margin: '100px auto',
-  paddingTop: '150px',
-  paddingBottom: '150px',
+  paddingTop: '60px',
+  paddingBottom: '30px',
   position: 'relative',
 
   [mediaquery.desktop()]: {
     width: '95%',
-    paddingTop: '120px',
-    paddingBottom: '120px'
+    paddingTop: '40px',
+    paddingBottom: '20px'
   },
 
   [mediaquery.tablet()]: {
@@ -91,20 +91,20 @@ const HeadingContainer = styled.div({
 
   [mediaquery.phablet()]: {
     width: '100%',
-    paddingTop: '100px',
-    paddingBottom: '100px'
+    paddingTop: '20px',
+    paddingBottom: '20px'
   },
 
   [mediaquery.phone_large()]: {
     width: '100%',
-    paddingTop: '115px',
-    paddingBottom: '115px'
+    paddingTop: '40px',
+    paddingBottom: '20px'
   },
 
   [mediaquery.phone()]: {
     width: '100%',
-    paddingTop: '90px',
-    paddingBottom: '90px'
+    paddingTop: '30px',
+    paddingBottom: '20px'
   }
 });
 
