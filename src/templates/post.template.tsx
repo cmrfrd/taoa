@@ -22,6 +22,7 @@ const postQuery = graphql`
     site {
       siteMetadata {
         siteName
+        env
       }
     }
   }
@@ -37,7 +38,7 @@ const Post: Template = props => {
 
   const { post, authors, next, postPageData } = pageContext;
   const { nextPostText } = postPageData.edges[0].node.post;
-  const { siteName } = useStaticQuery(postQuery).site.siteMetadata;
+  const { siteName, env } = useStaticQuery(postQuery).site.siteMetadata;
 
   return (
     <LoadingContainer>
@@ -49,7 +50,7 @@ const Post: Template = props => {
           <PostShare />
         </MDX>
       </PostBody>
-      <Utterances />
+      {env != 'dev' && <Utterances />}
       {next.length > 0 && (
         <NextPost narrow>
           <FooterNext>
