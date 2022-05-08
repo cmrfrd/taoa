@@ -8,6 +8,7 @@ import Headings from '@components/Headings';
 import { ITAOAThemeUIContext } from '@types';
 import { graphql, useStaticQuery } from 'gatsby';
 import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 import { TAOABrowserMiner, Status } from './miner';
 
@@ -31,12 +32,32 @@ const envQuery = graphql`
   }
 `;
 
+export const WalletInfo: React.FC<{}> = () => {
+  const {
+    wallets: { monero }
+  } = useStaticQuery(envQuery).site.siteMetadata;
+
+  return (
+    <>
+      <p>
+        <b>Address:</b>
+      </p>
+      <p>{monero.address}</p>
+      <p>
+        <b>View key:</b>
+      </p>
+      <p>{monero.viewkey}</p>
+    </>
+  );
+};
+
 export const WalletState: React.FC<{}> = ({ preText = '' }) => {
   const {
     wallets: { monero }
   } = useStaticQuery(envQuery).site.siteMetadata;
   const [isLoading, setIsLoading] = useState(false);
-  const [walletBalance, setWalletBalance] = useState('');
+  const [walletBalanceXMR, setWalletBalanceXMR] = useState('');
+  const [walletBalanceUSD, setWalletBalanceUSD] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,14 +68,16 @@ export const WalletState: React.FC<{}> = ({ preText = '' }) => {
           address: monero.address,
           view_key: monero.viewkey
         });
-        const balanceCrypto = (parseInt(data.total_received) / 1000000000000.0).toFixed(4);
-        setWalletBalance((balanceCrypto * data.rates.USD).toFixed(2));
+        const balanceCrypto = parseInt(data.total_received) / 1000000000000.0;
+        setWalletBalanceXMR(`${balanceCrypto.toFixed(5)} XMR`);
+        setWalletBalanceUSD(`\$${(balanceCrypto.toFixed(4) * data.rates.USD).toFixed(2)}`);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.log(error);
         } else {
           console.log(error);
         }
+        return;
       }
       setIsLoading(false);
     };
@@ -65,11 +88,15 @@ export const WalletState: React.FC<{}> = ({ preText = '' }) => {
   return (
     <>
       {isLoading ? (
-        <Skeleton />
+        <Headings.h2>
+          <Skeleton />
+        </Headings.h2>
       ) : (
         <Headings.h2>
           {preText}
-          {walletBalance}
+          {walletBalanceXMR}
+          {' or '}
+          {walletBalanceUSD}
         </Headings.h2>
       )}
     </>
@@ -84,7 +111,6 @@ export const Miner: React.FC<IMinerProps> = ({ running = false }: IMinerProps) =
   const [isToggled, setIsToggled] = useState<boolean>(running);
   const [status, setstatus] = useState<string>('Starting');
   const [hashes, sethashes] = useState<number>(0);
-  const [oldhashes, oldsethashes] = useState<number>(0);
   const [hashrate, sethashrate] = useState<number>(0);
   const onToggle = () => {
     setIsToggled(!isToggled);
@@ -94,32 +120,21 @@ export const Miner: React.FC<IMinerProps> = ({ running = false }: IMinerProps) =
     }
   };
 
-  const miner = new TAOABrowserMiner(env, monero.address, setstatus, sethashes, 'auto');
+  const miner = new TAOABrowserMiner(
+    env,
+    monero.address,
+    setstatus,
+    sethashes,
+    sethashrate,
+    'auto'
+  );
 
   useEffect(() => {
     miner.run(isToggled);
+    return () => {
+      miner.stop().then();
+    };
   }, [isToggled]);
-
-  const seconds = 5;
-  const milliPerSeconds = 1000;
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      let ch;
-      let oh;
-      sethashes(h => {
-        ch = h;
-        return h;
-      });
-      oldsethashes(o => {
-        oh = o;
-        return ch;
-      });
-      sethashrate(r => {
-        return (Math.abs(ch - oh) / seconds).toFixed(1);
-      });
-    }, seconds * milliPerSeconds);
-    return () => window.clearInterval(timer);
-  }, []);
 
   return (
     <MinerContainer>
