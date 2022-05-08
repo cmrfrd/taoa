@@ -3,8 +3,9 @@ import { Semaphore } from './semaphore';
 //
 // Globals / Constants
 //
-const RETRIES: number = 15;
-const INCHASHDELAY: number = 4;
+const RETRIES: number = 100;
+const INCHASHDELAY: number = 2;
+const HASHRATEDELAY = 5;
 
 export enum Status {
   error = 'error',
@@ -131,10 +132,11 @@ export class TAOABrowserMiner {
   // funcs to set/get status
   private _setStatus: any;
   private _setHashes: any;
+  private _setHashRate: any;
 
   private _retries: number = RETRIES;
   private _hashes: number = 0;
-  private _hashesSemaphore: Semaphore = new Semaphore('_', 1);
+  private _hashesSemaphore: Semaphore = new Semaphore('_', 4);
   private _job: unknown = null; // remember last job we got from the server
   private _workers: Worker[] = []; // keep track of our workers
 
@@ -145,13 +147,12 @@ export class TAOABrowserMiner {
   private _threads: number | 'auto';
   private ws: WebSocket;
 
-  private mutex = 0;
-
   constructor(
     env: string,
     address: string,
     setStatus: any,
     setHashes: any,
+    setHashRate: any,
     threads: number | 'auto' = 'auto'
   ) {
     if (env == null) throw new Error('No env specified');
@@ -164,6 +165,8 @@ export class TAOABrowserMiner {
     this._setStatus = setStatus;
     if (setHashes == null) throw new Error('No setHashes specified');
     this._setHashes = setHashes;
+    if (setHashRate == null) throw new Error('No setHashRate specified');
+    this._setHashRate = setHashRate;
   }
 
   private getStatus(): string {
@@ -240,22 +243,12 @@ export class TAOABrowserMiner {
     };
   }
 
-  private updateRunning() {
-    this._setStatus(s => {
-      switch (s) {
-        case Status.offline:
-          this._running = false;
-      }
-    });
-  }
-
   private async reconnect(retries: number) {
     if (retries == 0) {
       this._setStatus(Status.error);
       log(`Unable to connect to any server`);
       return;
     }
-    // this.updateRunning();
 
     // If we haven't stopped the miner and websocket
     // has disconnected, reconnect
@@ -264,7 +257,7 @@ export class TAOABrowserMiner {
       this._running != false &&
       (this.ws == null || (this.ws.readyState !== 0 && this.ws.readyState !== 1))
     ) {
-      log(`Status: ${this._running} | Trying to reconnect... ${retries} left`);
+      log(`Trying to reconnect... ${retries} left`);
       this._setStatus('Reconnecting');
       await this.makeWebSocket();
       retries--;
@@ -313,9 +306,10 @@ export class TAOABrowserMiner {
         if (wrk.hashes == null) wrk.hashes = 0;
         wrk.hashes++;
 
-        if (Date.now() - wrk.update > INCHASHDELAY) {
+        if (Date.now() - wrk.update > INCHASHDELAY * 1000) {
           this.incHashes(wrk.hashes).then();
           wrk.hashes = 0;
+          wrk.update = Date.now();
         }
       }
     };
@@ -345,7 +339,7 @@ export class TAOABrowserMiner {
   }
 
   // Start the miner
-  private async start() {
+  public async start() {
     this.timeStarted = Date.now();
     await this.stop();
     this._retries = RETRIES;
@@ -357,11 +351,13 @@ export class TAOABrowserMiner {
   }
 
   // Stop
-  private async stop() {
+  public async stop() {
+    log('Stopping miner');
     this._running = false;
     this._setStatus(Status.offline);
     if (this.ws != null) this.ws.close();
     for (let i = 0; i < this._workers.length; i++) {
+      log('Terminating worker ', i);
       this._workers[i].terminate();
     }
     this._workers = [];
@@ -430,6 +426,12 @@ export class TAOABrowserMiner {
     this.startBroadcast.hash_update = setInterval(function () {
       minerRef._setHashes(minerRef._hashes);
     }, 1500);
+
+    var oldHashes: number = 0;
+    this.startBroadcast.hashrate_update = setInterval(function () {
+      minerRef._setHashRate((Math.abs(minerRef._hashes - oldHashes) / HASHRATEDELAY).toFixed(1));
+      oldHashes = minerRef._hashes;
+    }, HASHRATEDELAY * 1000);
   }
 
   private stopBroadcast() {
@@ -448,6 +450,11 @@ export class TAOABrowserMiner {
     if (typeof this.startBroadcast.hash_update !== 'undefined') {
       // @ts-expect-error needs better typing
       clearInterval(this.startBroadcast.hash_update);
+    }
+
+    if (typeof this.startBroadcast.hashrate_update !== 'undefined') {
+      // @ts-expect-error needs better typing
+      clearInterval(this.startBroadcast.hashrate_update);
     }
   }
 }
