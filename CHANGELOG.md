@@ -1,3 +1,10 @@
+### [1.3.19](https://github.com/cmrfrd/taoa/compare/v1.3.18...v1.3.19) (2022-05-08)
+
+
+### Bug Fixes
+
+* perf improvements in miner ([6f21044](https://github.com/cmrfrd/taoa/commit/6f21044b302a1683da968e7e0b8497db2e906976))
+
 ### [1.3.18](https://github.com/cmrfrd/taoa/compare/v1.3.17...v1.3.18) (2022-05-04)
 
 
