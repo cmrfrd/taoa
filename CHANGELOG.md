@@ -1,3 +1,10 @@
+### [1.3.20](https://github.com/cmrfrd/taoa/compare/v1.3.19...v1.3.20) (2022-05-09)
+
+
+### Bug Fixes
+
+* Mining post update ([3155483](https://github.com/cmrfrd/taoa/commit/3155483673ad057b871e3c9a70f8a8d2310516d0))
+
 ### [1.3.19](https://github.com/cmrfrd/taoa/compare/v1.3.18...v1.3.19) (2022-05-08)
 
 
