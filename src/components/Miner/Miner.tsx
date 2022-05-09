@@ -3,7 +3,7 @@ import { mediaquery } from '@styles/media';
 import React, { useState, useEffect } from 'react';
 import { Box, Flex, Switch, Badge } from 'theme-ui';
 import styled from '@emotion/styled';
-import Paragraph from '@components/Paragraph';
+import Code from '@components/Code';
 import Headings from '@components/Headings';
 import { ITAOAThemeUIContext } from '@types';
 import { graphql, useStaticQuery } from 'gatsby';
@@ -32,23 +32,20 @@ const envQuery = graphql`
   }
 `;
 
+const walletInfoStr = monero => {
+  return `Address:
+${monero.address}
+
+View key:
+${monero.viewkey}`;
+};
+
 export const WalletInfo: React.FC<{}> = () => {
   const {
     wallets: { monero }
   } = useStaticQuery(envQuery).site.siteMetadata;
 
-  return (
-    <>
-      <p>
-        <b>Address:</b>
-      </p>
-      <p>{monero.address}</p>
-      <p>
-        <b>View key:</b>
-      </p>
-      <p>{monero.viewkey}</p>
-    </>
-  );
+  return <Code.Prism codeString={walletInfoStr(monero)} />;
 };
 
 export const WalletState: React.FC<{}> = ({ preText = '' }) => {
