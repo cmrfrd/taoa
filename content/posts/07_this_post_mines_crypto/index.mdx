@@ -13,29 +13,28 @@ excerpt: Is it really feasible to mine in the browser
 
 Thanks for coming by!
 
-If the box above shows "running" then congratulations! You are actively
-contributing hash power to the Monero proof of work consensus algorithm!
+If the box above shows "running" then congratulations! You are actively mining
+cryptocurrency and contributing to the proof of work consensus algorithm!
 
 If you have no idea what that means, then don't worry about it! Just know that
-keeping this tab open supports me in writing more content online 💞
+keeping this tab open supports me in writing more content online. 💞
 
 For those of you that *do* know what this means, you are most likely thinking
 "how is this even possible?"
 
-Keep reading to find out.
-
 You might have a lot of questions right now so I'm going to try and
-pre-emptively answer as many as I can.
+pre-emptively answer as many as I can. If I leave anything out, feel free to
+tell me at [alex@taoa.io](mailto:alex@taoa.io).
 
 ## What is this post about?
 
-An overview on how cryptocurrency mining works, and how to do it in the browser.
+An intro to how cryptocurrency mining works, and how to do it in the browser.
 
 ## How did you make this?
 
 Webassembly and a little crypto knowledge (I'll elaborate on this later 👇).
 
-## But isn't this crypto-jacking?
+## Isn't this crypto-jacking?
 
 Kinda not really. Crypto-jacking implies I'm trying to actively steal your CPU
 power, instead I'm enabling you to donate your CPU power as a way to support an
@@ -43,20 +42,20 @@ up and coming creator!
 
 ## Is the $ this post has made up to date?
 
-It should be! Come back in a few days to see what the current revenue of this
-post is!
+It should be! Come back in a few days to see what the current revenue generated
+by this post is!
 
-## How does this even work?
+## How does this post "mine crypto"?
 
 This is a bit of a big question so I'm going to break it down into smaller
 pieces.
 
 ## How does mining work?
 
-Cryptocurrency mining has been around for so long and has been written about so
+Cryptocurrency mining has been around for so long and been written about so
 much, the internet can explain it better than I ever could.
 
-Here are some top notch pre-requisite links that explain mining on a deeper level:
+Here are some top notch links that explain mining on a deeper level:
 
 - [https://monerodocs.org/proof-of-work/pow-in-cryptocurrencies/](https://monerodocs.org/proof-of-work/pow-in-cryptocurrencies/)
 - [https://andersbrownworth.com/blockchain/](https://andersbrownworth.com/blockchain/)
@@ -64,9 +63,12 @@ Here are some top notch pre-requisite links that explain mining on a deeper leve
 - [https://academy.bit2me.com/en/que-algoritmo-mineria-randomx-monero](https://academy.bit2me.com/en/que-algoritmo-mineria-randomx-monero)
 
 If you don't wanna read this material, than just know that mining is the process
-of many computers competing to solve math puzzles.
+of many computers competing to solve math puzzles. A puzzle is "solved" when a
+miner finds (by iteration) a special number (called a "nonce"), that when hashed
+(alongside a bunch of other data) meets some "solution" criteria (which is
+usually just some leading number of zeros in the hash output).
 
-On any given day millions of computers compete to solve these puzzles and are
+On any given day billions of computers compete to solve these puzzles and are
 incentivized with a cryptocurrency reward (which has become quite valuable to
 many). It's important to understand that this reward (called the "coinbase"
 transaction) only goes to one address. This means that finding a solution is
@@ -76,7 +78,8 @@ all" competition.
 Unfortunately this puts those who only have a few computers at a disadvantage
 because more compute means more chances to "win" this competition.
 
-Luckily all hope isn't lost to those who have little compute but want the reward.
+Luckily all hope isn't lost to those who have little compute but want some of the
+reward.
 
 Enter pool mining.
 
@@ -85,54 +88,61 @@ Enter pool mining.
 Pool mining is simply the "pooling" or aggregation of compute resources from
 many miners in an effort to be competitive in solving these math puzzles.
 
-In fact, it's very hard (and expensive) to compete as a "solo miner" and
-nowadays almost all mining is done in pools.
+In fact, it's very hard (and expensive) to solve these puzzles quickly as a
+"solo miner", and nowadays almost all mining is done in pools.
 
-You might have a lingering question in the back of your mind at this point. If
-this proof of work system is a "one winner takes all" kind of thing, then how can
-many people get rewarded?
-
-This is where is gets interesting.
+The interesting thing about mining pools is even though the proof of work system
+is a "one winner takes all" competition, miners are incentivized to participate
+because any rewards the pool recieves are split amongst its participants.
 
 Instead of pool miners putting their personal wallet address in the coinbase
-transaction, they put the mining pools address. They then "prove" to the mining
-pool (which is usually a centralized service), that they have found "partial"
-solutions (called shares) and get paid according to the shares that they have
-submitted.
+transaction, they put the mining pools address (this prevents miners from
+scamming the pool). Miners then "prove" to the pool (which is usually a
+centralized service), that they have found "partial" solutions (called shares)
+and get paid according to the shares that they have submitted.
 
-You can get into the weeds about mining pool payout methods and the differences
-between PPS, FPPS, PPS+, and PPLNS, but it's unnecessary. Just know that they
-are all based on getting paid based on how much "work" you've contributed.
+The work to reward ratio depends on the pool. You can also get into the weeds
+about different payout methods like [PPS, FPPS, PPS+, and
+PPLNS](https://minebest.com/blog/pps-vs-fpps-vs-pplns-vs-pps-mining-pool-payouts-explained),
+but it's unnecessary. Just know that they are all based on getting paid from how
+much "work" you've contributed.
 
 ## How does this post actually mine?
 
-Alright, enough with the cryptocurrency theory and definitions and what
-not. Let's break down how this post mines piece, by piece.
+Alright, enough with the cryptocurrency theory and definitions. Let's break down
+how this post mines piece, by piece.
 
 ## Piece 1: The browser miner
-
-We all stand on the shoulders of giants, and the giants I'm standing on are based
-on the work of these people:
-
-- [https://github.com/notgiven688/webminerpool](https://github.com/notgiven688/webminerpool) (and it's many forks)
-- [https://github.com/JayWalker512/CryptoNoter](https://github.com/JayWalker512/CryptoNoter)
-- [https://github.com/howardchung/jsminer](https://github.com/howardchung/jsminer)
 
 The miner is the heart beat of the entire proof of work system, it's the part
 that actually "does" the computing and create hashes in an attempt to solve the
 puzzles. Every cryptocurrency uses slightly different algorithms to make this
 possible so implementations are cryptocurrency-specific.
 
-The cryptocurrency that this post mines is Monero, meaning the miner
-implementation needs to abide by the algorithms Monero uses. The name of the
-algorithm in this case is
-[Cryptonight](https://monerodocs.org/proof-of-work/cryptonight/).
+The mining algorithm used in the background of this post is called
+[Cryptonight](https://monerodocs.org/proof-of-work/cryptonight/) and the mining
+pool this post is a part of ([monero ocean](https://moneroocean.stream/))
+rewards us in Monero (XMR).
 
-> The latest version/fork of Monero uses a new algorithm called RandomX, but the
-> mining pool this post uses allows for Cryptonight mining (which is easier for
-> desktop computers).
+> FYI: The latest version/fork of Monero uses a new algorithm called RandomX,
+> but Cryptonight is easier on desktop computers (which is most likely where
+> you're viewing this post from).
 
-Once this page loads, a webworker+miner is run per core available (via `window.navigator.hardwareConcurrency`). Shares are then actively computed in a WASM compiled implementation of Cryptonight ([compiled from here](https://github.com/notgiven688/webminerpool/blob/master/hash_cn/libhash/main.c)) and sent to the pool.
+Browser mining is not new. Its been implemented and reimplemented multiple
+times, and instead of reimplementing Cryptonight and an entire browser miner, I
+merged the best parts of multiple implementations in one place:
+
+- [https://github.com/notgiven688/webminerpool](https://github.com/notgiven688/webminerpool) (and it's many forks)
+- [https://github.com/JayWalker512/CryptoNoter](https://github.com/JayWalker512/CryptoNoter)
+- [https://github.com/howardchung/jsminer](https://github.com/howardchung/jsminer)
+
+Once this page loads, a webworker+miner is run per core available (via
+`window.navigator.hardwareConcurrency`). Shares are then actively computed in a
+WASM compiled implementation of Cryptonight ([compiled from
+here](https://github.com/notgiven688/webminerpool/blob/master/hash_cn/libhash/main.c))
+and sent to the pool.
+
+Check out the code [here](https://github.com/cmrfrd/taoa/blob/development/src/components/Miner/Miner.tsx).
 
 ## Piece 2: Connecting to the pool
 
@@ -141,9 +151,9 @@ Most mining pools communicate via the
 (which is just glorified JSON over a tcp socket).
 
 But fortunately, some pools support communication over websockets making
-communication from the browser possible!
+communication from the browser much easier to build!
 
-This post connects to the pool via websockets and proxies shares from the
+This post connects to the pool via websockets and proxies solved shares from the
 workers, directly to the pool. An intermediary nginx proxy (running on
 [fly.io](fly.io)) is used just in case the browser blocks the pool address 😉.
 
@@ -176,15 +186,18 @@ Here is the wallet and view key for your viewing convenience:
 
 Because it's cool!
 
-On a serious level though I built this so I could understand crypto mining at a
-deeper level (and potentially make some money while doing it 💰)!
+On a serious level though I built this so I could understand pool mining and
+Cryptonight at a deeper level (and potentially make some money while doing it
+💰)!
 
 I also wanted to experiment with the idea of using mining as an alternative
 monitization method to ads, even though [it's been
 shown](https://ifip.byu.edu/2019/DRW2019_paper_23.pdf) to be a rather inferior
 method.
 
-Cryptocurrency is quite a spectacular technology and we've only scratched the surface of what we can do with it. So much of it is unknown, no one knows what it means!
+Cryptocurrency is quite a spectacular technology and I believe we've only
+scratched the surface of what we can do with it. So much of it is unknown and
+despite what people say, no one knows what it means!
 
 ![img](/img/Its_provocative.gif)
 
