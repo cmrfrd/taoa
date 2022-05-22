@@ -1,6 +1,6 @@
 #+TITLE: Solving the two stocks probability puzzle
 #+CREATED: [2022-03-08 Tue 20:13]
-#+LAST_MODIFIED: [2022-04-17 Sun 01:27]
+#+LAST_MODIFIED: [2022-05-21 Sat 23:55]
 #+ROAM_TAGS: composition
 #+OPTIONS: toc:nil
 #+OPTIONS: tex:t
@@ -133,7 +133,7 @@ latex_centers = lambda *exprs: \
   and not necessarily the right answer.
 
   #+CAPTION: 10K Divers two stocks puzzle as a tweet
-  [[./images/twitter_puzzle.png]]
+  [[./images/twitter-puzzle.png]]
 
 * The solution
 
@@ -453,7 +453,7 @@ latex_centers = lambda *exprs: \
         )
     )
     fig.update_layout(showlegend=True)
-    fig.write_image("A_vs_B_final_price_compare.png")
+    fig.write_image("A-vs-B-final-price-compare.png")
     print("done!")
   #+end_src
 
@@ -468,7 +468,7 @@ latex_centers = lambda *exprs: \
   : done!
 
   #+CAPTION: Figure to compare both stocks final prices
-  [[file:A_vs_B_final_price_compare.png]]
+  [[file:./A-vs-B-final-price-compare.png]]
 
   By looking at this graph we can see that stock B only starts "beating" stock A
   once it gets 6 wins or more.
@@ -666,7 +666,7 @@ latex_centers = lambda *exprs: \
     exceed_A = list(filter(lambda i: exceed(i), map(Counter, cr(states,total_years))))
     not_exceed_A = list(filter(lambda i: not exceed(i), map(Counter, cr(states,total_years))))
     title = "Stock C win, loss, and none combinations that beat stock A"
-    filename = "stock_C_price_3d"
+    filename = "stock-C-price-3d"
 
     fig = go.Figure(
         data=[
@@ -731,7 +731,7 @@ latex_centers = lambda *exprs: \
   : done!
 
   #+CAPTION: 3d plot of outcomes of stock C that beat stock A
-  [[file:stock_C_price_3d.png]]
+  [[file:./stock-C-price-3d.png]]
 
   In this plot every point is a particular combination (or multiset) of "wins",
   "losses", and "nones" colored to indicate which final prices "beat" stock
