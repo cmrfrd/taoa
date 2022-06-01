@@ -1,3 +1,10 @@
+### [1.3.23](https://github.com/cmrfrd/taoa/compare/v1.3.22...v1.3.23) (2022-06-01)
+
+
+### Bug Fixes
+
+* Add img and gpg to source control ([62a67f2](https://github.com/cmrfrd/taoa/commit/62a67f2dddca286955a27e0fc3480670bb2e9cdc))
+
 ### [1.3.22](https://github.com/cmrfrd/taoa/compare/v1.3.21...v1.3.22) (2022-05-22)
 
 
