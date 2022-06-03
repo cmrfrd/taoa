@@ -1,3 +1,10 @@
+### [1.3.24](https://github.com/cmrfrd/taoa/compare/v1.3.23...v1.3.24) (2022-06-03)
+
+
+### Bug Fixes
+
+* Add optimal compounding slides ([8c8d333](https://github.com/cmrfrd/taoa/commit/8c8d3332eeb563e300d45f99674b579530bbb8f9))
+
 ### [1.3.23](https://github.com/cmrfrd/taoa/compare/v1.3.22...v1.3.23) (2022-06-01)
 
 
