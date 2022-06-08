@@ -53,8 +53,7 @@
 
 * Yield protocol simplified
 
-  These steps are a crude reduction on the interaction between users and yield
-  protocols:
+  A crude reduction on the user flow
 
   1. Deposit tokens into the protocol
   2. Wait for "yield" tokens to accrue
