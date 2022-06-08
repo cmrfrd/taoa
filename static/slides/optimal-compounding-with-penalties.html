@@ -21,8 +21,8 @@
 
 
 <section>
-<section id="slide-org88ed475">
-<h2 id="org88ed475">Disclaimer!</h2>
+<section id="slide-orgeafc507">
+<h2 id="orgeafc507">Disclaimer!</h2>
 <ul>
 <li>Not financial advice!</li>
 <li>Do what you will with this information at your own risk!</li>
@@ -32,14 +32,14 @@
 </section>
 </section>
 <section>
-<section id="slide-orge0cbb0b">
-<h2 id="orge0cbb0b">How to earn the most from cryptocurrency yield protocols</h2>
+<section id="slide-org224c253">
+<h2 id="org224c253">How to earn the most from cryptocurrency yield protocols</h2>
 
 </section>
 </section>
 <section>
-<section id="slide-orgb65c31d">
-<h2 id="orgb65c31d">What&rsquo;s a yield protocol?</h2>
+<section id="slide-orge9c4a34">
+<h2 id="orge9c4a34">What&rsquo;s a yield protocol?</h2>
 <ul>
 <li>Staking</li>
 <li>Market making / providing liquidity</li>
@@ -51,11 +51,10 @@
 </section>
 </section>
 <section>
-<section id="slide-org3a8fc8d">
-<h2 id="org3a8fc8d">Yield protocol simplified</h2>
+<section id="slide-org4bbb0b0">
+<h2 id="org4bbb0b0">Yield protocol simplified</h2>
 <p>
-These steps are a crude reduction on the interaction between users and yield
-protocols:
+A crude reduction on the user flow
 </p>
 
 <ol>
@@ -69,8 +68,8 @@ protocols:
 </section>
 </section>
 <section>
-<section id="slide-org4a2ba7e">
-<h2 id="org4a2ba7e">Yield protocol types</h2>
+<section id="slide-orge9764c2">
+<h2 id="orge9764c2">Yield protocol types</h2>
 <p>
 Yield protocols usually fall into one of two categories:
 </p>
@@ -92,8 +91,8 @@ Yield protocols usually fall into one of two categories:
 </section>
 </section>
 <section>
-<section id="slide-org023187c">
-<h2 id="org023187c">Things to notice about manual compounding</h2>
+<section id="slide-orga87d441">
+<h2 id="orga87d441">Things to notice about manual compounding</h2>
 <ol>
 <li>Rewards are &ldquo;unrealized&rdquo; until we &ldquo;claim&rdquo; them</li>
 <li>Claiming requires a fee</li>
@@ -103,8 +102,8 @@ Yield protocols usually fall into one of two categories:
 </section>
 </section>
 <section>
-<section id="slide-org97693fe">
-<h2 id="org97693fe">A thought exercise about manual compounding</h2>
+<section id="slide-orgf42bb53">
+<h2 id="orgf42bb53">A thought exercise about manual compounding</h2>
 <p>
 Suppose our objective is to maximize our balance:
 </p>
@@ -121,14 +120,14 @@ such that compound interest outweighs the fees?</li>
 </section>
 </section>
 <section>
-<section id="slide-orgdefe92f">
-<h2 id="orgdefe92f">Warning: MATH</h2>
+<section id="slide-org8ce86b5">
+<h2 id="org8ce86b5">Warning: MATH</h2>
 
 </section>
 </section>
 <section>
-<section id="slide-orge1f808b">
-<h2 id="orge1f808b">Modeling yield protocols</h2>
+<section id="slide-org265d55d">
+<h2 id="org265d55d">Modeling yield protocols</h2>
 <p>
 Here are the underlying parameters we will use:
 </p>
@@ -179,8 +178,8 @@ Here are the underlying parameters we will use:
 </section>
 </section>
 <section>
-<section id="slide-org2c98948">
-<h2 id="org2c98948">\(deriving\ ciwip\ 1\)</h2>
+<section id="slide-org742c82c">
+<h2 id="org742c82c">\(deriving\ ciwip\ 1\)</h2>
 <p>
 \[
   P_{0} r t + P_{0} - {f_{gas}} = P_{1}
@@ -190,8 +189,8 @@ Here are the underlying parameters we will use:
 </section>
 </section>
 <section>
-<section id="slide-orgb270ca9">
-<h2 id="orgb270ca9">\(deriving\ ciwip\ 2\)</h2>
+<section id="slide-orgdd925a8">
+<h2 id="orgdd925a8">\(deriving\ ciwip\ 2\)</h2>
 <p>
 \[
   P_{0} r t + P_{0} - {f_{gas}} = P_{1} \\ P_{1} r t + P_{1} - {f_{gas}} = P_{2} \\ P_{0} r^{2} t^{2} + {\left(2 \, P_{0} - {f_{gas}}\right)} r t + P_{0} - 2 \, {f_{gas}} = P_{2}
@@ -201,8 +200,8 @@ Here are the underlying parameters we will use:
 </section>
 </section>
 <section>
-<section id="slide-org2359fc1">
-<h2 id="org2359fc1">\(deriving\ ciwip\ 3\)</h2>
+<section id="slide-orgf486f36">
+<h2 id="orgf486f36">\(deriving\ ciwip\ 3\)</h2>
 <p>
 \[
   P_{0} r t + P_{0} - {f_{gas}} = P_{1} \\ {P_{n-1}} r t + {P_{n-1}} - {f_{gas}} = {P_n}
@@ -212,8 +211,8 @@ Here are the underlying parameters we will use:
 </section>
 </section>
 <section>
-<section id="slide-org45a9145">
-<h2 id="org45a9145">\(deriving\ ciwip\ 4\)</h2>
+<section id="slide-org5130b46">
+<h2 id="org5130b46">\(deriving\ ciwip\ 4\)</h2>
 <p>
 \[
   {\left(P_{0} r t + P_{0} - {f_{gas}}\right)} r t + P_{0} r t + P_{0} - 2 \, {f_{gas}} \\ {\left(r t + 1\right)}^{2} P_{0} - {f_{gas}} r t - 2 \, {f_{gas}} \\ P_{0} {\left(\left(\frac{1}{2} \, r\right) + 1\right)}^{2} - \frac{1}{2} \, {f_{gas}} r - 2 \, {f_{gas}}
@@ -223,8 +222,8 @@ Here are the underlying parameters we will use:
 </section>
 </section>
 <section>
-<section id="slide-orgbf30d0d">
-<h2 id="orgbf30d0d">\(deriving\ ciwip\ 5\)</h2>
+<section id="slide-org450539d">
+<h2 id="org450539d">\(deriving\ ciwip\ 5\)</h2>
 <p>
 \[
   P {\left(\frac{r}{n} + 1\right)}^{n} - {f_{gas}} {\sum_{i=0}^{n - 1} {\left(\frac{r}{n} + 1\right)}^{i}}
@@ -234,8 +233,8 @@ Here are the underlying parameters we will use:
 </section>
 </section>
 <section>
-<section id="slide-org78ed508">
-<h2 id="org78ed508">\(deriving\ ciwip\ 6\)</h2>
+<section id="slide-org97c6b23">
+<h2 id="org97c6b23">\(deriving\ ciwip\ 6\)</h2>
 <p>
 \[
   {\rm ciwip}\left(P, r, {f_{gas}}, n\right) = P {\left(\frac{r}{n} + 1\right)}^{n} - \frac{{\left(n \left(\frac{n + r}{n}\right)^{n} - n\right)} {f_{gas}}}{r}
@@ -245,8 +244,8 @@ Here are the underlying parameters we will use:
 </section>
 </section>
 <section>
-<section id="slide-org33a12f4">
-<h2 id="org33a12f4">Pretty pictures!</h2>
+<section id="slide-org36b3d52">
+<h2 id="org36b3d52">Pretty pictures!</h2>
 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAArwAAAH0CAYAAADfWf7fAAAgAElEQVR4XuydB5gURbeGv54hswQF
 VBAxEdUrOUtOimQwIkj0RwSMIEkxkAQTyYiAgBhhSSouWQlKBokCBnJUyQjM9H1OzfYwuzu7O7OT
 unu/vs//XNnprjr1neqZt0+fOqXpuq6DBxWgAlSAClABKkAFqAAVsKkCGoHXpp7lsKgAFaACVIAK
@@ -966,8 +965,8 @@ rFHTAAAAAElFTkSuQmCC">
 </section>
 </section>
 <section>
-<section id="slide-org22cccaf">
-<h2 id="org22cccaf">Moar pretty pictures!</h2>
+<section id="slide-org81e2ee6">
+<h2 id="org81e2ee6">Moar pretty pictures!</h2>
 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAAJYCAYAAAC+ZpjcAAAgAElEQVR4Xuy9CZQlV3Wmu29m3sys
 rMqaSyqVQAMSUIwaAFmYEpOMEFg24iHbmDa23E9uewmsNm68LGPjxhhsuU23aRnkdjerLU/AawQG
 m/aSZYMnmUGgETBiMINARWmsuXK6w1v/idgRJ849Md5zM7My/1hLqsx7I05EfHEy75977/PvVr/f
@@ -1852,8 +1851,8 @@ M1CagwAEIAABCEAAAggs9gAEIAABCEAAAhDwTOD/Aw9Dpqf3s1ZiAAAAAElFTkSuQmCC">
 </section>
 </section>
 <section>
-<section id="slide-org8741c93">
-<h2 id="org8741c93">What does the pretty picture tell us</h2>
+<section id="slide-org30d6a45">
+<h2 id="org30d6a45">What does the pretty picture tell us</h2>
 <ul>
 <li>Compounding more than once can result in more tokens</li>
 <li>Compounding too much loses us tokens</li>
@@ -1864,14 +1863,14 @@ M1CagwAEIAABCEAAAggs9gAEIAABCEAAAhDwTOD/Aw9Dpqf3s1ZiAAAAAElFTkSuQmCC">
 </section>
 </section>
 <section>
-<section id="slide-org53c4aeb">
-<h2 id="org53c4aeb">How do we find the &ldquo;most efficient&rdquo; \(n\)</h2>
+<section id="slide-org1367e8b">
+<h2 id="org1367e8b">How do we find the &ldquo;most efficient&rdquo; \(n\)</h2>
 
 </section>
 </section>
 <section>
-<section id="slide-orgac643e0">
-<h2 id="orgac643e0">Derivatives 😬?</h2>
+<section id="slide-org9fee2db">
+<h2 id="org9fee2db">Derivatives 😬?</h2>
 <p>
 \[
   -P {\left(\frac{r}{n} + 1\right)}^{n} {\left(\frac{r}{n {\left(\frac{r}{n} + 1\right)}} - \log\left(\frac{r}{n} + 1\right)\right)} + \frac{{\left({\left(\frac{n^{2} {\left(\frac{n + r}{n^{2}} - \frac{1}{n}\right)}}{n + r} - \log\left(\frac{n + r}{n}\right)\right)} n \left(\frac{n + r}{n}\right)^{n} - \left(\frac{n + r}{n}\right)^{n} + 1\right)} {f_{gas}}}{r} = \frac{\partial}{\partial n}{\rm ciwip}\left(P, r, {f_{gas}}, n\right)
@@ -1881,8 +1880,8 @@ M1CagwAEIAABCEAAAggs9gAEIAABCEAAAhDwTOD/Aw9Dpqf3s1ZiAAAAAElFTkSuQmCC">
 </section>
 </section>
 <section>
-<section id="slide-orga52cd35">
-<h2 id="orga52cd35">Convex optimization!</h2>
+<section id="slide-org91b62dc">
+<h2 id="org91b62dc">Convex optimization!</h2>
 <p>
 Use an optimization algorithm like line search or gradient descent to find the
 maximum of \(ciwip\)!
@@ -1891,8 +1890,8 @@ maximum of \(ciwip\)!
 </section>
 </section>
 <section>
-<section id="slide-orgb4936c5">
-<h2 id="orgb4936c5">But is \(ciwip\) convex?</h2>
+<section id="slide-orgd4e0d21">
+<h2 id="orgd4e0d21">But is \(ciwip\) convex?</h2>
 <p>
 If this function is non-convex we could risk iterating to a local minima
 </p>
@@ -1900,8 +1899,8 @@ If this function is non-convex we could risk iterating to a local minima
 </section>
 </section>
 <section>
-<section id="slide-org6aab936">
-<h2 id="org6aab936">\(ciwip\) is convex!</h2>
+<section id="slide-orgebc2cc3">
+<h2 id="orgebc2cc3">\(ciwip\) is convex!</h2>
 <p>
 By Leveraging Jensin&rsquo;s Inequality at the bounds \(0\) and \(\frac{P
   r}{{f_{gas}}}\) we can confirm this!
@@ -1916,8 +1915,8 @@ By Leveraging Jensin&rsquo;s Inequality at the bounds \(0\) and \(\frac{P
 </section>
 </section>
 <section>
-<section id="slide-org96966f6">
-<h2 id="org96966f6">What does this mean?</h2>
+<section id="slide-orga176960">
+<h2 id="orga176960">What does this mean?</h2>
 <ul>
 <li>We can always find the optimal number of compounds for a given yield protocol</li>
 <li>Compounding earnings in other ways could result in less returns</li>
@@ -1927,8 +1926,8 @@ By Leveraging Jensin&rsquo;s Inequality at the bounds \(0\) and \(\frac{P
 </section>
 </section>
 <section>
-<section id="slide-org9adcb55">
-<h2 id="org9adcb55">Results</h2>
+<section id="slide-orgcb3f7a6">
+<h2 id="orgcb3f7a6">Results</h2>
 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAG1gAABOICAMAAACPlBn1AAACQ1BMVEX////l7PYqP1/vVTtjbvoA
 zJby9vv4+v3t8fn6+/wpPl41SWfqn5fy8/X9/f319/zv9frq8fj5+fr19/j09fdXaIFAVHDq7/fv
 8PNtfJJ+i56DkKJ4hprk7Pbw8vRVZ4BjcopMXnm2vsnt7/Hoxsf3+Pn8/P2bprWAjZ/Ey9NreZCP
@@ -7698,14 +7697,14 @@ AixHAAAAAABJRU5ErkJggg==">
 </section>
 </section>
 <section>
-<section id="slide-orgdbb98c5">
-<h2 id="orgdbb98c5">Thanks for listening!</h2>
+<section id="slide-org28087ea">
+<h2 id="org28087ea">Thanks for listening!</h2>
 
 </section>
 </section>
 <section>
-<section id="slide-orgb99870c">
-<h2 id="orgb99870c">I&rsquo;m on the Internet! 🌐</h2>
+<section id="slide-orga26367e">
+<h2 id="orga26367e">I&rsquo;m on the Internet! 🌐</h2>
 <div style="text-align: left;width: 60%;margin: auto auto">
 <p><span style="float:left">🐙 Github:</span> <span style="float:right"><code>@cmrfrd</code></span></p>
 <br />
