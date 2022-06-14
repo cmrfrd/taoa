@@ -1,3 +1,10 @@
+### [1.3.27](https://github.com/cmrfrd/taoa/compare/v1.3.26...v1.3.27) (2022-06-14)
+
+
+### Bug Fixes
+
+* fix pathing ([bc3c0a6](https://github.com/cmrfrd/taoa/commit/bc3c0a68896b801c65815cbb3f39d1d102933281))
+
 ### [1.3.26](https://github.com/cmrfrd/taoa/compare/v1.3.25...v1.3.26) (2022-06-14)
 
 
