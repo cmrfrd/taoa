@@ -1,3 +1,10 @@
+### [1.3.26](https://github.com/cmrfrd/taoa/compare/v1.3.25...v1.3.26) (2022-06-14)
+
+
+### Bug Fixes
+
+* Add index files for static dir ([f743be0](https://github.com/cmrfrd/taoa/commit/f743be0dfa8a38e8f954a4fe78ac7bbe7935ada2))
+
 ### [1.3.25](https://github.com/cmrfrd/taoa/compare/v1.3.24...v1.3.25) (2022-06-08)
 
 
