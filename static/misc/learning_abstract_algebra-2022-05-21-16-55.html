@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-06-12 Sun 23:10 -->
+<!-- 2022-06-14 Tue 00:13 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>learning<sub>abstract</sub><sub>algebra</sub></title>
@@ -219,14 +219,6 @@
 <body>
 <div id="content">
 <h1 class="title">learning<sub>abstract</sub><sub>algebra</sub></h1>
-<div id="table-of-contents">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents">
-<ul>
-<li><a href="#orga7d2172">1. Homework #1</a></li>
-</ul>
-</div>
-</div>
 <p>
 I am currently learning abstract algebra through a tutor after realizing how in
 over my head I was learning elliptic curve pairings. On an abstract level the
@@ -261,9 +253,15 @@ pieces from the source material and produce a few blog post (maybe about the
 proofs).
 </p>
 
-<div id="outline-container-orga7d2172" class="outline-2">
-<h2 id="orga7d2172"><span class="section-number-2">1.</span> Homework #1</h2>
-<div class="outline-text-2" id="text-1">
+<div id="outline-container-org839a4e6" class="outline-2">
+<h2 id="org839a4e6">Homework #1</h2>
+<div class="outline-text-2" id="text-org839a4e6">
+</div>
+
+
+<div id="outline-container-org83bfdd3" class="outline-3">
+<h3 id="org83bfdd3">Setup</h3>
+<div class="outline-text-3" id="text-org83bfdd3">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #8FA1B3;">(</span><span style="color: #b48ead;">setq</span> org-babel-python-command <span style="color: #c678dd;">(</span>format <span style="color: #A3BE8C;">"%s/sympy"</span> <span style="color: #A3BE8C;">(</span>getenv <span style="color: #A3BE8C;">"SCRIPTS"</span><span style="color: #A3BE8C;">)</span><span style="color: #c678dd;">)</span><span style="color: #8FA1B3;">)</span>
 </pre>
@@ -288,11 +286,12 @@ proofs).
     <span style="color: #b48ead;">return</span> timeout_decorator
 </pre>
 </div>
+</div>
+</div>
 
-<p>
-Question 1:
-</p>
-
+<div id="outline-container-orgaa910a2" class="outline-3">
+<h3 id="orgaa910a2">Question 1</h3>
+<div class="outline-text-3" id="text-orgaa910a2">
 <p>
 Write a computer program to compute the order of a mod n, i.e., the smallest
 r&gt;=1 such that a<sup>r</sup> = 1 mod n.
@@ -315,14 +314,14 @@ print(find_order_naive(10, 17))
 </div>
 
 <pre class="example">
-16
+&gt;&gt;&gt; 16
 </pre>
+</div>
+</div>
 
-
-<p>
-Question 2:
-</p>
-
+<div id="outline-container-org7aa758e" class="outline-3">
+<h3 id="org7aa758e">Question 2</h3>
+<div class="outline-text-3" id="text-org7aa758e">
 <p>
 Use your program to find the order of every element of (Z/13Z)<sup>X</sup>. Since
 phi(13)=12 we know from Euler&rsquo;s totient theorem that the order of every
@@ -331,7 +330,7 @@ element of (Z/13)<sup>X</sup> has order that divides 12.
 
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #BF616A;">ring_size</span> = 13
-<span style="color: #BF616A;">results</span> = [[<span style="color: #A3BE8C;">"Element"</span>, <span style="color: #A3BE8C;">"Order"</span>, <span style="color: #A3BE8C;">"Div{ring_size-1}"</span>]]
+<span style="color: #BF616A;">results</span> = [[<span style="color: #A3BE8C;">"Element"</span>, <span style="color: #A3BE8C;">"Order"</span>, f<span style="color: #A3BE8C;">"Div{ring_size-1}"</span>]]
 <span style="color: #b48ead;">for</span> elem <span style="color: #b48ead;">in</span> <span style="color: #D08770;">range</span>(2, ring_size):
     <span style="color: #BF616A;">order</span> = find_order_naive(elem, ring_size)
     results.append(
@@ -359,7 +358,7 @@ results
 <tr>
 <td class="org-right">Element</td>
 <td class="org-right">Order</td>
-<td class="org-left">Div{ring<sub>size</sub>-1}</td>
+<td class="org-left">Div12</td>
 </tr>
 
 <tr>
@@ -470,6 +469,7 @@ particular, observe that there are phi(12) elements of order 12. These are the
 <p>
 We will prove later that the same ideas hold for (Z/pZ)<sup>X</sup> whenever p is prime.
 </p>
+</div>
 </div>
 </div>
 </div>

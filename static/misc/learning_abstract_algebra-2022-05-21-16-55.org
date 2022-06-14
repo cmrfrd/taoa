@@ -3,8 +3,10 @@
 :END:
 #+TITLE: learning_abstract_algebra
 #+CREATED: [2022-05-21 Sat 16:55]
-#+LAST_MODIFIED: [2022-06-12 Sun 23:11]
+#+LAST_MODIFIED: [2022-06-14 Tue 00:13]
 #+FILETAGS: fleeting
+#+OPTIONS: toc:nil
+#+OPTIONS: num:nil
 #+SETUPFILE: ./latexcss.theme
 
 I am currently learning abstract algebra through a tutor after realizing how in
@@ -34,6 +36,9 @@ proofs).
   :ID:       4b6e93d8-4436-4253-aa5d-004010becc54
   :END:
 
+
+** Setup
+
   #+begin_src emacs-lisp
   (setq org-babel-python-command (format "%s/sympy" (getenv "SCRIPTS")))
   #+end_src
@@ -62,12 +67,12 @@ proofs).
 
   #+RESULTS:
 
-  Question 1:
+** Question 1
 
-  Write a computer program to compute the order of a mod n, i.e., the smallest
-  r>=1 such that a^r = 1 mod n.
+   Write a computer program to compute the order of a mod n, i.e., the smallest
+   r>=1 such that a^r = 1 mod n.
 
-  #+begin_src python :session :results output :exports both
+   #+begin_src python :session :results output :exports both
     @timeout(10.0)
     def find_order_naive(a, n):
         '''
@@ -80,18 +85,18 @@ proofs).
         return r
 
     print(find_order_naive(10, 17))
-  #+end_src
+   #+end_src
 
-  #+RESULTS:
-  : 16
+   #+RESULTS:
+   : 16
 
-  Question 2:
+** Question 2
 
-  Use your program to find the order of every element of (Z/13Z)^X. Since
-  phi(13)=12 we know from Euler's totient theorem that the order of every
-  element of (Z/13)^X has order that divides 12.
+   Use your program to find the order of every element of (Z/13Z)^X. Since
+   phi(13)=12 we know from Euler's totient theorem that the order of every
+   element of (Z/13)^X has order that divides 12.
 
-  #+begin_src python :session :results value :exports both
+   #+begin_src python :session :results value :exports both
     ring_size = 13
     results = [["Element", "Order", f"Div{ring_size-1}"]]
     for elem in range(2, ring_size):
@@ -104,7 +109,7 @@ proofs).
              ]
       )
     results
-  #+end_src
+   #+end_src
 
   #+RESULTS:
   | Element | Order | Div12 |
