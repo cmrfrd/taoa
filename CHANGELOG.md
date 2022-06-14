@@ -1,3 +1,10 @@
+### [1.3.28](https://github.com/cmrfrd/taoa/compare/v1.3.27...v1.3.28) (2022-06-14)
+
+
+### Bug Fixes
+
+* Update misc static dir ([acfe369](https://github.com/cmrfrd/taoa/commit/acfe369e992150c1ef598c92219f8f027009841c))
+
 ### [1.3.27](https://github.com/cmrfrd/taoa/compare/v1.3.26...v1.3.27) (2022-06-14)
 
 
