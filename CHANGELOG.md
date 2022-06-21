@@ -1,3 +1,10 @@
+### [1.3.29](https://github.com/cmrfrd/taoa/compare/v1.3.28...v1.3.29) (2022-06-21)
+
+
+### Bug Fixes
+
+* Add sub static dir and move misc static files there ([cd3dc74](https://github.com/cmrfrd/taoa/commit/cd3dc74b5dc33f07c1e5dc76f00a6147048e0359))
+
 ### [1.3.28](https://github.com/cmrfrd/taoa/compare/v1.3.27...v1.3.28) (2022-06-14)
 
 
