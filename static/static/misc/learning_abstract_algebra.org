@@ -1,18 +1,19 @@
 :PROPERTIES:
 :ID:       a35c6a5b-3a56-42f9-8251-03c7362e7b74
+:header-args: :eval never-export
 :END:
-#+TITLE: learning_abstract_algebra
+#+TITLE: Learning Abstract Algebra
 #+CREATED: [2022-05-21 Sat 16:55]
-#+LAST_MODIFIED: [2022-06-14 Tue 00:13]
+#+LAST_MODIFIED: [2022-06-21 Tue 16:09]
 #+FILETAGS: fleeting
 #+OPTIONS: toc:nil
 #+OPTIONS: num:nil
-#+SETUPFILE: ./latexcss.theme
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://gongzhitaao.org/orgcss/org.css"/>
 
 I am currently learning abstract algebra through a tutor after realizing how in
-over my head I was learning elliptic curve pairings. On an abstract level the
-concept of billinear maps (which are the desired result produced by elliptic
-curve pairings) I can understand, but wawaweewa the underlying mechanisms are
+over my head I was learning elliptic curve pairings. On an abstract level I
+understand billinear maps (which are the desired result produced by elliptic
+curve pairings), but wawaweewa the underlying mechanisms are
 NOT SIMPLE.
 
 I thought I understood a lot of the fundamentals of elliptic curves, but in
