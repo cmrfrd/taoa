@@ -1,6 +1,6 @@
 #+TITLE: Understanding KZG10 Polynomial Commitments
 #+CREATED: [2022-07-18 Mon 11:25]
-#+LAST_MODIFIED: [2022-07-19 Tue 11:10]
+#+LAST_MODIFIED: [2022-07-19 Tue 13:42]
 #+ROAM_TAGS: composition
 #+OPTIONS: toc:nil
 #+OPTIONS: tex:t
@@ -65,41 +65,15 @@
   : >>> setup!
 
 
-* Rediscovering Cryptography through Cryptocurrency                :noexport:
+* The not so well known sides of cryptography
 
-  Cryptocurrency gets a lot of hype for some reason. Most people associate
-  Cryptocurrency with things like price, Ponzi schemes, or even economic
-  freedom. But what they don't think about is all the amazing modern
-  cryptography used behind the scenes, and it's implications beyond
-  Cryptocurrency!
+  When most programmers think of cryptography, they think of things like PKI,
+  AES, HMAC's, etc. These techniques are extremely important, but in the overall
+  umbrella of cryptography, they are just the tip of the iceberg.
 
-  In order to get a better sense of all the "Crypto hype", I've been exploring
-  the modern cryptography rabbit hole behind cryptocurrencies and It's been
-  nothing less than fascinating.
-
-  The "standard" cryptographic systems used and understood as a programmer are:
-
-  1. Encrypting/decrypting data
-  2. Verifying data integrity
-  3. PKI
-  4. Authentication
-  5. etc.
-
-  But now over the past year I've been re acquainting myself with number
-  theory + group theory, demystifying modern cryptography papers, and playing
-  with dozens of open source cryptography projects. This made me realize I only
-  knew a fraction of what's possible. "Newer" and more advanced cryptographic
-  systems like:
-
-  1. Zero Knowledge Proofs
-  2. Commitment Schemes
-  3. Multi Party Computation
-  4. Homomorphic Encryption
-  5. etc.
-
-  enable new and incredible security capabilities. In order to better understand
-  this new tier of primitives, I decided to take a stab at implementing the
-  lesser known cryptographic primitive: Polynomial Commitments.
+  One area that doesn't get much love are polynomial commitment schemes
+  (PCS). To change that I'm going to break down one of the
+  most well known polynomial commitment schemes KZG10.
 
 * What is a Cryptographic Commitment?
 
@@ -108,34 +82,34 @@
   ones receiving the commitment can also trust that it's cryptographically hard
   to lie without being caught.
 
-  More formally, the two security properties we need are:
+  More formally, the two security properties that make this possible are:
 
-  1. *Binding:* Two different statement can't make the same commitment
+  1. *Binding:* Two different statements can't make the same commitment
   2. *Hiding:* Given a commitment, nothing is known about the statement
 
   If you want to learn more about these properties, I've written about [[https://taoa.io/posts/Committing-to-lunch][hash
   based commitment schemes]] that goes into more detail.
 
-* Polynomial Commitment Scheme (PCS)
+* Polynomial Commitment Schemes (PCS)
 
-  There are many different styles of commitments. What makes PCS's unique is that
+  There are many different styles of commitments. What makes PCS unique is that
   instead of committing and verifying a "statement" (a.k.a just a blob of data),
   we are verifying a polynomial. This might not seem so special at first glance,
-  but in PCS's we get the additional utility of verifying polynomial evaluations!
+  but in PCS we get the additional utility of verifying polynomial evaluations!
 
   In essence, this allows us to do verifiable computation on a polynomial
   without re-doing the evaluation ourselves.
 
 * KZG10 PCS
 
-  There are many extraordinary PCS's like [[https://drops.dagstuhl.de/opus/volltexte/2018/9018/pdf/LIPIcs-ICALP-2018-14.pdf][FRI]] or [[https://eprint.iacr.org/2017/1066.pdf][IPA]] (used in bulletproofs), but
+  There are many extraordinary PCS like [[https://drops.dagstuhl.de/opus/volltexte/2018/9018/pdf/LIPIcs-ICALP-2018-14.pdf][FRI]] or [[https://eprint.iacr.org/2017/1066.pdf][IPA]] (used in bulletproofs), but
   [[https://cacr.uwaterloo.ca/techreports/2010/cacr2010-10.pdf][KZG10]] has a few unique features compared to other schemes:
 
-  1. It's [[https://en.wikipedia.org/wiki/Pairing-based_cryptography][pairing]] based
+  1. It is [[https://en.wikipedia.org/wiki/Pairing-based_cryptography][pairing]] based
   2. Its proofs are constant in size (a single elliptic curve group element)
   3. Verification time is constant (two pairing operations)
 
-  This is awesome because when applying PCs to zero knowledge systems (like
+  This is awesome because when applying PCS to zero knowledge systems (like
   [[https://vitalik.ca/general/2021/01/26/snarks.html][zkSNARKs]]), constant space and time is pretty neat! But it's not all sunshine
   and rainbows as the largest tradeoff of KZG10 is that it requires a [[https://zkproof.org/2021/06/30/setup-ceremonies/][trusted]]
   [[https://vitalik.ca/general/2022/03/14/trustedsetup.html][setup]].
@@ -251,9 +225,8 @@
   #+RESULTS: KZG10-protocol
   [[file:./kzg10_protocol.png]]
 
-  Before implementing KZG10, let's understand it in the context of an example
-  protocol. Doing so will give us a base understanding of all its components and
-  how they fit together.
+  Let's start by framing KZG10 as an example protocol. Doing so will give us a
+  base understanding of all its components and how they fit together.
 
   In this example protocol there will be two participants, *Victoria the
   Verifier* who wants to outsource the computation of a polynomial, and *Peter
@@ -261,7 +234,7 @@
   correct. We will also assume that any messages sent between them become public
   information.
 
-  This is a non standard protocol, but will serve its purpose in understanding
+  This is a non-standard protocol, but will serve its purpose in understanding
   KZG10. We'll start at a high level diagram as follows:
 
   #+CAPTION: An example KZG10 based protocol
@@ -325,12 +298,12 @@
 ** Steps
 
    1. *Victoria the Verifier* sends the polynomial with an x coordinate to be
-      evaluated at.
+      evaluated.
    2. *Peter the Prover* computes a commitment to the polynomial, the
       evaluation of the polynomial, and a proof of evaluation.
-   3. *Peter the Prover* sends all the information to the *Victoria the
+   3. *Peter the Prover* sends all the information to *Victoria the
       Verifier*.
-   4. The *Victoria Verifier* checks that the *Peter the Prover* has evaluated
+   4. *Victoria Verifier* checks that *Peter the Prover* has evaluated
       the polynomial properly and has committed to the correct polynomial.
 
    Notice that at no point will *Victoria the Verifier* evaluate the polynomial!
@@ -341,20 +314,20 @@
    properties that will help thwart cheating. These properties establish a level
    of trust knowing that tampering and falsification will be hard:
 
-   1. Polynomial commitment binding and hiding
+   1. Polynomial commitment binding and hiding:
 
       We touched on this idea in the beginning of this post. But for this
-      protocol instead of applying binding and hiding to statements, we need to
+      protocol, instead of applying binding and hiding to statements, we need to
       be sure they hold true for a polynomial.
 
-   2. Evaluation binding
+   2. Evaluation binding:
 
-      This property means that different evaluations of the polynomial will
+      This property means that different evaluations of a polynomial will
       result in different proofs. With this we should be able to correctly
       identify that only proper evaluations and proper proofs will coincide
       in {{{texwrap("VerifyEval")}}}.
 
-   3. Correctness
+   3. Correctness:
 
       This property just means that our protocol works as expected. More
       formally: all commitments made by {{{texwrap("Commit")}}} can be verified
@@ -429,7 +402,7 @@
 
     In order to make a CRS we could sample our own {{{texwrap("alpha")}}} and
     just "not look" at what it is (which is commonly done for testing). But if
-    many people wanted to use it our sampled CRS, they would have to trust we
+    many people wanted to use our sampled CRS, they would have to trust that we
     didn't look at {{{texwrap("alpha")}}} 😉. In practice, cryptographers
     perform MPC ceremonies where many machines contribute randomness to
     {{{texwrap("alpha")}}} so no one can reconstruct it without collusion. The
@@ -572,7 +545,7 @@
 
    The proof we've just generated doesn't look like much, but it encodes a lot
    of useful information related to the commitment previously generated that we
-   will use verify its correctness.
+   will use to verify its correctness.
 
    But before we can understand how to verify evaluations, we need to talk about
    the primary ingredient to verification, namely pairings.
@@ -669,7 +642,7 @@
     instead we are left with {{{texwrap("y")}}} and {{{texwrap("proof")}}}.
 
     We can also clearly see that since {{{texwrap("y")}}} is composed within
-    {{{texwrap("proof")}}}, so they must be changed together.
+    {{{texwrap("proof")}}}, they must be changed together.
 
     If we try cheating with {{{texwrap("y")}}}, the naive approach is to choose
     our desired false {{{texwrap("y_prime")}}} value and change the
@@ -858,7 +831,7 @@
      VerifyEvalBatch = function("VerifyEvalBatch")
    #+END_SRC
 
-   Boom! Just like that we've added batching and have two more functions
+   Boom! Just like that we've added batching and have two more functions:
    {{{texwrap("CreateWitnessBatch")}}} and {{{texwrap("VerifyEvalBatch")}}}. But
    how do we know this substitution can correctly "batch" verify points?
 
@@ -884,9 +857,9 @@
    and {{{texwrap("proof")}}}). And the size of the polynomial we can verify
    (bounded in {{{texwrap("commitment")}}}).
 
-   But we've already established that CRS's are pretty huge (sometimes $2^21$),
-   which in practice is very practical for verifying many points and large
-   polynomials.
+   But we've already established that CRS's are pretty huge (sometimes
+   $2^{21}$), which in practice is very practical for verifying many points and
+   large polynomials.
 
 * Implementation
 
@@ -901,7 +874,7 @@
 
 * Moar links
 
-  PCS's are just the beginning of the cryptography and zero knowledge rabbit
+  PCS are just the beginning of the cryptography and zero knowledge rabbit
   hole. Here are some more links to learn more. Thanks for reading!
 
   1. [[https://hackmd.io/@tompocock/Hk2A7BD6U][tompocock's kate commitments post]]
