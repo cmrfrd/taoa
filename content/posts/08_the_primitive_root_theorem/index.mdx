@@ -1,0 +1,43 @@
+---
+title: "The primitive root theorem"
+author: ["Alexander Comerford"]
+draft: false
+date: 2022-03-08
+hero: "./cover.jpg"
+secret: true
+excerpt: "Sometimes the best knowledge is no knowledge"
+---
+
+## What is the primitive root theorem
+
+In this post I'm going to break down one of the most non intuitive, yet
+foundational proofs in number/group theory.
+
+The primitive root theorem theorem states that:
+
+> If F is a finite field, then F - {O} is a cyclic group under multiplication.
+
+Although this theorem can be written as a single statement, there is a lot of
+complexity to unpack. The most obvious first step to understanding this
+theorem is to break down the underlying terms. The operative words in this
+statement that do most of the heavy lifting are "finite field" and "cyclic
+group".
+
+
+### Finite fields
+
+A finite field is simply a mathematical set which contains finitely many
+elements of whom we can perform basic math on (addition, subtraction,
+multiplication, and division). This definition is a very abstract notion of
+what a finite field is and for all intents and purposes we will only be
+looking at the finite fields described by the integers modulo the primes.
+
+  For clarity all finite fields are of size Python 3.9.6 (default, Jun 28 2021, 08:57:49)
+[GCC 10.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> for some prime
+   and positive integer . For the
+   case this must be true because if a finite field of size
+   was factorable (a.k.a ), then
+  there would exist two elements that multiply to the additive identity which
+  contradicts the definition of a field.

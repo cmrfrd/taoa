@@ -1,0 +1,116 @@
+#+TITLE: The primitive root theorem
+#+CREATED: [2022-03-08 Tue 20:13]
+#+LAST_MODIFIED: [2022-07-18 Mon 11:25]
+#+ROAM_TAGS: composition
+#+OPTIONS: toc:nil
+#+OPTIONS: tex:t
+#+OPTIONS: _:nil ^:nil p:nil
+
+#+HUGO_BASE_DIR: ./
+#+hugo_front_matter_format: yaml
+#+HUGO_CUSTOM_FRONT_MATTER: :date (org-to-blog-date (org-global-prop-value "CREATED"))
+#+HUGO_CUSTOM_FRONT_MATTER: :hero ./images/cover.png
+#+HUGO_CUSTOM_FRONT_MATTER: :secret true
+#+HUGO_CUSTOM_FRONT_MATTER: :excerpt Sometimes the best knowledge is no knowledge
+
+#+BEGIN_SRC emacs-lisp :exports none
+  (defun org-hugo-link (link contents info) (org-md-link link contents info))
+
+  ;; Setup org/latex exporting
+  (add-to-list 'org-export-filter-latex-fragment-functions
+               'sub-paren-for-dollar-sign)
+  (add-to-list 'org-export-filter-headline-functions
+               'remove-regexp-curly-braces)
+  (add-to-list 'org-export-filter-latex-environment-functions
+               'sub-paren-for-dollar-sign)
+  (export-to-mdx-on-save)
+#+END_SRC
+
+#+RESULTS:
+: Enabled mdx on save
+
+* Forward                                                          :noexport:
+
+  #+begin_src emacs-lisp
+    (setq org-babel-python-command (f-join (getenv "SCRIPTS") "sage"))
+    (setq py-default-interpreter (f-join (getenv "SCRIPTS") "sage"))
+    (setq-local org-plantuml-executable-path (f-join (getenv "SCRIPTS") "plantuml-cli"))
+  #+end_src
+
+  #+RESULTS:
+  : /home/cmrfrd/.dotfiles/scripts/plantuml-cli
+
+  #+NAME: init
+  #+HEADER: :exports none :results output
+  #+begin_src python :session root
+    from sage.all import *
+    import sympy as S
+  #+end_src
+
+  #+RESULTS: init
+
+  #+NAME: eval_latex
+  #+HEADER: :exports none :results output
+  #+BEGIN_SRC python :var inp="" :session root
+    def eval_latex(name):
+        if type(name) == str:
+            return latex(eval(name)._sage_())
+        return latex(name._sage_())
+    print(eval_latex(inp))
+  #+END_SRC
+
+  #+RESULTS: eval_latex
+
+  #+NAME: eval_latex_wrap
+  #+HEADER: :exports none :results output
+  #+BEGIN_SRC python :var inp="" :session root
+    def eval_latex_wrap(name):
+        return f"${eval_latex(name)}$"
+    print(eval_latex_wrap(inp))
+  #+END_SRC
+
+  #+RESULTS: eval_latex_wrap
+
+  #+MACRO: texwrap (eval (org-sbe eval_latex_wrap (inp $1)))
+
+  #+NAME: setup-vars
+  #+HEADER: :exports none :results output
+  #+begin_src python :session root
+    p, k, a, b, n = var('p k a b n')
+    def seq(one, two):
+        return S.Eq(one._sympy_(), two._sympy_())._sage_()
+  #+end_src
+
+  #+RESULTS: setup-vars
+
+* What is the primitive root theorem
+
+  In this post I'm going to break down one of the most non intuitive, yet
+  foundational proofs in number/group theory.
+
+  The primitive root theorem theorem states that:
+
+  #+begin_quote
+  If F is a finite field, then F - {O} is a cyclic group under multiplication.
+  #+end_quote
+
+  Although this theorem can be written as a single statement, there is a lot of
+  complexity to unpack. The most obvious first step to understanding this
+  theorem is to break down the underlying terms. The operative words in this
+  statement that do most of the heavy lifting are "finite field" and "cyclic
+  group".
+
+** Finite fields
+
+  A finite field is simply a mathematical set which contains finitely many
+  elements of whom we can perform basic math on (addition, subtraction,
+  multiplication, and division). This definition is a very abstract notion of
+  what a finite field is and for all intents and purposes we will only be
+  looking at the finite fields described by the integers modulo the primes.
+
+  For clarity all finite fields are of size {{{texwrap("p**k")}}} for some prime
+  {{{texwrap("p")}}} and positive integer {{{texwrap("k")}}}. For the
+  {{{texwrap("k==1")}}} case this must be true because if a finite field of size
+  {{{texwrap("n")}}} was factorable (a.k.a {{{texwrap("S.Eq(a*b\,n)")}}}), then
+  there would exist two elements that multiply to the additive identity which
+  contradicts the definition of a field.
