@@ -1,3 +1,10 @@
+### [1.3.30](https://github.com/cmrfrd/taoa/compare/v1.3.29...v1.3.30) (2022-07-19)
+
+
+### Bug Fixes
+
+* Update kzg post with image ([53da741](https://github.com/cmrfrd/taoa/commit/53da7410836db96e6df59e86292329d3bb040865))
+
 ### [1.3.29](https://github.com/cmrfrd/taoa/compare/v1.3.28...v1.3.29) (2022-06-21)
 
 
