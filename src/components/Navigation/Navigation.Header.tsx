@@ -363,9 +363,14 @@ const HeaderSticky = styled.div((p: IHeaderStickyProps) =>
 );
 
 const HeaderSection = styled(Section)({
-  paddingLeft: 0,
-  paddingRight: 0,
-  [mediaquery.tablet()]: {}
+  /* [mediaquery.tablet()]: {
+   *   maxWidth: 'none',
+   *   padding: '0 20px'
+   * },
+   * [mediaquery.desktop()]: {
+   *   maxWidth: 'none',
+   *   padding: '0 20px'
+   * } */
 });
 
 const Horizontal = styled.div((p: ITAOAThemeUIContext) => ({
