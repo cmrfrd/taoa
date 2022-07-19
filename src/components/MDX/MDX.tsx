@@ -121,7 +121,7 @@ const POST_WIDTH = (): IStringMap => ({
 });
 
 const BodyCSS = (): IStringMap => ({
-  'h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote': {
+  'h1, h2, h3, h4, h5, h6, p, ul, ol, blockquote, table': {
     margin: '10px auto',
     ...POST_WIDTH()
   },
