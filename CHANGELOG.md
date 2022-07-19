@@ -1,3 +1,10 @@
+### [1.3.32](https://github.com/cmrfrd/taoa/compare/v1.3.31...v1.3.32) (2022-07-19)
+
+
+### Bug Fixes
+
+* spellcheck kzg10 ([112c4be](https://github.com/cmrfrd/taoa/commit/112c4be3fce893e11b00e8dd2f84fc3138cf86b4))
+
 ### [1.3.31](https://github.com/cmrfrd/taoa/compare/v1.3.30...v1.3.31) (2022-07-19)
 
 
