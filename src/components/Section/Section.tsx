@@ -15,19 +15,20 @@ const Section = styled.section<{
     maxWidth: '850px'
   },
   [mediaquery.phablet()]: {
-    maxWidth: '100%'
+    padding: '0 20px'
+    /* maxWidth: '100%' */
   },
 
   ...(p.narrow
     ? {
         [mediaquery.tablet()]: {
-          padding: '0 1rem',
+          padding: '0 10px',
           maxWidth: '527px'
         }
       }
     : {
         [mediaquery.tablet()]: {
-          padding: '0 2rem',
+          padding: '0 24px',
           maxWidth: '567px'
         }
       })
