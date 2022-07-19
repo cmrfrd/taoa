@@ -1,3 +1,10 @@
+### [1.3.31](https://github.com/cmrfrd/taoa/compare/v1.3.30...v1.3.31) (2022-07-19)
+
+
+### Bug Fixes
+
+* Add primitive root initial post ([b3fa558](https://github.com/cmrfrd/taoa/commit/b3fa558747627cf3e87c8c951bec85b5ca923460))
+
 ### [1.3.30](https://github.com/cmrfrd/taoa/compare/v1.3.29...v1.3.30) (2022-07-19)
 
 
