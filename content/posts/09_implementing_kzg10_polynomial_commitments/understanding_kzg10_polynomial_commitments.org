@@ -1,6 +1,6 @@
-#+TITLE: Implementing KZG10 Polynomial Commitments
-#+CREATED: <2022-03-08 Tue 20:13>
-#+LAST_MODIFIED: [2022-07-17 Sun 03:24]
+#+TITLE: Understanding KZG10 Polynomial Commitments
+#+CREATED: [2022-07-18 Mon 11:25]
+#+LAST_MODIFIED: [2022-07-19 Tue 11:10]
 #+ROAM_TAGS: composition
 #+OPTIONS: toc:nil
 #+OPTIONS: tex:t
@@ -17,12 +17,12 @@
   (defun org-hugo-link (link contents info) (org-md-link link contents info))
 
   ;; Setup org/latex exporting
-  ;(add-to-list 'org-export-filter-latex-fragment-functions
-  ;             'sub-paren-for-dollar-sign)
-  ;(add-to-list 'org-export-filter-headline-functions
-  ;             'remove-regexp-curly-braces)
-  ;(add-to-list 'org-export-filter-latex-environment-functions
-  ;             'sub-paren-for-dollar-sign)
+  (add-to-list 'org-export-filter-latex-fragment-functions
+               'sub-paren-for-dollar-sign)
+  (add-to-list 'org-export-filter-headline-functions
+               'remove-regexp-curly-braces)
+  (add-to-list 'org-export-filter-latex-environment-functions
+               'sub-paren-for-dollar-sign)
   (export-to-mdx-on-save)
 #+END_SRC
 
@@ -59,7 +59,10 @@
   #+end_src
 
   #+RESULTS: init
-  : setup!
+  : Python 3.9.6 (default, Jun 28 2021, 08:57:49)
+  : [GCC 10.3.0] on linux
+  : Type "help", "copyright", "credits" or "license" for more information.
+  : >>> setup!
 
 
 * Rediscovering Cryptography through Cryptocurrency                :noexport:
@@ -100,12 +103,12 @@
 
 * What is a Cryptographic Commitment?
 
-  Making a cryptographic commitment is like making a promise. It enables someone
-  to "commit" to some statement and prove later that they were abiding by
-  it. The ones receiving the commitment can also rely on the cryptographic
-  security that it's hard to lie without being caught.
+  Making a cryptographic commitment is like making a promise. It enables us to
+  "commit" to some statement and prove later that we were abiding by it. The
+  ones receiving the commitment can also trust that it's cryptographically hard
+  to lie without being caught.
 
-  The two security properties we care about are:
+  More formally, the two security properties we need are:
 
   1. *Binding:* Two different statement can't make the same commitment
   2. *Hiding:* Given a commitment, nothing is known about the statement
@@ -115,24 +118,27 @@
 
 * Polynomial Commitment Scheme (PCS)
 
-  There are many different styles of commitments. What makes PCSs interesting is
-  that instead of committing and verifying a statement, we get the additional
-  utility of committing to a polynomial and verify its evaluations. In essence,
-  this allows us to do verifiable computation on a polynomial without doing the
-  evaluation ourselves.
+  There are many different styles of commitments. What makes PCS's unique is that
+  instead of committing and verifying a "statement" (a.k.a just a blob of data),
+  we are verifying a polynomial. This might not seem so special at first glance,
+  but in PCS's we get the additional utility of verifying polynomial evaluations!
 
-* KZG10
+  In essence, this allows us to do verifiable computation on a polynomial
+  without re-doing the evaluation ourselves.
 
-  There are many PCSs like [[https://drops.dagstuhl.de/opus/volltexte/2018/9018/pdf/LIPIcs-ICALP-2018-14.pdf][FRI]] or [[https://eprint.iacr.org/2017/1066.pdf][IPA]] (used in bulletproofs), but KZG10
-  has a few unique features compared to other schemes:
+* KZG10 PCS
+
+  There are many extraordinary PCS's like [[https://drops.dagstuhl.de/opus/volltexte/2018/9018/pdf/LIPIcs-ICALP-2018-14.pdf][FRI]] or [[https://eprint.iacr.org/2017/1066.pdf][IPA]] (used in bulletproofs), but
+  [[https://cacr.uwaterloo.ca/techreports/2010/cacr2010-10.pdf][KZG10]] has a few unique features compared to other schemes:
 
   1. It's [[https://en.wikipedia.org/wiki/Pairing-based_cryptography][pairing]] based
   2. Its proofs are constant in size (a single elliptic curve group element)
-  3. Verification time of proofs is constant (two pairing operations)
+  3. Verification time is constant (two pairing operations)
 
   This is awesome because when applying PCs to zero knowledge systems (like
-  [[https://vitalik.ca/general/2021/01/26/snarks.html][zkSNARKs]]), constant space and time is pretty neat! However the largest
-  criticism / drawback of KZG10 is that it requires a [[https://zkproof.org/2021/06/30/setup-ceremonies/][trusted]] [[https://vitalik.ca/general/2022/03/14/trustedsetup.html][setup]].
+  [[https://vitalik.ca/general/2021/01/26/snarks.html][zkSNARKs]]), constant space and time is pretty neat! But it's not all sunshine
+  and rainbows as the largest tradeoff of KZG10 is that it requires a [[https://zkproof.org/2021/06/30/setup-ceremonies/][trusted]]
+  [[https://vitalik.ca/general/2022/03/14/trustedsetup.html][setup]].
 
 * KZG10 as a protocol
 
@@ -226,16 +232,17 @@
     skinparam shadowing false
     hide footbox
     title An example KZG10 based protocol
-    "Victoria the Verifier" -> "Peter the Prover": <<latex_tags("1.")>> <<eval_latex_tags("polyfunc(x), x")>>
+    "Victoria the Verifier" <-> "Peter the Prover": <<latex_tags("1.")>> <<eval_latex_tags("Setup()")>>
+    "Victoria the Verifier" -> "Peter the Prover": <<latex_tags("2.")>> <<eval_latex_tags("polyfunc(x), x")>>
     "Peter the Prover" -> "Peter the Prover": \n\
-    <<latex_tags("2.")>> \n\
+    <<latex_tags("3.")>> \n\
     <<eval_latex_tags("commitment \=\= Commit(poly)")>> \n\
     <<eval_latex_tags("y \=\= polyfunc(x)")>> \n\
     <<eval_latex_tags("proof \=\= CreateWitness(poly, x, y)")>>
     "Peter the Prover" -> "Victoria the Verifier": \n\
-    <<latex_tags("3.")>> <<eval_latex_tags("commitment, y, proof")>>
+    <<latex_tags("4.")>> <<eval_latex_tags("commitment, y, proof")>>
     "Victoria the Verifier" -> "Victoria the Verifier": \n\
-    <<latex_tags("4.")>> \n\
+    <<latex_tags("5.")>> \n\
     <<eval_latex_tags("VerifyPoly(commitment, poly)")>> \n\
     <<eval_latex_tags("VerifyEval(commitment, proof, x, y)")>>
     @enduml
@@ -244,24 +251,24 @@
   #+RESULTS: KZG10-protocol
   [[file:./kzg10_protocol.png]]
 
-  Before implementing it, let's understand KZG10 in the context of an example
+  Before implementing KZG10, let's understand it in the context of an example
   protocol. Doing so will give us a base understanding of all its components and
   how they fit together.
 
-  In this example protocol there will be two participants, a *Victoria the
-  Verifier* who wants to out source the computation of a polynomial, and a
-  *Peter the Prover* who wants to evaluate the polynomial and prove the
-  evaluation is correct. We will also assume that any messages sent between them
-  become public information.
+  In this example protocol there will be two participants, *Victoria the
+  Verifier* who wants to outsource the computation of a polynomial, and *Peter
+  the Prover* who wants to evaluate the polynomial and show the evaluation is
+  correct. We will also assume that any messages sent between them become public
+  information.
 
   This is a non standard protocol, but will serve its purpose in understanding
-  KZG10. At a high level, we can diagram the protocol as follows:
+  KZG10. We'll start at a high level diagram as follows:
 
   #+CAPTION: An example KZG10 based protocol
   [[./kzg10_protocol.png]]
 
-  Now this is a pretty dense representation so to break it down. Here is what the
-  variables and steps represent.
+  Now this is a pretty dense representation so to break it down. Here is what
+  the variables, functions, and steps represent.
 
   #+NAME: kzg10_var_table
   #+HEADER: :exports results :results output table
@@ -271,7 +278,7 @@
         [eval_latex_wrap("polyfunc(x)"),
          f'''The desired polynomial to be evaluated of the form {eval_latex_wrap("polyfunc(x) == polyexpanded")}'''],
         [eval_latex_wrap("x, y"),
-         f'''Point to be evaluated by {eval_latex_wrap("polyfunc(x)")}'''],
+         f'''Point to be evaluated by {eval_latex_wrap("polyfunc")}'''],
         [eval_latex_wrap("commitment"),
          f'''Committed representation of the polynomial {eval_latex_wrap("polyfunc(x)")}'''],
         [eval_latex_wrap("proof"),
@@ -283,20 +290,21 @@
   #+RESULTS: kzg10_var_table
   | Variable            | Description                                                                                             |
   | $p\left(x\right)$   | The desired polynomial to be evaluated of the form $p\left(x\right) = {\sum_{{i}=0}^{n} c_{i} x^{{i}}}$ |
-  | $\left(x, y\right)$ | Point to be evaluated by $p\left(x\right)$                                                              |
+  | $\left(x, y\right)$ | Point to be evaluated by $p$                                                                            |
   | $C$                 | Committed representation of the polynomial $p\left(x\right)$                                            |
   | ${\pi}$             | Proof of evaluation (not $3.14...$)                                                                     |
-
 
   #+NAME: kzg10_func_table
   #+HEADER: :exports results :results output table
   #+BEGIN_SRC python :session kzg10
     t = [
         ["Function", "Description"],
+        [eval_latex_wrap("Setup"),
+         f'''Sets up paramaters to be used for the rest of the protocol'''],
         [eval_latex_wrap("Commit"),
          f'''Creates a "commitment" when given a polynomial'''],
         [eval_latex_wrap("CreateWitness"),
-         f'''Produces a proof of evaluation of $x,y$ on $p$'''],
+         f'''Produces a proof of evaluation of $x$ on $p$'''],
         [eval_latex_wrap("VerifyPoly"),
          f'''Checks that a commited polynomial and a polynomial coincide'''],
         [eval_latex_wrap("VerifyEval"),
@@ -307,16 +315,17 @@
 
   #+RESULTS: kzg10_func_table
   | Function        | Description                                                 |
+  | $Setup$         | Sets up paramaters to be used for the rest of the protocol  |
   | $Commit$        | Creates a "commitment" when given a polynomial              |
-  | $CreateWitness$ | Produces a proof of evaluation of $x,y$ on $p$              |
+  | $CreateWitness$ | Produces a proof of evaluation of $x$ on $p$                |
   | $VerifyPoly$    | Checks that a commited polynomial and a polynomial coincide |
   | $VerifyEval$    | Checks that a committed polynomial was evaluated properly   |
 
 
 ** Steps
 
-   1. *Victoria the Verifier* sends the polynomial to be evaluated with the
-      point it will be evaluated at.
+   1. *Victoria the Verifier* sends the polynomial with an x coordinate to be
+      evaluated at.
    2. *Peter the Prover* computes a commitment to the polynomial, the
       evaluation of the polynomial, and a proof of evaluation.
    3. *Peter the Prover* sends all the information to the *Victoria the
@@ -324,15 +333,7 @@
    4. The *Victoria Verifier* checks that the *Peter the Prover* has evaluated
       the polynomial properly and has committed to the correct polynomial.
 
-   #+begin_quote
-   *Aside:* At no point does the *Victoria the Verifier* evaluate the polynomial
-    themselves
-   #+end_quote
-
-   #+begin_quote
-   *Another Aside:* The keen reader who has read KZG10 will notice that we've left out
-    the $Setup$ function. Hold on tight, we'll get to it shortly.
-   #+end_quote
+   Notice that at no point will *Victoria the Verifier* evaluate the polynomial!
 
 ** Security properties
 
@@ -342,9 +343,9 @@
 
    1. Polynomial commitment binding and hiding
 
-      We touched on this idea in the first section of this post. However for
-      this protocol instead of applying binding and hiding to statements, we
-      need to be sure they hold true for a polynomial.
+      We touched on this idea in the beginning of this post. But for this
+      protocol instead of applying binding and hiding to statements, we need to
+      be sure they hold true for a polynomial.
 
    2. Evaluation binding
 
@@ -363,16 +364,18 @@
 
 * The math behind KZG10
 
-  So far we've only looked at KZG10 functionally. Now the only missing piece
-  left to understand KZG10 is the math and cryptography behind the functions. We
-  will mostly focus correctness, but touch on some other security properties.
+  Now that we've explored how KZG10 works functionally, the only missing chunk
+  left to understand is the math and cryptography behind the functions. We will
+  mostly focus on correctness, but touch on some other security properties as
+  well.
 
 ** Trusted setups and the Common Reference String
 
    The most important dependency that makes KZG10 work is the Common Reference
-   String (CRS). This is just a set of public parameters that all participants
-   use to compute and verify commitments and proofs. At the end of the day the
-   CRS is just a set of elliptic curve points of the form:
+   String (CRS). This is just a set of public parameters agreed upon in
+   {{{texwrap("Setup")}}} that all participants use to compute and verify
+   commitments and proofs. At the end of the day the CRS is just a set of
+   elliptic curve points of the form:
 
    #+NAME: CRS
    #+HEADER: :exports results :results latex output
@@ -397,14 +400,17 @@
    #+end_export
 
    What makes these points interesting is that {{{texwrap("alpha")}}} is an
-   unknown integer number (at least it's supposed to be). Unlike in [[https://cryptobook.nakov.com/asymmetric-key-ciphers/elliptic-curve-cryptography-ecc][ECC public
-   key cryptography]] where the key holder knows their private and public key (
-   {{{texwrap("alpha\, g**alpha")}}} respectively), in KZG10 we have a bunch of
-   "public keys" with an "unknown" private key. Even though we don't know what
-   mystical number {{{texwrap("alpha")}}} was used to create these "public
-   keys", we do know that each successive "public key" is another successive
-   power of {{{texwrap("alpha")}}} (We will use this to our advantage when we
-   start talking about polynomials).
+   unknown integer number (at least it's supposed to be).
+
+   Unlike in [[https://cryptobook.nakov.com/asymmetric-key-ciphers/elliptic-curve-cryptography-ecc][ECC public key cryptography]] where the key holder knows their
+   private and public key ( {{{texwrap("alpha\, g**alpha")}}} respectively), in
+   KZG10 we have a bunch of "public keys" with an "unknown" private key. Even
+   though we don't know what mystical number {{{texwrap("alpha")}}} was used to
+   create these "public keys", we do know that each successive "public key" is
+   defined by another successive power of {{{texwrap("alpha")}}}.
+
+   We will use this to our advantage when we start talking about evaluating
+   polynomials.
 
 *** Why is the CRS secure?
 
@@ -417,18 +423,19 @@
 
     #+RESULTS: q-SDH_and_q-SBDH
 
-    Ensuring {{{texwrap("alpha")}}} is a secret is important for the security of
-    KZG10. If we knew {{{texwrap("alpha")}}} then we could forge commitments and
-    proofs to our advantage (more on that later).
+    Ensuring {{{texwrap("alpha")}}} is a secret is *very* important for the
+    security of KZG10. If we knew {{{texwrap("alpha")}}} then we could forge
+    commitments and proofs to our advantage (more on that later).
 
     In order to make a CRS we could sample our own {{{texwrap("alpha")}}} and
     just "not look" at what it is (which is commonly done for testing). But if
-    many people wanted to use it, they would have to trust we didn't look 😉. In
-    practice, cryptographers perform MPC ceremonies where many machines
-    contribute randomness to {{{texwrap("alpha")}}} so no one can reconstruct it
-    without collusion. The process for generating a CRS through MPC ceremonies
-    is a bit out of scope for this post, but these resources by [[https://vitalik.ca/general/2022/03/14/trustedsetup.html][Vitalik Buterin]]
-    and [[https://eprint.iacr.org/2017/1050.pdf][Sean Bowe]] are great places to learn more.
+    many people wanted to use it our sampled CRS, they would have to trust we
+    didn't look at {{{texwrap("alpha")}}} 😉. In practice, cryptographers
+    perform MPC ceremonies where many machines contribute randomness to
+    {{{texwrap("alpha")}}} so no one can reconstruct it without collusion. The
+    process for generating a CRS through MPC ceremonies is a bit out of scope
+    for this post, but these resources by [[https://vitalik.ca/general/2022/03/14/trustedsetup.html][Vitalik Buterin]] and [[https://eprint.iacr.org/2017/1050.pdf][Sean Bowe]] are
+    great places to learn more.
 
     But how do we know we can't just recover {{{texwrap("alpha")}}} from the
     CRS?
@@ -482,7 +489,7 @@
     Unfortunately we cannot commit to infinite degree polynomials. We are capped
     by {{{texwrap("t")}}} parameters in the CRS. But {{{texwrap("t")}}} is
     usually some wickedly high number which provides a lot of wiggle room (ex:
-    $2^21$ from Zcash's powers of tau ceremony).
+    $2^{21}$ from Zcash's powers of tau ceremony).
 
     An important vulnerability to be aware of is that if we know
     {{{texwrap("alpha")}}}, we can easily break *binding* by finding two
@@ -514,12 +521,12 @@
     #+end_export
 
     Luckily we can rely on the *t-polyDH* assumption (an extension of *q-SDH*)
-    to help us establish *hiding* and *binding*.
+    to help us establish *hiding* and *binding* and prevent this vulnerability.
 
 ** Proofs of evaluation
 
-   Now that we can commit to a polynomial, the next step is to evaluate it and
-   *prove* we did so by creating a proof/witness.
+   Now that we can commit to a polynomial, the next step is to evaluate it on a
+   known point and *prove* we did so by creating a proof/witness.
 
    #+begin_quote
    *Aside:* A "proof" and "witness" have similar definitions and are used quite
@@ -531,7 +538,7 @@
    #+end_quote
 
    Evaluation of a polynomial is easy, but proving we did so is not
-   obvious. Here is the underlying math:
+   obvious. Here is the underlying math for proof creation:
 
     #+NAME: kzg_witness_creation
     #+HEADER: :exports results :results output latex
@@ -662,7 +669,7 @@
     instead we are left with {{{texwrap("y")}}} and {{{texwrap("proof")}}}.
 
     We can also clearly see that since {{{texwrap("y")}}} is composed within
-    {{{texwrap("proof")}}}, they both must be changed together.
+    {{{texwrap("proof")}}}, so they must be changed together.
 
     If we try cheating with {{{texwrap("y")}}}, the naive approach is to choose
     our desired false {{{texwrap("y_prime")}}} value and change the
@@ -690,7 +697,7 @@
     #+end_quote
 
     Unfortunately for us, finding the right {{{texwrap("y_prime")}}} to cheat is
-    not feasible. If we first observe that all the terms of a correctly executed
+    not feasible. If we first observe that the terms of a correctly executed
     proof numerator can be simplified like so:
 
     #+NAME: poly_factoring
@@ -713,9 +720,9 @@
     {\sum_{{i}=0}^{n} -{\left({\alpha}^{{i}} - x^{{i}}\right)} c_{i}} = \end{aligned}
     #+end_export
 
-    We see that polynomial {{{texwrap("polyfunc(alpha) - polyfunc(x)")}}} will
-    always have a positive root at {{{texwrap("alpha")}}} and will always be
-    divisible by {{{texwrap("alpha - x")}}}.
+    We see that the polynomial {{{texwrap("polyfunc(alpha) - polyfunc(x)")}}}
+    will always have a positive root at {{{texwrap("alpha")}}} and will always
+    be divisible by {{{texwrap("alpha - x")}}}.
 
     This puts us in a pickle because we can only construct polynomials of the
     form {{{texwrap("polyfunc(alpha) - y_prime")}}}. Since we can only use this
@@ -770,7 +777,7 @@
 ** What are zero polynomials?
 
    #+NAME: zero_polynomial_setup
-   #+HEADER: :exports results :results output latex
+   #+HEADER: :exports none :results output latex
    #+BEGIN_SRC python :session kzg10
      z_0, z_1, z_k = var('z_0 z_1 z_k')
      Z = function("Z")
@@ -781,9 +788,10 @@
    #+begin_export latex
    #+end_export
 
-   Not to be confused with the [[https://mathworld.wolfram.com/ZeroPolynomial.html][polynomial thats just the constant $0$]], a zero
+   Not to be confused with the [[https://mathworld.wolfram.com/ZeroPolynomial.html][polynomial thats just the constant "zero"]], a zero
    polynomial is a polynomial whose "zeros" (a.k.a roots) are defined by some
-   set of data points {{{texwrap("z_0\, z_1\, ell\, z_k")}}}. This can be expressed as:
+   set of data points {{{texwrap("z_0\, z_1\, ell\, z_k")}}}. This can be
+   expressed as:
 
    #+NAME: zero_polynomial
    #+HEADER: :exports results :results output latex
@@ -862,7 +870,7 @@
    results in a polynomial whose roots are {{{texwrap("z_0\, z_1\, ell\,
    z_k")}}}. This is great because our denominator (the zero polynomial) has the
    same roots and is therefore divisible since the [[https://sharmaeklavya2.github.io/theoremdep/nodes/polynomials/product-of-linear-factors-is-factor.html][product of linear factors is
-   a factor]]. We can now rest assured that this extension is correct because
+   a factor]]. We can now rest assured that verification will go smoothly because
    since we can do a clean polynomial division in
    {{{texwrap("CreateWitnessBatch")}}}, we can also do a clean reconstruction of
    {{{texwrap("polyfunc(alpha) - L_func(alpha)")}}} in
@@ -870,10 +878,10 @@
    {{{texwrap("Z(alpha)")}}}.
 
    The wild thing to notice is that even though we can verify many points with
-   "batching", the size of our proof {{{texwrap("proof")}}} stays the same (one
-   EC point)! Our only limitation is the size of the CRS which determines the
-   number of points we can verify (bounded in {{{texwrap("g**Z(alpha)")}}} and
-   {{{texwrap("proof")}}}). And the size of the polynomial we can verify
+   "batching", the size of our proof {{{texwrap("proof")}}} stays the same size
+   (one EC point)! Our only limitation is the size of the CRS which determines
+   the number of points we can verify (bounded in {{{texwrap("g**Z(alpha)")}}}
+   and {{{texwrap("proof")}}}). And the size of the polynomial we can verify
    (bounded in {{{texwrap("commitment")}}}).
 
    But we've already established that CRS's are pretty huge (sometimes $2^21$),
@@ -893,63 +901,10 @@
 
 * Moar links
 
-  PCSs are just the beginning to zero knowledge proving systems. Here are some
-  more links to learn more. Thanks for reading!
+  PCS's are just the beginning of the cryptography and zero knowledge rabbit
+  hole. Here are some more links to learn more. Thanks for reading!
 
   1. [[https://hackmd.io/@tompocock/Hk2A7BD6U][tompocock's kate commitments post]]
   2. [[https://dankradfeist.de/ethereum/2020/06/16/kate-polynomial-commitments.html][Dankrad Feist's kzg commitment post]]
   3. [[https://arxiv.org/pdf/2202.06877.pdf][A review of zkSNARKS]]
   4. [[https://arxiv.org/pdf/1906.07221.pdf][How and why zkSNARKs work]]
-
-
-* Scratchpad                                                       :noexport:
-
-  This post about how I went about using the zcash powers of tau in my own
-  personal KZG10 implementation. Alot of these terms don't mean much to average
-  folk let alone the average technical person so I'm going to lay it out.
-
-  The journey:
-
-  1. Reading about zkp and KZG10 / polynomial commitments
-  2. I wanted to try and implement it to help me understand zkp
-  3. Exaplain kzg10 and the "magical" reference string
-  4. Noticed that many ceremonies have been performed to make this reference string
-  5. Using an actual reference string would make for a great unit test!
-  6. Downloaded / verified public parameters
-  7. Embarrassingly was confused about the lineage of the parameters
-  8. Used the first few points for unit tests
-  9. Host the first few thousand points for those interested
-  10. Interactive example
-
-  What else needs to be developed:
-
-  1. DONE ~Better polynomials~
-  2. DONE Multi ~proofs~
-
-  Titles:
-
-  using zcash's powers of tau for kzg10
-  Implementing KZG10
-  Implementing KZG10 Polynomial Commitments
-
-  #+name: downloading-powers-of-tau
-  #+begin_src bash :eval no
-    $ wget https://archive.org/download/transcript_201804/transcript
-    ...
-    HTTP request sent, awaiting response... 200 OK
-    Length: 107508511200 (100G) [application/octet-stream]
-    Saving to: ‘transcript.1’
-
-    transcript.1        100%[==========================================>] 100.12G   882KB/s    in 29h 29m
-
-    2022-06-25 10:14:45 (989 KB/s) - ‘transcript.1’ saved [107508511200/107508511200]
-  #+end_src
-
-
-** Source references
-
-   https://github.com/numpy/numpy/blob/v1.23.0/numpy/polynomial/polyutils.py
-
-   https://github.com/arnaucube/kzg-commitments-study
-
-   https://github.com/protolambda/go-kzg
