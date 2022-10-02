@@ -1,0 +1,2 @@
+#!/usr/bin/env sh
+runc run $(cat /proc/sys/kernel/random/uuid) --no-pivot -b $CONTAINER_PATH/python

@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-07-05 Tue 16:22 -->
+<!-- 2022-06-21 Tue 16:09 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Learning Abstract Algebra</title>
@@ -216,28 +216,6 @@
     /*]]>*///-->
 // @license-end
 </script>
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        displayAlign: "center",
-        displayIndent: "0em",
-
-        "HTML-CSS": { scale: 100,
-                        linebreaks: { automatic: "false" },
-                        webFont: "TeX"
-                       },
-        SVG: {scale: 100,
-              linebreaks: { automatic: "false" },
-              font: "TeX"},
-        NativeMML: {scale: 100},
-        TeX: { equationNumbers: {autoNumber: "AMS"},
-               MultLineWidth: "85%",
-               TagSide: "right",
-               TagIndent: ".8em"
-             }
-});
-</script>
-<script type="text/javascript"
-        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
 </head>
 <body>
 <div id="content">
@@ -276,18 +254,17 @@ pieces from the source material and produce a few blog post (maybe about the
 proofs).
 </p>
 
-<div id="outline-container-orga6200f9" class="outline-2">
-<h2 id="orga6200f9">Homework #1</h2>
-<div class="outline-text-2" id="text-orga6200f9">
+<div id="outline-container-orgf639ab3" class="outline-2">
+<h2 id="orgf639ab3">Homework #1</h2>
+<div class="outline-text-2" id="text-orgf639ab3">
 </div>
 
 
-<div id="outline-container-org9cd49df" class="outline-3">
-<h3 id="org9cd49df">Setup</h3>
-<div class="outline-text-3" id="text-org9cd49df">
+<div id="outline-container-org0ed0b59" class="outline-3">
+<h3 id="org0ed0b59">Setup</h3>
+<div class="outline-text-3" id="text-org0ed0b59">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #8FA1B3;">(</span><span style="color: #b48ead;">setq</span> org-babel-python-command <span style="color: #c678dd;">(</span>format <span style="color: #A3BE8C;">"%s/sympy"</span> <span style="color: #A3BE8C;">(</span>getenv <span style="color: #A3BE8C;">"SCRIPTS"</span><span style="color: #A3BE8C;">)</span><span style="color: #c678dd;">)</span><span style="color: #8FA1B3;">)</span>
-<span style="color: #8FA1B3;">(</span><span style="color: #b48ead;">setq</span> py-default-interpreter <span style="color: #c678dd;">(</span>format <span style="color: #A3BE8C;">"%s/sympy"</span> <span style="color: #A3BE8C;">(</span>getenv <span style="color: #A3BE8C;">"SCRIPTS"</span><span style="color: #A3BE8C;">)</span><span style="color: #c678dd;">)</span><span style="color: #8FA1B3;">)</span>
 </pre>
 </div>
 
@@ -310,19 +287,12 @@ proofs).
     <span style="color: #b48ead;">return</span> timeout_decorator
 </pre>
 </div>
-
-<pre class="example">
-Python 3.9.6 (default, Jun 28 2021, 08:57:49)
-[GCC 10.3.0] on linux
-Type "help", "copyright", "credits" or "license" for more information.
-&gt;&gt;&gt;
-</pre>
 </div>
 </div>
 
-<div id="outline-container-org76fda5a" class="outline-3">
-<h3 id="org76fda5a">Question 1</h3>
-<div class="outline-text-3" id="text-org76fda5a">
+<div id="outline-container-org34991d0" class="outline-3">
+<h3 id="org34991d0">Question 1</h3>
+<div class="outline-text-3" id="text-org34991d0">
 <p>
 Write a computer program to compute the order of a mod n, i.e., the smallest
 r&gt;=1 such that a<sup>r</sup> = 1 mod n.
@@ -350,9 +320,9 @@ print(find_order_naive(10, 17))
 </div>
 </div>
 
-<div id="outline-container-orgbd3bb6d" class="outline-3">
-<h3 id="orgbd3bb6d">Question 2</h3>
-<div class="outline-text-3" id="text-orgbd3bb6d">
+<div id="outline-container-orgea4cd7c" class="outline-3">
+<h3 id="orgea4cd7c">Question 2</h3>
+<div class="outline-text-3" id="text-orgea4cd7c">
 <p>
 Use your program to find the order of every element of (Z/13Z)<sup>X</sup>. Since
 phi(13)=12 we know from Euler&rsquo;s totient theorem that the order of every
@@ -499,105 +469,6 @@ particular, observe that there are phi(12) elements of order 12. These are the
 
 <p>
 We will prove later that the same ideas hold for (Z/pZ)<sup>X</sup> whenever p is prime.
-</p>
-</div>
-</div>
-</div>
-
-<div id="outline-container-org97fd196" class="outline-2">
-<h2 id="org97fd196">Homework #2</h2>
-<div class="outline-text-2" id="text-org97fd196">
-</div>
-<div id="outline-container-org0ccc116" class="outline-3">
-<h3 id="org0ccc116">Primitive root theorem</h3>
-<div class="outline-text-3" id="text-org0ccc116">
-<p>
-For any finite field F the group of units (F*,*,1) is cyclic. (Write F* for
-the nonzero elements of F.) That is, there exists a nonzero element a in F
-such that every nonzero element has the form a<sup>k</sup> for some integer k.
-</p>
-
-<p>
-The proof has three major steps:
-</p>
-
-<ol class="org-ol">
-<li><p>
-Any polynomial of degree n over F has at most n roots in F.
-</p>
-
-<p>
-If we assume know that polynomials and their degrees have the following
-properties:
-</p>
-
-\begin{align} p\left(x\right) = {\prod_{i=1}^{m} -c_{i} + x} \\ {\rm deg}\left(p_{1}\left(x\right)\right) + {\rm deg}\left(p_{2}\left(x\right)\right) = {\rm deg}\left(p_{1}\left(x\right) p_{2}\left(x\right)\right) \end{align}
-
-<p>
-where every c<sub>i</sub> is a &ldquo;zero&rdquo; of the
-polynomial. Say we have two non zero polynomials p and g with p having
-degree n:
-</p>
-
-\begin{align} p\left(x\right) = g\left(x\right) {\prod_{i=1}^{m} -c_{i} + x} \\ n = {\rm deg}\left(p\left(x\right)\right) \\ n = m + {\rm deg}\left(g\left(x\right)\right) \\ -m + n = {\rm deg}\left(g\left(x\right)\right) \end{align}
-
-<p>
-Line 6 must be true because the degree of a polynomial cannot be
-negative. This inequality also holds if f is of order 0 or 1.
-</p>
-
-<p>
-This means that by line 2,
-\( p\left(x\right) \) must have atleast \( m + {\rm deg}\left(g\left(x\right)\right) \) roots.
-</p></li>
-
-<li><p>
-If F* contains an element of order d, then it contains exactly phi(d)
-elements of order d.
-</p>
-
-<p>
-Starting here:
-</p>
-
-\begin{align} {\rm Ord}\left(a^{k}\right) = {\rm Ord}\left(a^{{\rm gcd}\left(k, n\right)}\right) \\ {\rm Ord}\left(a^{k}\right) = \frac{n}{{\rm gcd}\left(k, n\right)} \end{align}
-
-<p>
-we know line 7 is true due to Bezout’s Identity. We also know that any
-divisor of \( n \) will have
-an order \( {\rm Ord}\left(a^{k}\right) = \frac{n}{k} \). Lastly since
-\( {\rm gcd}\left(k, d\right) \) is a divisor of
-\( d \) (by definition) we can combine these two to form
-line 8.
-</p></li>
-</ol>
-
-
-
-\begin{align} \end{align}
-
-
-<ol class="org-ol">
-<li>The sum of phi(d) over the divisors of n equals n. Example:
-phi(1)+phi(2)+phi(3)+phi(6)=1+1+2+2=6.</li>
-</ol>
-</div>
-</div>
-
-<div id="outline-container-org168d764" class="outline-3">
-<h3 id="org168d764">Satisfying the primitive root theorem</h3>
-<div class="outline-text-3" id="text-org168d764">
-<p>
-On page 197 of the algebra notes there is the multiplication table of a field
-of size eight. It has elements {0, 1, alpha, alpha<sup>2</sup>, 1+alpha, 1+alpha<sup>2</sup>,
-alpha+alpha<sup>2</sup>, 1+alpha+alpha<sup>2</sup>}. The coefficients are integers mod 2 (so
-+1=-1) and alpha is an &ldquo;imaginary number&rdquo; satisfying alpha<sup>3</sup>+alpha<sup>2</sup>+1=0.
-</p>
-
-<p>
-Problem: Verify explicitly that this field satisfies the Primitive Root
-Theorem. That is, find a nonzero element whose powers give all seven nonzero
-elements. More generally, find the order of every nonzero element.
 </p>
 </div>
 </div>

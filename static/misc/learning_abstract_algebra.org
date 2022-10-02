@@ -4,7 +4,7 @@
 :END:
 #+TITLE: Learning Abstract Algebra
 #+CREATED: [2022-05-21 Sat 16:55]
-#+LAST_MODIFIED: [2022-07-05 Tue 17:56]
+#+LAST_MODIFIED: [2022-06-21 Tue 16:09]
 #+FILETAGS: fleeting
 #+OPTIONS: toc:nil
 #+OPTIONS: num:nil
@@ -41,12 +41,11 @@ proofs).
 ** Setup
 
   #+begin_src emacs-lisp
-    (setq org-babel-python-command (format "%s/sage" (getenv "SCRIPTS")))
-    (setq py-default-interpreter (format "%s/sage" (getenv "SCRIPTS")))
+  (setq org-babel-python-command (format "%s/sympy" (getenv "SCRIPTS")))
   #+end_src
 
   #+RESULTS:
-  : /home/cmrfrd/.dotfiles/scripts/sage
+  : /home/cmrfrd/.dotfiles/scripts/sympy
 
   #+begin_src python :results output :session :exports both
     import multiprocessing.pool
@@ -75,7 +74,7 @@ proofs).
    r>=1 such that a^r = 1 mod n.
 
    #+begin_src python :session :results output :exports both
-    @timeout(3.0)
+    @timeout(10.0)
     def find_order_naive(a, n):
         '''
         solves for r:
@@ -158,202 +157,3 @@ proofs).
   "generators" of (Z/13)^X.
 
   We will prove later that the same ideas hold for (Z/pZ)^X whenever p is prime.
-
-* Homework #2
-
-** Primitive root theorem
-
-   For any finite field F the group of units (F*,*,1) is cyclic. (Write F* for
-   the nonzero elements of F.) That is, there exists a nonzero element a in F
-   such that every nonzero element has the form a^k for some integer k.
-
-   The proof has three major steps:
-
-   1. Any polynomial of degree n over F has at most n roots in F.
-
-      If we assume know that polynomials and their degrees have the following
-      properties:
-
-      #+header: :exports none :results none
-      #+begin_src python :python :session
-        import warnings
-        warnings.filterwarnings("ignore")
-      #+end_src
-
-      #+name: poly-n
-      #+header: :exports none :results output
-      #+begin_src python :python :session
-        from sage.all import *
-
-        class VG(object):
-            def __init__(self, prefix):
-                self.__prefix = prefix
-
-            @cached_method
-            def __getitem__(self, key):
-                return var("%s%s"%(self.__prefix,key))
-
-        latex_wrap = lambda expr: "\\(" + expr + "\\)"
-        latex_centers = lambda *exprs: \
-            LatexExpr("\\begin{align}") + \
-            ' \\\\ '.join(exprs) + \
-            LatexExpr("\\end{align}")
-
-        c = VG('c_')
-        i, x, n, m = var('i x n m')
-        f, g, p, p1, p2, q, deg = (function(i) for i in ['f', 'g', 'p', 'p1', 'p2', 'q', 'deg'])
-        pp = product(x-c[i], i, 1, m, hold=True)
-        # print(latex_wrap(latex(p(x) == pp)))
-        # print(latex_wrap(latex(f(x) == p(x)*q(x))))
-        print(
-            latex_centers(
-                latex(p(x) == pp),
-                latex(deg(p1(x)) + deg(p2(x)) == deg(p1(x)*p2(x))),
-            )
-        )
-      #+end_src
-
-      #+RESULTS: poly-n
-      : \begin{align} p\left(x\right) = {\prod_{i=1}^{m} -c_{i} + x} \\ {\rm deg}\left(p_{1}\left(x\right)\right) + {\rm deg}\left(p_{2}\left(x\right)\right) = {\rm deg}\left(p_{1}\left(x\right) p_{2}\left(x\right)\right) \end{align}
-
-      #+MACRO: poly-n (eval (org-sbe poly-n))
-
-      {{{poly-n()}}}
-
-      where every src_python[:results output :python
-      :session]{print(latex(c[i]))} {{{results(c_{i})}}} is a "zero" of the
-      polynomial. Say we have two non zero polynomials p and g with p having
-      degree n:
-
-      #+name: less-then-n-roots
-      #+header: :exports none :results output
-      #+begin_src python :python  :session
-        print(
-            latex_centers(
-                latex(p(x) == pp*g(x)),
-                latex(n == deg(p(x))),
-                latex(n == m + deg(g(x))),
-                latex(n-m == deg(g(x)))
-            )
-        )
-      #+end_src
-
-      #+RESULTS: less-then-n-roots
-      : \begin{align} p\left(x\right) = g\left(x\right) {\prod_{i=1}^{m} -c_{i} + x} \\ n = {\rm deg}\left(p\left(x\right)\right) \\ n = m + {\rm deg}\left(g\left(x\right)\right) \\ -m + n = {\rm deg}\left(g\left(x\right)\right) \end{align}
-
-      #+MACRO: less-then-n-roots (eval (org-sbe less-then-n-roots))
-
-      {{{less-then-n-roots()}}}
-
-      Line 6 must be true because the degree of a polynomial cannot be
-      negative. This inequality also holds if f is of order 0 or 1.
-
-      This means that by line 2, src_python[:results output :python
-       :session]{print(latex_wrap(latex(p(x))))}
-      {{{results(\( p\left(x\right) \))}}} must have atleast src_python[:results
-      output :python  :session
-      s]{print(latex_wrap(latex(m + deg(g(x)))))} {{{results(\( m + {\rm
-      deg}\left(g\left(x\right)\right) \))}}} roots.
-
-   2. If F* contains an element of order d, then it contains exactly phi(d)
-      elements of order d.
-
-      Starting here:
-
-      #+name: elements-order
-      #+header: :exports none :results output
-      #+begin_src python :python  :session
-        a, d, k, n = var('a d k n')
-        gcd_f = function('gcd')
-        Ord = function('Ord')
-        print(
-            latex_centers(
-                latex(Ord(a**k) == Ord(a**gcd_f(k,n))),
-                latex(Ord(a**k) == n / gcd_f(k,n)),
-            )
-        )
-        # print("\( | \{ a,...,a^p-1 \} | = p-1\)")
-      #+end_src
-
-      #+RESULTS: elements-order
-      : \begin{align} {\rm Ord}\left(a^{k}\right) = {\rm Ord}\left(a^{{\rm gcd}\left(k, n\right)}\right) \\ {\rm Ord}\left(a^{k}\right) = \frac{n}{{\rm gcd}\left(k, n\right)} \end{align}
-
-      #+MACRO: elements-order (eval (org-sbe elements-order))
-
-      {{{elements-order()}}}
-
-      we know line 7 is true due to Bezout’s Identity. We also know that any
-      divisor of src_python[:results output :python
-      :session]{print(latex_wrap(latex(n)))} {{{results(\( n \))}}} will have
-      an order src_python[:results output :python
-      :session]{print(latex_wrap(latex(Ord(a**k) == n/k)))} {{{results(\( {\rm Ord}\left(a^{k}\right) = \frac{n}{k} \))}}}. Lastly since
-      src_python[:results output :python  :session
-      s]{print(latex_wrap(latex(gcd(k, d))))} {{{results(\( {\rm gcd}\left(k\,
-      d\right) \))}}} is a divisor of src_python[:results output :python
-       :session]{print(latex_wrap(latex(d)))}
-      {{{results(\( d \))}}} (by definition) we can combine these two to form
-      line 8.
-
-
-
-      #+name: elements-order-d
-      #+header: :exports none :results output
-      #+begin_src python :python  :session
-        print(
-            latex_centers(
-            )
-        )
-
-        # we know that the num elements in Z/nZ = sum of elements of order d (d =
-        # factors of p)
-
-        # if they exist, there are phi(d) elements of order d.
-
-        # there can be 0 (maybe just because the subgroup doesn't exist)
-
-        # size n
-        # d | n
-        nn = 18
-        dd = 9
-        ee = int(nn/dd)
-        print(nn, dd, ee)
-        print(pow(ee,dd,nn))
-
-        for i in range(2, nn):
-            try:
-                print(i, find_order_naive(i, nn))
-            except:
-
-
-        # why is n/d an element of order d.
-        # Ord(a**d) == n / gcd(d,n)
-        #
-
-        # phi(d) = d * prod( (1-(1/p) , p|n )
-        #        = num of coprime elements of d
-        #        = p1^k1-1 * (p1 - 1) * ...... * pr^kr-1 * (pr - 1)
-      #+end_src
-
-      #+RESULTS: elements-order-d
-      : \begin{align} \end{align}
-      : 18 9 2
-      : 8
-
-      #+MACRO: elements-order-d (eval (org-sbe elements-order-d))
-
-      {{{elements-order-d()}}}
-
-
-   3. The sum of phi(d) over the divisors of n equals n. Example:
-      phi(1)+phi(2)+phi(3)+phi(6)=1+1+2+2=6.
-
-** Satisfying the primitive root theorem
-
-   On page 197 of the algebra notes there is the multiplication table of a field
-   of size eight. It has elements {0, 1, alpha, alpha^2, 1+alpha, 1+alpha^2,
-   alpha+alpha^2, 1+alpha+alpha^2}. The coefficients are integers mod 2 (so
-   +1=-1) and alpha is an "imaginary number" satisfying alpha^3+alpha^2+1=0.
-
-   Problem: Verify explicitly that this field satisfies the Primitive Root
-   Theorem. That is, find a nonzero element whose powers give all seven nonzero
-   elements. More generally, find the order of every nonzero element.
