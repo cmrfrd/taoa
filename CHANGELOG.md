@@ -1,3 +1,10 @@
+### [1.3.34](https://github.com/cmrfrd/taoa/compare/v1.3.33...v1.3.34) (2022-10-02)
+
+
+### Bug Fixes
+
+* update release ([856e29e](https://github.com/cmrfrd/taoa/commit/856e29e7f44c7a89fcabd7d851c318cb4482f586))
+
 ### [1.3.33](https://github.com/cmrfrd/taoa/compare/v1.3.32...v1.3.33) (2022-10-02)
 
 
