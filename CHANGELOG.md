@@ -1,3 +1,10 @@
+### [1.3.33](https://github.com/cmrfrd/taoa/compare/v1.3.32...v1.3.33) (2022-10-02)
+
+
+### Bug Fixes
+
+* Add taoa shell ([15d51fc](https://github.com/cmrfrd/taoa/commit/15d51fcac54a7fe612212aea42e69240ba79d2b1))
+
 ### [1.3.32](https://github.com/cmrfrd/taoa/compare/v1.3.31...v1.3.32) (2022-07-19)
 
 
