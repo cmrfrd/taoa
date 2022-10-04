@@ -1,4 +1,4 @@
-FROM node:current-alpine
+FROM node:current-alpine3.15
 
 ENV USER node
 ENV HOME /home/$USER
@@ -15,10 +15,6 @@ RUN \
     sudo apk add \
     --update \
     --no-cache \
-    --repository http://dl-cdn.alpinelinux.org/alpine/edge/main \
-    --repository http://dl-3.alpinelinux.org/alpine/edge/community \
-    --repository http://dl-3.alpinelinux.org/alpine/edge/main \
-    --repository http://dl-3.alpinelinux.org/alpine/edge/testing \
     fftw-dev \
     gcc \
     g++ \
