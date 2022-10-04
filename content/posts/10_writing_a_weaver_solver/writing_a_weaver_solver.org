@@ -1,0 +1,185 @@
+#+TITLE: Writing a Weaver solver
+#+CREATED: <2022-10-04 Tue>
+#+LAST_MODIFIED: [2022-10-04 Tue 15:55]
+#+ROAM_TAGS: composition
+#+OPTIONS: toc:nil
+#+OPTIONS: tex:t
+#+OPTIONS: _:nil ^:nil p:nil
+
+#+HUGO_BASE_DIR: ./
+#+hugo_front_matter_format: yaml
+#+HUGO_CUSTOM_FRONT_MATTER: :date (org-to-blog-date (org-global-prop-value "CREATED"))
+#+HUGO_CUSTOM_FRONT_MATTER: :hero ./images/cover.png
+#+HUGO_CUSTOM_FRONT_MATTER: :secret false
+#+HUGO_CUSTOM_FRONT_MATTER: :excerpt Beating word games one letter at a time
+
+#+BEGIN_SRC emacs-lisp :exports none
+  (defun org-hugo-link (link contents info) (org-md-link link contents info))
+
+  ;; Setup org/latex exporting
+  (add-to-list 'org-export-filter-latex-fragment-functions
+               'sub-paren-for-dollar-sign)
+  (add-to-list 'org-export-filter-headline-functions
+               'remove-regexp-curly-braces)
+  (add-to-list 'org-export-filter-latex-environment-functions
+               'sub-paren-for-dollar-sign)
+  (export-to-mdx-on-save)
+#+END_SRC
+
+#+RESULTS:
+: Enabled mdx on save
+
+Almost every night my wife and I play [[https://wordwormdormdork.com/][Weaver]] together. It's always fun and a
+good time but after several nights not finding the "optimal" sequence of words
+it got me thinking. "How hard could it be to write an optimal Weaver solver?"
+
+So I made one. Here's how I did it.
+
+* Step 1: Getting the Weaver lexicon
+
+  Weaver is purely based around substituting individual letters of 4 letter
+  words, so the logical first step is to get all English 4 letter words!
+
+  I started by downloading an [[https://github.com/dwyl/english-words][English dictionary on GH]] and filtered out all non
+  4 letter words.
+
+  #+HEADER: :exports both :results output
+  #+begin_src bash
+    wget https://github.com/dwyl/english-words/raw/master/words_alpha.txt -O /tmp/words.txt
+    awk '{ if (length($0) == 5 ) print }' /tmp/words.txt | uniq > /tmp/4words.txt
+    wc -l /tmp/4words.txt
+  #+end_src
+
+  #+RESULTS:
+  : 7186 /tmp/4words.txt
+
+  We see here that our lexicon is ~7186~ words.
+
+* Step 2: Building the Weaver graph
+
+  The next step is to build a representation of the Weaver "solution space"
+  which can give us a way to find the optimal word path.
+
+  The simplest representation I could think of is a graph where the nodes are
+  the words, and the edges link words that have a 1 letter difference.
+
+  This representation is convenient because once we make it, we can run a
+  shortest path graph algorithm (like Djikstra's) to get the optimal word path.
+
+  #+HEADER: :exports code :results output
+  #+begin_src python :results output
+    def is_distance_one(word1, word2):
+        """If the words share 3 letters, they are distsance one"""
+        word1 = set((i, w) for i, w in enumerate(word1))
+        word2 = set((i, w) for i, w in enumerate(word2))
+        return len(set(word1).intersection(set(word2))) == 3
+
+    weaver_graph = {}
+    with open('/tmp/4words.txt', 'r') as four_words:
+        for new_word in map(lambda w:w.strip(),four_words):
+            weaver_graph[new_word] = []
+            for existing_word, possible_next_words in weaver_graph.items():
+                if is_distance_one(new_word, existing_word):
+                    weaver_graph[new_word].append(existing_word)
+                    weaver_graph[existing_word].append(new_word)
+
+    import json
+    with open("/tmp/weaver_graph.json","w+") as f:
+        f.write(json.dumps(weaver_graph))
+  #+end_src
+
+  #+RESULTS:
+
+  This is a naive algorithm to create the graph, but it's simple, to the point,
+  and we only have to run it once.
+
+  Now that the graph is built, let's try visualizing it!
+
+
+  #+CAPTION: Full view of the Weaver word graph
+  [[./images/weaver_graph.png]]
+
+
+  This picture doesn't tell us much besides dense vs. not dense, but it's a
+  pretty picture nonetheless!
+
+  #+begin_export md
+  <p>
+  If you want explore the graph for yourself,<a href="/img/weaver_graph.json"> here is the JSON blob</a> and
+  <a href="/img/weaver_graph.json"> here is the SVG viz</a>.
+  </p>
+  #+end_export
+
+
+* Step 3: Building the Weaver solver!
+
+  Now that we have a graph of all the Weaver words and the transitions between
+  them, all we have left to do is build a solver!
+
+  As mentioned we can now use a Djikstra's shortest path algorithm to find our
+  optimal solution!
+
+  #+HEADER: :exports code output :results output
+  #+begin_src python :results output
+  import json
+  import heapq
+  from collections import namedtuple
+  from dataclasses import dataclass
+
+  @dataclass
+  class QueueItem:
+      node: str
+      path: list[str]
+      cost: int = 1
+
+      def __lt__(self, other):
+          return self.cost < other.cost
+
+  class WeaverSolver:
+      def __init__(self, weaver_graph_path: str):
+          self.weaver_graph = json.loads(open(weaver_graph_path,"r").read())
+
+      def solve(self, start_word: str, end_word: str, avoid_words: list[str] = None) -> list[str]:
+          assert start_word in self.weaver_graph, f"Start word {start_word} not in graph"
+          assert end_word in self.weaver_graph, f"End word {end_word} not in graph"
+
+          if not avoid_words:
+              avoid_words = []
+
+          init_queue_item = QueueItem(node=start_word, path=[], cost=0)
+          queue = [init_queue_item]
+          seen = set()
+
+          while True:
+              qi = heapq.heappop(queue)
+              if qi.node not in seen:
+
+                  qi.path = qi.path + [qi.node]
+                  seen.add(qi.node)
+
+                  # if we are at the end, return the path
+                  if qi.node == end_word:
+                      return qi.path
+
+                  # search edges avoiding nodes and increasing cost
+                  for search_node in self.weaver_graph[qi.node]:
+                      cost = float("inf") if search_node in avoid_words else qi.cost + 1
+                      heapq.heappush(
+                          queue,
+                          QueueItem(
+                              node=search_node,
+                              path=qi.path,
+                              cost=cost,
+                          )
+                      )
+
+  solver = WeaverSolver("/tmp/weaver_graph.json")
+  print(solver.solve("bone", "cast"))
+  #+end_src
+
+  #+RESULTS:
+  : ['bone', 'bane', 'cane', 'cant', 'cast']
+
+  And huzzah! We have a Weaver solver!
+
+  Thanks for reading! ヾ(⌐■_■)ノ♪
