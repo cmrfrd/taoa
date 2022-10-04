@@ -1,3 +1,10 @@
+### [1.3.35](https://github.com/cmrfrd/taoa/compare/v1.3.34...v1.3.35) (2022-10-04)
+
+
+### Bug Fixes
+
+* add weaverpost ([6c40262](https://github.com/cmrfrd/taoa/commit/6c402621a5b2caba350b92a324e175524ea2af60))
+
 ### [1.3.34](https://github.com/cmrfrd/taoa/compare/v1.3.33...v1.3.34) (2022-10-02)
 
 
