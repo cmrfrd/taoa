@@ -5,7 +5,6 @@ source development.env
 podman run \
        -u $(id -u):$(id -g) \
        --userns keep-id \
-       -m '1g' \
        -w /home/node/work/ \
        -v $(pwd):/home/node/work/ \
        -v ~/.ssh:/home/node/.ssh \
