@@ -1,6 +1,5 @@
 import colors from './colors';
 import tags from './tags';
-import forms from './forms';
 
 import merge from 'lodash/merge';
 
@@ -32,6 +31,5 @@ export default merge({
   colors,
   fonts,
   breakpoints,
-  tags,
-  forms
+  tags
 });
