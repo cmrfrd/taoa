@@ -8,17 +8,20 @@ secret: false
 excerpt: "Beating word games one letter at a time"
 ---
 
-Almost every night my wife and I play [Weaver](https://wordwormdormdork.com/) together. It's always fun and a
-good time but after several nights not finding the "optimal" sequence of words
-it got me thinking. "How hard could it be to write an optimal Weaver solver?"
+Almost every night my wife and I play [Weaver](https://wordwormdormdork.com/) together. It's always fun after
+several nights not finding the shortest "optimal" sequence of words it got me
+thinking. "How hard could it be to write an optimal Weaver solver?"
 
 So I made one. Here's how I did it.
 
 
 ## Step 1: Getting the Weaver lexicon
 
-Weaver is purely based around substituting individual letters of 4 letter
-words, so the logical first step is to get all English 4 letter words!
+Weaver is based around finding a sequence of 4 letter words that each differ
+by one letter and lead to some final word.
+
+The obvious first step to making a Weaver solver is to get all English 4
+letter words!
 
 I started by downloading an [English dictionary on GH](https://github.com/dwyl/english-words) and filtered out all non
 4 letter words.
@@ -38,8 +41,8 @@ We see here that our lexicon is `7186` words.
 
 ## Step 2: Building the Weaver graph
 
-The next step is to build a representation of the Weaver "solution space"
-which can give us a way to find the optimal word path.
+The next step is to build a representation of the Weaver "solution space" that
+we can work with to enable us to find the shortest word path.
 
 The simplest representation I could think of is a graph where the nodes are
 the words, and the edges link words that have a 1 letter difference.
@@ -80,7 +83,7 @@ pretty picture nonetheless!
 
 <p>
 If you want explore the graph for yourself,<a href="/img/weaver_graph.json"> here is the JSON blob</a> and
-<a href="/img/weaver_graph.json"> here is the SVG viz</a>.
+<a href="/img/weaver_graph.svg"> here is the SVG viz</a>.
 </p>
 
 

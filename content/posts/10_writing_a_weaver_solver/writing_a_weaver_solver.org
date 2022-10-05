@@ -1,6 +1,6 @@
 #+TITLE: Writing a Weaver solver
 #+CREATED: <2022-10-04 Tue>
-#+LAST_MODIFIED: [2022-10-04 Tue 15:55]
+#+LAST_MODIFIED: [2022-10-04 Tue 20:21]
 #+ROAM_TAGS: composition
 #+OPTIONS: toc:nil
 #+OPTIONS: tex:t
@@ -29,16 +29,19 @@
 #+RESULTS:
 : Enabled mdx on save
 
-Almost every night my wife and I play [[https://wordwormdormdork.com/][Weaver]] together. It's always fun and a
-good time but after several nights not finding the "optimal" sequence of words
-it got me thinking. "How hard could it be to write an optimal Weaver solver?"
+Almost every night my wife and I play [[https://wordwormdormdork.com/][Weaver]] together. It's always fun after
+several nights not finding the shortest "optimal" sequence of words it got me
+thinking. "How hard could it be to write an optimal Weaver solver?"
 
 So I made one. Here's how I did it.
 
 * Step 1: Getting the Weaver lexicon
 
-  Weaver is purely based around substituting individual letters of 4 letter
-  words, so the logical first step is to get all English 4 letter words!
+  Weaver is based around finding a sequence of 4 letter words that each differ
+  by one letter and lead to some final word.
+
+  The obvious first step to making a Weaver solver is to get all English 4
+  letter words!
 
   I started by downloading an [[https://github.com/dwyl/english-words][English dictionary on GH]] and filtered out all non
   4 letter words.
@@ -57,8 +60,8 @@ So I made one. Here's how I did it.
 
 * Step 2: Building the Weaver graph
 
-  The next step is to build a representation of the Weaver "solution space"
-  which can give us a way to find the optimal word path.
+  The next step is to build a representation of the Weaver "solution space" that
+  we can work with to enable us to find the shortest word path.
 
   The simplest representation I could think of is a graph where the nodes are
   the words, and the edges link words that have a 1 letter difference.
@@ -106,7 +109,7 @@ So I made one. Here's how I did it.
   #+begin_export md
   <p>
   If you want explore the graph for yourself,<a href="/img/weaver_graph.json"> here is the JSON blob</a> and
-  <a href="/img/weaver_graph.json"> here is the SVG viz</a>.
+  <a href="/img/weaver_graph.svg"> here is the SVG viz</a>.
   </p>
   #+end_export
 
