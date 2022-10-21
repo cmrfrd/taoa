@@ -1,3 +1,10 @@
+### [1.3.40](https://github.com/cmrfrd/taoa/compare/v1.3.39...v1.3.40) (2022-10-21)
+
+
+### Bug Fixes
+
+* hack ([3bfc2bd](https://github.com/cmrfrd/taoa/commit/3bfc2bd49a08efe20b174e06b136c6d9f1ad98f4))
+
 ### [1.3.39](https://github.com/cmrfrd/taoa/compare/v1.3.38...v1.3.39) (2022-10-21)
 
 
