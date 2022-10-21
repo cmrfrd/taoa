@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -e
+if [ "$*" == "" ]; then
+    ARGS="$(printf '/usr/local/bin/python3-sc\n%s' "$@" | jq -R . | jq -s . |  tr -d '\n\t')"
+else
+
+    ARGS="$((echo $'/usr/local/bin/python3-sc' && printf '%s\n' "$@") | jq -R . | jq -s . |  tr -d '\n\t')"
+fi
+OUT="$(mktemp)"
+IMAGE=python3-sc
+jq -r ".process.args |= ${ARGS}" ${CONTAINER_PATH}/${IMAGE}/config.json > $OUT
+mv $OUT ${CONTAINER_PATH}/${IMAGE}/config.json
+runc run $(cat /proc/sys/kernel/random/uuid) --no-pivot -b ${CONTAINER_PATH}/${IMAGE}

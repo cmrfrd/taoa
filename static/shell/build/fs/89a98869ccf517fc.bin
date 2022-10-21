@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+ARGS="$((echo $'/tetris') | jq -R . | jq -s . |  tr -d '\n\t')"
+OUT="$(mktemp)"
+IMAGE=tetris
+jq -r ".process.args |= ${ARGS}" ${CONTAINER_PATH}/${IMAGE}/config.json > $OUT
+mv $OUT ${CONTAINER_PATH}/${IMAGE}/config.json
+runc run $(cat /proc/sys/kernel/random/uuid) --no-pivot -b ${CONTAINER_PATH}/${IMAGE}
+reset

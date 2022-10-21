@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+cat << EOF
+ (*3*)
+Z(  )z  So ya wanna learn more do ya?
+ /  \\
+
+Right now you're running a tiny linux OS in your browser.
+
+This was all built with v86 + buildroot + glue code.
+
+I just wanted a place I can share my "non web" based projects on the web.
+
+EOF
