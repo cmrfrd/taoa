@@ -447,7 +447,9 @@
                  };
 
                  (async () => {
+
                      await loadScript("/shell/build/libv86.js");
+
                      var emulator = window.emulator = new V86Starter({
                          wasm_path: "/shell/build/v86.wasm",
                          memory_size: 512 * 1024 * 1024,
