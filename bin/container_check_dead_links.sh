@@ -2,7 +2,7 @@
 set -e
 
 function check_link {
-  if curl --output /dev/null --silent "$1"; then
+  if curl --connect-timeout 5 --max-time 10 --retry 5 --retry-delay 1 --retry-max-time 40 --output /dev/null "$1"; then
     exit 0;
   else
     echo "Link is DEAD: $1";
