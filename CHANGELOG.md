@@ -1,3 +1,10 @@
+### [1.3.39](https://github.com/cmrfrd/taoa/compare/v1.3.38...v1.3.39) (2022-10-21)
+
+
+### Bug Fixes
+
+* pathing better ([38a56c5](https://github.com/cmrfrd/taoa/commit/38a56c547c1858eebb96e5980fec7619f7368e5b))
+
 ### [1.3.38](https://github.com/cmrfrd/taoa/compare/v1.3.37...v1.3.38) (2022-10-21)
 
 
