@@ -1,0 +1,2 @@
+#!/usr/bin/env sh
+LD_TRACE_LOADED_OBJECTS=1 $@

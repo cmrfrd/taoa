@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -e
+if [ "$*" == "" ]; then
+    ARGS="$(printf '/weaver_solver\n%s' "$@" | jq -R . | jq -s . |  tr -d '\n\t')"
+else
+    ARGS="$((echo $'/weaver_solver' && printf '%s\n' "$@") | jq -R . | jq -s . |  tr -d '\n\t')"
+fi
+OUT="$(mktemp)"
+IMAGE=weaver_solver
+jq -r ".process.args |= ${ARGS}" ${CONTAINER_PATH}/${IMAGE}/config.json > $OUT
+mv $OUT ${CONTAINER_PATH}/${IMAGE}/config.json
+runc run $(cat /proc/sys/kernel/random/uuid) --no-pivot -b ${CONTAINER_PATH}/${IMAGE}

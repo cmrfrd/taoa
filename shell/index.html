@@ -1,6 +1,6 @@
 <html lang="en">
     <head>
-        <meta charset="UTF-8" />
+        <meta charset='utf-8'>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content="protiumx info terminal" />
@@ -8,31 +8,11 @@
         <meta http-equiv="Pragma" content="no-cache" />
         <meta http-equiv="Expires" content="0" />
 
-        <script defer src="/shell/libv86.js"></script>
-        <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@4.5.0/css/xterm.css" />
-        <script defer src="https://cdn.jsdelivr.net/npm/xterm@4.5.0/lib/xterm.js"></script>
+        <meta name="keywords" content="brian mayo,software,developer,infopage,blog,protiumx,protium">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@4.5.0/css/xterm.css" />
+        <script src="https://cdn.jsdelivr.net/npm/xterm@4.5.0/lib/xterm.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.5.0/lib/xterm-addon-fit.js"></script>
         <style>
-         @font-face {
-             font-family: "CascadiaMono";
-             font-style: normal;
-             font-weight: normal;
-             src: url("./fonts/CascadiaMono-Regular.woff2") format("woff2");
-         }
-
-         @font-face {
-             font-family: "CascadiaMono";
-             font-style: italic;
-             font-weight: normal;
-             src: url("./fonts/CascadiaMono-Italic.woff2") format("woff2");
-         }
-
-         @font-face {
-             font-family: "CascadiaMono";
-             font-style: normal;
-             font-weight: bold;
-             src: url("./fonts/CascadiaMono-Bold.woff2") format("woff2");
-         }
-
          :root {
              --color-highlight: #d9d9d9;
          }
@@ -48,16 +28,16 @@
 
          .content {
              height: 100%;
-             min-height: 500px;
              width: 100%;
              display: flex;
              flex-direction: column;
              align-items: center;
              justify-content: center;
-             min-width: 700px;
          }
 
          .content .terminal-container {
+             min-height: 400px;
+             min-width: 700px;
              -webkit-box-shadow: 5px 5px 5px #a9a9a9;
              box-shadow: 5px 5px 5px #a9a9a9;
              border: 2px solid var(--color-highlight);
@@ -97,40 +77,19 @@
 
                  var term = new Terminal(
                      {
-                         cols: 90,
-                         rows: 34,
                          scrollback: 100,
                          cursorBlink: true,
-
                      }
                  );
+                 term.write = term.writeUtf8;
+
+                 var fit = new FitAddon.FitAddon();
+                 term.loadAddon(fit);
                  window.term = term;
+                 term.open(document.getElementById("terminal"));
+                 fit.fit();
 
-                 var emulator = window.emulator = new V86Starter({
-                     wasm_path: "/shell/v86.wasm",
-                     memory_size: 128 * 1024 * 1024,
-                     vga_memory_size: 1 * 1024 * 1024,
-                     /*          screen_container: document.getElementById("screen_container"), */
-                     serial_container_xtermjs: document.getElementById("terminal"),
-                     bios: {
-                         url: "/shell/seabios.bin",
-                     },
-                     cdrom: {
-                         url: "/shell/taoa.iso",
-                     },
-                     vga_bios: {
-                         url: "/shell/vgabios.bin",
-                     },
-                     filesystem: {
-                         basefs: {
-                             url: "/shell/fs.json",
-                         },
-                         baseurl: "/shell/taoa_fs_flat/",
-                     },
-                     autostart: true,
-                     cmdline: "tsc=reliable mitigations=off random.trust_cpu=on",
-                 });
-
+                 var online = false;
                  (function() {
 
                      /* mobile fix */
@@ -165,7 +124,7 @@
 
                      function s(v,x,y) {
 
-                         y = y/fh*fw; // Normalize to font
+                         y = y/fh*fw;
 
                          x = x|0;
                          y = y|0;
@@ -386,11 +345,6 @@
                      );
                      scene.addChild(movingSquare);
 
-                     var online = false;
-                     emulator.bus.register("serial0-output-char", function(chr) {
-                         online = true;
-                     }, this)
-
                      var frame_index = 0;
                      var frames = [
                          '(ヘ°-°)ヘ ┬─┬ \xa0',
@@ -462,14 +416,15 @@
                          }
                          var dots = '.'.repeat(Math.ceil(3*frame_index/frames.length));
                          var write_line = [
-                             pad(term.cols, `Loading TAOA OS ${dots}`),
-                             "\r\n",
+                             pad(term.cols, `Loading TAOA Shell ${dots}`),
+                             "\r\n\n",
                              pad(term.cols, frames[frame_index]),
                              ...a.map(function(x) { return x.map(value).join(""); }),
                          ]
                          write_line = write_line.join("\r\n");
-                             write_line += "\r\n".repeat(term.rows - occurrences(write_line, "\r\n") - 5);
+                         write_line += "\r\n".repeat(term.rows - occurrences(write_line, "\r\n") - 5);
                          frame_index=(frame_index+1)%frames.length;
+                         // term.write(write_line);
                          term.writeUtf8(write_line);
                          if (online) {
                              clearInterval(draw_interval);
@@ -477,6 +432,106 @@
                          }
                      },150);
                  })()
+
+                 const loadScript = function (url) {
+                     return new Promise(function (resolve, reject) {
+                         const script = document.createElement('script');
+                         script.src = url;
+
+                         script.addEventListener('load', function () {
+                             resolve(true);
+                         });
+
+                         document.head.appendChild(script);
+                     });
+                 };
+
+                 (async () => {
+                     await loadScript("/build/libv86.js");
+                     var emulator = window.emulator = new V86Starter({
+                         wasm_path: "/build/v86.wasm",
+                         memory_size: 512 * 1024 * 1024,
+                         vga_memory_size: 1 * 1024 * 1024,
+                         serial_container_xtermjs: document.getElementById("terminal"),
+                         bios: {
+                             url: "/build/seabios.bin",
+                         },
+                         cdrom: {
+                             url: "/build/taoa.iso",
+                         },
+                         vga_bios: {
+                             url: "/build/vgabios.bin",
+                         },
+                         filesystem: {
+                             basefs: {
+                                 url: "/build/fs.json",
+                             },
+                             baseurl: "/build/fs/",
+                         },
+                         autostart: true,
+                         cmdline: "tsc=reliable mitigations=off random.trust_cpu=on",
+                     });
+                     function toHexString(byteArray) {
+                         return Array.prototype.map.call(byteArray, function (byte) {
+                             return ('0' + (byte & 0xFF).toString(16)).slice(-2);
+                         }).join('');
+                     }
+                     function toByteArray(hexString) {
+                         var result = [];
+                         for (var i = 0; i < hexString.length; i += 2) {
+                             result.push(parseInt(hexString.substr(i, 2), 16));
+                         }
+                         return result;
+                     }
+
+                     emulator.bus.register("serial0-output-char", function(chr) {
+                         online = true;
+                     }, this)
+
+                     /* document.getElementById("filesystem_send_file").onchange = function()
+                      * {
+                      *     Array.prototype.forEach.call(this.files, function(file)
+                      *         {
+                      *             (async function(file) {
+                      *                 await emulator.create_file("/" + file.name, new Uint8Array(await file.arrayBuffer()));
+                      *             })(file)
+                      *         }, this);
+                      *     this.value = "";
+                      *     this.blur();
+                      * }; */
+
+                     function download(file_or_blob, name)
+                     {
+                         var a = document.createElement("a");
+                         a["download"] = name;
+                         a.href = window.URL.createObjectURL(file_or_blob);
+                         a.dataset["downloadurl"] = ["application/octet-stream", a["download"], a.href].join(":");
+
+                         if(document.createEvent)
+                         {
+                             var ev = document.createEvent("MouseEvent");
+                             ev.initMouseEvent("click", true, true, window,
+                                               0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                             a.dispatchEvent(ev);
+                         }
+                         else
+                         {
+                             a.click();
+                         }
+
+                         window.URL.revokeObjectURL(a.href);
+                     };
+                     function dump_file(ab, name)
+                     {
+                         if(!(ab instanceof Array))
+                         {
+                             ab = [ab];
+                         }
+
+                         var blob = new Blob(ab);
+                         download(blob, name);
+                     };
+                 })();
              }
             </script>
     </body>

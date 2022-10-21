@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# if which tmux >/dev/null 2>&1; then
+#    if [[ ! $TERM =~ screen ]]; then
+#       if [[ -z "$TMUX" ]] ;then
+#          ID="$( tmux ls | grep -vm1 attached | cut -d: -f1 )"
+#          if [[ -z "$ID" ]] ;then
+#             nice -n 75 tmux new-session
+#          else
+#             nice -n 75 tmux attach-session -t "$ID"
+#          fi
+#        fi
+#     fi
+# fi
