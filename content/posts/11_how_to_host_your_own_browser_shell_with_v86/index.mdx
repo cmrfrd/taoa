@@ -1,0 +1,43 @@
+---
+title: "Hosting my own browser shell with v86 and buildroot"
+author: ["Alexander Comerford"]
+draft: false
+date: 2022-10-14
+hero: "./images/hero.jpg"
+secret: true
+excerpt: "Beating word games one letter at a time"
+---
+
+Recently I rediscovered [v86](https://github.com/copy/v86) and wondered how hard it would be to "self host"
+your own browser shell / OS.
+
+So I gave it a try and am happy to release [TAOA Shell](file:///shell)!
+
+Now to get the haters points out of the way:
+
+1.  This thing is pretty slow compared to bare metal (as any emulator is)
+2.  The OS is packaged poorly (hacked together over a week)
+
+But these tradeoffs give us the benefits of:
+
+1.  Cheap hosting (all static assets)
+2.  Accessibility (just click a link)
+
+Not only is tech cool in general, but actually has some unique practical
+purposes. The main one I'm using it for is to self host my side projects
+that aren't web based.
+
+For example: in my last post I wrote about how to [solve weaver](file:///posts/Writing-a-Weaver-solver). If people want
+to use the script, they'd have to copy the code, download the weaver graph, and
+run it. But now, with the click of a link, they can just try it in [TAOA Shell](file:///shell) to
+see it in action.
+
+For very little work of putting the script in TAOA Shell this tool becomes much
+more accessible. This also generalizes beyond python scripts to anything that
+can run in Linux (which is alot).
+
+
+## 1. The OS
+
+Most personal hardware is powerful enough to run VMs / emulators at great
+speeds without any noticeable lag. Unfortunately
