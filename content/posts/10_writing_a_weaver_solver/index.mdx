@@ -158,4 +158,99 @@ print(solver.solve("bone", "cast"))
 
 And huzzah! We have a Weaver solver!
 
+
+## [UPDATE] Step 4: Word frequency weights
+
+One problem I noticed with this solver is that sometimes the word path chosen
+won't get accepted by Weaver. To try and remedy this without Weaver's word
+list I decided to try and "weight" the graph edges based on word frequency.
+
+First I got a frequency list of english words by usage
+
+```bash
+wget https://github.com/nachocab/words-by-frequency/raw/master/english.txt -O /tmp/words_freq.txt
+awk '{if(length($2)==4){print $2, $1}}' /tmp/words_freq.txt | tr " " "," > /tmp/4words_freq.csv
+cat /tmp/4words_freq.csv | python3 -c 'import json,sys,pandas;print(json.dumps(pandas.read_csv(sys.stdin,header=None).set_index(0).to_dict()[1]))' | jq -r > /tmp/4words_freq.json
+```
+
+Then I adjusted the code we had before except added a "likeness" factor to
+make edges whose words are more popular slightly less expensive to traverse.
+
+While it adds a hyperparamater to tune how "closely" we follow this frequency
+list, it makes us much more likely to get a path accepted by Weaver.
+
+```python
+import json
+import heapq
+from collections import namedtuple
+from dataclasses import dataclass
+
+@dataclass
+class QueueItem:
+    node: str
+    path: list[str]
+    cost: int = 1
+
+    def __lt__(self, other):
+        return self.cost < other.cost
+
+class WeaverSolver:
+    def __init__(self, weaver_graph_path: str, word_freq: str = "", freq_likeness: int = 5):
+        self.weaver_graph = json.loads(open(weaver_graph_path,"r").read())
+
+        try:
+            self.word_freq = json.loads(open(word_freq,"r").read())
+        except:
+            self.word_freq = {}
+
+        self.freq_likeness = freq_likeness
+
+    def solve(self, start_word: str, end_word: str, avoid_words: list[str] = None) -> list[str]:
+        assert start_word in self.weaver_graph, f"Start word {start_word} not in graph"
+        assert end_word in self.weaver_graph, f"End word {end_word} not in graph"
+
+        if not avoid_words:
+            avoid_words = []
+
+        init_queue_item = QueueItem(node=start_word, path=[], cost=0)
+        queue = [init_queue_item]
+        seen = set()
+
+        while True:
+            qi = heapq.heappop(queue)
+            if qi.node not in seen:
+
+                qi.path = qi.path + [qi.node]
+                seen.add(qi.node)
+
+                # if we are at the end, return the path
+                if qi.node == end_word:
+                    return qi.path
+
+                # search edges avoiding nodes and increasing cost
+                for search_node in self.weaver_graph[qi.node]:
+                    cost = 1
+                    if search_node in avoid_words:
+                        cost = float("inf")
+                    elif search_node in self.word_freq:
+                        cost = qi.cost + 1 - (self.word_freq[search_node] / (self.freq_likeness*self.word_freq[search_node]+1))
+                    else:
+                        cost = qi.cost + 1
+                    heapq.heappush(
+                        queue,
+                        QueueItem(
+                            node=search_node,
+                            path=qi.path,
+                            cost=cost,
+                        )
+                    )
+
+solver = WeaverSolver(weaver_graph_path="/tmp/weaver_graph.json", word_freq="/tmp/4words_freq.json", freq_likeness=5)
+print(solver.solve("snow", "days"))
+```
+
+```text
+['snow', 'snot', 'soot', 'boot', 'boos', 'boys', 'bays', 'days']
+```
+
 Thanks for reading! ヾ(⌐■_■)ノ♪

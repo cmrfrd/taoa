@@ -1,16 +1,14 @@
 name: "about"
 about:
   title:
-    author: "About the author"
-    authors: "About the authors"
+    author: "Me"
+    authors: "Friends and me"
     about: "What is The Art of Abstraction?"
   about:
     - |
       The Art of Abstraction is a blog about exploring and building the hidden
-      abstractions that run our world. The main topics are focused in subfields
-      of engineering, math, and the occasional philosophy.
+      abstractions that run our world. The main topics are engineering, math,
+      and the occasional philosophy.
     - |
-      Every post is made to provide value to experts and beginners
-      alike. Whether coming from a tech background or not, the metaphors in each
-      post are meant to evoke a sense of freedom and delight towards the
-      intricate.
+      Sometimes there's interactive posts, sometimes deep theory, hope you
+      enjoy!
