@@ -21,6 +21,7 @@ import Ex from './ui/Ex.Icon';
 import Link from './ui/Link.Icon';
 import Rows from './ui/Rows.Icon';
 import SearchIcon from './ui/Search.Icon';
+import ShellIcon from './ui/Shell.Icon';
 import Tiles from './ui/Tiles.Icon';
 import ToggleClose from './ui/ToggleClose.Icon';
 import ToggleOpen from './ui/ToggleOpen.Icon';
@@ -51,5 +52,6 @@ export default {
   ToggleClose,
   ToggleOpen,
   Rows,
-  Tiles
+  Tiles,
+  ShellIcon
 };

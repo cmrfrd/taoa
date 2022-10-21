@@ -101,6 +101,24 @@ const DarkModeToggle: React.FC<{}> = () => {
   );
 };
 
+const ShellLink: React.FC<{}> = () => {
+  const [colorMode] = useColorMode();
+  const isDark = colorMode === `dark`;
+  const fill = isDark ? '#fff' : '#000';
+  return (
+    <IconWrapper
+      isDark={isDark}
+      data-a11y={false}
+      aria-label={'Go to the TAOA shell'}
+      title={'Go to the TAOA shell'}
+    >
+      <a href="/shell">
+        <Icons.ShellIcon fill={fill} />
+      </a>
+    </IconWrapper>
+  );
+};
+
 /* SharePageButton is a component that when clicked
  * will copy the current URL to the clipboard
  */
@@ -272,6 +290,7 @@ const NavigationHeader: React.FC<INavigationHeader> = (props: INavigationHeader)
                         <Horizontal />
                         <NavControls>
                           <>
+                            <ShellLink />
                             <GridRowToggle active={false} />
                             <SharePageButton />
                             <DarkModeToggle />
@@ -300,6 +319,7 @@ const NavigationHeader: React.FC<INavigationHeader> = (props: INavigationHeader)
               </NavLinks>
               <NavControls>
                 <>
+                  <ShellLink />
                   <GridRowToggle active={enableGridRow} />
                   <SharePageButton />
                   <DarkModeToggle />
