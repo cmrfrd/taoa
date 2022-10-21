@@ -4,6 +4,14 @@
 ### Bug Fixes
 
 * add shell and init v86 post ([4882078](https://github.com/cmrfrd/taoa/commit/4882078233af752ec28fa4979f84fe8ec5c55bca))
+* update ([49f78d9](https://github.com/cmrfrd/taoa/commit/49f78d9e831cb574e786f89f6095359987685604))
+
+### [1.3.37](https://github.com/cmrfrd/taoa/compare/v1.3.36...v1.3.37) (2022-10-21)
+
+
+### Bug Fixes
+
+* add shell and init v86 post ([4882078](https://github.com/cmrfrd/taoa/commit/4882078233af752ec28fa4979f84fe8ec5c55bca))
 
 ### [1.3.37](https://github.com/cmrfrd/taoa/compare/v1.3.36...v1.3.37) (2022-10-21)
 
