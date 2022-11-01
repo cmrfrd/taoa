@@ -414,7 +414,7 @@
                              clearInterval(draw_interval);
                              return
                          }
-                         var dots = '.'.repeat(Math.ceil(3*frame_index/frames.length));
+                         var dots = '.'.repeat(Math.ceil(2*frame_index/frames.length));
                          var write_line = [
                              pad(term.cols, `Loading TAOA Shell ${dots}`),
                              "\r\n\n",
@@ -447,28 +447,26 @@
                  };
 
                  (async () => {
-
-                     await loadScript("/shell/build/libv86.js");
-
+                     await loadScript("/build/libv86.js");
                      var emulator = window.emulator = new V86Starter({
-                         wasm_path: "/shell/build/v86.wasm",
+                         wasm_path: "/build/v86.wasm",
                          memory_size: 512 * 1024 * 1024,
                          vga_memory_size: 1 * 1024 * 1024,
                          serial_container_xtermjs: document.getElementById("terminal"),
                          bios: {
-                             url: "/shell/build/seabios.bin",
+                             url: "/build/seabios.bin",
                          },
                          cdrom: {
-                             url: "/shell/build/taoa.iso",
+                             url: "/build/taoa.iso",
                          },
                          vga_bios: {
-                             url: "/shell/build/vgabios.bin",
+                             url: "/build/vgabios.bin",
                          },
                          filesystem: {
                              basefs: {
-                                 url: "/shell/build/fs.json",
+                                 url: "/build/fs.json",
                              },
-                             baseurl: "/shell/build/fs/",
+                             baseurl: "/build/fs/",
                          },
                          autostart: true,
                          cmdline: "tsc=reliable mitigations=off random.trust_cpu=on",
