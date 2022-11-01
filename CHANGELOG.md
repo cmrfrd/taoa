@@ -1,3 +1,10 @@
+### [1.3.43](https://github.com/cmrfrd/taoa/compare/v1.3.42...v1.3.43) (2022-11-01)
+
+
+### Bug Fixes
+
+* Asset pathing for shell ([b79ca22](https://github.com/cmrfrd/taoa/commit/b79ca22270dfc377733ebf768163b0655882695b))
+
 ### [1.3.42](https://github.com/cmrfrd/taoa/compare/v1.3.41...v1.3.42) (2022-11-01)
 
 
