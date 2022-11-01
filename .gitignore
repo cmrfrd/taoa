@@ -12,3 +12,4 @@ certs/
 old_site/
 .git/
 static/emojis/
+*~*~
