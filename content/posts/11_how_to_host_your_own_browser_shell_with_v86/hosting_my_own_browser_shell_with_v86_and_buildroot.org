@@ -1,6 +1,6 @@
 #+TITLE: Hosting a browser shell with v86 and buildroot
 #+CREATED: <2022-10-31 Mon>
-#+LAST_MODIFIED: [2022-11-01 Tue 16:11]
+#+LAST_MODIFIED: [2022-11-01 Tue 16:14]
 #+ROAM_TAGS: composition
 #+OPTIONS: toc:nil
 #+OPTIONS: tex:t
@@ -68,3 +68,5 @@ I just dump the code into TAOA Shell, and ✨like magic✨ it's on the internet!
 
 There's also the added benefit of this generalizing beyond python scripts to
 almost anything that can run in Linux!
+
+Thanks for reading! 🙋🏼
