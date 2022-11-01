@@ -447,26 +447,26 @@
                  };
 
                  (async () => {
-                     await loadScript("/build/libv86.js");
+                     await loadScript("/shell/build/libv86.js");
                      var emulator = window.emulator = new V86Starter({
-                         wasm_path: "/build/v86.wasm",
+                         wasm_path: "/shell/build/v86.wasm",
                          memory_size: 512 * 1024 * 1024,
                          vga_memory_size: 1 * 1024 * 1024,
                          serial_container_xtermjs: document.getElementById("terminal"),
                          bios: {
-                             url: "/build/seabios.bin",
+                             url: "/shell/build/seabios.bin",
                          },
                          cdrom: {
-                             url: "/build/taoa.iso",
+                             url: "/shell/build/taoa.iso",
                          },
                          vga_bios: {
-                             url: "/build/vgabios.bin",
+                             url: "/shell/build/vgabios.bin",
                          },
                          filesystem: {
                              basefs: {
-                                 url: "/build/fs.json",
+                                 url: "/shell/build/fs.json",
                              },
-                             baseurl: "/build/fs/",
+                             baseurl: "/shell/build/fs/",
                          },
                          autostart: true,
                          cmdline: "tsc=reliable mitigations=off random.trust_cpu=on",
