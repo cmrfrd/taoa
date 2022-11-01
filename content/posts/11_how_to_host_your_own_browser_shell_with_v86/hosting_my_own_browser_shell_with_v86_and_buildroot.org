@@ -1,6 +1,6 @@
-#+TITLE: Hosting my own browser shell with v86 and buildroot
-#+CREATED: <2022-10-14 Fri>
-#+LAST_MODIFIED: [2022-10-20 Thu 21:38]
+#+TITLE: Hosting a browser shell with v86 and buildroot
+#+CREATED: <2022-10-31 Mon>
+#+LAST_MODIFIED: [2022-11-01 Tue 16:11]
 #+ROAM_TAGS: composition
 #+OPTIONS: toc:nil
 #+OPTIONS: tex:t
@@ -10,8 +10,8 @@
 #+hugo_front_matter_format: yaml
 #+HUGO_CUSTOM_FRONT_MATTER: :date (org-to-blog-date (org-global-prop-value "CREATED"))
 #+HUGO_CUSTOM_FRONT_MATTER: :hero ./images/hero.jpg
-#+HUGO_CUSTOM_FRONT_MATTER: :secret true
-#+HUGO_CUSTOM_FRONT_MATTER: :excerpt Beating word games one letter at a time
+#+HUGO_CUSTOM_FRONT_MATTER: :secret false
+#+HUGO_CUSTOM_FRONT_MATTER: :excerpt Click -> OS
 
 #+BEGIN_SRC emacs-lisp :exports none
   (defun org-hugo-link (link contents info) (org-md-link link contents info))
@@ -29,35 +29,42 @@
 #+RESULTS:
 : Enabled mdx on save
 
-Recently I rediscovered [[https://github.com/copy/v86][v86]] and wondered how hard it would be to "self host"
-your own browser shell / OS.
+Recently I rediscovered [[https://github.com/copy/v86][v86]] and after browsing through the examples, I thought
+it would be cool to "self host" my own browser shell / OS. So I gave it a try
+and am happy to show TAOA Shell! [[[https://github.com/cmrfrd/taoa.shell][source]]]
 
-So I gave it a try and am happy to release [[/shell][TAOA Shell]]!
+#+begin_export md
+export const clickHandler = e => {
+  location.href="/shell";
+}
 
-Now to get the haters points out of the way:
+<div onClick={clickHandler} style="display: block;margin: 0px auto 0px;">
+     <MediumButton text="To TAOA Shell" />
+</div>
+#+end_export
 
-1. This thing is pretty slow compared to bare metal (as any emulator is)
-2. The OS is packaged poorly (hacked together over a week)
+With the amazingly simple interface of v86, anyone can have an extremely
+accessible OS in their browser for near zero cost!
 
-But these tradeoffs give us the benefits of:
+This is possible because v86 emulates an x86 computer with WebAssembly and
+Javascript. Since these are just static assets, they can run in almost any
+browser and be hosted on a number of platforms, such GitHub pages, Netlify, and
+Digital Ocean, for free!
 
-1. Cheap hosting (all static assets)
-2. Accessibility (just click a link)
+Now unfortunately the v86 emulator is slow compared to bare metal (sometimes a
+10-100x slowdown). But it's fast enough and usable for a lot of tasks!
 
-Not only is tech cool in general, but actually has some unique practical
-purposes. The main one I'm using it for is to self host my side projects
-that aren't web based.
+Now not only is this cool, but there is a _real_ personal use case I care about,
+which is the ability to self host my side projects that _aren't_ naturally web
+based.
 
-For example: in my last post I wrote about how to [[/posts/Writing-a-Weaver-solver][solve weaver]]. If people want
-to use the script, they'd have to copy the code, download the weaver graph, and
-run it. But now, with the click of a link, they can just try it in [[/shell][TAOA Shell]] to
-see it in action.
+For example: my last weekend side project was about [[/posts/Writing-a-Weaver-solver][solving weaver]]. Now if
+people want to use the solver script, they'd have to copy the code, download the
+weaver graph, and run it. But now, with the click of a link, they can just try
+it in TAOA Shell to see it in action.
 
-For very little work of putting the script in TAOA Shell this tool becomes much
-more accessible. This also generalizes beyond python scripts to anything that
-can run in Linux (which is alot).
+I didn't have to rewrite it into Javascript or host a server somewhere. Instead
+I just dump the code into TAOA Shell, and ✨like magic✨ it's on the internet!
 
-* 1. The OS
-
-  Most personal hardware is powerful enough to run VMs / emulators at great
-  speeds without any noticeable lag. Unfortunately
+There's also the added benefit of this generalizing beyond python scripts to
+almost anything that can run in Linux!
