@@ -1,3 +1,11 @@
+### [1.3.41](https://github.com/cmrfrd/taoa/compare/v1.3.40...v1.3.41) (2022-11-01)
+
+
+### Bug Fixes
+
+* Add browser shell post ([5896fb6](https://github.com/cmrfrd/taoa/commit/5896fb69af8d79a05959cd30bcde483393405e9c))
+* Release ([7e1badc](https://github.com/cmrfrd/taoa/commit/7e1badc988758caf6dac816e0dc6cb36b00d2c42))
+
 ### [1.3.40](https://github.com/cmrfrd/taoa/compare/v1.3.39...v1.3.40) (2022-10-21)
 
 
