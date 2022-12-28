@@ -1,3 +1,10 @@
+### [1.3.45](https://github.com/cmrfrd/taoa/compare/v1.3.44...v1.3.45) (2022-12-28)
+
+
+### Bug Fixes
+
+* spelling mistakes ([8e4a725](https://github.com/cmrfrd/taoa/commit/8e4a7258fb1b67714abff3a947f0d1324858c14f))
+
 ### [1.3.44](https://github.com/cmrfrd/taoa/compare/v1.3.43...v1.3.44) (2022-12-28)
 
 
