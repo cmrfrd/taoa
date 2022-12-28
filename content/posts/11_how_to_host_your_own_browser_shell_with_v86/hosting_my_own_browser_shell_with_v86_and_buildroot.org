@@ -1,6 +1,6 @@
 #+TITLE: Hosting a browser shell with v86 and buildroot
 #+CREATED: <2022-10-31 Mon>
-#+LAST_MODIFIED: [2022-11-01 Tue 16:14]
+#+LAST_MODIFIED: [2022-12-27 Tue 23:45]
 #+ROAM_TAGS: composition
 #+OPTIONS: toc:nil
 #+OPTIONS: tex:t
@@ -54,9 +54,8 @@ Digital Ocean, for free!
 Now unfortunately the v86 emulator is slow compared to bare metal (sometimes a
 10-100x slowdown). But it's fast enough and usable for a lot of tasks!
 
-Now not only is this cool, but there is a _real_ personal use case I care about,
-which is the ability to self host my side projects that _aren't_ naturally web
-based.
+Now not only is this cool, but there is a personal use case I care about, which
+is the ability to self host my side projects that *aren't* naturally web based.
 
 For example: my last weekend side project was about [[/posts/Writing-a-Weaver-solver][solving weaver]]. Now if
 people want to use the solver script, they'd have to copy the code, download the
