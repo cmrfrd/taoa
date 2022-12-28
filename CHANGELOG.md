@@ -1,3 +1,10 @@
+### [1.3.44](https://github.com/cmrfrd/taoa/compare/v1.3.43...v1.3.44) (2022-12-28)
+
+
+### Bug Fixes
+
+* Add ipad screen mirroring post ([f0ce2c3](https://github.com/cmrfrd/taoa/commit/f0ce2c3ce611c783bfae95353ae265d5248f0679))
+
 ### [1.3.43](https://github.com/cmrfrd/taoa/compare/v1.3.42...v1.3.43) (2022-11-01)
 
 
