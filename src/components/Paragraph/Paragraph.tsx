@@ -12,13 +12,12 @@ export const commonStyles = (p: ITAOAThemeUIContext): any => ({
   [mediaquery.desktop()]: {
     maxWidth: '607px'
   },
-   
+
   [mediaquery.tablet()]: {
     maxWidth: '586px',
-    margin: '0 auto 25px',
-  },
+    margin: '0 auto 25px'
+  }
 });
-
 
 const Paragraph = styled.p((p: ITAOAThemeUIContext) => ({
   ...commonStyles(p),
@@ -31,6 +30,15 @@ const Paragraph = styled.p((p: ITAOAThemeUIContext) => ({
 
   b: {
     fontWeight: 800
+  },
+
+  code: {
+    paddingLeft: '0.5rem',
+    paddingRight: '0.5rem',
+    fontFamily: p.theme.fonts.monospace,
+    color: p.theme.colors.prism.plain,
+    borderRadius: '3px',
+    backgroundColor: p.theme.colors.prism.background
   },
 
   [mediaquery.tablet()]: {
