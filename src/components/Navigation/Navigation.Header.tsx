@@ -105,6 +105,7 @@ const ShellLink: React.FC<{}> = () => {
   const [colorMode] = useColorMode();
   const isDark = colorMode === `dark`;
   const fill = isDark ? '#fff' : '#000';
+  const invFill = isDark ? '#000' : '#fff';
   return (
     <IconWrapper
       isDark={isDark}
@@ -113,7 +114,7 @@ const ShellLink: React.FC<{}> = () => {
       title={'Go to the TAOA shell'}
     >
       <a href="/shell">
-        <Icons.ShellIcon fill={fill} />
+        <Icons.ShellIcon fill={fill} invFill={invFill} />
       </a>
     </IconWrapper>
   );

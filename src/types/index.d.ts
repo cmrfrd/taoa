@@ -131,6 +131,7 @@ export interface IProgress {
 
 export type Icon = {
   fill?: string;
+  invFill?: string;
 };
 
 export type TLayout = {
