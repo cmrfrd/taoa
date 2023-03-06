@@ -1,0 +1,186 @@
+---
+title: "Preventing numpy shape errors with pyright and variadic generics"
+author: ["Alexander Comerford"]
+draft: false
+date: 2023-02-27
+hero: "./images/cover.jpg"
+secret: false
+excerpt: "MxN * NxM"
+---
+
+When doing any sort of tensor/array computation in python (via `numpy`, `pytorch`, `jax`, or
+otherwise), it's more frequent than not we encounter shape errors like the one below
+
+And most of the time, these kind of errors boil down to something like
+accidentally forgetting to do a reshape or transpose like so.
+
+And while this is a mild case, shape bugs like these become more frequent as
+operations grow more complex and as more dimensions are involved.
+
+Here's a slightly more complex example of using a `Linear` layer
+implementation in `numpy` with a shape bug.
+
+The docstring of `Linear` clearly says the result should be size `m` (or
+`4`). But why then did we end up with a vector of size `16`? If we dig into
+each function we will eventually find that our problem is in how `numpy`
+handles `ndarrays` of differing shapes.
+
+If we break down `Linear`, after `np.matmul` we have an `ndarray` of shape
+`(4,1)` of which we do `np.add` with a vector of shape `(4)`. And here lies
+our bug. We might naturally think that `np.add` will do this addition element
+wise, but instead we fell into an [array broadcasting](https://numpy.org/doc/stable/user/basics.broadcasting.html#broadcastable-arrays) trap. Array broadcasting
+are sets of rules `numpy` uses to determine how to do arithmetic on different
+shaped `ndarrays`. So instead of doing our computation element wise, `numpy`
+interprets this as doing a broadcast operation of addition, resulting in a
+`(4,4)` matrix, which subsequently gets "raveled" into a size `16` vector.
+
+Now to fix this is easy, we just need to initialize our `b` variable to be of
+size `(4,1)` so `numpy` will interpret the `np.add` as an element wise
+addition.
+
+But how can we be smarter to make sure this error doesn't happen
+again by accident?
+
+
+## Existing ways to stop shape bugs
+
+The simplest (yet crudest) way we can try to stop this shape bug is with good
+docs. Ideally we should always have good docs, but we can make it a point to
+include what the shape expectations are like so:
+
+Now while informative, nothing is preventing us from encountering the bug
+again. The only thing this does is make the debugging process a bit
+easier. But we can do better.
+
+Another approach in addition to good docs that's more of a preventative action
+is to use assertions. By sprinkling `assert` throughout `Linear` with an
+informative error message, we can "fail early" to start debugging like so:
+
+`Linear` is a bit "safer" now. But compared to what we had originally, this
+approach is much less readable. We also inherit some of the baggage that comes
+with runtime error checking we need to think about such as:
+
+-   **Incomplete checking**: Have we checked all expected failure modes?
+
+-   **Slow debugging cycles**: How many refactor-&gt;rerun cycles will we have to do
+    pass the checks?
+
+-   **Additional testing**: Do the tests cover our runtime error checks?
+
+Overall runtime error checking is not a bad thing and in most cases is
+necessary! But when it comes to shape errors we can leverage a third approach,
+namely static type checking.
+
+
+## Shape typing `numpy` arrays
+
+Shape typing is a technique used to annotate additional shape information
+about your arrays. In the context of numpy, shape typing can be used to
+enforce constraints on the dimensions of arrays and catch errors before
+runtime.
+
+> As of `numpy==v1.24.2`, typing is supported on an `ndarray`'s `dtype`
+> (`uint8`, `float64`, etc.).
+
+Here is how we would include `dtype` type information to our `Linear`
+example (note: there is a type error)
+
+<a id="code-snippet--pyright-environment-build"></a>
+```podman-build
+FROM python:3.11.2-slim
+USER root
+RUN pip install pyright numpy
+CMD ["sleep", "infinity"]
+```
+
+Even though our code is "runnable", running the code through a type checker
+like `pyright` tells us a different story.
+
+<a id="code-snippet--pyright-bad-typing"></a>
+```bash
+pyright linear_bad_typing.py
+```
+
+`pyright` has noticed that when we create our `b` variable we have chosen a
+type that is incompatible with `np.random.standard_normal`, which is easily
+fixed with changing the type of `b` to `NDArray[np.float32]`.
+
+---
+
+While `dtype` typing is great, it's not the most useful for preventing shape
+errors.
+
+However if we dig into the definition of the `NDArray` type ...
+
+```python
+ScalarType = TypeVar("ScalarType", bound=np.generic, covariant=True)
+
+if TYPE_CHECKING or sys.version_info >= (3, 9):
+    _DType = np.dtype[ScalarType]
+    NDArray = np.ndarray[Any, np.dtype[ScalarType]]
+else:
+    _DType = _GenericAlias(np.dtype, (ScalarType,))
+    NDArray = _GenericAlias(np.ndarray, (Any, _DType))
+```
+
+And follow the definition of `np.ndarray` ...
+
+```python
+class ndarray(_ArrayOrScalarCommon, Generic[_ShapeType, _DType_co]):
+```
+
+We can see that `numpy` has been expecting using a `Shape` based type! But
+unfortunately if we look at the definition for this ...
+
+```python
+# TODO: Set the `bound` to something more suitable once we
+# have proper shape support
+_ShapeType = TypeVar("_ShapeType", bound=Any)
+_ShapeType2 = TypeVar("_ShapeType2", bound=Any)
+```
+
+😭 Looks like we'll have to settle for something "more suitable" until shape
+typing is supported ...
+
+But what if we don't want to wait 🤔? Luckily for us, [PEP 646](https://peps.python.org/pep-0646/) has the base
+foundation for shape typing and has already been accepted into python `3.11`!
+And it's supported by `pyright`! Theoretically these two things give us most
+of the ingredients to do shape typing.
+
+Now this blog post isn't about the details of [PEP 646](https://peps.python.org/pep-0646/) or variadic generics. But
+the rest of this post will assume you know how they work.
+
+In order to add rudimentary shape typing to `numpy` we can simple change the
+`Any` type in the `NDArray` type definition to a variadic generic like so:
+
+```python
+ScalarType = TypeVar("ScalarType", bound=np.generic, covariant=True)
+Shape = TypeVarTuple("Shape")
+
+if TYPE_CHECKING or sys.version_info >= (3, 9):
+    _DType = np.dtype[ScalarType]
+    NDArray = np.ndarray[*Shape, np.dtype[ScalarType]]
+else:
+    _DType = _GenericAlias(np.dtype, (ScalarType,))
+    NDArray = _GenericAlias(np.ndarray, (Any, _DType))
+```
+
+Doing so allows us to write additional typing overloads for common `numpy`
+functions which can account for shape changes.
+
+The first function from our `Linear` example we can start to overload is
+`np.random.random`.
+
+```python
+import numpy as np
+from typing import Tuple, TypeVar
+
+Shape = Tuple
+ShapeND = Shape[int, ...]
+ShapeNDType = TypeVar("ShapeNDType", bound=ShapeND)
+GenericDType = TypeVar("GenericDType", bound=np.generic)
+
+def rand_normal_matrix(shape: ShapeNDType) -> NDArray[ShapeNDType, np.float64]:
+    """Return a random ND normal matrix."""
+    return np.random.standard_normal(size=shape)
+```
