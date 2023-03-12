@@ -1,6 +1,6 @@
 #+TITLE: Shape typing numpy with pyright and variadic generics
 #+CREATED: <2023-02-27 Mon>
-#+LAST_MODIFIED: [2023-03-12 Sun 12:58]
+#+LAST_MODIFIED: [2023-03-12 Sun 13:02]
 #+ROAM_TAGS: composition
 #+OPTIONS: toc:nil
 #+OPTIONS: tex:t
@@ -28,6 +28,7 @@
 
 #+RESULTS:
 : Enabled mdx on save
+
 
 When doing any sort of tensor/array computation in python (via ~numpy~,
 ~pytorch~, ~jax~, or other>>), it's more frequent than not to encounter shape
