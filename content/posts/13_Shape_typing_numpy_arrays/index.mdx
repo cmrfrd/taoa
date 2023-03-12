@@ -1,5 +1,5 @@
 ---
-title: "Preventing numpy shape errors with pyright and variadic generics"
+title: "Shape typing numpy with pyright and variadic generics"
 author: ["Alexander Comerford"]
 draft: false
 date: 2023-02-27
@@ -8,24 +8,91 @@ secret: false
 excerpt: "MxN * NxM"
 ---
 
-When doing any sort of tensor/array computation in python (via `numpy`, `pytorch`, `jax`, or
-otherwise), it's more frequent than not we encounter shape errors like the one below
+When doing any sort of tensor/array computation in python (via `numpy`,
+`pytorch`, `jax`, or other&gt;&gt;), it's more frequent than not to encounter shape
+errors like the one below
+
+```python
+import numpy as np
+
+size1 = (2,3)
+size2 = (4,3)
+
+M1 = np.random.random(size=size1)
+M2 = np.random.random(size=size2)
+
+try:
+    print(np.dot(M1,M2))
+except Exception as e:
+    print(e)
+```
+
+```text
+shapes (2,3) and (4,3) not aligned: 3 (dim 1) != 4 (dim 0)
+```
 
 And most of the time, these kind of errors boil down to something like
 accidentally forgetting to do a reshape or transpose like so.
 
+```python
+import numpy as np
+
+size1 = (2,3)
+size2 = (4,3)
+
+M1 = np.random.random(size=size1)
+M2 = np.random.random(size=size2).T
+
+try:
+    print(np.dot(M1,M2))
+except Exception as e:
+    print(e)
+```
+
+```text
+[[0.86500455 1.77617316 1.09941949 1.89889291]
+ [0.43887288 0.60611809 0.70336887 0.96326243]]
+```
+
 And while this is a mild case, shape bugs like these become more frequent as
 operations grow more complex and as more dimensions are involved.
 
-Here's a slightly more complex example of using a `Linear` layer
-implementation in `numpy` with a shape bug.
+Here's a slightly more complex example of a `Linear` implementation in `numpy`
+with a subtle shape bug.
+
+```python
+def Linear(A, x, b):
+    """
+    Takes matrix A (m x n) times a vector x (n x 1) and
+    adds a bias. The resulting ndarray is then ravelled
+    into a vector of size (m).
+    """
+    Ax = np.dot(A, x)
+    Axb = np.add(Ax, b)
+    return np.ravel(Axb)
+
+A = np.random.random(size=(4,4))
+x = np.random.random(size=(4,1))
+b = np.random.random(size=(4))
+
+result = Linear(A, x, b)
+print(result)
+print(result.shape)
+```
+
+```text
+[1.4464441  1.37505164 1.31826451 1.57352928 1.68693734 1.61554488
+ 1.55875775 1.81402252 1.25033755 1.17894509 1.12215796 1.37742274
+ 1.02384854 0.95245608 0.89566895 1.15093373]
+(16,)
+```
 
 The docstring of `Linear` clearly says the result should be size `m` (or
 `4`). But why then did we end up with a vector of size `16`? If we dig into
 each function we will eventually find that our problem is in how `numpy`
-handles `ndarrays` of differing shapes.
+handles an `ndarray` of a different shape.
 
-If we break down `Linear`, after `np.matmul` we have an `ndarray` of shape
+If we break down `Linear`, after `np.dot` we have an `ndarray` of shape
 `(4,1)` of which we do `np.add` with a vector of shape `(4)`. And here lies
 our bug. We might naturally think that `np.add` will do this addition element
 wise, but instead we fell into an [array broadcasting](https://numpy.org/doc/stable/user/basics.broadcasting.html#broadcastable-arrays) trap. Array broadcasting
@@ -35,82 +102,220 @@ interprets this as doing a broadcast operation of addition, resulting in a
 `(4,4)` matrix, which subsequently gets "raveled" into a size `16` vector.
 
 Now to fix this is easy, we just need to initialize our `b` variable to be of
-size `(4,1)` so `numpy` will interpret the `np.add` as an element wise
+shape `(4,1)` so `numpy` will interpret the `np.add` as an element wise
 addition.
 
-But how can we be smarter to make sure this error doesn't happen
-again by accident?
+```python
+def Linear(A, x, b):
+    """
+    Takes matrix A (m x n) times a vector x (n x 1) and
+    adds a bias. The resulting ndarray is then ravelled
+    into a vector of size (m).
+    """
+    Ax = np.dot(A, x)
+    Axb = np.add(Ax, b)
+    return np.ravel(Axb)
+
+A = np.random.random(size=(4,4))
+x = np.random.random(size=(4,1))
+b = np.random.random(size=(4,1))
+
+result = Linear(A, x, b)
+print(result)
+print(result.shape)
+```
+
+```text
+[1.784427   3.16567155 2.13709511 1.62570137]
+(4,)
+```
+
+We've solved the problem, but how can we be smarter to prevent this error from
+happening again?
 
 
 ## Existing ways to stop shape bugs
 
-The simplest (yet crudest) way we can try to stop this shape bug is with good
-docs. Ideally we should always have good docs, but we can make it a point to
-include what the shape expectations are like so:
+The simplest way we can try to stop this shape bug is with good docs. Ideally
+we should always have good docs, but we can make it a point to include what
+the shape expectations are like so:
 
-Now while informative, nothing is preventing us from encountering the bug
-again. The only thing this does is make the debugging process a bit
-easier. But we can do better.
+```python
+def Linear(A, x, b):
+    """
+    Args:
+        A: ndarray of shape (M x N)
+        x: ndarray of shape (N x 1)
+        b: ndarray of shape (M x 1)
+
+    Returns:
+        Linear output ndarray of shape (M)
+    """
+    Ax = np.dot(A, x) # Shape (M x 1)
+    Axb = np.add(Ax, b) # (M x 1) + (M x 1)
+    return np.ravel(Axb) # Shape (M)
+```
+
+Now while informative, nothing is preventing us from encountering the same bug
+again. The only benefit this gives us, is making the debugging process a
+bit easier.
+
+We can do better.
 
 Another approach in addition to good docs that's more of a preventative action
 is to use assertions. By sprinkling `assert` throughout `Linear` with an
-informative error message, we can "fail early" to start debugging like so:
+informative error message, we can "fail early" and start debugging like so:
 
-`Linear` is a bit "safer" now. But compared to what we had originally, this
-approach is much less readable. We also inherit some of the baggage that comes
-with runtime error checking we need to think about such as:
+```python
+def Linear(A, x, b):
+    """
+    Args:
+        A: ndarray of shape (M x N)
+        x: ndarray of shape (N x 1)
+        b: ndarray of shape (M x 1)
 
--   **Incomplete checking**: Have we checked all expected failure modes?
+    Returns:
+        Linear output ndarray of shape (M)
+    """
+    assert len(A.shape) == 2, f"A must be of dim 2, not {len(A.shape)}"
+    Am, An = A.shape
 
--   **Slow debugging cycles**: How many refactor-&gt;rerun cycles will we have to do
-    pass the checks?
+    assert x.shape == (An, 1), f"X must be shape ({An}, 1) to do dot"
+    Ax = np.dot(A, x) # Shape (M x 1)
 
--   **Additional testing**: Do the tests cover our runtime error checks?
+    assert b.shape == (Am, 1), f"Bias term must be shape ({Am}, 1)"
+    result = np.add(Ax, b) # (M x 1) + (M x 1)
 
-Overall runtime error checking is not a bad thing and in most cases is
-necessary! But when it comes to shape errors we can leverage a third approach,
-namely static type checking.
-
-
-## Shape typing `numpy` arrays
-
-Shape typing is a technique used to annotate additional shape information
-about your arrays. In the context of numpy, shape typing can be used to
-enforce constraints on the dimensions of arrays and catch errors before
-runtime.
-
-> As of `numpy==v1.24.2`, typing is supported on an `ndarray`'s `dtype`
-> (`uint8`, `float64`, etc.).
-
-Here is how we would include `dtype` type information to our `Linear`
-example (note: there is a type error)
-
-<a id="code-snippet--pyright-environment-build"></a>
-```podman-build
-FROM python:3.11.2-slim
-USER root
-RUN pip install pyright numpy
-CMD ["sleep", "infinity"]
+    ravel_result = np.ravel(result)
+    assert ravel_result.shape == (Am,), f"Uh oh, ravel result is shape {ravel_result.shape} and not {(Am,)}"
+    return ravel_result
 ```
 
-Even though our code is "runnable", running the code through a type checker
-like `pyright` tells us a different story.
+At every step of this function we do an `assert` to make sure all the
+`ndarray` shapes are what we expect.
 
-<a id="code-snippet--pyright-bad-typing"></a>
+As a result `Linear` is a bit "safer". But compared to what we had originally,
+this approach is much less readable. We also inherit some of the baggage that
+comes with runtime error checking like:
+
+-   **Incomplete checking**: Have we checked all expected shape failure modes?
+
+-   **Slow debugging cycles**: How many refactor-&gt;run cycles will we have to do
+    pass the checks?
+
+-   **Additional testing**: Do we have to update our tests cover our runtime error
+    checks?
+
+Overall runtime error checking is not a bad thing. In most cases it's very
+necessary! But when it comes to shape errors, we can leverage an additional
+approach, static type checking.
+
+Even though `python` is a dynamically typed language, in `python>=3.5` the
+`typing` module was introduced to enable static type checkers to validate type
+hinted `python` code. (See [this video](https://www.youtube.com/watch?v=2wDvzy6Hgxg) for more details)
+
+Over time many third party libraries (like `numpy`) have started to type hint
+their codebases which we can use to our benefit.
+
+In order to help us prevent shape errors, let's see what typing capabilities
+exist in `numpy`.
+
+
+## `dtype` typing `numpy` arrays
+
+As of writing this post, `numpy==v1.24.2` only supports typing on an
+`ndarray`'s `dtype` (`uint8`, `float64`, etc.).
+
+Using `numpy`'s existing type hinting tooling, here's how we would include
+`dtype` type information to our `Linear` example (note: there is an
+intentional type error)
+
+```python
+from typing import TypeVar
+
+import numpy as np
+from numpy.typing import NDArray
+
+GenericType = TypeVar("GenericType", bound=np.generic)
+
+
+def Linear(
+        A: NDArray[GenericType],
+        x: NDArray[GenericType],
+        b: NDArray[GenericType],
+) -> NDArray[GenericType]:
+    """
+    Args:
+        A: ndarray of shape (M x N)
+        x: ndarray of shape (N x 1)
+        b: ndarray of shape (M x 1)
+
+    Returns:
+
+        Linear output ndarray of shape (M)
+    """
+    assert len(A.shape) == 2, f"A must be of dim 2, not {len(A.shape)}"
+    Am, An = A.shape
+
+    assert x.shape == (An, 1), f"X must be shape ({An}, 1) to do dot"
+    Ax: NDArray[GenericType] = np.dot(A, x)  # Shape (M x 1)
+
+    assert b.shape == (Am, 1), f"Bias term must be shape ({Am}, 1)"
+    result: NDArray[GenericType] = np.add(Ax, b)  # (M x 1) + (M x 1)
+
+    ravel_result: NDArray[GenericType] = np.ravel(result)
+    assert ravel_result.shape == (Am,), f"Uh oh, ravel result is shape {ravel_result.shape} and not {(Am,)}"
+    return ravel_result
+
+
+A: NDArray[np.float64] = np.random.standard_normal(size=(10, 10))
+x: NDArray[np.float64] = np.random.standard_normal(size=(10, 1))
+b: NDArray[np.float32] = np.random.standard_normal(size=(10, 1))
+y: NDArray[np.float64] = Linear(A, x, b)
+print(y)
+print(y.dtype)
+```
+
+```text
+[-5.26123159  0.77125238 -0.73588501  2.93252681 -1.21463007  2.17040024
+  2.14382479 -9.54945303 -1.47919684  0.15828995]
+float64
+```
+
+Even though this code is "runnable" and doesn't produce an error, a type
+checker like `pyright` tells us a different story.
+
 ```bash
 pyright linear_bad_typing.py
 ```
 
-`pyright` has noticed that when we create our `b` variable we have chosen a
-type that is incompatible with `np.random.standard_normal`, which is easily
-fixed with changing the type of `b` to `NDArray[np.float32]`.
+`pyright` has noticed that when we create our `b` variable, we gave it a
+`dtype` type that is incompatible with `np.random.standard_normal`.
 
----
+Now we know to adjust the type hint of `b` to be in line with the `dtype` that
+is expected of `np.random.standard_normal` (`NDArray[np.float64]`).
+
+
+## Shape typing `numpy` arrays
 
 While `dtype` typing is great, it's not the most useful for preventing shape
-errors.
+errors (like from our original example).
 
-However if we dig into the definition of the `NDArray` type ...
+Ideally it would be great if in addition to a `dtype` type, we can also
+include information about an `ndarray`'s shape to do shape typing.
+
+Shape typing is a technique used to annotate information about the
+dimensionality and size of an array. In the context of `numpy` and the
+`python` type hinting system, we can use shape typing catch shape errors
+before runtime.
+
+> For more information about shape typing checkout [this google doc on a shape
+> typing syntax proposal](https://docs.google.com/document/d/1But-hjet8-djv519HEKvBN6Ik2lW3yu0ojZo6pG9osY/edit#heading=h.aw3bt3fg1s2w) by Matthew Rahtz, Jörg Bornschein, Vlad Mikulik, Tim
+> Harley, Matthew Willson, Dimitrios Vytiniotis, Sergei Lebedev, Adam Paszke.
+
+As we've seen, `numpy`'s `NDArray` currently only supports `dtype` typing and
+doesn't have any of this kind of shape typing ability. But why is that? If we
+dig into the definition of the `NDArray` type:
 
 ```python
 ScalarType = TypeVar("ScalarType", bound=np.generic, covariant=True)
@@ -129,7 +334,7 @@ And follow the definition of `np.ndarray` ...
 class ndarray(_ArrayOrScalarCommon, Generic[_ShapeType, _DType_co]):
 ```
 
-We can see that `numpy` has been expecting using a `Shape` based type! But
+We can see that it looks like `numpy` uses a `Shape` type already! But
 unfortunately if we look at the definition for this ...
 
 ```python
@@ -139,19 +344,21 @@ _ShapeType = TypeVar("_ShapeType", bound=Any)
 _ShapeType2 = TypeVar("_ShapeType2", bound=Any)
 ```
 
-😭 Looks like we'll have to settle for something "more suitable" until shape
-typing is supported ...
+😭 Looks like we're stuck with `Any` which doesn't add any useful shape
+information on our types.
 
-But what if we don't want to wait 🤔? Luckily for us, [PEP 646](https://peps.python.org/pep-0646/) has the base
-foundation for shape typing and has already been accepted into python `3.11`!
-And it's supported by `pyright`! Theoretically these two things give us most
-of the ingredients to do shape typing.
+Luckily for us, we don't have to wait for shape support in `numpy`. [PEP 646](https://peps.python.org/pep-0646/) has
+the base foundation for shape typing and has already been accepted into python
+`3.11`! And it's supported by `pyright`! Theoretically these two things give
+us most of the ingredients to do basic shape typing.
 
-Now this blog post isn't about the details of [PEP 646](https://peps.python.org/pep-0646/) or variadic generics. But
-the rest of this post will assume you know how they work.
+Now this blog post isn't about the details of [PEP 646](https://peps.python.org/pep-0646/) or variadic
+generics. But the rest of this post will assume you know the basics of how
+they work.
 
-In order to add rudimentary shape typing to `numpy` we can simple change the
-`Any` type in the `NDArray` type definition to a variadic generic like so:
+In order to add rudimentary shape typing to `numpy` we can simply change the
+`Any` type in the `NDArray` type definition to an unpacked variadic generic
+like so:
 
 ```python
 ScalarType = TypeVar("ScalarType", bound=np.generic, covariant=True)
@@ -165,22 +372,589 @@ else:
     NDArray = _GenericAlias(np.ndarray, (Any, _DType))
 ```
 
-Doing so allows us to write additional typing overloads for common `numpy`
-functions which can account for shape changes.
+Doing so allows us to fill in a `Tuple` based type (indicating shape) in an
+`NDArray` alongside a `dtype` type. And shape typing with `Tuple`'s enables us
+define function overloads which describe to a type checker the possible ways a
+function can change the shape of an `NDArray`.
 
-The first function from our `Linear` example we can start to overload is
-`np.random.random`.
+Let's look at an example of using these concepts to type a wrapper function
+for `np.random.standard_normal` from our `Linear` example with an intentional
+type error:
 
 ```python
 import numpy as np
-from typing import Tuple, TypeVar
+from numpy.typing import NDArray
+from typing import Tuple, TypeVar, Literal
 
+# Generic dimension sizes types
+T1 = TypeVar("T1", bound=int)
+T2 = TypeVar("T2", bound=int)
+T3 = TypeVar("T3", bound=int)
+
+# Dimension types represented as typles
 Shape = Tuple
-ShapeND = Shape[int, ...]
+Shape1D = Shape[T1]
+Shape2D = Shape[T1, T2]
+Shape3D = Shape[T1, T2, T3]
+ShapeND = Shape[T1, ...]
 ShapeNDType = TypeVar("ShapeNDType", bound=ShapeND)
-GenericDType = TypeVar("GenericDType", bound=np.generic)
 
 def rand_normal_matrix(shape: ShapeNDType) -> NDArray[ShapeNDType, np.float64]:
     """Return a random ND normal matrix."""
     return np.random.standard_normal(size=shape)
+
+# Yay correctly typed 2x2x2 cube!
+TWO = Literal[2]
+two_by_two_by_two: NDArray[Shape3D[TWO, TWO, TWO], np.float64] = rand_normal_matrix((2,2,2))
+print(two_by_two_by_two)
+
+FOUR = Literal[4]
+
+# Uh oh the shapes won't match!
+four_by_four: NDArray[Shape2D[FOUR, FOUR], np.float64] = rand_normal_matrix((3,3))
+print(four_by_four)
 ```
+
+Notice here there are no `assert` statements. And instead of several comments
+about shape, we indicate shape in the type hint.
+
+Now while this code is "runnable", `pyright` will tell us something else:
+
+```bash
+py -m pyright bad_shape_typing.py --lib
+```
+
+`pyright` is telling us we've incorrectly typed `four_by_four` and that it's
+incompatible with a `3x3` shape. Now we know we need to go back and fix the
+type to what a type checker should expect.
+
+Huzzah shape typing!!
+
+
+## Moar `numpy` shape typing!
+
+Now that we have shape typed one function, let's step it up a notch. Let's try
+typing each `numpy` function in our `Linear` example to include shape
+types. We've already typed `np.random.standard_normal`, so next let's do
+`np.dot`.
+
+If we look at the [docs for `np.dot`](https://numpy.org/doc/stable/reference/generated/numpy.dot.html) there are 5 type cases it supports.
+
+1.  Both arguments as `1D` arrays
+
+2.  Both arguments are `2D` arrays (resulting in a `matmul`)
+
+3.  Either arguments are scalars
+
+4.  Either argument is a `ND` array and the other is a `1D` array
+
+5.  One argument is `ND` array and the other is `MD` array
+
+We can implement these cases as follows
+
+```python
+ShapeVarGen = TypeVarTuple("ShapeVarGen")
+
+@overload
+def dot(x1: NDArray[Shape1D[T1], GenericDType], x2: NDArray[Shape1D[T1], GenericDType], /) -> GenericDType:
+    ...
+
+
+@overload
+def dot(
+    x1: NDArray[Shape[T1, *ShapeVarGen], GenericDType], x2: NDArray[Shape1D[T1], GenericDType], /
+) -> NDArray[Shape[*ShapeVarGen], GenericDType]:
+    ...
+
+
+@overload
+def dot(
+    x1: NDArray[Shape2D[T1, T2], GenericDType],
+    x2: NDArray[Shape2D[T2, T3], GenericDType],
+    /,
+) -> NDArray[Shape2D[T1, T3], GenericDType]:
+    ...
+
+
+@overload
+def dot(x1: GenericDType, x2: GenericDType, /) -> GenericDType:
+    ...
+
+
+def dot(x1, x2):
+    return np.dot(x1, x2)
+
+```
+
+The only case we can't implement is an `ND` dimensional array with an `MD`
+dimensional array. Ideally we would try implementing it like so:
+
+```python
+ShapeVarGen1 = TypeVarTuple("ShapeVarGen1")
+ShapeVarGen2 = TypeVarTuple("ShapeVarGen2")
+
+@overload
+def dot(
+    x1: NDArray[Shape[*ShapeVarGen1, T1], GenericDType], x2: NDArray[Shape[*ShapeVarGen2, T1, T2], GenericDType], /
+) -> NDArray[Shape[*ShapeVarGen1, *ShapeVarGen2], GenericDType]:
+    ...
+```
+
+But currently using multiple type variable tuples [is not allowed](https://peps.python.org/pep-0646/#multiple-type-variable-tuples-not-allowed). If you know
+of another way to cover this case let me know! Luckily for our `Linear` use
+case, it only uses scalars, vectors, and matrices which is covered by our four
+overloads.
+
+Here's how we would use these `dot` overloads to do the dot product between a
+`2x3` matrix and a `3x2` matrix with type hints:
+
+```python
+import numpy as np
+from numpy.typing import NDArray
+from numpy_shape_typing.dot import dot
+from numpy_shape_typing.types import ShapeNDType, Shape2D
+from numpy_shape_typing.rand import rand_normal_matrix
+
+from typing import Literal
+
+TWO = Literal[2]
+THREE = Literal[3]
+A: NDArray[Shape2D[TWO, THREE], np.float64] = rand_normal_matrix((2,3))
+B: NDArray[Shape2D[THREE, TWO], np.float64] = rand_normal_matrix((3,2))
+C: NDArray[Shape2D[TWO, TWO], np.float64] = dot(A, B)
+print(C)
+```
+
+And if we check with `pyright`:
+
+```bash
+py -m pyright good_dot.py --lib
+```
+
+Everything looks good as it should!
+
+And if we change the types to invalid matrix shapes:
+
+```python
+import numpy as np
+from numpy.typing import NDArray
+from numpy_shape_typing.dot import dot
+from numpy_shape_typing.rand import rand_normal_matrix
+from numpy_shape_typing.types import ShapeNDType, Shape2D
+
+from typing import Literal
+
+TWO = Literal[2]
+THREE = Literal[3]
+FOUR = Literal[4]
+A: NDArray[Shape2D[TWO, THREE], np.float64] = rand_normal_matrix((2,3))
+B: NDArray[Shape2D[FOUR, FOUR], np.float64] = rand_normal_matrix((4,4))
+
+# uh oh bad shape type
+C: NDArray[Shape2D[TWO, TWO], np.float64] = dot(A, B)
+print(C)
+```
+
+And if we check with `pyright`:
+
+```bash
+py -m pyright ./bad_dot.py --lib
+```
+
+`pyright` let's us know that the types we are using are incorrect shapes based
+on `np.dot`'s type overloads we've specified.
+
+
+## Even moar `numpy` shape typing!
+
+The next function we are going to type is `np.add`. The [`numpy` docs](https://numpy.org/doc/stable/reference/generated/numpy.add.html) only show
+two cases.
+
+1.  Two `ND` array arguments of the same shape are added element wise
+
+2.  Two `ND` array arguments that are not the same shape must be broadcastable to
+    a common shape
+
+Covering the first case is easy, but the second case is much harder as we
+would have to come up with a scheme to cover `numpy`'s [array broadcasting
+system](https://numpy.org/doc/stable/user/basics.broadcasting.html). Currently `python==3.11`'s `typing` doesn't have a generic way to
+cover all the broadcasting rules. (If you know of a way let me know!)
+
+However if we scope down the second case to only two dimensions, we can cover
+all the array broadcasting rules with a few overloads:
+
+```python
+from typing import overload
+
+import numpy as np
+from numpy.typing import NDArray
+
+from numpy_shape_typing.types import ONE, T1, T2, GenericDType, Shape1D, Shape2D, ShapeVarGen
+
+
+@overload
+def add(
+    x1: NDArray[Shape2D[T1, T2], GenericDType],
+    x2: NDArray[Shape1D[T2], GenericDType],
+    /,
+) -> NDArray[Shape2D[T1, T2], GenericDType]:
+    ...
+
+
+@overload
+def add(
+    x1: NDArray[Shape1D[T2], GenericDType],
+    x2: NDArray[Shape2D[T1, T2], GenericDType],
+    /,
+) -> NDArray[Shape2D[T1, T2], GenericDType]:
+    ...
+
+
+@overload
+def add(
+    x1: NDArray[Shape2D[T1, T2], GenericDType],
+    x2: NDArray[Shape1D[ONE], GenericDType],
+    /,
+) -> NDArray[Shape2D[T1, T2], GenericDType]:
+    ...
+
+
+@overload
+def add(
+    x1: NDArray[Shape1D[ONE], GenericDType],
+    x2: NDArray[Shape2D[T1, T2], GenericDType],
+    /,
+) -> NDArray[Shape2D[T1, T2], GenericDType]:
+    ...
+
+
+@overload
+def add(
+    x1: NDArray[Shape2D[T1, T2], GenericDType],
+    x2: NDArray[Shape2D[T1, ONE], GenericDType],
+    /,
+) -> NDArray[Shape2D[T1, T2], GenericDType]:
+    ...
+
+
+@overload
+def add(
+    x1: NDArray[Shape2D[T1, T2], GenericDType],
+    x2: NDArray[Shape2D[ONE, T2], GenericDType],
+    /,
+) -> NDArray[Shape2D[T1, T2], GenericDType]:
+    ...
+
+
+@overload
+def add(
+    x1: NDArray[Shape2D[T1, ONE], GenericDType],
+    x2: NDArray[Shape2D[T1, T2], GenericDType],
+    /,
+) -> NDArray[Shape2D[T1, T2], GenericDType]:
+    ...
+
+
+@overload
+def add(
+    x1: NDArray[Shape2D[ONE, T2], GenericDType],
+    x2: NDArray[Shape2D[T1, T2], GenericDType],
+    /,
+) -> NDArray[Shape2D[T1, T2], GenericDType]:
+    ...
+
+
+@overload
+def add(
+    x1: GenericDType,
+    x2: NDArray[Shape2D[T1, T2], GenericDType],
+    /,
+) -> NDArray[Shape2D[T1, T2], GenericDType]:
+    ...
+
+
+@overload
+def add(
+    x1: NDArray[Shape2D[T1, T2], GenericDType],
+    x2: GenericDType,
+    /,
+) -> NDArray[Shape2D[T1, T2], GenericDType]:
+    ...
+
+
+@overload
+def add(
+    x1: NDArray[*ShapeVarGen, GenericDType],
+    x2: NDArray[*ShapeVarGen, GenericDType],
+    /,
+) -> NDArray[*ShapeVarGen, GenericDType]:
+    ...
+
+
+def add(x1, x2):
+    return np.add(x1, x2)
+```
+
+Using these overloads, here is how we would catch unexpected array broadcasts
+(similar to the one from our original `Linear` example).
+
+```python
+from typing import Literal
+
+import numpy as np
+from numpy.typing import NDArray
+
+from numpy_shape_typing.add import add
+from numpy_shape_typing.dot import dot
+from numpy_shape_typing.rand import rand_normal_matrix
+from numpy_shape_typing.types import ONE, Shape1D, Shape2D
+
+FOUR = Literal[4]
+A: NDArray[Shape2D[FOUR, FOUR], np.float64] = rand_normal_matrix((4, 4))
+B: NDArray[Shape2D[ONE, FOUR], np.float64] = rand_normal_matrix((1, 4))
+C: NDArray[Shape2D[ONE, FOUR], np.float64] = add(A, B)
+print(C)
+```
+
+In the example above, our output is a `4x4` matrix, but from our types we wanted
+an output shape of `4x1`. Let's see what `pyright` says
+
+```bash
+py -m pyright unnexpected_broadcast.py --lib
+```
+
+
+## Hitting the limitations of shape typing 😿
+
+The last function we will type to finish of our `Linear` example is
+`np.ravel`. However this is where we start hitting some major limitations of
+shape typing as they exist today in `python` and `numpy`.
+
+From the [numpy docs on](https://numpy.org/doc/stable/reference/generated/numpy.ravel.html) `np.ravel` the only case we need to cover is that any
+`ND` array gets collapsed into a `1D` array of size of the total number of
+elements. Luckily all the information to compute the final `1D` size is just
+the product of all the input dimension sizes.
+
+Ideally we would try to write code that looks something like this:
+
+```python
+ShapeVarGen = TypeVarTuple("ShapeVarGen")
+
+@overload
+def ravel(
+    arr: NDArray[Shape[*ShapeVarGen], GenericDType]
+) -> NDArray[Shape1D[Product[*ShapeVarGen]], GenericDType]:
+    ...
+```
+
+But unfortunately `python`'s `typing` package currently doesn't have a notion
+of a `Product` type that provides a way to do algebraic typing.
+
+However for the sake of completion we can fake it!
+
+If we scope down from a generic `ND` typing of `np.ravel` to support up to two
+dimensions and limit the size of the output dimension to some maximum number,
+we can overload all the possible factors that multiply to the output dimension
+size. We would effectively be typing a multiplication table 😆, but it will
+work and get us to a "partially" typed `np.ravel`.
+
+Here's how we can do it.
+
+First we create a bunch of `Literal` types (our factors):
+
+```python
+ZERO = Literal[0]
+ONE = Literal[1]
+TWO = Literal[2]
+THREE = Literal[3]
+FOUR = Literal[4]
+...
+```
+
+Then we define "multiply" types for factor pairs of numbers:
+
+```python
+SHAPE_2D_MUL_TO_ONE = TypeVar(
+    "SHAPE_2D_MUL_TO_ONE",
+    bound=Shape2D[Literal[ONE], Literal[ONE]],
+)
+SHAPE_2D_MUL_TO_TWO = TypeVar(
+    "SHAPE_2D_MUL_TO_TWO",
+    bound=Union[Shape2D[Literal[ONE], Literal[TWO]], Shape2D[Literal[TWO], Literal[ONE]]],
+)
+SHAPE_2D_MUL_TO_THREE = TypeVar(
+    "SHAPE_2D_MUL_TO_THREE",
+    bound=Union[Shape2D[Literal[ONE], Literal[THREE]], Shape2D[Literal[THREE], Literal[ONE]]],
+)
+SHAPE_2D_MUL_TO_FOUR = TypeVar(
+    "SHAPE_2D_MUL_TO_FOUR",
+    bound=Union[
+        Shape2D[Literal[ONE], Literal[FOUR]],
+        Shape2D[Literal[TWO], Literal[TWO]],
+        Shape2D[Literal[FOUR], Literal[ONE]],
+    ],
+)
+```
+
+Then lastly we wire these types up into individual `ravel` overloads (and
+cover a few generic ones while we're at it):
+
+```python
+@overload
+def ravel(arr: NDArray[SHAPE_2D_MUL_TO_ONE, GenericDType]) -> NDArray[Shape1D[ONE], GenericDType]:
+    ...
+
+
+@overload
+def ravel(arr: NDArray[SHAPE_2D_MUL_TO_TWO, GenericDType]) -> NDArray[Shape1D[TWO], GenericDType]:
+    ...
+
+
+@overload
+def ravel(arr: NDArray[SHAPE_2D_MUL_TO_THREE, GenericDType]) -> NDArray[Shape1D[THREE], GenericDType]:
+    ...
+
+
+@overload
+def ravel(arr: NDArray[SHAPE_2D_MUL_TO_FOUR, GenericDType]) -> NDArray[Shape1D[FOUR], GenericDType]:
+    ...
+
+@overload
+def ravel(arr: NDArray[Shape2D[T1, ONE], GenericDType]) -> NDArray[Shape1D[T1], GenericDType]:
+    ...
+
+
+@overload
+def ravel(arr: NDArray[Shape2D[ONE, T1], GenericDType]) -> NDArray[Shape1D[T1], GenericDType]:
+    ...
+
+
+@overload
+def ravel(arr: NDArray[Shape1D[T1], GenericDType]) -> NDArray[Shape1D[T1], GenericDType]:
+    ...
+```
+
+Now we can rinse and repeat for as many numbers as we like!
+
+Here is how we'd use this typing to catch a shape type error with `ravel`:
+
+```python
+import numpy as np
+from numpy.typing import NDArray
+
+from numpy_shape_typing.rand import rand_normal_matrix
+from numpy_shape_typing.ravel import ravel
+from numpy_shape_typing.types import FOUR, SEVEN, TWO, Shape1D, Shape2D
+
+A: NDArray[Shape2D[TWO, FOUR], np.float64] = rand_normal_matrix((2, 4))
+B: NDArray[Shape1D[SEVEN], np.float64] = ravel(A)
+print(B)
+```
+
+```bash
+py -m pyright raveling.py --lib
+```
+
+
+## Putting it all together
+
+So far we've gone through typing a small subset of `numpy`'s functions
+(`np.random.standard_normal`, `np.dot`, `np.add`, and `np.ravel` in all).
+
+Now we can chain these typed functions together to form a typed `Linear`
+implementation like so:
+
+```python
+from typing import Literal
+
+import numpy as np
+from numpy.typing import NDArray
+
+from numpy_shape_typing.add import add
+from numpy_shape_typing.dot import dot
+from numpy_shape_typing.rand import rand_normal_matrix
+from numpy_shape_typing.ravel import ravel
+from numpy_shape_typing.types import ONE, T1, T2, GenericDType, Shape1D, Shape2D
+
+
+def Linear(
+        A: NDArray[Shape2D[T1, T2], GenericDType],
+        x: NDArray[Shape2D[T2, ONE], GenericDType],
+        b: NDArray[Shape2D[T1, ONE], GenericDType],
+) -> NDArray[Shape1D[T1], GenericDType]:
+    Ax = dot(A, x)
+    Axb = add(Ax, b)
+    return ravel(Axb)
+
+
+IN_DIM = Literal[3]
+in_dim: IN_DIM = 3
+
+OUT_DIM = Literal[4]
+out_dim: OUT_DIM = 4
+
+# bad type >:(
+BAD_OUT_DIM = Literal[5]
+
+A: NDArray[Shape2D[OUT_DIM, IN_DIM], np.float64] = rand_normal_matrix((out_dim, in_dim))
+x: NDArray[Shape2D[IN_DIM, ONE], np.float64] = rand_normal_matrix((in_dim, 1))
+b: NDArray[Shape2D[OUT_DIM, ONE], np.float64] = rand_normal_matrix((out_dim, 1))
+
+# this is a bad type! we should have an output shape type of "Shape1D[BAD_OUT_DIM]"
+y: NDArray[Shape1D[BAD_OUT_DIM], np.float64] = Linear(A, x, b)
+```
+
+I've included an intentional type error which should be caught by `pyright`
+like so:
+
+```bash
+py -m pyright linear_type_bad.py --lib
+```
+
+And huzzah again! `pyright` has caught the shape type error!
+
+And now we can fix this shape error by changing `BAD_OUT_DIM` to the correct
+output dimension size.
+
+```python
+from typing import Literal
+
+import numpy as np
+from numpy.typing import NDArray
+
+from numpy_shape_typing.add import add
+from numpy_shape_typing.dot import dot
+from numpy_shape_typing.rand import rand_normal_matrix
+from numpy_shape_typing.ravel import ravel
+from numpy_shape_typing.types import ONE, T1, T2, GenericDType, Shape1D, Shape2D
+
+
+def Linear(
+        A: NDArray[Shape2D[T1, T2], GenericDType],
+        x: NDArray[Shape2D[T2, ONE], GenericDType],
+        b: NDArray[Shape2D[T1, ONE], GenericDType],
+) -> NDArray[Shape1D[T1], GenericDType]:
+    Ax = dot(A, x)
+    Axb = add(Ax, b)
+    return ravel(Axb)
+
+
+IN_DIM = Literal[3]
+in_dim: IN_DIM = 3
+
+OUT_DIM = Literal[4]
+out_dim: OUT_DIM = 4
+
+A: NDArray[Shape2D[OUT_DIM, IN_DIM], np.float64] = rand_normal_matrix((out_dim, in_dim))
+x: NDArray[Shape2D[IN_DIM, ONE], np.float64] = rand_normal_matrix((in_dim, 1))
+b: NDArray[Shape2D[OUT_DIM, ONE], np.float64] = rand_normal_matrix((out_dim, 1))
+y: NDArray[Shape1D[OUT_DIM], np.float64] = Linear(A, x, b)
+```
+
+And if we check with `pyright`.
+
+```bash
+py -m pyright linear_type_good.py --lib
+```
+
+`pyright` tells us that our types are consistent!

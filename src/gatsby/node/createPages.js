@@ -14,6 +14,7 @@ const templates = {
   post: path.resolve(templatesDirectory, 'post.template.tsx'),
   author: path.resolve(templatesDirectory, 'author.template.tsx'),
   about: path.resolve(templatesDirectory, 'about.template.tsx'),
+  shell: path.resolve(templatesDirectory, 'shell.template.tsx'),
   search: path.resolve(templatesDirectory, 'search.template.tsx'),
   fourofour: path.resolve(templatesDirectory, '404.template.tsx')
 };
@@ -144,6 +145,18 @@ module.exports = async ({ actions: { createPage }, graphql }, themeOptions) => {
       enableGridRow: false
     }
   });
+
+  // Creating the shell page
+  // log('Creating', 'shell page');
+  // const shellPath = '/shell';
+  // createPage({
+  //   path: shellPath,
+  //   component: templates.shell,
+  //   context: {
+  //     basePath,
+  //       slug: shellPath,
+  //   }
+  // });
 
   /**
    * Once the list of posts have bene created, we need to make individual post posts.

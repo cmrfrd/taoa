@@ -1,6 +1,6 @@
-#+TITLE: Preventing numpy shape errors with pyright and variadic generics
+#+TITLE: Shape typing numpy with pyright and variadic generics
 #+CREATED: <2023-02-27 Mon>
-#+LAST_MODIFIED: [2023-03-06 Mon 03:01]
+#+LAST_MODIFIED: [2023-03-12 Sun 12:58]
 #+ROAM_TAGS: composition
 #+OPTIONS: toc:nil
 #+OPTIONS: tex:t
@@ -27,10 +27,11 @@
 #+END_SRC
 
 #+RESULTS:
-: Disabled mdx on save
+: Enabled mdx on save
 
-When doing any sort of tensor/array computation in python (via ~numpy~, ~pytorch~, ~jax~, or
-otherwise), it's more frequent than not we encounter shape errors like the one below
+When doing any sort of tensor/array computation in python (via ~numpy~,
+~pytorch~, ~jax~, or other>>), it's more frequent than not to encounter shape
+errors like the one below
 
   #+CONSTANTS: image_name=pyright container_name=pyright
   #+CONSTANTS: image_name_shape_typing=cmrfrd/numpy_shape_typing-dev container_name_shape_typing=numpy_shape_typing-dev
@@ -86,16 +87,15 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
   #+RESULTS: init
   : init
 
-  #+NAME: example-fail
-  #+HEADER: :exports none :results output verbatim
+  #+HEADER: :exports both :results output verbatim
   #+begin_src python :session numpy
     import numpy as np
 
-    axes1 = (2,3)
-    axes2 = (4,3)
+    size1 = (2,3)
+    size2 = (4,3)
 
-    M1 = np.random.random(size=axes1)
-    M2 = np.random.random(size=axes2)
+    M1 = np.random.random(size=size1)
+    M2 = np.random.random(size=size2)
 
     try:
         print(np.dot(M1,M2))
@@ -103,22 +103,21 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
         print(e)
   #+end_src
 
-  #+RESULTS: example-fail
+  #+RESULTS:
   : shapes (2,3) and (4,3) not aligned: 3 (dim 1) != 4 (dim 0)
 
   And most of the time, these kind of errors boil down to something like
   accidentally forgetting to do a reshape or transpose like so.
 
-  #+NAME: example-success
-  #+HEADER: :exports none :results output verbatim
+  #+HEADER: :exports both :results output verbatim
   #+begin_src python :session numpy
     import numpy as np
 
-    axes1 = (2,3)
-    axes2 = (4,3)
+    size1 = (2,3)
+    size2 = (4,3)
 
-    M1 = np.random.random(size=axes1)
-    M2 = np.random.random(size=axes2).T
+    M1 = np.random.random(size=size1)
+    M2 = np.random.random(size=size2).T
 
     try:
         print(np.dot(M1,M2))
@@ -126,9 +125,9 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
         print(e)
   #+end_src
 
-  #+RESULTS: example-success
-  : [[0.26210787 0.9858254  0.89502795 0.34813758]
-  :  [0.37646863 0.3790563  0.35087926 0.14548013]]
+  #+RESULTS:
+  : [[0.1547545  0.30949099 0.59024794 0.55318775]
+  :  [0.21051272 0.34419557 0.54559747 0.5703837 ]]
 
   And while this is a mild case, shape bugs like these become more frequent as
   operations grow more complex and as more dimensions are involved.
@@ -136,8 +135,7 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
   Here's a slightly more complex example of a ~Linear~ implementation in ~numpy~
   with a subtle shape bug.
 
-  #+NAME: linear-bug
-  #+HEADER: :exports none :results output verbatim
+  #+HEADER: :exports both :results output verbatim
   #+begin_src python :session numpy
     def Linear(A, x, b):
         """
@@ -158,16 +156,17 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
     print(result.shape)
   #+end_src
 
-  #+RESULTS: linear-bug
-  : [1.37932258 1.48121007 1.7228994  1.73685425 1.19747849 1.29936598
-  :  1.54105531 1.55501016 1.01962288 1.12151038 1.36319971 1.37715455
-  :  0.69472436 0.79661186 1.03830119 1.05225603]
+  #+RESULTS:
+  : [1.73515224 1.89505469 1.9289733  1.72298648 1.60409676 1.76399922
+  :  1.79791782 1.59193101 0.58554031 0.74544276 0.77936137 0.57337455
+  :  0.98373656 1.14363901 1.17755762 0.9715708 ]
   : (16,)
+
 
   The docstring of ~Linear~ clearly says the result should be size ~m~ (or
   ~4~). But why then did we end up with a vector of size ~16~? If we dig into
   each function we will eventually find that our problem is in how ~numpy~
-  handles ~ndarrays~ of differing shapes.
+  handles an ~ndarray~ of a different shape.
 
   If we break down ~Linear~, after ~np.dot~ we have an ~ndarray~ of shape
   ~(4,1)~ of which we do ~np.add~ with a vector of shape ~(4)~. And here lies
@@ -182,8 +181,7 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
   shape ~(4,1)~ so ~numpy~ will interpret the ~np.add~ as an element wise
   addition.
 
-  #+NAME: linear-bug-fixed
-  #+HEADER: :exports none :results output verbatim
+  #+HEADER: :exports both :results output verbatim
   #+begin_src python :session numpy
     def Linear(A, x, b):
         """
@@ -204,8 +202,8 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
     print(result.shape)
   #+end_src
 
-  #+RESULTS: linear-bug-fixed
-  : [1.61890606 1.02107972 1.54771397 1.44444939]
+  #+RESULTS:
+  : [0.66736135 0.75746147 1.53202375 1.56823255]
   : (4,)
 
   We've solved the problem, but how can we be smarter to prevent this error from
@@ -213,12 +211,11 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
 
 * Existing ways to stop shape bugs
 
-  The simplest (yet crudest) way we can try to stop this shape bug is with good
-  docs. Ideally we should always have good docs, but we can make it a point to
-  include what the shape expectations are like so:
+  The simplest way we can try to stop this shape bug is with good docs. Ideally
+  we should always have good docs, but we can make it a point to include what
+  the shape expectations are like so:
 
-  #+NAME: linear-good-docs
-  #+HEADER: :exports none :results output verbatim
+  #+HEADER: :exports code :results output verbatim
   #+begin_src python :session numpy
     def Linear(A, x, b):
         """
@@ -235,6 +232,8 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
         return np.ravel(Axb) # Shape (M)
   #+end_src
 
+  #+RESULTS:
+
   #+RESULTS: linear-good-docs
 
   Now while informative, nothing is preventing us from encountering the same bug
@@ -247,8 +246,7 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
   is to use assertions. By sprinkling ~assert~ throughout ~Linear~ with an
   informative error message, we can "fail early" and start debugging like so:
 
-  #+NAME: linear-asserts
-  #+HEADER: :exports none :results output verbatim
+  #+HEADER: :exports code :results output verbatim
   #+begin_src python :session numpy
     def Linear(A, x, b):
         """
@@ -274,34 +272,48 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
         return ravel_result
   #+end_src
 
-  #+RESULTS: linear-asserts
+  #+RESULTS:
 
-  ~Linear~ is a bit "safer" now. But compared to what we had originally, this
-  approach is much less readable. We also inherit some of the baggage that comes
-  with runtime error checking we need to think about such as:
 
-  - *Incomplete checking*: Have we checked all expected failure modes?
+  At every step of this function we do an ~assert~ to make sure all the
+  ~ndarray~ shapes are what we expect.
 
-  - *Slow debugging cycles*: How many refactor->rerun cycles will we have to do
+  As a result ~Linear~ is a bit "safer". But compared to what we had originally,
+  this approach is much less readable. We also inherit some of the baggage that
+  comes with runtime error checking like:
+
+  - *Incomplete checking*: Have we checked all expected shape failure modes?
+
+  - *Slow debugging cycles*: How many refactor->run cycles will we have to do
     pass the checks?
 
-  - *Additional testing*: Do the tests cover our runtime error checks?
+  - *Additional testing*: Do we have to update our tests cover our runtime error
+    checks?
 
-  Overall runtime error checking is not a bad thing and in most cases is
-  necessary! But when it comes to shape errors we can try to leverage a third
+  Overall runtime error checking is not a bad thing. In most cases it's very
+  necessary! But when it comes to shape errors, we can leverage an additional
   approach, static type checking.
+
+  Even though ~python~ is a dynamically typed language, in ~python>=3.5~ the
+  ~typing~ module was introduced to enable static type checkers to validate type
+  hinted ~python~ code. (See [[https://www.youtube.com/watch?v=2wDvzy6Hgxg][this video]] for more details)
+
+  Over time many third party libraries (like ~numpy~) have started to type hint
+  their codebases which we can use to our benefit.
+
+  In order to help us prevent shape errors, let's see what typing capabilities
+  exist in ~numpy~.
 
 * ~dtype~ typing ~numpy~ arrays
 
   As of writing this post, ~numpy==v1.24.2~ only supports typing on an
   ~ndarray~'s ~dtype~ (~uint8~, ~float64~, etc.).
 
-  Using ~numpy~'s existing type tooling, here's how we would include ~dtype~
-  type information to our ~Linear~ example (note: there is an intentional type
-  error)
+  Using ~numpy~'s existing type hinting tooling, here's how we would include
+  ~dtype~ type information to our ~Linear~ example (note: there is an
+  intentional type error)
 
-  #+NAME: linear-typing-dtype
-  #+HEADER: :exports none :results output verbatim :tangle linear_bad_typing.py
+  #+HEADER: :exports both :results output verbatim :tangle linear_bad_typing.py
   #+begin_src python :session numpy
     from typing import TypeVar
 
@@ -345,14 +357,17 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
     b: NDArray[np.float32] = np.random.standard_normal(size=(10, 1))
     y: NDArray[np.float64] = Linear(A, x, b)
     print(y)
+    print(y.dtype)
   #+end_src
 
-  #+RESULTS: linear-typing-dtype
-  : [-2.71019241 -2.81848162  0.6833062  -0.33208219 -0.09177579  0.10964564
-  :  -4.72878577  1.19790715 -3.78049511 -2.65254407]
+  #+RESULTS:
+  : [ 2.46238575 -3.14896089 -1.94370608 -1.15712163 -0.1701296   1.25522833
+  :  -3.73717187 -0.03529537  2.88735514  2.50981703]
+  : float64
+
 
   #+NAME: pyright-environment-build
-  #+HEADER: :exports code :padline no
+  #+HEADER: :exports none :padline no
   #+BEGIN_SRC podman-build :dir "." :tangle (make-temp-name "Dockerfile-") :tag (org-table-get-constant "image_name")
     FROM python:3.11.2-slim
     USER root
@@ -361,7 +376,7 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
   #+END_SRC
 
   #+RESULTS: pyright-environment-build
-  : #<window 76 on /tmp/babel-x2dUJT/ob-podman-build-out-2Wxdag>
+  : #<window 614 on /tmp/babel-nU1TQb/ob-podman-build-out-3Te4yf>
 
   #+NAME: pyright-environment-start
   #+HEADER: :exports none
@@ -382,21 +397,33 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
 
   #+RESULTS: pyright-environment-start
   : Running container if not already running ...
-  : e2743f3a67bd5c137d9d718cc2a4eeeceeef47295c25b12d6c5a011ec89f551f
-  : Container starting...
+  : Container already running...
 
-  Even though our code is "runnable", we can expand our view of what "correct"
-  and "runnable" means by putting our code through a type checker. And when we
-  do use a type checker like ~pyright~, it tells us a different story.
+  Even though this code is "runnable" and doesn't produce an error, a type
+  checker like ~pyright~ tells us a different story.
 
-  #+NAME: pyright-bad-typing
   #+HEADER: :results output
   #+begin_src bash :dir (org-sbe container-dir-str) :session pyright
     pyright linear_bad_typing.py
   #+end_src
 
-  #+RESULTS: pyright-bad-typing
+  #+RESULTS:
   #+begin_example
+  STEP 1/4: FROM python:3.11.2-slim
+  STEP 2/4: USER root
+  Using cache 0948b45cbff93ee6c26fd2f25cd97e5d1be44ee05d33f69bbcc03e6995287819
+  0948b45cbff
+  STEP 3/4: RUN pip install pyright numpy
+  Using cache cd7565c67e85715a5648c30e62672b6b9c7580751961cb9a598f867c1e199b99
+  cd7565c67e8
+  STEP 4/4: CMD ["sleep", "infinity"]
+  Using cache f4506a0d8337c9b96ef850c295add506621ead2997aa6d166eac40d48c88e222
+  COMMIT pyright
+  v1.1.298).
+  Please install the new version or set PYRIGHT_PYTHON_FORCE_VERSION to `latest`
+  f4506a0d833
+  Successfully tagged localhost/pyright:latest
+  f4506a0d8337c9b96ef850c295add506621ead2997aa6d166eac40d48c88e222
   No configuration file found.
   No pyproject.toml file found.
   stubPath /mnt/typings is not a valid directory.
@@ -418,33 +445,37 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
             TypeVar "_DTypeScalar_co@dtype" is covariant
               "float32" is incompatible with "float64" (reportGeneralTypeIssues)
   2 errors, 0 warnings, 0 informations
-  Completed in 0.611sec
+  Completed in 0.623sec
   #+end_example
 
-  ~pyright~ has noticed that when we create our ~b~ variable we gave it a
-  ~dtype~ type that is incompatible with ~np.random.standard_normal~. Using this
-  information we know we should adjust the type hint of ~b~ to be in line with
-  what is expected of ~np.random.standard_normal~ (by changing the type of ~b~
-  to ~NDArray[np.float64]~).
+  ~pyright~ has noticed that when we create our ~b~ variable, we gave it a
+  ~dtype~ type that is incompatible with ~np.random.standard_normal~.
+
+  Now we know to adjust the type hint of ~b~ to be in line with the ~dtype~ that
+  is expected of ~np.random.standard_normal~ (~NDArray[np.float64]~).
 
 * Shape typing ~numpy~ arrays
 
   While ~dtype~ typing is great, it's not the most useful for preventing shape
-  errors. Ideally it would be great if our code could include shape typing
-  instead.
+  errors (like from our original example).
 
-  Shape typing is a technique used to annotate shape information on your array
-  variables. In the context of ~numpy~, shape typing can be used to enforce
-  constraints on the dimensionality and size of arrays in order to catch shape
-  errors before runtime.
+  Ideally it would be great if in addition to a ~dtype~ type, we can also
+  include information about an ~ndarray~'s shape to do shape typing.
 
-  Compared to our original code, shape typing would give us the same ~assert~
-  like information when shapes are invalid, but would take place in the type
-  hinting system so a type checker can catch them before runtime.
+  Shape typing is a technique used to annotate information about the
+  dimensionality and size of an array. In the context of ~numpy~ and the
+  ~python~ type hinting system, we can use shape typing catch shape errors
+  before runtime.
 
-  As we've seen however, ~numpy~'s ~NDArray~ doesn't have this kind of typing
-  ability yet. But why is that? If we dig into the definition of the ~NDArray~
-  type ...
+  #+begin_quote
+  For more information about shape typing checkout [[https://docs.google.com/document/d/1But-hjet8-djv519HEKvBN6Ik2lW3yu0ojZo6pG9osY/edit#heading=h.aw3bt3fg1s2w][this google doc on a shape
+  typing syntax proposal]] by Matthew Rahtz, Jörg Bornschein, Vlad Mikulik, Tim
+  Harley, Matthew Willson, Dimitrios Vytiniotis, Sergei Lebedev, Adam Paszke.
+  #+end_quote
+
+  As we've seen, ~numpy~'s ~NDArray~ currently only supports ~dtype~ typing and
+  doesn't have any of this kind of shape typing ability. But why is that? If we
+  dig into the definition of the ~NDArray~ type:
 
   #+begin_src python
     ScalarType = TypeVar("ScalarType", bound=np.generic, covariant=True)
@@ -457,11 +488,15 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
         NDArray = _GenericAlias(np.ndarray, (Any, _DType))
   #+end_src
 
+  #+RESULTS:
+
   And follow the definition of ~np.ndarray~ ...
 
   #+begin_src python
     class ndarray(_ArrayOrScalarCommon, Generic[_ShapeType, _DType_co]):
   #+end_src
+
+  #+RESULTS:
 
   We can see that it looks like ~numpy~ uses a ~Shape~ type already! But
   unfortunately if we look at the definition for this ...
@@ -473,13 +508,15 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
     _ShapeType2 = TypeVar("_ShapeType2", bound=Any)
   #+end_src
 
+  #+RESULTS:
+
   😭 Looks like we're stuck with ~Any~ which doesn't add any useful shape
   information on our types.
 
-  But what if we don't want to wait for shape support in ~numpy~ 🤔? Luckily for
-  us, [[https://peps.python.org/pep-0646/][PEP 646]] has the base foundation for shape typing and has already been
-  accepted into python ~3.11~! And it's supported by ~pyright~! Theoretically
-  these two things give us most of the ingredients to do basic shape typing.
+  Luckily for us, we don't have to wait for shape support in ~numpy~. [[https://peps.python.org/pep-0646/][PEP 646]] has
+  the base foundation for shape typing and has already been accepted into python
+  ~3.11~! And it's supported by ~pyright~! Theoretically these two things give
+  us most of the ingredients to do basic shape typing.
 
   Now this blog post isn't about the details of [[https://peps.python.org/pep-0646/][PEP 646]] or variadic
   generics. But the rest of this post will assume you know the basics of how
@@ -501,13 +538,16 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
         NDArray = _GenericAlias(np.ndarray, (Any, _DType))
   #+end_src
 
-  Doing so allows us to fill in a ~Tuple~ based type (indicating array shape) in
-  an ~NDArray~ alongside a ~dtype~ type. And by being able to type with
-  ~Tuple~'s enables us define function overloads which describe to a type
-  checker the possible ways a function can change the shape of an ~NDArray~.
+  #+RESULTS:
 
-  Let's try using these concepts to overloading a wrapper function for
-  ~np.random.standard_normal~ from our ~Linear~ example:
+  Doing so allows us to fill in a ~Tuple~ based type (indicating shape) in an
+  ~NDArray~ alongside a ~dtype~ type. And shape typing with ~Tuple~'s enables us
+  define function overloads which describe to a type checker the possible ways a
+  function can change the shape of an ~NDArray~.
+
+  Let's look at an example of using these concepts to type a wrapper function
+  for ~np.random.standard_normal~ from our ~Linear~ example with an intentional
+  type error:
 
   #+NAME: numpy-shape_typing-environment-start
   #+HEADER: :exports none
@@ -528,8 +568,7 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
 
   #+RESULTS: numpy-shape_typing-environment-start
   : Running container if not already running ...
-  : 3d870e0fd5fa2430fd4ed76984ac5cf58bd224aed492e5c51efe1dac4dfcc491
-  : Container starting...
+  : Container already running...
 
   #+NAME: setup-vars-shape-typing
   #+HEADER: :exports none
@@ -541,17 +580,19 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
   #+RESULTS: setup-vars-shape-typing
   : py
 
-  #+HEADER: :exports code :results output verbatim
+  #+HEADER: :exports both :results output verbatim
   #+HEADER: :tangle bad_shape_typing.py
   #+begin_src python :dir (org-sbe container-dir-str-shape-typing)
     import numpy as np
     from numpy.typing import NDArray
     from typing import Tuple, TypeVar, Literal
 
-    # shape typing boilerplate
+    # Generic dimension sizes types
     T1 = TypeVar("T1", bound=int)
     T2 = TypeVar("T2", bound=int)
     T3 = TypeVar("T3", bound=int)
+
+    # Dimension types represented as typles
     Shape = Tuple
     Shape1D = Shape[T1]
     Shape2D = Shape[T1, T2]
@@ -563,48 +604,41 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
         """Return a random ND normal matrix."""
         return np.random.standard_normal(size=shape)
 
-    # Yay correct 2x2x2 cube!
+    # Yay correctly typed 2x2x2 cube!
     TWO = Literal[2]
     two_by_two_by_two: NDArray[Shape3D[TWO, TWO, TWO], np.float64] = rand_normal_matrix((2,2,2))
     print(two_by_two_by_two)
 
-    COLS = Literal[10]
-    ROWS = Literal[10]
+    FOUR = Literal[4]
 
     # Uh oh the shapes won't match!
-    ten_by_ten: NDArray[Shape2D[COLS, ROWS], np.float64] = rand_normal_matrix((5,5))
-    print(ten_by_ten)
+    four_by_four: NDArray[Shape2D[FOUR, FOUR], np.float64] = rand_normal_matrix((3,3))
+    print(four_by_four)
   #+end_src
 
   #+RESULTS:
-  #+begin_example
-  [[[ 1.08383684 -0.93235767]
-    [ 0.77370489 -0.23094173]]
-
-   [[-0.36080346 -1.60719666]
-    [-0.72917753  0.73126763]]]
-  [[-0.1583864  -0.54168374 -1.05106127  0.44360795  1.67406833]
-   [ 0.49748789  0.41599082  0.04458734  1.27599865 -0.44602015]
-   [-0.1390734   0.75398734  0.82568951 -0.25329142 -1.40010258]
-   [-0.62565285  1.06906175  1.14700824  1.06373754 -0.98659981]
-   [-0.40292483 -0.40227061 -0.33068709  1.29622372 -2.94897423]]
-  #+end_example
+  : [[[-0.25349245  0.48769158]
+  :   [ 0.71369366  1.87259878]]
+  :
+  :  [[ 1.16757851 -0.71031436]
+  :   [-0.68083206  0.49385056]]]
+  : [[-1.23500485 -0.97530914 -0.01870734]
+  :  [ 0.50789676  1.31297228  2.11942613]
+  :  [-0.44229871  1.02762774  0.75637794]]
 
   Notice here there are no ~assert~ statements. And instead of several comments
   about shape, we indicate shape in the type hint.
 
   Now while this code is "runnable", ~pyright~ will tell us something else:
 
-  #+NAME: pyright-bad-shape-typing
   #+HEADER: :results output
   #+begin_src bash :dir (org-sbe container-dir-str-shape-typing) :session pyright-shape-typing
     py -m pyright bad_shape_typing.py --lib
   #+end_src
 
-  #+RESULTS: pyright-bad-shape-typing
+  #+RESULTS:
   #+begin_example
-
-  $ /opt/project/.venv/lib/python3.11/site-packages/nodeenv.py:26: DeprecationWarning: 'pipes' is deprecated and slated for removal in Python 3.13
+  /opt/project/.venv/lib/python3.11/site-packages/nodeenv.py:26: DeprecationWarning: 'pipes' is deprecated and slated for removal in Python 3.13
     import pipes
    ,* Install prebuilt node (19.7.0) ..... done.
   No configuration file found.
@@ -613,16 +647,16 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
   Assuming Python platform Linux
   Searching for source files
   Found 1 source file
-  pyright 1.1.296
+  pyright 1.1.298
   /mnt/bad_shape_typing.py
-    /mnt/bad_shape_typing.py:29:75 - error: Argument of type "tuple[Literal[5], Literal[5]]" cannot be assigned to parameter "shape" of type "ShapeNDType@rand_normal_matrix" in function "rand_normal_matrix"
-      Type "Shape2D[COLS, ROWS]" cannot be assigned to type "tuple[Literal[5], Literal[5]]" (reportGeneralTypeIssues)
+    /mnt/bad_shape_typing.py:30:77 - error: Argument of type "tuple[Literal[3], Literal[3]]" cannot be assigned to parameter "shape" of type "ShapeNDType@rand_normal_matrix" in function "rand_normal_matrix"
+      Type "Shape2D[FOUR, FOUR]" cannot be assigned to type "tuple[Literal[3], Literal[3]]" (reportGeneralTypeIssues)
   1 error, 0 warnings, 0 informations
-  Completed in 0.538sec
+  Completed in 0.541sec
   #+end_example
 
-  ~pyright~ is telling us we've incorrectly typed ~ten_by_ten~ and that it's
-  incompatible with a ~5x5~ shape. Now we know we need to go back and fix the
+  ~pyright~ is telling us we've incorrectly typed ~four_by_four~ and that it's
+  incompatible with a ~3x3~ shape. Now we know we need to go back and fix the
   type to what a type checker should expect.
 
   Huzzah shape typing!!
@@ -634,21 +668,21 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
   types. We've already typed ~np.random.standard_normal~, so next let's do
   ~np.dot~.
 
-  If we look at the [[https://numpy.org/doc/stable/reference/generated/numpy.dot.html][docs for ~np.dot~]] there are 5 type cases it supports (and
-  only 4 we can implement).
+  If we look at the [[https://numpy.org/doc/stable/reference/generated/numpy.dot.html][docs for ~np.dot~]] there are 5 type cases it supports.
 
   1. Both arguments as ~1D~ arrays
 
-  2. Both arguments are ~2D~ arrays (resulting in a matmul)
+  2. Both arguments are ~2D~ arrays (resulting in a ~matmul~)
 
   3. Either arguments are scalars
 
-  4. Either arguments are ~ND~ arrays and the other argument is a ~1D~ array
+  4. Either argument is a ~ND~ array and the other is a ~1D~ array
 
   5. One argument is ~ND~ array and the other is ~MD~ array
 
   We can implement these cases as follows
 
+  #+HEADER: :exports code
   #+begin_src python :noeval
     ShapeVarGen = TypeVarTuple("ShapeVarGen")
 
@@ -684,8 +718,9 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
   #+end_src
 
   The only case we can't implement is an ~ND~ dimensional array with an ~MD~
-  dimensional array. We would try implementing it like so:
+  dimensional array. Ideally we would try implementing it like so:
 
+  #+HEADER: :exports code
   #+begin_src python :noeval
     ShapeVarGen1 = TypeVarTuple("ShapeVarGen1")
     ShapeVarGen2 = TypeVarTuple("ShapeVarGen2")
@@ -698,8 +733,8 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
   #+end_src
 
   But currently using multiple type variable tuples [[https://peps.python.org/pep-0646/#multiple-type-variable-tuples-not-allowed][is not allowed]]. If you know
-  of another generic way to cover this case let me know! Luckily, our ~Linear~
-  use case only uses scalars, vectors, and matrices which is covered by our
+  of another way to cover this case let me know! Luckily for our ~Linear~ use
+  case, it only uses scalars, vectors, and matrices which is covered by our four
   overloads.
 
   Here's how we would use these ~dot~ overloads to do the dot product between a
@@ -725,18 +760,17 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
   #+end_src
 
   #+RESULTS:
-  : [[-1.7426746   1.08235593]
-  :  [ 1.80474815 -1.69172741]]
+  : [[ 0.91270269  1.14463641]
+  :  [-0.05479925  0.05966535]]
 
   And if we check with ~pyright~:
 
-  #+NAME: pyright-good-dot
   #+HEADER: :results output
   #+begin_src bash :dir (org-sbe container-dir-str-shape-typing) :session pyright-shape-typing
     py -m pyright good_dot.py --lib
   #+end_src
 
-  #+RESULTS: pyright-good-dot
+  #+RESULTS:
   #+begin_example
   /opt/project/.venv/lib/python3.11/site-packages/nodeenv.py:26: DeprecationWarning: 'pipes' is deprecated and slated for removal in Python 3.13
     import pipes
@@ -747,9 +781,9 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
   Assuming Python platform Linux
   Searching for source files
   Found 1 source file
-  pyright 1.1.296
+  pyright 1.1.298
   0 errors, 0 warnings, 0 informations
-  Completed in 0.553sec
+  Completed in 0.546sec
   #+end_example
 
   Everything looks good as it should!
@@ -772,22 +806,24 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
     FOUR = Literal[4]
     A: NDArray[Shape2D[TWO, THREE], np.float64] = rand_normal_matrix((2,3))
     B: NDArray[Shape2D[FOUR, FOUR], np.float64] = rand_normal_matrix((4,4))
+
+    # uh oh bad shape type
     C: NDArray[Shape2D[TWO, TWO], np.float64] = dot(A, B)
     print(C)
   #+end_src
 
   #+RESULTS:
 
-  #+NAME: pyright-bad-dot
+  And if we check with ~pyright~:
+
   #+HEADER: :results output
   #+begin_src bash :dir (org-sbe container-dir-str-shape-typing) :session pyright-bad-shape-typing
     py -m pyright ./bad_dot.py --lib
   #+end_src
 
-  #+RESULTS: pyright-bad-dot
+  #+RESULTS:
   #+begin_example
-
-  $ /opt/project/.venv/lib/python3.11/site-packages/nodeenv.py:26: DeprecationWarning: 'pipes' is deprecated and slated for removal in Python 3.13
+  /opt/project/.venv/lib/python3.11/site-packages/nodeenv.py:26: DeprecationWarning: 'pipes' is deprecated and slated for removal in Python 3.13
     import pipes
    ,* Install prebuilt node (19.7.0) ..... done.
   No configuration file found.
@@ -796,42 +832,46 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
   Assuming Python platform Linux
   Searching for source files
   Found 1 source file
-  pyright 1.1.296
+  pyright 1.1.298
   /mnt/bad_dot.py
-    /mnt/bad_dot.py:14:49 - error: Argument of type "NDArray[Shape2D[TWO, THREE], float64]" cannot be assigned to parameter "x1" of type "GenericDType@dot" in function "dot"
+    /mnt/bad_dot.py:16:49 - error: Argument of type "NDArray[Shape2D[TWO, THREE], float64]" cannot be assigned to parameter "x1" of type "GenericDType@dot" in function "dot"
       Type "NDArray[Shape2D[TWO, THREE], float64]" cannot be assigned to type "NDArray[Shape2D[TWO, TWO], float64]"
         "NDArray[Shape2D[TWO, THREE], float64]" is incompatible with "NDArray[Shape2D[TWO, TWO], float64]"
           TypeVar "_ShapeType@ndarray" is invariant
             "*tuple[Shape2D[TWO, THREE]]" is incompatible with "*tuple[Shape2D[TWO, TWO]]"
               Tuple entry 1 is incorrect type (reportGeneralTypeIssues)
-    /mnt/bad_dot.py:14:52 - error: Argument of type "NDArray[Shape2D[FOUR, FOUR], float64]" cannot be assigned to parameter "x2" of type "GenericDType@dot" in function "dot"
+    /mnt/bad_dot.py:16:52 - error: Argument of type "NDArray[Shape2D[FOUR, FOUR], float64]" cannot be assigned to parameter "x2" of type "GenericDType@dot" in function "dot"
       Type "NDArray[Shape2D[FOUR, FOUR], float64]" cannot be assigned to type "NDArray[Shape2D[TWO, TWO], float64]"
         "NDArray[Shape2D[FOUR, FOUR], float64]" is incompatible with "NDArray[Shape2D[TWO, TWO], float64]"
           TypeVar "_ShapeType@ndarray" is invariant
             "*tuple[Shape2D[FOUR, FOUR]]" is incompatible with "*tuple[Shape2D[TWO, TWO]]"
               Tuple entry 1 is incorrect type (reportGeneralTypeIssues)
   2 errors, 0 warnings, 0 informations
-  Completed in 0.561sec
+  Completed in 0.547sec
   #+end_example
 
-  ~pyright~ let's us know that the types we are using are incorrect based on the
-  type overloads we've specified.
+  ~pyright~ let's us know that the types we are using are incorrect shapes based
+  on ~np.dot~'s type overloads we've specified.
 
 * Even moar ~numpy~ shape typing!
 
   The next function we are going to type is ~np.add~. The [[https://numpy.org/doc/stable/reference/generated/numpy.add.html][~numpy~ docs]] only show
   two cases.
 
-  1. 2 ~ND~ array arguments of the same shape are added element wise
+  1. Two ~ND~ array arguments of the same shape are added element wise
 
-  2. 2 ~ND~ array arguments that are not the same shape must be broadcastable to
+  2. Two ~ND~ array arguments that are not the same shape must be broadcastable to
      a common shape
 
   Covering the first case is easy, but the second case is much harder as we
   would have to come up with a scheme to cover ~numpy~'s [[https://numpy.org/doc/stable/user/basics.broadcasting.html][array broadcasting
-  system]]. However with a few overloads we can cover the broadcasting types for
-  two dimensions.
+  system]]. Currently ~python==3.11~'s ~typing~ doesn't have a generic way to
+  cover all the broadcasting rules. (If you know of a way let me know!)
 
+  However if we scope down the second case to only two dimensions, we can cover
+  all the array broadcasting rules with a few overloads:
+
+  #+HEADER: :exports code
   #+begin_src python :noeval
     from typing import overload
 
@@ -947,10 +987,9 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
   Using these overloads, here is how we would catch unexpected array broadcasts
   (similar to the one from our original ~Linear~ example).
 
-
   #+HEADER: :exports code :results output verbatim
-  #+HEADER: :tangle unnexpected_broadcast.py :noeval
-  #+begin_src python
+  #+HEADER: :tangle unnexpected_broadcast.py
+  #+begin_src python :dir (org-sbe container-dir-str-shape-typing)
     from typing import Literal
 
     import numpy as np
@@ -964,19 +1003,25 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
     FOUR = Literal[4]
     A: NDArray[Shape2D[FOUR, FOUR], np.float64] = rand_normal_matrix((4, 4))
     B: NDArray[Shape2D[ONE, FOUR], np.float64] = rand_normal_matrix((1, 4))
-    C: NDArray[Shape2D[FOUR, ONE], np.float64] = add(A, B)
+    C: NDArray[Shape2D[ONE, FOUR], np.float64] = add(A, B)
     print(C)
   #+end_src
 
   #+RESULTS:
+  : [[ 0.52190456 -0.59038544 -0.16410868 -1.97714141]
+  :  [-1.36188878 -1.32828576 -0.0162497   1.1594779 ]
+  :  [-0.85793515 -0.47610803 -1.03530451 -1.07469943]
+  :  [ 2.29569189  1.48435967  0.54641844 -0.42001828]]
 
-  #+NAME: pyright-unexpected-broadcast
+  In the example above, our output is a ~4x4~ matrix, but from our types we wanted
+  an output shape of ~4x1~. Let's see what ~pyright~ says
+
   #+HEADER: :results output
   #+begin_src bash :dir (org-sbe container-dir-str-shape-typing) :session pyright-bad-shape-typing
     py -m pyright unnexpected_broadcast.py --lib
   #+end_src
 
-  #+RESULTS: pyright-unexpected-broadcast
+  #+RESULTS:
   #+begin_example
   /opt/project/.venv/lib/python3.11/site-packages/nodeenv.py:26: DeprecationWarning: 'pipes' is deprecated and slated for removal in Python 3.13
     import pipes
@@ -987,32 +1032,35 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
   Assuming Python platform Linux
   Searching for source files
   Found 1 source file
-  pyright 1.1.296
+  pyright 1.1.298
   /mnt/unnexpected_broadcast.py
     /mnt/unnexpected_broadcast.py:14:50 - error: Argument of type "NDArray[Shape2D[FOUR, FOUR], float64]" cannot be assigned to parameter "x1" of type "NDArray[*ShapeVarGen@add, GenericDType@add]" in function "add"
-      "NDArray[Shape2D[FOUR, FOUR], float64]" is incompatible with "NDArray[Shape2D[FOUR, ONE], float64]"
+      "NDArray[Shape2D[FOUR, FOUR], float64]" is incompatible with "NDArray[Shape2D[ONE, FOUR], float64]"
         TypeVar "_ShapeType@ndarray" is invariant
-          "*tuple[Shape2D[FOUR, FOUR]]" is incompatible with "*tuple[Shape2D[FOUR, ONE]]"
+          "*tuple[Shape2D[FOUR, FOUR]]" is incompatible with "*tuple[Shape2D[ONE, FOUR]]"
             Tuple entry 1 is incorrect type
-              "Shape2D[FOUR, FOUR]" is incompatible with "Shape2D[FOUR, ONE]" (reportGeneralTypeIssues)
-    /mnt/unnexpected_broadcast.py:14:53 - error: Argument of type "NDArray[Shape2D[ONE, FOUR], float64]" cannot be assigned to parameter "x2" of type "NDArray[*ShapeVarGen@add, GenericDType@add]" in function "add"
-      "NDArray[Shape2D[ONE, FOUR], float64]" is incompatible with "NDArray[Shape2D[FOUR, ONE], float64]"
-        TypeVar "_ShapeType@ndarray" is invariant
-          "*tuple[Shape2D[ONE, FOUR]]" is incompatible with "*tuple[Shape2D[FOUR, ONE]]"
-            Tuple entry 1 is incorrect type
-              "Shape2D[ONE, FOUR]" is incompatible with "Shape2D[FOUR, ONE]" (reportGeneralTypeIssues)
-  2 errors, 0 warnings, 0 informations
-  Completed in 0.579sec
+              "Shape2D[FOUR, FOUR]" is incompatible with "Shape2D[ONE, FOUR]" (reportGeneralTypeIssues)
+  1 error, 0 warnings, 0 informations
+  Completed in 0.578sec
   #+end_example
 
-  -----
 
-  And now the last function we will type to complete our example is
-  ~np.ravel~. However this is where we reach the limitations of shape typing as
-  they exist today in ~python~ and ~numpy~.
 
-  Ideally we would try to write code like this:
 
+* Hitting the limitations of shape typing 😿
+
+  The last function we will type to finish of our ~Linear~ example is
+  ~np.ravel~. However this is where we start hitting some major limitations of
+  shape typing as they exist today in ~python~ and ~numpy~.
+
+  From the [[https://numpy.org/doc/stable/reference/generated/numpy.ravel.html][numpy docs on]] ~np.ravel~ the only case we need to cover is that any
+  ~ND~ array gets collapsed into a ~1D~ array of size of the total number of
+  elements. Luckily all the information to compute the final ~1D~ size is just
+  the product of all the input dimension sizes.
+
+  Ideally we would try to write code that looks something like this:
+
+  #+HEADER: :exports code
   #+begin_src python :noeval
     ShapeVarGen = TypeVarTuple("ShapeVarGen")
 
@@ -1023,23 +1071,99 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
         ...
   #+end_src
 
-  In order to generically type ~np.ravel~ we need a way to find the product of
-  every dimensions size. But ~python~ currently doesn't provide a way to do
-  algebraic typing like this.
+  But unfortunately ~python~'s ~typing~ package currently doesn't have a notion
+  of a ~Product~ type that provides a way to do algebraic typing.
 
-  However for the sake of completing our ~Linear~ example we can "fake"
-  type ~np.ravel~:
+  However for the sake of completion we can fake it!
+
+  If we scope down from a generic ~ND~ typing of ~np.ravel~ to support up to two
+  dimensions and limit the size of the output dimension to some maximum number,
+  we can overload all the possible factors that multiply to the output dimension
+  size. We would effectively be typing a multiplication table 😆, but it will
+  work and get us to a "partially" typed ~np.ravel~.
+
+  Here's how we can do it.
+
+  First we create a bunch of ~Literal~ types (our factors):
+
+  #+HEADER: :exports code
+  #+begin_src python :noeval
+    ZERO = Literal[0]
+    ONE = Literal[1]
+    TWO = Literal[2]
+    THREE = Literal[3]
+    FOUR = Literal[4]
+    ...
+  #+end_src
+
+  Then we define "multiply" types for factor pairs of numbers:
+
+  #+HEADER: :exports code
+  #+begin_src python :noeval
+    SHAPE_2D_MUL_TO_ONE = TypeVar(
+        "SHAPE_2D_MUL_TO_ONE",
+        bound=Shape2D[Literal[ONE], Literal[ONE]],
+    )
+    SHAPE_2D_MUL_TO_TWO = TypeVar(
+        "SHAPE_2D_MUL_TO_TWO",
+        bound=Union[Shape2D[Literal[ONE], Literal[TWO]], Shape2D[Literal[TWO], Literal[ONE]]],
+    )
+    SHAPE_2D_MUL_TO_THREE = TypeVar(
+        "SHAPE_2D_MUL_TO_THREE",
+        bound=Union[Shape2D[Literal[ONE], Literal[THREE]], Shape2D[Literal[THREE], Literal[ONE]]],
+    )
+    SHAPE_2D_MUL_TO_FOUR = TypeVar(
+        "SHAPE_2D_MUL_TO_FOUR",
+        bound=Union[
+            Shape2D[Literal[ONE], Literal[FOUR]],
+            Shape2D[Literal[TWO], Literal[TWO]],
+            Shape2D[Literal[FOUR], Literal[ONE]],
+        ],
+    )
+  #+end_src
+
+  Then lastly we wire these types up into individual ~ravel~ overloads (and
+  cover a few generic ones while we're at it):
+
+  #+HEADER: :exports code
+  #+begin_src python :noeval
+    @overload
+    def ravel(arr: NDArray[SHAPE_2D_MUL_TO_ONE, GenericDType]) -> NDArray[Shape1D[ONE], GenericDType]:
+        ...
 
 
+    @overload
+    def ravel(arr: NDArray[SHAPE_2D_MUL_TO_TWO, GenericDType]) -> NDArray[Shape1D[TWO], GenericDType]:
+        ...
 
 
-  For more information about shape typing checkout:
-
-  1. [[https://docs.google.com/document/d/1But-hjet8-djv519HEKvBN6Ik2lW3yu0ojZo6pG9osY/edit#heading=h.aw3bt3fg1s2w][This google doc on a shape typing syntax proposal]] by Matthew Rahtz, Jörg
-     Bornschein, Vlad Mikulik, Tim Harley, Matthew Willson, Dimitrios
-     Vytiniotis, Sergei Lebedev, Adam Paszke
+    @overload
+    def ravel(arr: NDArray[SHAPE_2D_MUL_TO_THREE, GenericDType]) -> NDArray[Shape1D[THREE], GenericDType]:
+        ...
 
 
+    @overload
+    def ravel(arr: NDArray[SHAPE_2D_MUL_TO_FOUR, GenericDType]) -> NDArray[Shape1D[FOUR], GenericDType]:
+        ...
+
+    @overload
+    def ravel(arr: NDArray[Shape2D[T1, ONE], GenericDType]) -> NDArray[Shape1D[T1], GenericDType]:
+        ...
+
+
+    @overload
+    def ravel(arr: NDArray[Shape2D[ONE, T1], GenericDType]) -> NDArray[Shape1D[T1], GenericDType]:
+        ...
+
+
+    @overload
+    def ravel(arr: NDArray[Shape1D[T1], GenericDType]) -> NDArray[Shape1D[T1], GenericDType]:
+        ...
+  #+end_src
+
+  Now we can rinse and repeat for as many numbers as we like!
+
+  Here is how we'd use this typing to catch a shape type error with ~ravel~:
 
   #+HEADER: :exports code :results output verbatim
   #+HEADER: :tangle raveling.py :noeval
@@ -1058,13 +1182,12 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
 
   #+RESULTS:
 
-  #+NAME: pyright-raveling
   #+HEADER: :results output
   #+begin_src bash :dir (org-sbe container-dir-str-shape-typing) :session pyright-bad-shape-typing
     py -m pyright raveling.py --lib
   #+end_src
 
-  #+RESULTS: pyright-raveling
+  #+RESULTS:
   #+begin_example
   /opt/project/.venv/lib/python3.11/site-packages/nodeenv.py:26: DeprecationWarning: 'pipes' is deprecated and slated for removal in Python 3.13
     import pipes
@@ -1075,7 +1198,7 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
   Assuming Python platform Linux
   Searching for source files
   Found 1 source file
-  pyright 1.1.296
+  pyright 1.1.298
   /mnt/raveling.py
     /mnt/raveling.py:9:42 - error: Expression of type "NDArray[Shape1D[EIGHT], float64]" cannot be assigned to declared type "NDArray[Shape1D[SEVEN], float64]"
       "NDArray[Shape1D[EIGHT], float64]" is incompatible with "NDArray[Shape1D[SEVEN], float64]"
@@ -1084,5 +1207,163 @@ otherwise), it's more frequent than not we encounter shape errors like the one b
             Tuple entry 1 is incorrect type
               "Shape1D[EIGHT]" is incompatible with "Shape1D[SEVEN]" (reportGeneralTypeIssues)
   1 error, 0 warnings, 0 informations
-  Completed in 0.559sec
+  Completed in 0.558sec
   #+end_example
+
+* Putting it all together
+
+  So far we've gone through typing a small subset of ~numpy~'s functions
+  (~np.random.standard_normal~, ~np.dot~, ~np.add~, and ~np.ravel~ in all).
+
+  Now we can chain these typed functions together to form a typed ~Linear~
+  implementation like so:
+
+  #+HEADER: :exports code :results output verbatim
+  #+HEADER: :tangle linear_type_bad.py :noeval
+  #+begin_src python
+    from typing import Literal
+
+    import numpy as np
+    from numpy.typing import NDArray
+
+    from numpy_shape_typing.add import add
+    from numpy_shape_typing.dot import dot
+    from numpy_shape_typing.rand import rand_normal_matrix
+    from numpy_shape_typing.ravel import ravel
+    from numpy_shape_typing.types import ONE, T1, T2, GenericDType, Shape1D, Shape2D
+
+
+    def Linear(
+            A: NDArray[Shape2D[T1, T2], GenericDType],
+            x: NDArray[Shape2D[T2, ONE], GenericDType],
+            b: NDArray[Shape2D[T1, ONE], GenericDType],
+    ) -> NDArray[Shape1D[T1], GenericDType]:
+        Ax = dot(A, x)
+        Axb = add(Ax, b)
+        return ravel(Axb)
+
+
+    IN_DIM = Literal[3]
+    in_dim: IN_DIM = 3
+
+    OUT_DIM = Literal[4]
+    out_dim: OUT_DIM = 4
+
+    # bad type >:(
+    BAD_OUT_DIM = Literal[5]
+
+    A: NDArray[Shape2D[OUT_DIM, IN_DIM], np.float64] = rand_normal_matrix((out_dim, in_dim))
+    x: NDArray[Shape2D[IN_DIM, ONE], np.float64] = rand_normal_matrix((in_dim, 1))
+    b: NDArray[Shape2D[OUT_DIM, ONE], np.float64] = rand_normal_matrix((out_dim, 1))
+
+    # this is a bad type! we should have an output shape type of "Shape1D[BAD_OUT_DIM]"
+    y: NDArray[Shape1D[BAD_OUT_DIM], np.float64] = Linear(A, x, b)
+  #+end_src
+
+  #+RESULTS:
+
+  I've included an intentional type error which should be caught by ~pyright~
+  like so:
+
+  #+HEADER: :results output
+  #+begin_src bash :dir (org-sbe container-dir-str-shape-typing) :session pyright-bad-shape-typing
+    py -m pyright linear_type_bad.py --lib
+  #+end_src
+
+  #+RESULTS:
+  #+begin_example
+  /opt/project/.venv/lib/python3.11/site-packages/nodeenv.py:26: DeprecationWarning: 'pipes' is deprecated and slated for removal in Python 3.13
+    import pipes
+   ,* Install prebuilt node (19.7.0) ..... done.
+  No configuration file found.
+  No pyproject.toml file found.
+  stubPath /mnt/typings is not a valid directory.
+  Assuming Python platform Linux
+  Searching for source files
+  Found 1 source file
+  pyright 1.1.298
+  /mnt/linear_type_bad.py
+    /mnt/linear_type_bad.py:37:55 - error: Argument of type "NDArray[Shape2D[OUT_DIM, IN_DIM], float64]" cannot be assigned to parameter "A" of type "NDArray[Shape2D[T1@Linear, T2@Linear], GenericDType@Linear]" in function "Linear"
+      "NDArray[Shape2D[OUT_DIM, IN_DIM], float64]" is incompatible with "NDArray[Shape2D[BAD_OUT_DIM, IN_DIM], float64]"
+        TypeVar "_ShapeType@ndarray" is invariant
+          "*tuple[Shape2D[OUT_DIM, IN_DIM]]" is incompatible with "*tuple[Shape2D[BAD_OUT_DIM, IN_DIM]]"
+            Tuple entry 1 is incorrect type
+              "Shape2D[OUT_DIM, IN_DIM]" is incompatible with "Shape2D[BAD_OUT_DIM, IN_DIM]" (reportGeneralTypeIssues)
+    /mnt/linear_type_bad.py:37:61 - error: Argument of type "NDArray[Shape2D[OUT_DIM, ONE], float64]" cannot be assigned to parameter "b" of type "NDArray[Shape2D[T1@Linear, ONE], GenericDType@Linear]" in function "Linear"
+      "NDArray[Shape2D[OUT_DIM, ONE], float64]" is incompatible with "NDArray[Shape2D[BAD_OUT_DIM, ONE], float64]"
+        TypeVar "_ShapeType@ndarray" is invariant
+          "*tuple[Shape2D[OUT_DIM, ONE]]" is incompatible with "*tuple[Shape2D[BAD_OUT_DIM, ONE]]"
+            Tuple entry 1 is incorrect type
+              "Shape2D[OUT_DIM, ONE]" is incompatible with "Shape2D[BAD_OUT_DIM, ONE]" (reportGeneralTypeIssues)
+  2 errors, 0 warnings, 0 informations
+  Completed in 0.657sec
+  #+end_example
+
+  And huzzah again! ~pyright~ has caught the shape type error!
+
+  And now we can fix this shape error by changing ~BAD_OUT_DIM~ to the correct
+  output dimension size.
+
+  #+HEADER: :exports code :results output verbatim
+  #+HEADER: :tangle linear_type_good.py :noeval
+  #+begin_src python
+    from typing import Literal
+
+    import numpy as np
+    from numpy.typing import NDArray
+
+    from numpy_shape_typing.add import add
+    from numpy_shape_typing.dot import dot
+    from numpy_shape_typing.rand import rand_normal_matrix
+    from numpy_shape_typing.ravel import ravel
+    from numpy_shape_typing.types import ONE, T1, T2, GenericDType, Shape1D, Shape2D
+
+
+    def Linear(
+            A: NDArray[Shape2D[T1, T2], GenericDType],
+            x: NDArray[Shape2D[T2, ONE], GenericDType],
+            b: NDArray[Shape2D[T1, ONE], GenericDType],
+    ) -> NDArray[Shape1D[T1], GenericDType]:
+        Ax = dot(A, x)
+        Axb = add(Ax, b)
+        return ravel(Axb)
+
+
+    IN_DIM = Literal[3]
+    in_dim: IN_DIM = 3
+
+    OUT_DIM = Literal[4]
+    out_dim: OUT_DIM = 4
+
+    A: NDArray[Shape2D[OUT_DIM, IN_DIM], np.float64] = rand_normal_matrix((out_dim, in_dim))
+    x: NDArray[Shape2D[IN_DIM, ONE], np.float64] = rand_normal_matrix((in_dim, 1))
+    b: NDArray[Shape2D[OUT_DIM, ONE], np.float64] = rand_normal_matrix((out_dim, 1))
+    y: NDArray[Shape1D[OUT_DIM], np.float64] = Linear(A, x, b)
+  #+end_src
+
+  #+RESULTS:
+
+  And if we check with ~pyright~.
+
+  #+HEADER: :results output
+  #+begin_src bash :dir (org-sbe container-dir-str-shape-typing) :session pyright-bad-shape-typing
+    py -m pyright linear_type_good.py --lib
+  #+end_src
+
+  #+RESULTS:
+  #+begin_example
+  /opt/project/.venv/lib/python3.11/site-packages/nodeenv.py:26: DeprecationWarning: 'pipes' is deprecated and slated for removal in Python 3.13
+    import pipes
+   ,* Install prebuilt node (19.7.0) ..... done.
+  No configuration file found.
+  No pyproject.toml file found.
+  stubPath /mnt/typings is not a valid directory.
+  Assuming Python platform Linux
+  Searching for source files
+  Found 1 source file
+  pyright 1.1.298
+  0 errors, 0 warnings, 0 informations
+  Completed in 0.647sec
+  #+end_example
+
+  ~pyright~ tells us that our types are consistent!
