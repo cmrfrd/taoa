@@ -1,0 +1,211 @@
++++
+title = "Learning Abstract Algebra"
+author = ["Alexander Comerford"]
+draft = false
++++
+
+I am currently learning abstract algebra through a tutor after realizing how in
+over my head I was learning elliptic curve pairings. On an abstract level I
+understand billinear maps (which are the desired result produced by elliptic
+curve pairings), but wawaweewa the underlying mechanisms are
+NOT SIMPLE.
+
+I thought I understood a lot of the fundamentals of elliptic curves, but in
+order to understand "pairings" you need almost an order of magnitude more
+knowledge of elliptic curves to do so.
+
+In order to grow my mathematical foundation I'm leveraging the help of a tutor
+to help me smooth over the gaps of my knowledge.
+
+I am starting with undergrad content in abstract algebra here:
+
+<https://www.math.miami.edu/~armstrong/562sp22/562sp22notes.pdf>
+
+My primary goal is to be able to retain and use this knowledge as a stepping
+stone for further complicated topics. To achieve this I'll be taking digestible
+pieces from the source material and produce a few blog post (maybe about the
+proofs).
+
+
+## Homework #1
+
+
+### Setup
+
+```emacs-lisp
+(setq org-babel-python-command (format "%s/sage" (getenv "SCRIPTS")))
+(setq py-default-interpreter (format "%s/sage" (getenv "SCRIPTS")))
+```
+
+```python
+import multiprocessing.pool
+import functools
+
+def timeout(max_timeout):
+    """Timeout decorator, parameter in seconds."""
+    def timeout_decorator(item):
+        """Wrap the original function."""
+        @functools.wraps(item)
+        def func_wrapper(*args, **kwargs):
+            """Closure for function."""
+            pool = multiprocessing.pool.ThreadPool(processes=1)
+            async_result = pool.apply_async(item, args, kwargs)
+            # raises a TimeoutError if execution exceeds max_timeout
+            return async_result.get(max_timeout)
+        return func_wrapper
+    return timeout_decorator
+```
+
+
+### Question 1
+
+Write a computer program to compute the order of a mod n, i.e., the smallest
+r>=1 such that a^r = 1 mod n.
+
+```python
+@timeout(3.0)
+def find_order_naive(a, n):
+    '''
+    solves for r:
+    a^r = 1 mod n
+    '''
+    r = 1
+    while pow(a, r, n) != 1:
+        r += 1
+    return r
+
+print(find_order_naive(10, 17))
+```
+
+```text
+16
+```
+
+
+### Question 2
+
+Use your program to find the order of every element of (Z/13Z)^X. Since
+phi(13)=12 we know from Euler's totient theorem that the order of every
+element of (Z/13)^X has order that divides 12.
+
+```python
+ring_size = 13
+results = [["Element", "Order", f"Div{ring_size-1}"]]
+for elem in range(2, ring_size):
+    order = find_order_naive(elem, ring_size)
+    results.append(
+        [
+         elem,
+         order,
+         (ring_size-1) % order == 0
+         ]
+  )
+results
+```
+
+| Element | Order | Div12 |
+|---------|-------|-------|
+| 2       | 12    | True  |
+| 3       | 3     | True  |
+| 4       | 6     | True  |
+| 5       | 4     | True  |
+| 6       | 12    | True  |
+| 7       | 12    | True  |
+| 8       | 4     | True  |
+| 9       | 3     | True  |
+| 10      | 6     | True  |
+| 11      | 12    | True  |
+| 12      | 2     | True  |
+
+Compute phi(d) for every divisor of 12, i.e., for d=1, 2, 3, 4, 6, 12.
+
+```python
+from sympy import divisors
+from sympy.ntheory import factorint, divisors
+
+def totient(n):
+    prime_factors = factorint(n, limit=10000)
+    ans = n
+    for p in prime_factors.keys():
+        ans *= 1 - (1/p)
+    return ans
+
+for d in divisors(12):
+    print(totient(d))
+
+```
+
+```text
+1
+1.0
+2.0
+2.0
+2.0
+4.0
+```
+
+Observe that the number of elements of (Z/13Z)^X of order d equals phi(d). In
+particular, observe that there are phi(12) elements of order 12. These are the
+"generators" of (Z/13)^X.
+
+We will prove later that the same ideas hold for (Z/pZ)^X whenever p is prime.
+
+
+## Homework #2
+
+
+### Primitive root theorem
+
+For any finite field F the group of units (F\*,\*,1) is cyclic. (Write F\* for
+the nonzero elements of F.) That is, there exists a nonzero element a in F
+such that every nonzero element has the form a^k for some integer k.
+
+The proof has three major steps:
+
+1.  Any polynomial of degree n over F has at most n roots in F.
+
+    If we assume know that polynomials and their degrees have the following
+    properties:
+
+    \begin{align} p\left(x\right) = {\prod_{i=1}^{m} -c_{i} + x} \\ {\rm deg}\left(p_{1}\left(x\right)\right) + {\rm deg}\left(p_{2}\left(x\right)\right) = {\rm deg}\left(p_{1}\left(x\right) p_{2}\left(x\right)\right) \end{align}
+
+    where every c<sub>i</sub> is a "zero" of the
+    polynomial. Say we have two non zero polynomials p and g with p having
+    degree n:
+
+    \begin{align} p\left(x\right) = g\left(x\right) {\prod_{i=1}^{m} -c_{i} + x} \\ n = {\rm deg}\left(p\left(x\right)\right) \\ n = m + {\rm deg}\left(g\left(x\right)\right) \\ -m + n = {\rm deg}\left(g\left(x\right)\right) \end{align}
+
+    Line 6 must be true because the degree of a polynomial cannot be
+    negative. This inequality also holds if f is of order 0 or 1.
+
+    This means that by line 2,
+    $ p\left(x\right) $ must have atleast  roots.
+
+2.  If F\* contains an element of order d, then it contains exactly phi(d)
+    elements of order d.
+
+    Starting here:
+
+    \begin{align} {\rm Ord}\left(a^{k}\right) = {\rm Ord}\left(a^{{\rm gcd}\left(k, n\right)}\right) \\ {\rm Ord}\left(a^{k}\right) = \frac{n}{{\rm gcd}\left(k, n\right)} \end{align}
+
+    we know line 7 is true due to Bezout’s Identity. We also know that any
+    divisor of $ n $ will have
+    an order $ {\rm Ord}\left(a^{k}\right) = \frac{n}{k} $. Lastly since
+    $ {\rm gcd}\left(k, d\right) $ is a divisor of
+    $ d $ (by definition) we can combine these two to form
+    line 8.
+
+1.  The sum of phi(d) over the divisors of n equals n. Example:
+    phi(1)+phi(2)+phi(3)+phi(6)=1+1+2+2=6.
+
+
+### Satisfying the primitive root theorem
+
+On page 197 of the algebra notes there is the multiplication table of a field
+of size eight. It has elements {0, 1, alpha, alpha^2, 1+alpha, 1+alpha^2,
+alpha+alpha^2, 1+alpha+alpha^2}. The coefficients are integers mod 2 (so
++1=-1) and alpha is an "imaginary number" satisfying alpha^3+alpha^2+1=0.
+
+Problem: Verify explicitly that this field satisfies the Primitive Root
+Theorem. That is, find a nonzero element whose powers give all seven nonzero
+elements. More generally, find the order of every nonzero element.
