@@ -1,3 +1,10 @@
+### [1.3.48](https://github.com/cmrfrd/taoa/compare/v1.3.47...v1.3.48) (2023-03-13)
+
+
+### Bug Fixes
+
+* include pyright messages ([9e2132b](https://github.com/cmrfrd/taoa/commit/9e2132b3cb3527fccf8b42e32a242b3eca28fc87))
+
 ### [1.3.47](https://github.com/cmrfrd/taoa/compare/v1.3.46...v1.3.47) (2023-03-12)
 
 
