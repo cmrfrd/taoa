@@ -50,8 +50,8 @@ except Exception as e:
 ```
 
 ```text
-[[0.30107944 0.77536851 1.09367428 0.40458726]
- [0.36731406 1.01442791 1.28123555 0.51842414]]
+[[0.94934161 0.76387417 0.70331537 0.61889709]
+ [1.04017129 1.15667481 0.68654371 0.7545676 ]]
 ```
 
 And while this is a mild case, shape bugs like these become more frequent as
@@ -81,9 +81,9 @@ print(result.shape)
 ```
 
 ```text
-[2.0367838  1.63654023 2.02552241 1.38342291 2.44376582 2.04352225
- 2.43250443 1.79040493 2.65987874 2.25963517 2.64861735 2.00651785
- 2.44294654 2.04270297 2.43168515 1.78958565]
+[1.46692632 1.28588486 1.12812159 1.72904172 0.96773684 0.78669538
+ 0.62893212 1.22985224 1.41900111 1.23795966 1.08019639 1.68111651
+ 1.36515645 1.184115   1.02635173 1.62727186]
 (16,)
 ```
 
@@ -126,7 +126,7 @@ print(result.shape)
 ```
 
 ```text
-[1.72493875 0.91784843 1.57265948 1.49376213]
+[2.07124715 2.15431464 2.06190738 1.8685129 ]
 (4,)
 ```
 
@@ -277,8 +277,8 @@ print(y.dtype)
 ```
 
 ```text
-[-0.38677273 -2.68384527  1.19333451 -0.18736847 -3.43392021 -1.51889879
-  5.6047523   3.97918204  2.54240063  1.95581106]
+[ 2.75583342 -2.88358856 -0.23317297 -3.74406694 -0.78613834 -2.85023411
+ -1.27252403 -7.02892541  1.28997326  2.85915995]
 float64
 ```
 
@@ -287,6 +287,31 @@ checker like `pyright` tells us a different story.
 
 ```bash
 pyright linear_bad_typing.py
+```
+
+```text
+No configuration file found.
+No pyproject.toml file found.
+stubPath /mnt/typings is not a valid directory.
+Assuming Python platform Linux
+Searching for source files
+Found 1 source file
+pyright 1.1.298
+/mnt/linear_bad_typing.py
+  /mnt/linear_bad_typing.py:40:26 - error: Expression of type "ndarray[Any, dtype[float64]]" cannot be assigned to declared type "NDArray[float32]"
+    "ndarray[Any, dtype[float64]]" is incompatible with "NDArray[float32]"
+      TypeVar "_DType_co@ndarray" is covariant
+        "dtype[float64]" is incompatible with "dtype[float32]"
+          TypeVar "_DTypeScalar_co@dtype" is covariant
+            "float64" is incompatible with "float32" (reportGeneralTypeIssues)
+  /mnt/linear_bad_typing.py:41:39 - error: Argument of type "NDArray[float32]" cannot be assigned to parameter "b" of type "NDArray[GenericType@Linear]" in function "Linear"
+    "NDArray[float32]" is incompatible with "NDArray[float64]"
+      TypeVar "_DType_co@ndarray" is covariant
+        "dtype[float32]" is incompatible with "dtype[float64]"
+          TypeVar "_DTypeScalar_co@dtype" is covariant
+            "float32" is incompatible with "float64" (reportGeneralTypeIssues)
+2 errors, 0 warnings, 0 informations
+Completed in 0.626sec
 ```
 
 `pyright` has noticed that when we create our `b` variable, we gave it a
@@ -424,6 +449,20 @@ Now while this code is "runnable", `pyright` will tell us something else:
 py -m pyright bad_shape_typing.py --lib
 ```
 
+```text
+No configuration file found.
+No pyproject.toml file found.
+Assuming Python platform Linux
+Searching for source files
+Found 1 source file
+pyright 1.1.298
+/mnt/bad_shape_typing.py
+  /mnt/bad_shape_typing.py:30:77 - error: Argument of type "tuple[Literal[3], Literal[3]]" cannot be assigned to parameter "shape" of type "ShapeNDType@rand_normal_matrix" in function "rand_normal_matrix"
+    Type "Shape2D[FOUR, FOUR]" cannot be assigned to type "tuple[Literal[3], Literal[3]]" (reportGeneralTypeIssues)
+1 error, 0 warnings, 0 informations
+Completed in 0.563sec
+```
+
 `pyright` is telling us we've incorrectly typed `four_by_four` and that it's
 incompatible with a `3x3` shape. Now we know we need to go back and fix the
 type to what a type checker should expect.
@@ -531,6 +570,17 @@ And if we check with `pyright`:
 py -m pyright good_dot.py --lib
 ```
 
+```text
+No configuration file found.
+No pyproject.toml file found.
+Assuming Python platform Linux
+Searching for source files
+Found 1 source file
+pyright 1.1.298
+0 errors, 0 warnings, 0 informations
+Completed in 0.927sec
+```
+
 Everything looks good as it should!
 
 And if we change the types to invalid matrix shapes:
@@ -559,6 +609,30 @@ And if we check with `pyright`:
 
 ```bash
 py -m pyright ./bad_dot.py --lib
+```
+
+```text
+No configuration file found.
+No pyproject.toml file found.
+Assuming Python platform Linux
+Searching for source files
+Found 1 source file
+pyright 1.1.298
+/mnt/bad_dot.py
+  /mnt/bad_dot.py:16:49 - error: Argument of type "NDArray[Shape2D[TWO, THREE], float64]" cannot be assigned to parameter "x1" of type "GenericDType@dot" in function "dot"
+    Type "NDArray[Shape2D[TWO, THREE], float64]" cannot be assigned to type "NDArray[Shape2D[TWO, TWO], float64]"
+      "NDArray[Shape2D[TWO, THREE], float64]" is incompatible with "NDArray[Shape2D[TWO, TWO], float64]"
+        TypeVar "_ShapeType@ndarray" is invariant
+          "*tuple[Shape2D[TWO, THREE]]" is incompatible with "*tuple[Shape2D[TWO, TWO]]"
+            Tuple entry 1 is incorrect type (reportGeneralTypeIssues)
+  /mnt/bad_dot.py:16:52 - error: Argument of type "NDArray[Shape2D[FOUR, FOUR], float64]" cannot be assigned to parameter "x2" of type "GenericDType@dot" in function "dot"
+    Type "NDArray[Shape2D[FOUR, FOUR], float64]" cannot be assigned to type "NDArray[Shape2D[TWO, TWO], float64]"
+      "NDArray[Shape2D[FOUR, FOUR], float64]" is incompatible with "NDArray[Shape2D[TWO, TWO], float64]"
+        TypeVar "_ShapeType@ndarray" is invariant
+          "*tuple[Shape2D[FOUR, FOUR]]" is incompatible with "*tuple[Shape2D[TWO, TWO]]"
+            Tuple entry 1 is incorrect type (reportGeneralTypeIssues)
+2 errors, 0 warnings, 0 informations
+Completed in 0.933sec
 ```
 
 `pyright` let's us know that the types we are using are incorrect shapes based
@@ -716,12 +790,33 @@ C: NDArray[Shape2D[ONE, FOUR], np.float64] = add(A, B)
 print(C)
 ```
 
-In the example above, our output is a `4x4` matrix, but from our types we wanted
-an output shape of `4x1`. Let's see what `pyright` says
+In the example above, our output is a `4x4` matrix, but what we want from our
+types is an output shape of `4x1`. Let's see what `pyright` says
 
 ```bash
 py -m pyright unnexpected_broadcast.py --lib
 ```
+
+```text
+No configuration file found.
+No pyproject.toml file found.
+Assuming Python platform Linux
+Searching for source files
+Found 1 source file
+pyright 1.1.298
+/mnt/unnexpected_broadcast.py
+  /mnt/unnexpected_broadcast.py:14:50 - error: Argument of type "NDArray[Shape2D[FOUR, FOUR], float64]" cannot be assigned to parameter "x1" of type "NDArray[*ShapeVarGen@add, GenericDType@add]" in function "add"
+    "NDArray[Shape2D[FOUR, FOUR], float64]" is incompatible with "NDArray[Shape2D[ONE, FOUR], float64]"
+      TypeVar "_ShapeType@ndarray" is invariant
+        "*tuple[Shape2D[FOUR, FOUR]]" is incompatible with "*tuple[Shape2D[ONE, FOUR]]"
+          Tuple entry 1 is incorrect type
+            "Shape2D[FOUR, FOUR]" is incompatible with "Shape2D[ONE, FOUR]" (reportGeneralTypeIssues)
+1 error, 0 warnings, 0 informations
+Completed in 2.83sec
+```
+
+`pyright` informs us that our shapes are off and that we got broadcasted to a
+`4x4`! Huzzah shape typing!
 
 
 ## Hitting the limitations of shape typing 😿
@@ -855,6 +950,24 @@ print(B)
 py -m pyright raveling.py --lib
 ```
 
+```text
+No configuration file found.
+No pyproject.toml file found.
+Assuming Python platform Linux
+Searching for source files
+Found 1 source file
+pyright 1.1.298
+/mnt/raveling.py
+  /mnt/raveling.py:9:42 - error: Expression of type "NDArray[Shape1D[EIGHT], float64]" cannot be assigned to declared type "NDArray[Shape1D[SEVEN], float64]"
+    "NDArray[Shape1D[EIGHT], float64]" is incompatible with "NDArray[Shape1D[SEVEN], float64]"
+      TypeVar "_ShapeType@ndarray" is invariant
+        "*tuple[Shape1D[EIGHT]]" is incompatible with "*tuple[Shape1D[SEVEN]]"
+          Tuple entry 1 is incorrect type
+            "Shape1D[EIGHT]" is incompatible with "Shape1D[SEVEN]" (reportGeneralTypeIssues)
+1 error, 0 warnings, 0 informations
+Completed in 0.945sec
+```
+
 
 ## Putting it all together
 
@@ -911,6 +1024,30 @@ like so:
 py -m pyright linear_type_bad.py --lib
 ```
 
+```text
+No configuration file found.
+No pyproject.toml file found.
+Assuming Python platform Linux
+Searching for source files
+Found 1 source file
+pyright 1.1.298
+/mnt/linear_type_bad.py
+  /mnt/linear_type_bad.py:37:55 - error: Argument of type "NDArray[Shape2D[OUT_DIM, IN_DIM], float64]" cannot be assigned to parameter "A" of type "NDArray[Shape2D[T1@Linear, T2@Linear], GenericDType@Linear]" in function "Linear"
+    "NDArray[Shape2D[OUT_DIM, IN_DIM], float64]" is incompatible with "NDArray[Shape2D[BAD_OUT_DIM, IN_DIM], float64]"
+      TypeVar "_ShapeType@ndarray" is invariant
+        "*tuple[Shape2D[OUT_DIM, IN_DIM]]" is incompatible with "*tuple[Shape2D[BAD_OUT_DIM, IN_DIM]]"
+          Tuple entry 1 is incorrect type
+            "Shape2D[OUT_DIM, IN_DIM]" is incompatible with "Shape2D[BAD_OUT_DIM, IN_DIM]" (reportGeneralTypeIssues)
+  /mnt/linear_type_bad.py:37:61 - error: Argument of type "NDArray[Shape2D[OUT_DIM, ONE], float64]" cannot be assigned to parameter "b" of type "NDArray[Shape2D[T1@Linear, ONE], GenericDType@Linear]" in function "Linear"
+    "NDArray[Shape2D[OUT_DIM, ONE], float64]" is incompatible with "NDArray[Shape2D[BAD_OUT_DIM, ONE], float64]"
+      TypeVar "_ShapeType@ndarray" is invariant
+        "*tuple[Shape2D[OUT_DIM, ONE]]" is incompatible with "*tuple[Shape2D[BAD_OUT_DIM, ONE]]"
+          Tuple entry 1 is incorrect type
+            "Shape2D[OUT_DIM, ONE]" is incompatible with "Shape2D[BAD_OUT_DIM, ONE]" (reportGeneralTypeIssues)
+2 errors, 0 warnings, 0 informations
+Completed in 8.446sec
+```
+
 And huzzah again! `pyright` has caught the shape type error!
 
 And now we can fix this shape error by changing `BAD_OUT_DIM` to the correct
@@ -955,6 +1092,17 @@ And if we check with `pyright`.
 
 ```bash
 py -m pyright linear_type_good.py --lib
+```
+
+```text
+No configuration file found.
+No pyproject.toml file found.
+Assuming Python platform Linux
+Searching for source files
+Found 1 source file
+pyright 1.1.298
+0 errors, 0 warnings, 0 informations
+Completed in 8.352sec
 ```
 
 `pyright` tells us that our types are consistent!
