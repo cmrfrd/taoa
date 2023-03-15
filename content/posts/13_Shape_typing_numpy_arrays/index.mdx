@@ -3,7 +3,7 @@ title: "Shape typing numpy with pyright and variadic generics"
 author: ["Alexander Comerford"]
 draft: false
 date: 2023-02-27
-hero: "./images/cover.jpg"
+hero: "./images/cover.jpeg"
 secret: false
 excerpt: "MxN * NxM"
 ---
@@ -50,8 +50,8 @@ except Exception as e:
 ```
 
 ```text
-[[0.73449389 0.54895412 0.4318125  0.49579821]
- [0.64073733 0.53456924 0.4564287  0.45139246]]
+[[0.68034751 0.49931699 0.71019458 0.22819836]
+ [0.56876626 0.5991015  1.19438961 0.3778173 ]]
 ```
 
 And while this is a mild case, shape bugs like these become more frequent as
@@ -81,9 +81,9 @@ print(result.shape)
 ```
 
 ```text
-[0.31747906 0.67557869 0.63683977 0.78580511 0.80719429 1.16529391
- 1.126555   1.27552034 1.21638136 1.57448099 1.53574208 1.68470742
- 1.51774183 1.87584146 1.83710255 1.98606789]
+[1.56441647 1.47650364 1.57303598 1.14131074 1.18493577 1.09702295
+ 1.19355528 0.76183004 1.57644585 1.48853302 1.58506536 1.15334012
+ 1.18260885 1.09469603 1.19122836 0.75950312]
 (16,)
 ```
 
@@ -126,7 +126,7 @@ print(result.shape)
 ```
 
 ```text
-[1.12258688 2.04320971 1.52755498 1.73536779]
+[1.97154938 1.84206823 2.94043945 1.7510802 ]
 (4,)
 ```
 
@@ -276,8 +276,8 @@ print(y.dtype)
 ```
 
 ```text
-[-1.70329184  0.86647688 -1.36582266  0.47069552 -1.20065069  1.19667966
-  0.16447022 -0.46533094  0.02325212  3.52518688]
+[-0.53752298  3.67833386 -1.43092158 -2.58647295  2.44053318 -1.9393581
+ -0.23397058  0.79320484  2.16039462 -0.10612777]
 float64
 ```
 
@@ -289,14 +289,6 @@ pyright linear_bad_typing.py
 ```
 
 ```text
-
-$ /usr/local/lib/python3.11/site-packages/nodeenv.py:26: DeprecationWarning: 'pipes' is deprecated and slated for removal in Python 3.13
-  import pipes
- * Install prebuilt node (19.8.1) ..... done.
-
-added 1 package, and audited 2 packages in 1s
-
-found 0 vulnerabilities
 No configuration file found.
 No pyproject.toml file found.
 stubPath /mnt/typings is not a valid directory.
@@ -318,7 +310,7 @@ pyright 1.1.299
           TypeVar "_DTypeScalar_co@dtype" is covariant
             "float32" is incompatible with "float64" (reportGeneralTypeIssues)
 2 errors, 0 warnings, 0 informations
-Completed in 0.628sec
+Completed in 0.606sec
 ```
 
 `pyright` has noticed that when we create our `b` variable, we gave it a
@@ -466,7 +458,7 @@ pyright 1.1.299
   /mnt/bad_shape_typing.py:30:71 - error: Argument of type "tuple[Literal[3], Literal[3]]" cannot be assigned to parameter "shape" of type "ShapeNDType@rand_normal_matrix" in function "rand_normal_matrix"
     Type "Shape2D[SIDE, SIDE]" cannot be assigned to type "tuple[Literal[3], Literal[3]]" (reportGeneralTypeIssues)
 1 error, 0 warnings, 0 informations
-Completed in 0.55sec
+Completed in 0.528sec
 ```
 
 `pyright` is telling us we've incorrectly typed `cube` and that it's
@@ -584,7 +576,7 @@ Searching for source files
 Found 1 source file
 pyright 1.1.299
 0 errors, 0 warnings, 0 informations
-Completed in 0.922sec
+Completed in 0.917sec
 ```
 
 Everything looks good as it should!
@@ -618,8 +610,7 @@ py -m pyright ./bad_dot.py --lib
 ```
 
 ```text
-
-$ No configuration file found.
+No configuration file found.
 No pyproject.toml file found.
 Assuming Python platform Linux
 Searching for source files
@@ -629,7 +620,7 @@ pyright 1.1.299
   /mnt/bad_dot.py:16:54 - error: Argument of type "NDArray[Shape2D[SLICES, COLS], float64]" cannot be assigned to parameter "x2" of type "GenericDType@dot" in function "dot"
     Type "NDArray[Shape2D[ROWS, COLS], float64]" cannot be assigned to type "NDArray[Shape2D[SLICES, COLS], float64]" (reportGeneralTypeIssues)
 1 error, 0 warnings, 0 informations
-Completed in 0.931sec
+Completed in 0.915sec
 ```
 
 `pyright` let's us know that the types we are using are incorrect shapes based
@@ -809,7 +800,7 @@ pyright 1.1.299
           Tuple entry 1 is incorrect type
             "Shape2D[COLS, COLS]" is incompatible with "Shape2D[ONE, COLS]" (reportGeneralTypeIssues)
 1 error, 0 warnings, 0 informations
-Completed in 2.791sec
+Completed in 2.73sec
 ```
 
 `pyright` informs us that our shapes are off and that we got broadcasted to a
@@ -962,7 +953,7 @@ pyright 1.1.299
           Tuple entry 1 is incorrect type
             "Shape1D[EIGHT]" is incompatible with "Shape1D[SEVEN]" (reportGeneralTypeIssues)
 1 error, 0 warnings, 0 informations
-Completed in 0.944sec
+Completed in 0.925sec
 ```
 
 
@@ -1042,7 +1033,7 @@ pyright 1.1.299
           Tuple entry 1 is incorrect type
             "Shape2D[OUT_DIM, ONE]" is incompatible with "Shape2D[BAD_OUT_DIM, ONE]" (reportGeneralTypeIssues)
 2 errors, 0 warnings, 0 informations
-Completed in 8.186sec
+Completed in 8.132sec
 ```
 
 And huzzah again! `pyright` has caught the shape type error!
@@ -1108,7 +1099,7 @@ Searching for source files
 Found 1 source file
 pyright 1.1.299
 0 errors, 0 warnings, 0 informations
-Completed in 8.046sec
+Completed in 8.131sec
 ```
 
 `pyright` tells us that our types are consistent!

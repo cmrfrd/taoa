@@ -1,6 +1,6 @@
 #+TITLE: Shape typing numpy with pyright and variadic generics
 #+CREATED: <2023-02-27 Mon>
-#+LAST_MODIFIED: [2023-03-15 Wed 16:19]
+#+LAST_MODIFIED: [2023-03-15 Wed 16:36]
 #+ROAM_TAGS: composition
 #+OPTIONS: toc:nil
 #+OPTIONS: tex:t
@@ -9,7 +9,7 @@
 #+HUGO_BASE_DIR: ./
 #+hugo_front_matter_format: yaml
 #+HUGO_CUSTOM_FRONT_MATTER: :date (org-to-blog-date (org-global-prop-value "CREATED"))
-#+HUGO_CUSTOM_FRONT_MATTER: :hero ./images/cover.jpg
+#+HUGO_CUSTOM_FRONT_MATTER: :hero ./images/cover.jpeg
 #+HUGO_CUSTOM_FRONT_MATTER: :secret false
 #+HUGO_CUSTOM_FRONT_MATTER: :excerpt MxN * NxM
 
