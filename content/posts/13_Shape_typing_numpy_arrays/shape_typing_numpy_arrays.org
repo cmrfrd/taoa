@@ -1,6 +1,6 @@
 #+TITLE: Shape typing numpy with pyright and variadic generics
 #+CREATED: <2023-02-27 Mon>
-#+LAST_MODIFIED: [2023-03-13 Mon 16:09]
+#+LAST_MODIFIED: [2023-03-15 Wed 16:19]
 #+ROAM_TAGS: composition
 #+OPTIONS: toc:nil
 #+OPTIONS: tex:t
@@ -30,8 +30,8 @@
 : Enabled mdx on save
 
 
-When doing any sort of tensor/array computation in python (via ~numpy~,
-~pytorch~, ~jax~, or other>>), it's more frequent than not to encounter shape
+When doing any sort of tensor/array computation in ~python~ (via ~numpy~,
+~pytorch~, ~jax~, or other), it's more frequent than not to encounter shape
 errors like the one below
 
   #+CONSTANTS: image_name=pyright container_name=pyright
@@ -127,8 +127,8 @@ errors like the one below
   #+end_src
 
   #+RESULTS:
-  : [[0.1547545  0.30949099 0.59024794 0.55318775]
-  :  [0.21051272 0.34419557 0.54559747 0.5703837 ]]
+  : [[0.18845275 0.16816292 0.17028781 0.13473183]
+  :  [0.54380607 0.51062839 0.62926936 0.68058922]]
 
   And while this is a mild case, shape bugs like these become more frequent as
   operations grow more complex and as more dimensions are involved.
@@ -158,9 +158,9 @@ errors like the one below
   #+end_src
 
   #+RESULTS:
-  : [1.73515224 1.89505469 1.9289733  1.72298648 1.60409676 1.76399922
-  :  1.79791782 1.59193101 0.58554031 0.74544276 0.77936137 0.57337455
-  :  0.98373656 1.14363901 1.17755762 0.9715708 ]
+  : [0.96122174 1.44441476 0.94192888 0.89505177 1.38703539 1.87022841
+  :  1.36774253 1.32086543 0.72468177 1.20787479 0.70538891 0.65851181
+  :  1.26610675 1.74929977 1.2468139  1.19993679]
   : (16,)
 
 
@@ -204,7 +204,7 @@ errors like the one below
   #+end_src
 
   #+RESULTS:
-  : [0.66736135 0.75746147 1.53202375 1.56823255]
+  : [1.86303202 1.02403729 1.06504611 1.31155001]
   : (4,)
 
   We've solved the problem, but how can we be smarter to prevent this error from
@@ -325,9 +325,9 @@ errors like the one below
 
 
     def Linear(
-            A: NDArray[GenericType],
-            x: NDArray[GenericType],
-            b: NDArray[GenericType],
+        A: NDArray[GenericType],
+        x: NDArray[GenericType],
+        b: NDArray[GenericType],
     ) -> NDArray[GenericType]:
         """
         Args:
@@ -336,7 +336,6 @@ errors like the one below
             b: ndarray of shape (M x 1)
 
         Returns:
-
             Linear output ndarray of shape (M)
         """
         assert len(A.shape) == 2, f"A must be of dim 2, not {len(A.shape)}"
@@ -362,8 +361,8 @@ errors like the one below
   #+end_src
 
   #+RESULTS:
-  : [ 2.46238575 -3.14896089 -1.94370608 -1.15712163 -0.1701296   1.25522833
-  :  -3.73717187 -0.03529537  2.88735514  2.50981703]
+  : [ 0.97102654  0.17781899  3.6638438   0.97169125  0.48276491 -4.16955029
+  :   0.86328053  0.92919773 -1.43328786  0.18720676]
   : float64
 
 
@@ -399,7 +398,7 @@ errors like the one below
 
   #+RESULTS: pyright-environment-start
   : Running container if not already running ...
-  : 2ea0d1a7a9f2674f8d0ecf9da2f88ff8bdb2b6a5b76b494dd2500cd95011b592
+  : 01676559cc8f498b5f8c8353cb80b7e6c4bad91b475bccb9518777b97f09d36a
   : Container starting...
 
   Even though this code is "runnable" and doesn't produce an error, a type
@@ -418,7 +417,7 @@ errors like the one below
   Assuming Python platform Linux
   Searching for source files
   Found 1 source file
-  pyright 1.1.298
+  pyright 1.1.299
   /mnt/linear_bad_typing.py
     /mnt/linear_bad_typing.py:40:26 - error: Expression of type "ndarray[Any, dtype[float64]]" cannot be assigned to declared type "NDArray[float32]"
       "ndarray[Any, dtype[float64]]" is incompatible with "NDArray[float32]"
@@ -433,7 +432,7 @@ errors like the one below
             TypeVar "_DTypeScalar_co@dtype" is covariant
               "float32" is incompatible with "float64" (reportGeneralTypeIssues)
   2 errors, 0 warnings, 0 informations
-  Completed in 0.622sec
+  Completed in 0.61sec
   #+end_example
 
   ~pyright~ has noticed that when we create our ~b~ variable, we gave it a
@@ -502,13 +501,12 @@ errors like the one below
   information on our types.
 
   Luckily for us, we don't have to wait for shape support in ~numpy~. [[https://peps.python.org/pep-0646/][PEP 646]] has
-  the base foundation for shape typing and has already been accepted into python
-  ~3.11~! And it's supported by ~pyright~! Theoretically these two things give
+  the base foundation for shape typing and has already been accepted into ~python==3.11~! And it's supported by ~pyright~! Theoretically these two things give
   us most of the ingredients to do basic shape typing.
 
   Now this blog post isn't about the details of [[https://peps.python.org/pep-0646/][PEP 646]] or variadic
-  generics. But the rest of this post will assume you know the basics of how
-  they work.
+  generics. Understanding PEP 646 will help, but it's not needed to understand
+  the rest of this post.
 
   In order to add rudimentary shape typing to ~numpy~ we can simply change the
   ~Any~ type in the ~NDArray~ type definition to an unpacked variadic generic
@@ -556,7 +554,7 @@ errors like the one below
 
   #+RESULTS: numpy-shape_typing-environment-start
   : Running container if not already running ...
-  : 9a2d7faba8de1c5ecc604d65925ac46a0e44caeee403a9555ca283e712a6d535
+  : 7482ccf814a106788f6f8948c5274e68aa968d3e4a20c800879dccdcf4a191c7
   : Container starting...
 
   #+NAME: setup-vars-shape-typing
@@ -576,8 +574,7 @@ errors like the one below
 
   #+RESULTS:
   #+begin_example
-
-  $ Usage: pyright [options] files...
+  Usage: pyright [options] files...
     Options:
   Create type stub file(s) for import
     --dependencies                     Emit import dependency information
@@ -625,26 +622,26 @@ errors like the one below
         return np.random.standard_normal(size=shape)
 
     # Yay correctly typed 2x2x2 cube!
-    TWO = Literal[2]
-    two_by_two_by_two: NDArray[Shape3D[TWO, TWO, TWO], np.float64] = rand_normal_matrix((2,2,2))
-    print(two_by_two_by_two)
+    LENGTH = Literal[2]
+    cube: NDArray[Shape3D[LENGTH, LENGTH, LENGTH], np.float64] = rand_normal_matrix((2,2,2))
+    print(cube)
 
-    FOUR = Literal[4]
+    SIDE = Literal[4]
 
     # Uh oh the shapes won't match!
-    four_by_four: NDArray[Shape2D[FOUR, FOUR], np.float64] = rand_normal_matrix((3,3))
-    print(four_by_four)
+    square: NDArray[Shape2D[SIDE, SIDE], np.float64] = rand_normal_matrix((3,3))
+    print(square)
   #+end_src
 
   #+RESULTS:
-  : [[[-0.25349245  0.48769158]
-  :   [ 0.71369366  1.87259878]]
+  : [[[ 0.66011109  0.53906345]
+  :   [ 1.0678481   2.32843385]]
   :
-  :  [[ 1.16757851 -0.71031436]
-  :   [-0.68083206  0.49385056]]]
-  : [[-1.23500485 -0.97530914 -0.01870734]
-  :  [ 0.50789676  1.31297228  2.11942613]
-  :  [-0.44229871  1.02762774  0.75637794]]
+  :  [[ 0.51764708 -0.83865783]
+  :   [ 0.16713498  1.81424915]]]
+  : [[ 0.56144194  0.27910648 -0.58900233]
+  :  [-0.37050612  0.46703174  0.41284443]
+  :  [ 0.96748532  0.34495041 -0.1005104 ]]
 
   Notice here there are no ~assert~ statements. And instead of several comments
   about shape, we indicate shape in the type hint.
@@ -663,15 +660,15 @@ errors like the one below
   Assuming Python platform Linux
   Searching for source files
   Found 1 source file
-  pyright 1.1.298
+  pyright 1.1.299
   /mnt/bad_shape_typing.py
-    /mnt/bad_shape_typing.py:30:77 - error: Argument of type "tuple[Literal[3], Literal[3]]" cannot be assigned to parameter "shape" of type "ShapeNDType@rand_normal_matrix" in function "rand_normal_matrix"
-      Type "Shape2D[FOUR, FOUR]" cannot be assigned to type "tuple[Literal[3], Literal[3]]" (reportGeneralTypeIssues)
+    /mnt/bad_shape_typing.py:30:71 - error: Argument of type "tuple[Literal[3], Literal[3]]" cannot be assigned to parameter "shape" of type "ShapeNDType@rand_normal_matrix" in function "rand_normal_matrix"
+      Type "Shape2D[SIDE, SIDE]" cannot be assigned to type "tuple[Literal[3], Literal[3]]" (reportGeneralTypeIssues)
   1 error, 0 warnings, 0 informations
   Completed in 0.532sec
   #+end_example
 
-  ~pyright~ is telling us we've incorrectly typed ~four_by_four~ and that it's
+  ~pyright~ is telling us we've incorrectly typed ~cube~ and that it's
   incompatible with a ~3x3~ shape. Now we know we need to go back and fix the
   type to what a type checker should expect.
 
@@ -767,17 +764,17 @@ errors like the one below
 
     from typing import Literal
 
-    TWO = Literal[2]
-    THREE = Literal[3]
-    A: NDArray[Shape2D[TWO, THREE], np.float64] = rand_normal_matrix((2,3))
-    B: NDArray[Shape2D[THREE, TWO], np.float64] = rand_normal_matrix((3,2))
-    C: NDArray[Shape2D[TWO, TWO], np.float64] = dot(A, B)
+    ROWS = Literal[2]
+    COLS = Literal[3]
+    A: NDArray[Shape2D[ROWS, COLS], np.float64] = rand_normal_matrix((2,3))
+    B: NDArray[Shape2D[COLS, ROWS], np.float64] = rand_normal_matrix((3,2))
+    C: NDArray[Shape2D[ROWS, ROWS], np.float64] = dot(A, B)
     print(C)
   #+end_src
 
   #+RESULTS:
-  : [[ 0.91270269  1.14463641]
-  :  [-0.05479925  0.05966535]]
+  : [[-0.0570878   0.17993298]
+  :  [-1.72624938  1.23582863]]
 
   And if we check with ~pyright~:
 
@@ -787,20 +784,14 @@ errors like the one below
   #+end_src
 
   #+RESULTS:
-  #+begin_example
-  /opt/project/.venv/lib/python3.11/site-packages/nodeenv.py:26: DeprecationWarning: 'pipes' is deprecated and slated for removal in Python 3.13
-    import pipes
-   ,* Install prebuilt node (19.7.0) ..... done.
-  No configuration file found.
-  No pyproject.toml file found.
-  stubPath /mnt/typings is not a valid directory.
-  Assuming Python platform Linux
-  Searching for source files
-  Found 1 source file
-  pyright 1.1.298
-  0 errors, 0 warnings, 0 informations
-  Completed in 0.546sec
-  #+end_example
+  : No configuration file found.
+  : No pyproject.toml file found.
+  : Assuming Python platform Linux
+  : Searching for source files
+  : Found 1 source file
+  : pyright 1.1.299
+  : 0 errors, 0 warnings, 0 informations
+  : Completed in 0.906sec
 
   Everything looks good as it should!
 
@@ -817,14 +808,14 @@ errors like the one below
 
     from typing import Literal
 
-    TWO = Literal[2]
-    THREE = Literal[3]
-    FOUR = Literal[4]
-    A: NDArray[Shape2D[TWO, THREE], np.float64] = rand_normal_matrix((2,3))
-    B: NDArray[Shape2D[FOUR, FOUR], np.float64] = rand_normal_matrix((4,4))
+    ROWS = Literal[2]
+    COLS = Literal[3]
+    SLICES = Literal[4]
 
-    # uh oh bad shape type
-    C: NDArray[Shape2D[TWO, TWO], np.float64] = dot(A, B)
+    # uh oh based on these types we can't do a valid dot product!
+    A: NDArray[Shape2D[ROWS, COLS], np.float64] = rand_normal_matrix((2,3))
+    B: NDArray[Shape2D[SLICES, COLS], np.float64] = rand_normal_matrix((4,3))
+    C: NDArray[Shape2D[ROWS, COLS], np.float64] = dot(A, B)
     print(C)
   #+end_src
 
@@ -839,31 +830,17 @@ errors like the one below
 
   #+RESULTS:
   #+begin_example
-  /opt/project/.venv/lib/python3.11/site-packages/nodeenv.py:26: DeprecationWarning: 'pipes' is deprecated and slated for removal in Python 3.13
-    import pipes
-   ,* Install prebuilt node (19.7.0) ..... done.
   No configuration file found.
   No pyproject.toml file found.
-  stubPath /mnt/typings is not a valid directory.
   Assuming Python platform Linux
   Searching for source files
   Found 1 source file
-  pyright 1.1.298
+  pyright 1.1.299
   /mnt/bad_dot.py
-    /mnt/bad_dot.py:16:49 - error: Argument of type "NDArray[Shape2D[TWO, THREE], float64]" cannot be assigned to parameter "x1" of type "GenericDType@dot" in function "dot"
-      Type "NDArray[Shape2D[TWO, THREE], float64]" cannot be assigned to type "NDArray[Shape2D[TWO, TWO], float64]"
-        "NDArray[Shape2D[TWO, THREE], float64]" is incompatible with "NDArray[Shape2D[TWO, TWO], float64]"
-          TypeVar "_ShapeType@ndarray" is invariant
-            "*tuple[Shape2D[TWO, THREE]]" is incompatible with "*tuple[Shape2D[TWO, TWO]]"
-              Tuple entry 1 is incorrect type (reportGeneralTypeIssues)
-    /mnt/bad_dot.py:16:52 - error: Argument of type "NDArray[Shape2D[FOUR, FOUR], float64]" cannot be assigned to parameter "x2" of type "GenericDType@dot" in function "dot"
-      Type "NDArray[Shape2D[FOUR, FOUR], float64]" cannot be assigned to type "NDArray[Shape2D[TWO, TWO], float64]"
-        "NDArray[Shape2D[FOUR, FOUR], float64]" is incompatible with "NDArray[Shape2D[TWO, TWO], float64]"
-          TypeVar "_ShapeType@ndarray" is invariant
-            "*tuple[Shape2D[FOUR, FOUR]]" is incompatible with "*tuple[Shape2D[TWO, TWO]]"
-              Tuple entry 1 is incorrect type (reportGeneralTypeIssues)
-  2 errors, 0 warnings, 0 informations
-  Completed in 0.547sec
+    /mnt/bad_dot.py:16:54 - error: Argument of type "NDArray[Shape2D[SLICES, COLS], float64]" cannot be assigned to parameter "x2" of type "GenericDType@dot" in function "dot"
+      Type "NDArray[Shape2D[ROWS, COLS], float64]" cannot be assigned to type "NDArray[Shape2D[SLICES, COLS], float64]" (reportGeneralTypeIssues)
+  1 error, 0 warnings, 0 informations
+  Completed in 0.886sec
   #+end_example
 
   ~pyright~ let's us know that the types we are using are incorrect shapes based
@@ -1016,18 +993,18 @@ errors like the one below
     from numpy_shape_typing.rand import rand_normal_matrix
     from numpy_shape_typing.types import ONE, Shape1D, Shape2D
 
-    FOUR = Literal[4]
-    A: NDArray[Shape2D[FOUR, FOUR], np.float64] = rand_normal_matrix((4, 4))
-    B: NDArray[Shape2D[ONE, FOUR], np.float64] = rand_normal_matrix((1, 4))
-    C: NDArray[Shape2D[ONE, FOUR], np.float64] = add(A, B)
+    COLS = Literal[4]
+    A: NDArray[Shape2D[COLS, COLS], np.float64] = rand_normal_matrix((4, 4))
+    B: NDArray[Shape2D[ONE, COLS], np.float64] = rand_normal_matrix((1, 4))
+    C: NDArray[Shape2D[ONE, COLS], np.float64] = add(A, B)
     print(C)
   #+end_src
 
   #+RESULTS:
-  : [[ 0.52190456 -0.59038544 -0.16410868 -1.97714141]
-  :  [-1.36188878 -1.32828576 -0.0162497   1.1594779 ]
-  :  [-0.85793515 -0.47610803 -1.03530451 -1.07469943]
-  :  [ 2.29569189  1.48435967  0.54641844 -0.42001828]]
+  : [[-2.92244832  0.80637103  0.95910007 -0.21777555]
+  :  [-1.1895015   0.54396826 -1.1781785  -1.44635253]
+  :  [ 0.36108414 -1.20937981 -0.34139515  1.74408456]
+  :  [-0.36983507  0.27738811 -0.41677562 -1.11111284]]
 
   In the example above, our output is a ~4x4~ matrix, but what we want from our
   types is an output shape of ~4x1~. Let's see what ~pyright~ says
@@ -1039,30 +1016,25 @@ errors like the one below
 
   #+RESULTS:
   #+begin_example
-  /opt/project/.venv/lib/python3.11/site-packages/nodeenv.py:26: DeprecationWarning: 'pipes' is deprecated and slated for removal in Python 3.13
-    import pipes
-   ,* Install prebuilt node (19.7.0) ..... done.
   No configuration file found.
   No pyproject.toml file found.
-  stubPath /mnt/typings is not a valid directory.
   Assuming Python platform Linux
   Searching for source files
   Found 1 source file
-  pyright 1.1.298
+  pyright 1.1.299
   /mnt/unnexpected_broadcast.py
-    /mnt/unnexpected_broadcast.py:14:50 - error: Argument of type "NDArray[Shape2D[FOUR, FOUR], float64]" cannot be assigned to parameter "x1" of type "NDArray[*ShapeVarGen@add, GenericDType@add]" in function "add"
-      "NDArray[Shape2D[FOUR, FOUR], float64]" is incompatible with "NDArray[Shape2D[ONE, FOUR], float64]"
+    /mnt/unnexpected_broadcast.py:14:50 - error: Argument of type "NDArray[Shape2D[COLS, COLS], float64]" cannot be assigned to parameter "x1" of type "NDArray[*ShapeVarGen@add, GenericDType@add]" in function "add"
+      "NDArray[Shape2D[COLS, COLS], float64]" is incompatible with "NDArray[Shape2D[ONE, COLS], float64]"
         TypeVar "_ShapeType@ndarray" is invariant
-          "*tuple[Shape2D[FOUR, FOUR]]" is incompatible with "*tuple[Shape2D[ONE, FOUR]]"
+          "*tuple[Shape2D[COLS, COLS]]" is incompatible with "*tuple[Shape2D[ONE, COLS]]"
             Tuple entry 1 is incorrect type
-              "Shape2D[FOUR, FOUR]" is incompatible with "Shape2D[ONE, FOUR]" (reportGeneralTypeIssues)
+              "Shape2D[COLS, COLS]" is incompatible with "Shape2D[ONE, COLS]" (reportGeneralTypeIssues)
   1 error, 0 warnings, 0 informations
-  Completed in 0.578sec
+  Completed in 2.634sec
   #+end_example
 
   ~pyright~ informs us that our shapes are off and that we got broadcasted to a
   ~4x4~! Huzzah shape typing!
-
 
 * Hitting the limitations of shape typing 😿
 
@@ -1251,9 +1223,9 @@ errors like the one below
 
 
     def Linear(
-            A: NDArray[Shape2D[T1, T2], GenericDType],
-            x: NDArray[Shape2D[T2, ONE], GenericDType],
-            b: NDArray[Shape2D[T1, ONE], GenericDType],
+        A: NDArray[Shape2D[T1, T2], GenericDType],
+        x: NDArray[Shape2D[T2, ONE], GenericDType],
+        b: NDArray[Shape2D[T1, ONE], GenericDType],
     ) -> NDArray[Shape1D[T1], GenericDType]:
         Ax = dot(A, x)
         Axb = add(Ax, b)
@@ -1273,7 +1245,7 @@ errors like the one below
     x: NDArray[Shape2D[IN_DIM, ONE], np.float64] = rand_normal_matrix((in_dim, 1))
     b: NDArray[Shape2D[OUT_DIM, ONE], np.float64] = rand_normal_matrix((out_dim, 1))
 
-    # this is a bad type! we should have an output shape type of "Shape1D[BAD_OUT_DIM]"
+    # this is a bad type!
     y: NDArray[Shape1D[BAD_OUT_DIM], np.float64] = Linear(A, x, b)
   #+end_src
 
@@ -1289,16 +1261,12 @@ errors like the one below
 
   #+RESULTS:
   #+begin_example
-  /opt/project/.venv/lib/python3.11/site-packages/nodeenv.py:26: DeprecationWarning: 'pipes' is deprecated and slated for removal in Python 3.13
-    import pipes
-   ,* Install prebuilt node (19.7.0) ..... done.
   No configuration file found.
   No pyproject.toml file found.
-  stubPath /mnt/typings is not a valid directory.
   Assuming Python platform Linux
   Searching for source files
   Found 1 source file
-  pyright 1.1.298
+  pyright 1.1.299
   /mnt/linear_type_bad.py
     /mnt/linear_type_bad.py:37:55 - error: Argument of type "NDArray[Shape2D[OUT_DIM, IN_DIM], float64]" cannot be assigned to parameter "A" of type "NDArray[Shape2D[T1@Linear, T2@Linear], GenericDType@Linear]" in function "Linear"
       "NDArray[Shape2D[OUT_DIM, IN_DIM], float64]" is incompatible with "NDArray[Shape2D[BAD_OUT_DIM, IN_DIM], float64]"
@@ -1313,7 +1281,7 @@ errors like the one below
             Tuple entry 1 is incorrect type
               "Shape2D[OUT_DIM, ONE]" is incompatible with "Shape2D[BAD_OUT_DIM, ONE]" (reportGeneralTypeIssues)
   2 errors, 0 warnings, 0 informations
-  Completed in 0.657sec
+  Completed in 7.6sec
   #+end_example
 
   And huzzah again! ~pyright~ has caught the shape type error!
@@ -1337,10 +1305,19 @@ errors like the one below
 
 
     def Linear(
-            A: NDArray[Shape2D[T1, T2], GenericDType],
-            x: NDArray[Shape2D[T2, ONE], GenericDType],
-            b: NDArray[Shape2D[T1, ONE], GenericDType],
+        A: NDArray[Shape2D[T1, T2], GenericDType],
+        x: NDArray[Shape2D[T2, ONE], GenericDType],
+        b: NDArray[Shape2D[T1, ONE], GenericDType],
     ) -> NDArray[Shape1D[T1], GenericDType]:
+        """
+        Args:
+            A: ndarray of shape (M x N)
+            x: ndarray of shape (N x 1)
+            b: ndarray of shape (M x 1)
+
+        Returns:
+            Linear output ndarray of shape (M)
+        """
         Ax = dot(A, x)
         Axb = add(Ax, b)
         return ravel(Axb)
@@ -1368,23 +1345,42 @@ errors like the one below
   #+end_src
 
   #+RESULTS:
-  #+begin_example
-  /opt/project/.venv/lib/python3.11/site-packages/nodeenv.py:26: DeprecationWarning: 'pipes' is deprecated and slated for removal in Python 3.13
-    import pipes
-   ,* Install prebuilt node (19.7.0) ..... done.
-  No configuration file found.
-  No pyproject.toml file found.
-  stubPath /mnt/typings is not a valid directory.
-  Assuming Python platform Linux
-  Searching for source files
-  Found 1 source file
-  pyright 1.1.298
-  0 errors, 0 warnings, 0 informations
-  Completed in 0.647sec
-  #+end_example
+  : No configuration file found.
+  : No pyproject.toml file found.
+  : Assuming Python platform Linux
+  : Searching for source files
+  : Found 1 source file
+  : pyright 1.1.299
+  : 0 errors, 0 warnings, 0 informations
+  : Completed in 7.756sec
 
   ~pyright~ tells us that our types are consistent!
 
+* What's next?
+
+  You tell me! Many open source scientific computing libraries have GitHub issues
+  about shape typing such as:
+
+  - ~numpy~: https://github.com/numpy/numpy/issues/16544
+  - ~jax~: https://github.com/google/jax/issues/12049
+  - ~pytorch~: https://github.com/pytorch/pytorch/issues/33953
+
+  So it's well recognized as a desirable feature. Some of the major technical
+  hurdles we still need to overcome are:
+
+  - [[https://github.com/python/mypy/issues/12280][PEP 646 in mypy]]
+  - [[https://github.com/python/mypy/issues/11990][Arithmetic between Literal's]]
+  - [[https://peps.python.org/pep-0646/#multiple-type-variable-tuples-not-allowed][Multiple type variable tuples]]
+  - [[https://peps.python.org/pep-0646/#variance-type-constraints-and-type-bounds-not-yet-supported][Type bounds for variadic generics]]
+
+  Once these hurdles are overcome I don't see any blockers stopping projects
+  like ~numpy~ from being fully shape typed.
+
+  This post and [[https://github.com/cmrfrd/numpy_shape_typing][accompanying repo]] is just a sample form of what shape typing
+  might become. With future PEPs and work on the ~python~ type hinting system,
+  we'll hopefully make our code incrementally safer.
+
+  Thanks for reading! (っ◔◡◔)っ ♥
 
   #+NAME: numpy-shape_typing-environment-end
   #+HEADER: :exports none
@@ -1394,7 +1390,7 @@ errors like the one below
   #+end_src
 
   #+RESULTS: numpy-shape_typing-environment-end
-  : df90f605d7ddd5b13cb57ac7a06551b9681397c274e2fc904ea5333934f48f0f
+  : 7eeb3f913c9028a0262c0ef10744a101a9c2c24dd4edd313985d3a47987e7997
 
   #+NAME: pyright-environment-end
   #+HEADER: :exports none
@@ -1404,4 +1400,4 @@ errors like the one below
   #+end_src
 
   #+RESULTS: pyright-environment-end
-  : 2502bd15c050a40f986d87a20c06d99428cc8af458c35210591509921fcb3638
+  : 1dfa798d711cc71d461d8a6c31ca41ef89a695853ba253088715f055c55addab
