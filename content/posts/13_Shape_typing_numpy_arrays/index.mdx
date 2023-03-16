@@ -50,8 +50,8 @@ except Exception as e:
 ```
 
 ```text
-[[0.68034751 0.49931699 0.71019458 0.22819836]
- [0.56876626 0.5991015  1.19438961 0.3778173 ]]
+[[0.68812413 0.63491692 0.375332   1.22395427]
+ [0.57381506 0.42578404 0.19132443 0.8889217 ]]
 ```
 
 And while this is a mild case, shape bugs like these become more frequent as
@@ -81,9 +81,9 @@ print(result.shape)
 ```
 
 ```text
-[1.56441647 1.47650364 1.57303598 1.14131074 1.18493577 1.09702295
- 1.19355528 0.76183004 1.57644585 1.48853302 1.58506536 1.15334012
- 1.18260885 1.09469603 1.19122836 0.75950312]
+[1.18041914 1.87580329 0.93373901 1.48799234 1.4920404  2.18742455
+ 1.24536027 1.79961361 2.29649806 2.99188221 2.04981793 2.60407127
+ 1.31159899 2.00698314 1.06491886 1.6191722 ]
 (16,)
 ```
 
@@ -126,7 +126,7 @@ print(result.shape)
 ```
 
 ```text
-[1.97154938 1.84206823 2.94043945 1.7510802 ]
+[1.15227694 1.24640271 0.63951685 1.13304944]
 (4,)
 ```
 
@@ -276,8 +276,8 @@ print(y.dtype)
 ```
 
 ```text
-[-0.53752298  3.67833386 -1.43092158 -2.58647295  2.44053318 -1.9393581
- -0.23397058  0.79320484  2.16039462 -0.10612777]
+[-1.81553298 -4.94471634  3.24041295  3.34200411  2.221593    7.59161372
+  3.1321597  -0.37862935 -1.98975116  1.57701057]
 float64
 ```
 
@@ -458,10 +458,10 @@ pyright 1.1.299
   /mnt/bad_shape_typing.py:30:71 - error: Argument of type "tuple[Literal[3], Literal[3]]" cannot be assigned to parameter "shape" of type "ShapeNDType@rand_normal_matrix" in function "rand_normal_matrix"
     Type "Shape2D[SIDE, SIDE]" cannot be assigned to type "tuple[Literal[3], Literal[3]]" (reportGeneralTypeIssues)
 1 error, 0 warnings, 0 informations
-Completed in 0.528sec
+Completed in 0.535sec
 ```
 
-`pyright` is telling us we've incorrectly typed `cube` and that it's
+`pyright` is telling us we've incorrectly typed `square` and that it's
 incompatible with a `3x3` shape. Now we know we need to go back and fix the
 type to what a type checker should expect.
 
@@ -576,7 +576,7 @@ Searching for source files
 Found 1 source file
 pyright 1.1.299
 0 errors, 0 warnings, 0 informations
-Completed in 0.917sec
+Completed in 0.909sec
 ```
 
 Everything looks good as it should!
@@ -620,7 +620,7 @@ pyright 1.1.299
   /mnt/bad_dot.py:16:54 - error: Argument of type "NDArray[Shape2D[SLICES, COLS], float64]" cannot be assigned to parameter "x2" of type "GenericDType@dot" in function "dot"
     Type "NDArray[Shape2D[ROWS, COLS], float64]" cannot be assigned to type "NDArray[Shape2D[SLICES, COLS], float64]" (reportGeneralTypeIssues)
 1 error, 0 warnings, 0 informations
-Completed in 0.915sec
+Completed in 0.908sec
 ```
 
 `pyright` let's us know that the types we are using are incorrect shapes based
@@ -800,7 +800,7 @@ pyright 1.1.299
           Tuple entry 1 is incorrect type
             "Shape2D[COLS, COLS]" is incompatible with "Shape2D[ONE, COLS]" (reportGeneralTypeIssues)
 1 error, 0 warnings, 0 informations
-Completed in 2.73sec
+Completed in 2.757sec
 ```
 
 `pyright` informs us that our shapes are off and that we got broadcasted to a
@@ -953,7 +953,7 @@ pyright 1.1.299
           Tuple entry 1 is incorrect type
             "Shape1D[EIGHT]" is incompatible with "Shape1D[SEVEN]" (reportGeneralTypeIssues)
 1 error, 0 warnings, 0 informations
-Completed in 0.925sec
+Completed in 0.933sec
 ```
 
 
@@ -1033,7 +1033,7 @@ pyright 1.1.299
           Tuple entry 1 is incorrect type
             "Shape2D[OUT_DIM, ONE]" is incompatible with "Shape2D[BAD_OUT_DIM, ONE]" (reportGeneralTypeIssues)
 2 errors, 0 warnings, 0 informations
-Completed in 8.132sec
+Completed in 8.155sec
 ```
 
 And huzzah again! `pyright` has caught the shape type error!
@@ -1099,7 +1099,7 @@ Searching for source files
 Found 1 source file
 pyright 1.1.299
 0 errors, 0 warnings, 0 informations
-Completed in 8.131sec
+Completed in 8.116sec
 ```
 
 `pyright` tells us that our types are consistent!

@@ -1,6 +1,6 @@
 #+TITLE: Shape typing numpy with pyright and variadic generics
 #+CREATED: <2023-02-27 Mon>
-#+LAST_MODIFIED: [2023-03-15 Wed 16:36]
+#+LAST_MODIFIED: [2023-03-16 Thu 14:12]
 #+ROAM_TAGS: composition
 #+OPTIONS: toc:nil
 #+OPTIONS: tex:t
@@ -398,7 +398,7 @@ errors like the one below
 
   #+RESULTS: pyright-environment-start
   : Running container if not already running ...
-  : 01676559cc8f498b5f8c8353cb80b7e6c4bad91b475bccb9518777b97f09d36a
+  : c890473c71fc38ae95da701d357d6bc864137739725f7749b1a0b5608b70c9ac
   : Container starting...
 
   Even though this code is "runnable" and doesn't produce an error, a type
@@ -554,7 +554,7 @@ errors like the one below
 
   #+RESULTS: numpy-shape_typing-environment-start
   : Running container if not already running ...
-  : 7482ccf814a106788f6f8948c5274e68aa968d3e4a20c800879dccdcf4a191c7
+  : bf46568a821ea542b1380d15522edae5dfff56a18280da1f53228f1aed8f815d
   : Container starting...
 
   #+NAME: setup-vars-shape-typing
@@ -668,7 +668,7 @@ errors like the one below
   Completed in 0.532sec
   #+end_example
 
-  ~pyright~ is telling us we've incorrectly typed ~cube~ and that it's
+  ~pyright~ is telling us we've incorrectly typed ~square~ and that it's
   incompatible with a ~3x3~ shape. Now we know we need to go back and fix the
   type to what a type checker should expect.
 
@@ -1390,7 +1390,7 @@ errors like the one below
   #+end_src
 
   #+RESULTS: numpy-shape_typing-environment-end
-  : 7eeb3f913c9028a0262c0ef10744a101a9c2c24dd4edd313985d3a47987e7997
+  : 7482ccf814a106788f6f8948c5274e68aa968d3e4a20c800879dccdcf4a191c7
 
   #+NAME: pyright-environment-end
   #+HEADER: :exports none
@@ -1400,4 +1400,4 @@ errors like the one below
   #+end_src
 
   #+RESULTS: pyright-environment-end
-  : 1dfa798d711cc71d461d8a6c31ca41ef89a695853ba253088715f055c55addab
+  : 01676559cc8f498b5f8c8353cb80b7e6c4bad91b475bccb9518777b97f09d36a
