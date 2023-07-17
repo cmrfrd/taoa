@@ -1,0 +1,542 @@
+#+TITLE: Lagrange's Theorem
+#+CREATED: [2023-07-16 Sun 20:13]
+#+LAST_MODIFIED: [2023-07-17 Mon 14:08]
+#+ROAM_TAGS: composition
+#+OPTIONS: toc:nil
+#+OPTIONS: tex:t
+#+OPTIONS: _:nil ^:nil p:nil
+
+#+HUGO_BASE_DIR: ./
+#+hugo_front_matter_format: yaml
+#+HUGO_CUSTOM_FRONT_MATTER: :date (org-to-blog-date (org-global-prop-value "CREATED"))
+#+HUGO_CUSTOM_FRONT_MATTER: :hero ./cover.png
+#+HUGO_CUSTOM_FRONT_MATTER: :secret false
+#+HUGO_CUSTOM_FRONT_MATTER: :excerpt Groups in groups in groups
+
+#+BEGIN_SRC emacs-lisp :exports none
+  ;; All inline code blocks will be latex
+  (setq org-babel-inline-result-wrap "$%s$")
+  (defun org-hugo-link (link contents info) (org-md-link link contents info))
+
+  ;; Setup org/latex exporting
+  (add-to-list 'org-export-filter-latex-fragment-functions
+               'sub-paren-for-dollar-sign)
+  (add-to-list 'org-export-filter-headline-functions
+               'remove-regexp-curly-braces)
+  (add-to-list 'org-export-filter-latex-environment-functions
+               'sub-paren-for-dollar-sign)
+  (export-to-mdx-on-save)
+#+END_SRC
+
+#+RESULTS:
+: Enabled mdx on save
+
+* Forward                                                          :noexport:
+
+  #+NAME: emacs-init
+  #+begin_src emacs-lisp
+    (setq org-babel-python-command (f-join (getenv "SCRIPTS") "pysage"))
+    (setq py-default-interpreter (f-join (getenv "SCRIPTS") "pysage"))
+    (setq-local org-plantuml-executable-path (f-join (getenv "SCRIPTS") "plantuml-cli"))
+  #+end_src
+
+  #+RESULTS: emacs-init
+  : /home/cmrfrd/.dotfiles/scripts/plantuml-cli
+
+  #+NAME: init
+  #+HEADER: :exports none :results output
+  #+begin_src python :session
+    from sage.all import *
+    from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+    import sympy as S
+    import warnings
+    warnings.simplefilter("ignore")
+  #+end_src
+
+  #+RESULTS: init
+  : Python 3.10.6 (main, Aug  1 2022, 20:38:21) [GCC 11.3.0] on linux
+  : Type "help", "copyright", "credits" or "license" for more information.
+  : >>>
+
+  #+NAME: setup-vars
+  #+HEADER: :exports none :results output
+  #+begin_src python :session
+    a, b, h, g, n = var('a b h g n')
+    def seq(one, two):
+        return S.Eq(one._sympy_(), two._sympy_())._sage_()
+
+    latex_center = lambda expr: \
+        '\n' + \
+        LatexExpr("\\begin{alignedat}{2}") + \
+        '\n' + \
+        expr + \
+        '\n' + \
+        LatexExpr("\\end{alignedat}") + \
+        '\n'
+
+    latex_centers = lambda *exprs: \
+        '\n' + \
+        LatexExpr("\\begin{alignedat}{2}") + \
+        '\n' + \
+        ' \\\\ '.join(exprs) + \
+        ' \n' + \
+        LatexExpr("\\end{alignedat}") + \
+        '\n'
+
+    latex_right = lambda a, b: a + LatexExpr(" \\rightarrow ") + b
+  #+end_src
+
+  #+RESULTS: setup-vars
+
+* What is Lagrange's Theorem?
+
+  Over the past year I've gone down a deep dive of cryptography of which group
+  theory is a pivotal dependency. One theorem I've seem that are leaned on
+  heavily when using popular cryptographic objects like finite fields is
+  Lagrange's Theorem.
+
+  Simply put Lagrange's theorem states:
+
+  #+begin_quote
+  If $H$ is a subgroup of a finite group $G$. Then the order of $H$ divides the order
+  of $G$.
+  #+end_quote
+
+  Or in terse mathematical notation:
+
+  #+NAME: lagrange
+  #+HEADER: :exports results :results output latex
+  #+begin_src python :session
+    ord = function("ord")
+    G, H = var('G H')
+    print(
+        latex_right(
+        latex(H <= G),
+        latex(ord(H)) + \
+        '\space | \space ' + \
+        latex(ord(G))
+        )
+    )
+  #+end_src
+
+  #+RESULTS: lagrange
+  #+begin_export latex
+  H \leq G \rightarrow {\rm ord}\left(H\right) | {\rm ord}\left(G\right)
+  #+end_export
+
+  This a pretty elegant finding! Thanks Lagrange!
+
+  To understand why this is true we'll go through four checkpoints.
+
+  1. What is a coset?
+  2. When are cosets the same?
+  3. Why cosets are equal xor disjoint?
+  4. Why cosets split the group?
+
+* What is a coset?
+  :PROPERTIES:
+  :ID:       fb78c2af-e713-4e7c-aa74-58479e66166c
+  :END:
+
+  While the word "coset" seems like a fancy unrelated term, but in reality it's
+  a very simple concept that will be core in proving Lagrange's Theorem.
+
+  If src_python[:results output :session]{print(latex(H))} {{{results($H$)}}} is
+  a subgroup of src_python[:results output :session]{print(latex(G))}
+  {{{results($G$)}}}, then a coset is the set of elements where
+  src_python[:results output :session]{print(latex(g))} {{{results($g$)}}} is
+  applied on src_python[:results output :session]{print(latex(H))}
+  {{{results($H$)}}} where src_python[:results output :session]{print(latex(g))}
+  {{{results($g$)}}} is an element of src_python[:results output
+  :session]{print(latex(G))} {{{results($G$)}}}.
+
+  In other words, the cosets of a subgroup src_python[:results output
+  :session]{print(latex(H))} {{{results($H$)}}} can be thought of as applying the
+  group operation as a mapping function on the elements of src_python[:results
+  output :session]{print(latex(H))} {{{results($H$)}}} with the elements of
+  src_python[:results output :session]{print(latex(G))} {{{results($G$)}}}
+
+  For a more terse math notation, cosets can be described like this:
+
+  #+NAME: coset
+  #+HEADER: :exports results :results output latex
+  #+begin_src python :session
+    g, h = var('g h')
+    print(f"{latex(g*H)} = \{{ {latex(g*h)} \| {h} \in {H} \}}")
+  #+end_src
+
+  #+RESULTS: coset
+  #+begin_export latex
+  H g \eq \{ g h \| h \in H \}
+  #+end_export
+
+  #+begin_quote
+  Note: There is a notion of "left" and "right" cosets, but for this post we'll
+  be assuming src_python[:results output :session]{print(latex(G))}
+  {{{results($G$)}}} is abelian.
+  #+end_quote
+
+  Let's make this a little more concrete with an example. Lets consider the
+  cosets of the group $\Z/24\Z$ with the subgroup generated by
+  src_python[:results output :session]{print(latex(4))} {{{results($4$)}}} via
+  group addition.
+
+  #+NAME: coset_24_gen_4
+  #+HEADER: :exports results :results value
+  #+begin_src python :session
+     ring_size = 24
+     gen = 4
+     subgroup = []
+     for elem in range(1, ring_size):
+         subgroup_elem = elem * gen % ring_size
+         if subgroup_elem in subgroup:
+             break
+         subgroup.append(subgroup_elem)
+
+     results = [["Coset", "Coset Elements", "Coset Size"]]
+     for coset_i in range(ring_size // len(subgroup) + 1):
+         results.append(
+             [
+              f"{coset_i} + {latex(H)}",
+              str((sorted(list(map(lambda i:(i+coset_i) % ring_size, subgroup))))),
+              len(subgroup)
+             ]
+         )
+
+     results
+   #+end_src
+
+   #+RESULTS: coset_24_gen_4
+   | Coset | Coset Elements         | Coset Size |
+   | 0 + H | [0, 4, 8, 12, 16, 20]  |          6 |
+   | 1 + H | [1, 5, 9, 13, 17, 21]  |          6 |
+   | 2 + H | [2, 6, 10, 14, 18, 22] |          6 |
+   | 3 + H | [3, 7, 11, 15, 19, 23] |          6 |
+   | 4 + H | [0, 4, 8, 12, 16, 20]  |          6 |
+
+   Here are some things worth noticing about this table:
+
+   1. $0 + H$ and $4 + H$ are the same! I left this in intentionally to point
+      out the fact that if we keep incrementing our added term to the $0 + H$
+      coset, we eventually wrap around with what we started with! Is this a
+      coincidence or is this always the case?
+   2. The size of all the cosets are the same. This makes sense because when we
+      have a subgroup and we add a number to it, it can be thought of as a
+      "translation" of all the elements, hence the sizes will all the same as
+      $0 + H$. But how do we know the elements of a coset of any subgroup have
+      no shared elements? If this were the case this could result in different
+      coset sizes!
+   3. All the elements of the cosets contain all the elements of the group! Does
+      this mean that all the cosets split the group?
+
+   It's not that obvious now, but proving that these observations are always
+   true will give us all the information needed to prove Lagranges Theorem!
+
+* When are cosets the same?
+
+  In our first observation we saw the same coset twice, this begs the question
+  when are any two cosets equal? We will show that if two cosets have a single
+  element in common, then all their elements will be in common, making them the
+  same. In terse math notation we can write this assumption as:
+
+  #+NAME: coset_similarity
+  #+HEADER: :exports results :results output latex
+  #+begin_src python :session
+    a, b = var('a b')
+    print(
+        latex_right(
+        latex(a) + ' \in ' + latex(H*b),
+        latex(H*a == H*b)
+        )
+    )
+  #+end_src
+
+  #+RESULTS: coset_similarity
+  #+begin_export latex
+  a \in H b \rightarrow H a = H b
+  #+end_export
+
+  One of the most effective ways to show that two cosets are equal is by showing
+  that if each coset shares an element, then it's a subset of the other. Let's
+  break it down.
+
+  The first thing we can observe is that if src_python[:results output
+  :session]{print(latex(a) + ' \in ' + latex(H*b))} {{{results($a \in H b$)}}},
+  then there must exist an element $h_1$ such that:
+
+  #+NAME: coset_similarity_p1
+  #+HEADER: :exports results :results output latex
+  #+begin_src python :session
+    h_one, h_two, h_three, x = var('h_1 h_2 h_3 x')
+    print(
+        latex(a == h_one*b)
+    )
+  #+end_src
+
+  #+RESULTS: coset_similarity_p1
+  #+begin_export latex
+  a = b h_{1}
+  #+end_export
+
+  This means we can take our first coset src_python[:results output
+  :session]{print(latex(H*a))} {{{results($H a$)}}}, select a random element
+  src_python[:results output :session]{print(latex(x))} {{{results($x$)}}} from
+  it, and rewrite it as src_python[:results output :session]{print(latex(x ==
+  h_2*a))} {{{results($x = a h_{2}$)}}}. By doing this and rewriting in terms
+  src_python[:results output :session]{print(latex(a))} {{{results($a$)}}} like so:
+
+  #+NAME: coset_similarity_p2
+  #+HEADER: :exports results :results output latex
+  #+begin_src python :session
+    print(
+        latex_centers(
+            latex(x == h_two*a),
+            latex(x == h_two*(b*h_one)),
+            '\\therefore' + latex((h_two*h_one)*b) + ' \in ' + latex(H*b),
+        )
+    )
+  #+end_src
+
+  #+RESULTS: coset_similarity_p2
+  #+begin_export latex
+
+   \begin{alignedat}{2}
+   x = a h_{2} \\ x = b h_{1} h_{2} \\ \therefore b h_{1} h_{2} \in H b
+   \end{alignedat}
+  #+end_export
+
+  By doing this reduction, we know that any random element of
+  src_python[:results output :session]{print(latex(H*a))} is an element of
+  src_python[:results output :session]{print(latex(H*b))}. Now we need to show
+  the inverse is true and that any random element of src_python[:results output
+  :session]{print(latex(H*b))} is an element of src_python[:results output
+  :session]{print(latex(H*a))}.
+
+  We can do this by leveraging the [[https://explained-from-first-principles.com/number-theory/#group-axioms][property of inverses]] of groups to rewrite
+  src_python[:results output :session]{print(latex(a == h_one*b))} into $a
+  h_1^{-1} = b$. With this we can show that for some src_python[:results output
+  :session]{print(latex(y) + ' \in ' + latex(H*b))} the follow reduction can be done:
+
+  #+NAME: coset_similarity_p3
+  #+HEADER: :exports results :results output latex
+  #+begin_src python :session
+    h_inv = var("h_inv", latex_name="h^{-1}")
+    y = var("y")
+    print(
+        latex_centers(
+            latex(y) + ' \in ' + latex(H*b),
+            latex(y == h_three*b),
+            latex(y == h_three*(a*h_inv)),
+            '\\therefore' + latex(a*(h_three*h_inv)) + ' \in ' + latex(H*a),
+        )
+    )
+  #+end_src
+
+  #+RESULTS: coset_similarity_p3
+  #+begin_export latex
+
+   \begin{alignedat}{2}
+   y \in H b \\ y = b h_{3} \\ y = a h_{3} {h^{-1}} \\ y = a h_{3} {h^{-1}} \\ \therefore a h_{3} {h^{-1}} \in H a
+   \end{alignedat}
+  #+end_export
+
+  This implies that if we select any element from either coset, it must belong
+  to the other, implying that all the elements of one coset must be in the
+  other, or in other words, they are the same!
+
+* Why cosets are equal xor disjoint?
+
+  We showed when cosets are equal, but in order to show our second observation
+  is always the case, we need to show that if two cosets don't share an element,
+  then they are disjoint (no shared elements). Luckily we can build on our
+  previous coset equality result to show this.
+
+  To show that cosets are disjoint we will assume that the intersection of
+  src_python[:results output :session]{print(latex(H*a))} and
+  src_python[:results output :session]{print(latex(H*b))} is empty, but if there
+  is a shared element, they are equal. With this assumption we can do the
+  following:
+
+  #+NAME: coset_similarity_p4
+  #+HEADER: :exports results :results output latex
+  #+begin_src python :session
+    h_one_inv = var("h_one_inv", latex_name="h_{1}^{-1}")
+    print(
+        latex_centers(
+            latex(x) + ' \in ' + latex((H*b)) + ' \cap ' + latex((H*a)),
+            latex(x == h_one*a),
+            latex(x == h_two*b),
+            latex(a == h_one_inv*(x)),
+            latex(a == h_one_inv*(h_two*b)),
+            '\\therefore' + latex(a) + ' \in ' + latex(H*b)
+        )
+    )
+  #+end_src
+
+  #+RESULTS: coset_similarity_p4
+  #+begin_export latex
+
+   \begin{alignedat}{2}
+   x \in H b \cap H a \\ x = a h_{1} \\ x = b h_{2} \\ a = {h_{1}^{-1}} x \\ a = b h_{2} {h_{1}^{-1}} \\ \therefore a \in H b
+   \end{alignedat}
+  #+end_export
+
+  Here we show that if we pull an element from the intersection of two cosets,
+  the coset generated by src_python[:results output :session]{print(latex(a))}
+  must be in src_python[:results output :session]{print(latex(H*b))}. But this
+  should look familiar because we just proved above that if src_python[:results
+  output :session]{print(latex(a) + ' \in ' + latex(H*b))}, then both cosets
+  must be equal! This implies that if there are shared elements between both
+  cosets, they must be equal which also implies if they don't have common
+  element(s), they have nothing in common.
+
+* Why do cosets split the group?
+
+  Our last observation to prove is that all cosets of a group split the
+  group. To show this is true, we just need to ensure that every element
+  src_python[:results output :session]{print(latex(g) + ' \in ' + latex(G))}
+  belongs to some coset src_python[:results output
+  :session]{print(latex(H*g))}. Luckily this is simple to show:
+
+  #+NAME: coset_similarity_p5
+  #+HEADER: :exports results :results output latex
+  #+begin_src python :session
+    e = var("e")
+    print(
+        latex_centers(
+            latex(e) + ' \in ' + latex((H)),
+            latex(e*g) + ' \in ' + latex((H*g)),
+            latex(g) + ' \in ' + latex((H*g)),
+        )
+    )
+  #+end_src
+
+  #+RESULTS: coset_similarity_p5
+  #+begin_export latex
+
+   \begin{alignedat}{2}
+   e \in H \\ e h \in H h \\ h \in H h
+   \end{alignedat}
+  #+end_export
+
+  Since src_python[:results output :session]{print(latex(H))} is a subgroup, it
+  must have an identity element. Then we can create the coset src_python[:results output
+  :session]{print(latex(H*g))} of which src_python[:results output
+  :session]{print(latex(e*g))} must be an element. And since applying the group
+  operation with the identity element returns the applied element, we know that src_python[:results output
+  :session]{print(latex(g))} will always belong the coset it generates,
+  meaning every element in src_python[:results output
+  :session]{print(latex(G))} belongs to a coset.
+
+* Lagrange's Theorem
+
+  Now that we have all the component information for Lagrange's Theorem, we can
+  move forward in proving it. We showed in the beginning that the theorem can be
+  stated as:
+
+  #+call: lagrange()
+
+  To reach this conclusion we will start with our previous result that all the
+  cosets split the group, meaning by "unioning" all the cosets we reconstruct
+  the original group:
+
+  #+NAME: lagrange_proof_p1
+  #+HEADER: :exports results :results output latex
+  #+begin_src python :session
+    a_1, a_n = var("a_1 a_n")
+    print(
+        latex_centers(
+            latex(G) + ' = ' + latex(H*a_1) + ' \cup ... \cup ' + latex(H*a_n)
+        )
+    )
+  #+end_src
+
+  #+RESULTS: lagrange_proof_p1
+  #+begin_export latex
+
+   \begin{alignedat}{2}
+   G = H a_{1} \cup ... \cup H a_{n}
+   \end{alignedat}
+  #+end_export
+
+  Keep in mind there will be some integer src_python[:results output
+  :session]{print(latex(n))} number of cosets. If we transition to thinking
+  about orders, then the total order of the group will be the sum of the number
+  of elements of the cosets:
+
+  #+NAME: lagrange_proof_p2
+  #+HEADER: :exports results :results output latex
+  #+begin_src python :session
+    print(
+        latex_centers(
+            latex(abs(G)) + ' = ' + latex(abs(H*a_1)) + ' + ... + ' + latex(abs(H*a_n))
+        )
+    )
+  #+end_src
+
+  #+RESULTS: lagrange_proof_p2
+  #+begin_export latex
+
+   \begin{alignedat}{2}
+   {\left| G \right|} = {\left| H a_{1} \right|} + ... + {\left| H a_{n} \right|}
+   \end{alignedat}
+  #+end_export
+
+  But since we know that all cosets of the subgroup are the same size as the
+  subgroup, we can rewrite this as:
+
+  #+NAME: lagrange_proof_p3
+  #+HEADER: :exports results :results output latex
+  #+begin_src python :session
+    print(
+        latex_centers(
+            latex(abs(G) == n*abs(H))
+        )
+    )
+  #+end_src
+
+  #+RESULTS: lagrange_proof_p3
+  #+begin_export latex
+
+   \begin{alignedat}{2}
+   {\left| G \right|} = n {\left| H \right|}
+   \end{alignedat}
+  #+end_export
+
+  And we're done! This shows that the order of a group src_python[:results
+  output :session]{print(latex(G))} is a multiple of the order of a subgroup
+  src_python[:results output :session]{print(latex(H))} which is functionally
+  the same as saying the order of the subgroup divides the order of the group!
+
+  This incredible result attributed to Lagrange means that just by knowing the
+  order of a group allows us to infer information about the order of subgroups
+  (and vice versa). But one of the most important details to keep in mind about
+  this proof is that just because the order of a subgroup must divide the order
+  of the group, it doesn't guarantee a subgroup of a dividing order exists. In
+  essence this is a "one way" proof stating that any subgroups that exist will
+  divide the order of the group.
+
+* Downstream implications
+
+  #+NAME: extra
+  #+HEADER: :exports none :results output latex
+  #+begin_src python :session
+    p = var("p")
+  #+end_src
+
+  This theorem has large implications for the rest of group theory. For example
+  if we consider groups that are of prime order src_python[:results output
+  :session]{print(latex(p))} ... well by definition nothing divides it except
+  itself and one, so the only subgroups that can exist are the identity element
+  and the group itself! This type of group has a special name, a "cyclic" group
+  because any non identity element of the group can generate the rest of the
+  group.
+
+  There are also many practical applications of Lagrange's Theorem. For example
+  in the [[https://zkhack.dev/puzzles/][ZKHACK 2021 hackathon]] in [[https://hackmd.io/@shalevos/HyDgqfBPK][the second puzzle]], participants need to
+  leverage Lagrange's Theorem to break the discrete log of an unsafe group with small
+  prime cofactors.
+
+  Thanks for reading! Stay tuned for breakdowns of more group theory theorems
+  like the primitive root theorem, and maybe more regarding implementing ECC
+  pairings 😮!
