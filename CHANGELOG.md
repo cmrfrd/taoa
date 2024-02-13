@@ -1,3 +1,10 @@
+### [1.3.55](https://github.com/cmrfrd/taoa/compare/v1.3.54...v1.3.55) (2024-02-13)
+
+
+### Bug Fixes
+
+* add img ([a793f56](https://github.com/cmrfrd/taoa/commit/a793f56e4d8ea52e52aaf4e23f6c402acc3e9ba0))
+
 ### [1.3.54](https://github.com/cmrfrd/taoa/compare/v1.3.53...v1.3.54) (2024-02-13)
 
 
