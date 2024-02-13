@@ -23,8 +23,8 @@
 
 
 <section>
-<section id="slide-org4738890">
-<h2 id="org4738890">Intro</h2>
+<section id="slide-org23fd615">
+<h2 id="org23fd615">Intro</h2>
 <ul>
 <li>Work as an ML Engineer</li>
 <li>Wannabe researcher / solopreneur</li>
@@ -37,8 +37,8 @@
 </section>
 </section>
 <section>
-<section id="slide-orgd41259f">
-<h2 id="orgd41259f">I made a word game!</h2>
+<section id="slide-org580724d">
+<h2 id="org580724d">I made a word game!</h2>
 <p>
 <a href="https://wordgolf.taoa.io">https://wordgolf.taoa.io</a>
 </p>
@@ -412,11 +412,11 @@ QmCC" style="width: 400px">
 </section>
 </section>
 <section>
-<section id="slide-org92ad78c">
-<h2 id="org92ad78c">How to play</h2>
+<section id="slide-org72c39b9">
+<h2 id="org72c39b9">How to play</h2>
 <ol>
 <li>Your goal is to <b>find the destination word</b></li>
-<li>All you&rsquo;re given is a starting word and it&rsquo;s related word</li>
+<li>All you&rsquo;re given is a starting word and its related words</li>
 <li>Your goal is to search through the word graph through related words to find
 the destination word</li>
 <li>Optional: Try to do it in the fewest number of &ldquo;jumps&rdquo;</li>
@@ -426,8 +426,8 @@ the destination word</li>
 </section>
 </section>
 <section>
-<section id="slide-orgaf3e57b">
-<h2 id="orgaf3e57b">Inspiration!</h2>
+<section id="slide-org64319fc">
+<h2 id="org64319fc">Inspiration!</h2>
 <p>
 My family and I play ALOT of word games.
 </p>
@@ -451,36 +451,58 @@ My family and I play ALOT of word games.
 </section>
 </section>
 <section>
-<section id="slide-org886d65d">
-<h2 id="org886d65d">The idea!</h2>
+<section id="slide-orgcd8de21">
+<h2 id="orgcd8de21">💙</h2>
 <p>
-What if you had a game like weaver, except you can traverse by association 🤔
+I want to make one to bring a little more fun into the world
 </p>
 
 </section>
 </section>
 <section>
-<section id="slide-org203bf63">
-<h2 id="org203bf63">How would you build these associations?</h2>
+<section id="slide-orga34e11a">
+<h2 id="orga34e11a">The idea!</h2>
+<p>
+What if you had a game like weaver, except you can traverse word to word by association 🤔
+</p>
 
 </section>
 </section>
 <section>
-<section id="slide-orged6ab82">
-<h2 id="orged6ab82">😻😻</h2>
+<section id="slide-org13b11d4">
+<h2 id="org13b11d4">Design considerations</h2>
+<ol>
+<li>Should take &lt;5 minutes</li>
+<li>People should know the words</li>
+<li>Shouldn&rsquo;t be too hard or to easy</li>
+<li>Should be fun :)</li>
+
+</ol>
+
+</section>
+</section>
+<section>
+<section id="slide-orgaa41f05">
+<h2 id="orgaa41f05">How would you build these associations?</h2>
+
+</section>
+</section>
+<section>
+<section id="slide-org272fc76">
+<h2 id="org272fc76">😻😻</h2>
 <img src="http://www.gigaglitters.com/created/du45hxAcFA.gif" width="558"  height="166" border="0">
 
 </section>
 </section>
 <section>
-<section id="slide-org144ffa8">
-<h2 id="org144ffa8">The whirlwind overview of embeddings!</h2>
+<section id="slide-org64c185b">
+<h2 id="org64c185b">The whirlwind overview of embeddings!</h2>
 
 </section>
 </section>
 <section>
-<section id="slide-org4872a4c">
-<h2 id="org4872a4c">What are embeddings?</h2>
+<section id="slide-org8f7eefc">
+<h2 id="org8f7eefc">What are embeddings?</h2>
 <ul>
 <li><b>An embedding is a numeric representation of data</b></li>
 <li>Typically represented as a vector</li>
@@ -492,8 +514,8 @@ What if you had a game like weaver, except you can traverse by association 🤔
 </section>
 </section>
 <section>
-<section id="slide-orge8e5654">
-<h2 id="orge8e5654">What are vectors?</h2>
+<section id="slide-org7fa52b6">
+<h2 id="org7fa52b6">What are vectors?</h2>
 <ul>
 <li>Typically referring to &ldquo;euclidian vectors&rdquo;</li>
 <li>Defined by a position and a length</li>
@@ -503,8 +525,8 @@ What if you had a game like weaver, except you can traverse by association 🤔
 </section>
 </section>
 <section>
-<section id="slide-orgf6e58af">
-<h2 id="orgf6e58af">Why vectors?</h2>
+<section id="slide-orgfc6d142">
+<h2 id="orgfc6d142">Why vectors?</h2>
 <ol>
 <li>They are byproduct of ML models!!</li>
 <li>They are mathematically convenient!!
@@ -519,8 +541,8 @@ What if you had a game like weaver, except you can traverse by association 🤔
 </section>
 </section>
 <section>
-<section id="slide-orgbb4b4d4">
-<h2 id="orgbb4b4d4">Word embeddings encode semantics!</h2>
+<section id="slide-org53c66bd">
+<h2 id="org53c66bd">Word embeddings encode semantics!</h2>
 <p>
 king - man + woman = queen (<a href="https://nlp.stanford.edu/projects/glove/">GloVe</a>)
 </p>
@@ -1064,20 +1086,20 @@ Om1vZGlmeQAyMDE5LTA2LTA5VDE3OjAzOjE5LTA3OjAw/B9iugAAAABJRU5ErkJggg==" style="wid
 </section>
 </section>
 <section>
-<section id="slide-orgb11595d">
-<h2 id="orgb11595d">(GPT embeddings are better 😏)</h2>
+<section id="slide-orgea46f92">
+<h2 id="orgea46f92">(GPT embeddings are better 😏)</h2>
 
 </section>
 </section>
 <section>
-<section id="slide-orgef2a013">
-<h2 id="orgef2a013">How can we use embeddings to make a word game?</h2>
+<section id="slide-orge9c538e">
+<h2 id="orge9c538e">How can we use embeddings to make a word game?</h2>
 
 </section>
 </section>
 <section>
-<section id="slide-org8f30af1">
-<h2 id="org8f30af1">The game plan</h2>
+<section id="slide-org685e573">
+<h2 id="org685e573">The game plan</h2>
 <ol>
 <li>Get a list of words</li>
 <li>Turn words into embeddings</li>
@@ -1090,8 +1112,8 @@ Om1vZGlmeQAyMDE5LTA2LTA5VDE3OjAzOjE5LTA3OjAw/B9iugAAAABJRU5ErkJggg==" style="wid
 </section>
 </section>
 <section>
-<section id="slide-org50c0b63">
-<h2 id="org50c0b63">The data (1/2)</h2>
+<section id="slide-orgbe5b9be">
+<h2 id="orgbe5b9be">The data (1/2)</h2>
 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAwgAAAEACAYAAAAXyVFTAAAABHNCSVQICAgIfAhkiAAAIABJREFU
 eJzsnXd8VMX6h5/taZtNJYUQOoSSUEKREmoCFooEUBSkqajovViuV5Qicm33WlCxi6DwE2yAjaag
 IiodAiEECIQ0kmzKbnY32WzP749IYEm2kISinufzyR85c953vjPznrMz58yZEXXrOagGAQEBAQGB
@@ -2752,8 +2774,8 @@ oBeAcZJZpoQAAAAASUVORK5CYII=" style="width: 400px">
 </section>
 </section>
 <section>
-<section id="slide-org94d3267">
-<h2 id="org94d3267">The data (2/2)</h2>
+<section id="slide-org1bd1f10">
+<h2 id="org1bd1f10">The data (2/2)</h2>
 <p>
 A lot of words had to be filtered
 </p>
@@ -8328,22 +8350,168 @@ QBBjhJNBIBAIBAKBQCAQCAQCQVT4NwQhvYSTGU9PAAAAAElFTkSuQmCC" style="width: 400px">
 </section>
 </section>
 <section>
-<section id="slide-org8646689">
-<h2 id="org8646689">Making the embeddings</h2>
+<section id="slide-org420c02f">
+<h2 id="org420c02f">Making the embeddings</h2>
 <div class="org-src-container">
 
-<pre   ><code class="python3" >words = [...]
+<pre   ><code class="python" >words = [...]
 embeddings = [emb(word) for word in words]
-embeddings = np.concantenate(embeddings, axis=0)
-normalized_embeddings = np.linalg.norm(embeddings, axis=1, keepdims=True)
+embeddings = np.concantenate(
+  embeddings,
+  axis=0
+)
+norm_embeddings = np.linalg.norm(
+  embeddings,
+  axis=1,
+  keepdims=True
+)
+similarities = np.dot(
+  norm_embeddings,
+  norm_embeddings.T
+)
 </code></pre>
 </div>
 
 </section>
 </section>
 <section>
-<section id="slide-org1763467">
-<h2 id="org1763467">I&rsquo;m on the internet! 🌐</h2>
+<section id="slide-orgc22f397">
+<h2 id="orgc22f397">Making the graph</h2>
+<div class="org-src-container">
+
+<pre   ><code class="python" >G = nx.DiGraph()
+num_neighbors = 8
+for word in words:
+    similars = similarities[word]
+    top_n_similars_idx = np.argsort(similars)[1:num_neighbors+1]
+    top_n_similars = similars[top_n_similars_idx]
+    for idx, score in zip(top_n_similars_idx, top_n_similars):
+        G.add_edge(word, words[idx], weight=round(1-score, 4))
+</code></pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org94b7079">
+<h2 id="org94b7079">Graph stats!</h2>
+<ul>
+<li>Number of nodes: 6592</li>
+<li>Number of edges: 52736</li>
+<li>Average weight: 0.47</li>
+<li>#1 most linked to word is <b>boat</b></li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgf49bdf6">
+<h2 id="orgf49bdf6">Pretty pictures!</h2>
+</section>
+</section>
+<section>
+<section id="slide-org2b3e001" data-background="./assets/test_graph.svg" data-background-transition="slide">
+<h2 id="org2b3e001"><font color="black">The word graph</font></h2>
+
+</section>
+</section>
+<section>
+<section id="slide-orgee8fe91">
+<h2 id="orgee8fe91">2D word embeddings</h2>
+
+<div id="org1cd5837" class="figure">
+<p><img src="./assets/word_embeddings_2d.png" alt="word_embeddings_2d.png" width="400px" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgdda460b">
+<h2 id="orgdda460b">Similarity matrix (unsorted)</h2>
+
+<div id="org57068aa" class="figure">
+<p><img src="./assets/similarity_unordered.png" alt="similarity_unordered.png" width="400px" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org9a8ca15">
+<h2 id="org9a8ca15">Similarity matrix (sorted)</h2>
+
+<div id="org1044e0e" class="figure">
+<p><img src="./assets/similarity_ordered.png" alt="similarity_ordered.png" width="400px" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgc2edb4b">
+<h2 id="orgc2edb4b">Similarity dropoff</h2>
+
+<div id="orgcadc179" class="figure">
+<p><img src="./assets/similarity_ordered_lines.png" alt="similarity_ordered_lines.png" width="400px" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org1c09f45">
+<h2 id="org1c09f45">How do we make a game? (1/2)</h2>
+<p>
+We have a graph! But how do we choose start/end words?
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-org7d1621a">
+<h2 id="org7d1621a">How do we make a game? (2/2)</h2>
+<p>
+Constraints
+</p>
+
+<ol>
+<li>There should be no &ldquo;shortcuts&rdquo; (paths &lt;5)</li>
+<li>There should always be atleast 1 path of length 5</li>
+<li>A sample of shortest paths should be between some range (5.5, 7.25)</li>
+<li>There should be no &ldquo;bottleneck&rdquo; words
+<ul>
+<li>The &ldquo;vegetable forest&rdquo; problem</li>
+
+</ul></li>
+
+</ol>
+
+</section>
+</section>
+<section>
+<section id="slide-orge9581b1">
+<h2 id="orge9581b1">Future plans</h2>
+<ol>
+<li>More analysis on the graph</li>
+<li>Grow this site from 10-&gt;100-&gt;1000,&#x2026; users a day</li>
+<li>Add &ldquo;explorer&rdquo; mode</li>
+<li>Play it daily with my family</li>
+
+</ol>
+
+</section>
+</section>
+<section>
+<section id="slide-org8a0c38e">
+<h2 id="org8a0c38e">Oh Mama!</h2>
+
+</section>
+</section>
+<section>
+<section id="slide-org444c552">
+<h2 id="org444c552">I&rsquo;m on the internet! 🌐</h2>
 <div style="text-align: left;width: 60%;margin: auto auto">
 <p><span style="float:left">🐙 Github:</span> <span style="float:right"><code>@cmrfrd</code></span></p>
 <br />
