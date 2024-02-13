@@ -131,6 +131,11 @@ const SEO: React.FC<IHelmetProps> = ({
       script={themeUIDarkModeWorkaroundScript}
       meta={metaTags}
     >
+      <script
+        async
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5123907739075514"
+        crossOrigin="anonymous"
+      ></script>
       <link rel="canonical" href={canonicalUrl} />
       {children}
     </Helmet>
