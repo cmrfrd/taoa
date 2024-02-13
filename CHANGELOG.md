@@ -1,3 +1,10 @@
+### [1.3.52](https://github.com/cmrfrd/taoa/compare/v1.3.51...v1.3.52) (2024-02-13)
+
+
+### Bug Fixes
+
+* add ads ([e11d4af](https://github.com/cmrfrd/taoa/commit/e11d4afe009a8341e3c6d312dd73842955e00b36))
+
 ### [1.3.51](https://github.com/cmrfrd/taoa/compare/v1.3.50...v1.3.51) (2023-07-17)
 
 
