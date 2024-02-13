@@ -2772,7 +2772,7 @@
   )
   #+end_src
 
-* Making the graph
+* Making the graph (directional)
 
   #+begin_src python :noeval
   G = nx.DiGraph()
@@ -2785,11 +2785,10 @@
           G.add_edge(word, words[idx], weight=round(1-score, 4))
   #+end_src
 
-* Graph stats!
+* Graph stats! (directional)
 
   - Number of nodes: 6592
   - Number of edges: 52736
-  - Average weight: 0.47
   - #1 most linked to word is *boat*
 
 * Pretty pictures!
@@ -2819,6 +2818,11 @@
   #+ATTR_HTML: :width 400px
   [[./assets/similarity_ordered_lines.png]]
 
+* Shortest paths
+
+  #+ATTR_HTML: :width 400px
+  [[./assets/shortest_path_length_histogram_bidirectional.png]]
+
 * How do we make a game? (1/2)
 
   We have a graph! But how do we choose start/end words?
@@ -2831,7 +2835,7 @@
   2. There should always be atleast 1 path of length 5
   3. A sample of shortest paths should be between some range (5.5, 7.25)
   4. There should be no "bottleneck" words
-     - The "vegetable forest" problem
+     - The "vegetable cluster" problem
 
 * Future plans
 
