@@ -1,3 +1,10 @@
+### [1.3.54](https://github.com/cmrfrd/taoa/compare/v1.3.53...v1.3.54) (2024-02-13)
+
+
+### Bug Fixes
+
+* moar updates ([2cd062d](https://github.com/cmrfrd/taoa/commit/2cd062d89c0258d1c78f9dac831cad75c860b263))
+
 ### [1.3.53](https://github.com/cmrfrd/taoa/compare/v1.3.52...v1.3.53) (2024-02-13)
 
 
