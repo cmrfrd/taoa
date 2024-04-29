@@ -1,6 +1,6 @@
 #+TITLE: The Rainbow Hats Puzzle
 #+CREATED: [2024-04-27 Sat 20:13]
-#+LAST_MODIFIED: [2024-04-28 Sun 22:54]
+#+LAST_MODIFIED: [2024-04-28 Sun 23:03]
 #+ROAM_TAGS: composition
 #+OPTIONS: toc:nil
 #+OPTIONS: tex:t
