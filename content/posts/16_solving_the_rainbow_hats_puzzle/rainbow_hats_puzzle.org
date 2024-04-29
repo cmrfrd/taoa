@@ -1,0 +1,514 @@
+#+TITLE: The Rainbow Hats Puzzle
+#+CREATED: [2024-04-27 Sat 20:13]
+#+LAST_MODIFIED: [2024-04-28 Sun 22:54]
+#+ROAM_TAGS: composition
+#+OPTIONS: toc:nil
+#+OPTIONS: tex:t
+#+OPTIONS: _:nil ^:nil p:nil
+
+#+HUGO_BASE_DIR: ./
+#+hugo_front_matter_format: yaml
+#+HUGO_CUSTOM_FRONT_MATTER: :date (org-to-blog-date (org-global-prop-value "CREATED"))
+#+HUGO_CUSTOM_FRONT_MATTER: :hero ./cover.png
+#+HUGO_CUSTOM_FRONT_MATTER: :secret false
+#+HUGO_CUSTOM_FRONT_MATTER: :excerpt Groups in groups in groups
+
+#+BEGIN_SRC emacs-lisp :exports none
+  ;; All inline code blocks will be latex
+  (setq org-babel-inline-result-wrap "$%s$")
+  (defun org-hugo-link (link contents info) (org-md-link link contents info))
+
+  ;; Setup org/latex exporting
+  (add-to-list 'org-export-filter-latex-fragment-functions
+               'sub-paren-for-dollar-sign)
+  (add-to-list 'org-export-filter-headline-functions
+               'remove-regexp-curly-braces)
+  (add-to-list 'org-export-filter-latex-environment-functions
+               'sub-paren-for-dollar-sign)
+  (export-to-mdx-on-save)
+#+END_SRC
+
+#+RESULTS:
+: Enabled mdx on save
+
+* Forward                                                          :noexport:
+
+  #+NAME: emacs-init
+  #+begin_src emacs-lisp
+    (setq org-babel-python-command (f-join (getenv "SCRIPTS") "pysage"))
+    (setq py-default-interpreter (f-join (getenv "SCRIPTS") "pysage"))
+    (setq-local org-plantuml-executable-path (f-join (getenv "SCRIPTS") "plantuml-cli"))
+  #+end_src
+
+  #+RESULTS: emacs-init
+  : /home/cmrfrd/.dotfiles/scripts/plantuml-cli
+
+  #+NAME: init
+  #+HEADER: :exports none :results output
+  #+begin_src python :session rainbow
+    from sage.all import *
+    from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+    import sympy as S
+    import warnings
+    warnings.simplefilter("ignore")
+  #+end_src
+
+  #+RESULTS: init
+  : Python 3.11.8 (main, Feb  6 2024, 21:21:21) [GCC 12.3.0] on linux
+  : Type "help", "copyright", "credits" or "license" for more information.
+  : >>>
+
+  #+NAME: setup-vars
+  #+HEADER: :exports none :results output
+  #+begin_src python :session rainbow
+    i, j, c, c_i, c_j, n, T, S, S_i, a, b = var("i j c c_i c_j n T S S_i a b")
+
+    def seq(one, two):
+        return S.Eq(one._sympy_(), two._sympy_())._sage_()
+
+    latex_center = lambda expr: \
+        '\n' + \
+        LatexExpr("\\begin{alignedat}{2}") + \
+        '\n' + \
+        expr + \
+        '\n' + \
+        LatexExpr("\\end{alignedat}") + \
+        '\n'
+
+    latex_centers = lambda *exprs: \
+        '\n' + \
+        LatexExpr("\\begin{alignedat}{2}") + \
+        '\n' + \
+        ' \\\\ '.join(exprs) + \
+        ' \n' + \
+        LatexExpr("\\end{alignedat}") + \
+        '\n'
+
+    latex_right = lambda a, b: a + LatexExpr(" \\rightarrow ") + b
+  #+end_src
+
+  #+RESULTS: setup-vars
+
+  #+NAME: eval_latex
+  #+HEADER: :exports none :results output
+  #+BEGIN_SRC python :var name="" :session rainbow
+    def eval_latex(name):
+        if type(name) == str:
+            result = eval(name)
+            if type(result) == tuple:
+                return latex((tuple(elem._sage_() for elem in result)))
+            return latex(result._sage_())
+        return latex(name._sage_())
+  #+END_SRC
+
+  #+RESULTS: eval_latex
+
+  #+NAME: eval_latex_wrap
+  #+HEADER: :exports none :results output
+  #+BEGIN_SRC python :var inp="" :session rainbow
+    def eval_latex_wrap(name):
+        return f"${eval_latex(name)}$"
+  #+END_SRC
+
+  #+RESULTS: eval_latex_wrap
+
+* The puzzle
+
+  You and your friends are walking through the park when an evil game master
+  kidnaps you all and forces you to play a devious game.
+
+  The game master sits you all down in a room across from one other and explains
+  the game. The game master says that he will be placing hats on each of your
+  heads. Each hat will be one of several colors, the maximum number of possible
+  colors will match the number of people in your group. So if there are six of
+  you, there will be six different possible colors that the game master can
+  choose from. However, the game master is sneaky, and can choose to use as few
+  or as many colors as he sees fit; some of you could end up wearing the same
+  color hat. You won't be able to see your own hat, but you *will* be able to
+  see everybody elses.
+
+  #+begin_src python :session rainbow :exports none :results output
+    def create_friend_img(filename: str, color: str):
+        file_content = f"""<?xml version="1.0" encoding="UTF-8"?>
+    <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+      <title>User Icon</title>
+      <circle cx="100" cy="100" r="40" fill="none" stroke="black" stroke-width="10"/>
+      <circle cx="100" cy="210" r="70" fill="none" stroke="black" stroke-width="10" clip-path="url(#body-clip)"/>
+      <polygon points="75,60 125,60 100,10" fill="{color}" stroke="black" stroke-width="2"/>
+      <defs>
+        <clipPath id="body-clip">
+          <rect x="0" y="70" width="200" height="130"/>
+        </clipPath>
+      </defs>
+    </svg>"""
+        with open(filename, 'w') as f:
+            f.write(file_content)
+
+        import subprocess
+        png_filename = filename.replace('.svg', '.png')
+        # Call the 'convert' command to convert the SVG to a PNG file
+        result = subprocess.run(['convert', filename, png_filename])
+        print(result)
+
+    colors = [
+        "#ff595e",
+        "#ffca3a",
+        "#8ac926",
+        "#1982c4",
+        "#6a4c93",
+        "#1982c4",
+    ]
+    for ii in range(len(colors)):
+       create_friend_img(f"friend{ii}.svg", colors[ii])
+  #+end_src
+
+  #+RESULTS:
+  : CompletedProcess(args=['convert', 'friend0.svg', 'friend0.png'], returncode=0)
+  : CompletedProcess(args=['convert', 'friend1.svg', 'friend1.png'], returncode=0)
+  : CompletedProcess(args=['convert', 'friend2.svg', 'friend2.png'], returncode=0)
+  : CompletedProcess(args=['convert', 'friend3.svg', 'friend3.png'], returncode=0)
+  : CompletedProcess(args=['convert', 'friend4.svg', 'friend4.png'], returncode=0)
+  : CompletedProcess(args=['convert', 'friend5.svg', 'friend5.png'], returncode=0)
+
+  #+HEADER: :exports results :results output
+  #+BEGIN_SRC dot :file puzzlepic.png
+    graph G {
+        node [shape=circle];
+        layout=circo;
+        A [image="./friend0.png", label=""];
+        B [image="./friend1.png", label=""];
+        C [image="./friend2.png", label=""];
+        D [image="./friend3.png", label=""];
+        E [image="./friend4.png", label=""];
+        F [image="./friend5.png", label=""];
+
+        A -- B;
+        A -- C;
+        A -- D;
+        A -- E;
+        A -- F;
+        B -- C;
+        B -- D;
+        B -- E;
+        B -- F;
+        C -- D;
+        C -- E;
+        C -- F;
+        D -- E;
+        D -- F;
+        E -- F;
+      }
+  #+END_SRC
+
+  #+CAPTION: You and five friends trapped with colored hats
+  #+RESULTS:
+  [[file:puzzlepic.png]]
+
+  Once the game master places all the hats, then one by one he will ask you in
+  order to write down your best guess as to what your own hat color is. If at
+  least one of you is able to guess your own hat color, he'll set you all free,
+  and if not, you all must remain his prisoners!
+
+  #+HEADER: :exports results :results output
+  #+BEGIN_SRC dot :file puzzlepic_answered.png
+    graph G {
+        node [shape=circle, labelloc="b"];
+        layout=circo;
+        A [image="./friend0.png", label=<<br/>green!>];
+        B [image="./friend1.png", label=<<br/>red!>];
+        C [image="./friend2.png", label=<<br/>purple!>];
+        D [image="./friend3.png", label=<<br/>yellow!>];
+        E [image="./friend4.png", label=<<br/>purple!>];
+        F [image="./friend5.png", label=<<br/>green!>];
+
+        A -- B;
+        A -- C;
+        A -- D;
+        A -- E;
+        A -- F;
+        B -- C;
+        B -- D;
+        B -- E;
+        B -- F;
+        C -- D;
+        C -- E;
+        C -- F;
+        D -- E;
+        D -- F;
+        E -- F;
+      }
+  #+END_SRC
+
+  #+CAPTION: Everyone guessing their own hat color
+  #+RESULTS:
+  [[file:puzzlepic_answered.png]]
+
+  Feeling merciful, the game master gives you a few moments to say goodbye to
+  each other as he believes you are all doomed. This gives you a few moments to
+  think of a way to try and win his devious game. This is important because once
+  the game master sits you down, you won't be able to communicate at all to each
+  other without forfeiting the game.
+
+  How can you *guarantee* that at least one of you will guess your own hat color
+  correctly?
+
+* TLDR
+
+  Rainbow Hats Puzzle
+
+  1. You and src_python[:results output :session rainbow]{print(latex(n))}
+     {{{results($n$)}}} friends are sitting in a room across from one another.
+  2. Each of you is wearing a colored hat src_python[:results output
+     :session rainbow]{print(latex(c_i))} {{{results($c_{i}$)}}}.
+  3. The number of unique hat colors is equal to src_python[:results output
+     :session rainbow]{print(latex(n))} {{{results($n$)}}}.
+  4. Colors may or may not repeat.
+  5. You can see everyone elses hat color except your own.
+  6. No friend can communicate with another once the hats are placed.
+  7. No friend can hear any other friends guesses
+
+  *Goal:* garuntee that at least one of you can guess their own hat color!
+
+  Try to solve it for yourself, or keep scrolling for the answer!
+
+  -----
+
+* The Solution
+
+  This has been one of my favorite math puzzles I've seen over the past year. In
+  my mind it strikes that beautiful in between of mathematical simplicity, and
+  hard reasoning. Let's go through that reasoning and the solution step by step:
+
+  First lets define some core variables based on the puzzle description
+
+  #+NAME: var_table
+  #+HEADER: :exports results :results output table
+  #+BEGIN_SRC python :session rainbow
+    t = [
+        ["Variable", "Description"],
+        [eval_latex_wrap("n"),
+         f'''The total number of people'''],
+        [eval_latex_wrap("c_i"),
+         f'''The ith colored hat (represented as an integer between 0 and n-1)'''],
+        [eval_latex_wrap("S_i"),
+         f'''The sum of colored hats seen by person "i", or {eval_latex_wrap("sum(c_j, j, 0, n, hold=True)")} where {eval_latex_wrap("j != i")}'''],
+    ]
+    print(t)
+  #+END_SRC
+
+  #+RESULTS: var_table
+  | Variable | Description                                                                              |
+  | $n$      | The total number of people                                                               |
+  | $c_{i}$  | The ith colored hat (represented as an integer between 0 and n-1)                        |
+  | $S_{i}$  | The sum of colored hats seen by person "i", or ${\sum_{j=0}^{n} c_{j}}$ where $j \neq 5$ |
+
+  The first logical and simplest step is to try and express our desired
+  src_python[:results output :session rainbow]{print(latex(c_i))} in an
+  algebraic form from the perspective of any one of the friends like so:
+
+   #+NAME: first_step
+   #+HEADER: :exports results :results latex output
+   #+BEGIN_SRC python :session rainbow
+    print(
+        latex_centers(
+            latex(T == sum(c_j, j, 0, n, hold=True)),
+            latex(c_i == T - S_i),
+        )
+    )
+   #+END_SRC
+
+   #+RESULTS: first_step
+   #+begin_export latex
+
+    \begin{alignedat}{2}
+    T = {\sum_{j=0}^{n} c_{j}} \\ c_{i} = -S_{i} + T
+    \end{alignedat}
+   #+end_export
+
+   Here we are expressing src_python[:results output :session
+   rainbow]{print(latex(c_i))} as the difference between the sum of total colors
+   in the group src_python[:results output :session rainbow]{print(latex(T))}
+   {{{results($T$)}}}, and the sum of colors any one friend can see
+   src_python[:results output :session rainbow]{print(latex(S_i))}.
+
+   Now the only variable any one of the friends know is src_python[:results
+   output :session rainbow]{print(latex(S_i))} {{{results($S_{i}$)}}} (since
+   they can each see each others hats), and since our final goal is to solve for
+   src_python[:results output :session rainbow]{print(latex(c_i))}, the only
+   unknown we need to reason about is src_python[:results output :session
+   rainbow]{print(latex(T))}.
+
+   Here we need to make a small leap of insight. The game master by choosing
+   some combination of colored hats, also decides the value src_python[:results
+   output :session rainbow]{print(latex(T))} which is bounded by
+   src_python[:results output :session rainbow]{print(latex([0,
+   (n*(n-1))]))}. src_python[:results output :session rainbow]{print(latex(T))}
+   is tricky to understand because the game master effectively is able chooses
+   any number in this bound. So what do we do?  In situations like this where we
+   have a complicated variable to reason about, it's often advisable to try
+   breaking it down or representing it as something more digestible with
+   different constraints to try and make forward progress.
+
+   One of the simplest ways to re-represent bounded variables like
+   src_python[:results output :session rainbow]{print(latex(T))} is by turning
+   it into a linear form like so:
+
+    #+NAME: linear_breakdown
+    #+HEADER: :exports results :results output latex
+    #+BEGIN_SRC python :session rainbow
+      print(
+          latex_centers(
+              ' \\\\ \n',
+              latex(T == a*n + b),
+          )
+      )
+    #+END_SRC
+
+    #+RESULTS: linear_breakdown
+    #+begin_export latex
+
+     \begin{alignedat}{2}
+     \\
+     \\ T = a n + b
+     \end{alignedat}
+    #+end_export
+
+    for some a and b with the following constraints: src_python[:results output
+    :session rainbow]{print(' , '.join([latex(b>=0), latex(b<n), latex(a>=0),
+    latex(a<n), latex(T<=(n*(n-1)))]))} {{{results($b \geq 0 \, b < n \, a \geq
+    0 \, a < n \, T \leq {\left(n - 1\right)} n$)}}}. In this form, no matter
+    what value src_python[:results output :session rainbow]{print(latex(T))} is,
+    there will always exist a unique a and b equal to that total.
+
+    Substitute everything together, we get:
+
+    #+NAME: all_together_expanded
+    #+HEADER: :exports results :results latex output
+    #+BEGIN_SRC python :session rainbow
+      print(
+          latex_centers(
+              latex(c_i == ((a*n) + b) - S_i),
+            )
+      )
+    #+END_SRC
+
+    #+RESULTS: all_together_expanded
+    #+begin_export latex
+
+     \begin{alignedat}{2}
+     c_{i} = a n - S_{i} + b
+     \end{alignedat}
+    #+end_export
+
+    It might seem like we've gone backwards by adding two more "unknowns" to our
+    equation, but by doing this we've added more ways to tackle our problem and
+    integrate new information to help us solve it.
+
+    At this point we need to make *yet another* small leap of insight. Mentioned
+    in puzzle definition is the variable src_python[:results output :session
+    rainbow]{print(latex(i))} which tells us that all of the friends have an
+    order, or an "id". This is information we can use!
+
+    If we look closely, since every friend has a unique src_python[:results
+    output :session rainbow]{print(latex(i))}, this means that no matter what
+    src_python[:results output :session rainbow]{print(latex(T))} the game
+    master chooses, if we represent src_python[:results output :session
+    rainbow]{print(latex(T))} in the linear form, exactly ~one~ of the friends
+    will have an src_python[:results output :session rainbow]{print(latex(i))}
+    that is equal to src_python[:results output :session
+    rainbow]{print(latex(b))} (since src_python[:results output :session
+    rainbow]{print(latex(b))} will be bounded from src_python[:results output
+    :session rainbow]{print(latex(0))} to src_python[:results output :session
+    rainbow]{print(latex(n-1))}). Knowing this we can do the following
+    cancellation:
+
+    #+NAME: all_together_reduction
+    #+HEADER: :exports results :results latex output
+    #+BEGIN_SRC python :session rainbow
+      print(
+          latex_centers(
+              latex(c_i == ((a*n) + b) - S_i),
+              latex((c_i - i) == (((a*n) + b) - S_i) - i),
+              latex((c_i - i) == (((a*n)) - S_i)),
+              latex((c_i) == (((a*n)) - S_i + i)),
+            )
+      )
+    #+END_SRC
+
+    #+RESULTS: all_together_reduction
+    #+begin_export latex
+
+     \begin{alignedat}{2}
+     c_{i} = a n - S_{i} + b \\ c_{i} - i = a n - S_{i} + b - i \\ c_{i} - i = a n - S_{i} \\ c_{i} = a n - S_{i} + i
+     \end{alignedat}
+    #+end_export
+
+    And almost like magic, we've substituted one of our unknown terms
+    src_python[:results output :session rainbow]{print(latex(b))} with a term we
+    do know, src_python[:results output :session rainbow]{print(latex(i))}.
+
+    This leads us to *one last piece* of insight we need to make to get our final
+    answer. We know src_python[:results output :session
+    rainbow]{print(latex(c_i))} is bounded by src_python[:results output
+    :session rainbow]{print(latex([0, n-1]))} {{{results($\left[0\, n -
+    1\right]$)}}}, which means if we apply $\mod n$, it will have no
+    effect. However if we apply it to both sides, we will actually be able to
+    eliminate the src_python[:results output :session
+    rainbow]{print(latex(a*n))} term entirely (because any multiple of
+    src_python[:results output :session rainbow]{print(latex(n))} is just 0 in
+    $\mod n$).
+
+    By applying this operation we get our final expression:
+
+    #+NAME: final
+    #+HEADER: :exports results :results latex output
+    #+BEGIN_SRC python :session rainbow
+      print(
+          latex_centers(
+              latex((c_i) == (((a*n)) - S_i + i)),
+              latex((c_i)) + ' \mod n' + ' = ' + latex((((a*n)) - S_i + i)) + ' \mod n',
+              latex((c_i)) + ' = ' + latex( -S_i + i ) + ' \mod n',
+            )
+      )
+    #+END_SRC
+
+    #+RESULTS: final
+    #+begin_export latex
+
+     \begin{alignedat}{2}
+     c_{i} = a n - S_{i} + i \\ c_{i} \mod n = a n - S_{i} + i \mod n \\ c_{i} = -S_{i} + i \mod n
+     \end{alignedat}
+    #+end_export
+
+    And we've arrived at an interesting conclusion! In order to get a single
+    friend to guess their own color, all we have to do is have each friend take
+    their index, subtract the sum of the colors they see, and mod by $n$! In
+    doing this we guarantee that one of the friends will correctly guess their
+    own hat!
+
+    In this final form, all any friend has to do is:
+
+    #+NAME: final-clean
+    #+HEADER: :exports results :results latex output
+    #+BEGIN_SRC python :session rainbow
+      print(
+          latex_centers(
+              latex(latex( -S_i + i ) + ' \mod n')
+          )
+      )
+    #+END_SRC
+
+    #+RESULTS: final-clean
+    #+begin_export latex
+
+     \begin{alignedat}{2}
+     -S_{i} + i \mod n
+     \end{alignedat}
+    #+end_export
+
+    And one will guess correctly!
+
+    Congratulations! The game master, stupefied that one of you was able to
+    guess correctly, begrudgingly releases you!
+
+    Thanks for reading! (◍＞◡＜◍)⋈。✧♡

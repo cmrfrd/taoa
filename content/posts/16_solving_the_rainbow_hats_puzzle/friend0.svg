@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <title>User Icon</title>
+  <circle cx="100" cy="100" r="40" fill="none" stroke="black" stroke-width="10"/>
+  <circle cx="100" cy="210" r="70" fill="none" stroke="black" stroke-width="10" clip-path="url(#body-clip)"/>
+  <polygon points="75,60 125,60 100,10" fill="#ff595e" stroke="black" stroke-width="2"/>
+  <defs>
+    <clipPath id="body-clip">
+      <rect x="0" y="70" width="200" height="130"/>
+    </clipPath>
+  </defs>
+</svg>
