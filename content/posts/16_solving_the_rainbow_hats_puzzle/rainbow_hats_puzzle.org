@@ -1,6 +1,6 @@
 #+TITLE: The Rainbow Hats Puzzle
 #+CREATED: [2024-04-27 Sat 20:13]
-#+LAST_MODIFIED: [2024-04-28 Sun 23:03]
+#+LAST_MODIFIED: [2024-04-28 Sun 23:06]
 #+ROAM_TAGS: composition
 #+OPTIONS: toc:nil
 #+OPTIONS: tex:t
@@ -11,7 +11,7 @@
 #+HUGO_CUSTOM_FRONT_MATTER: :date (org-to-blog-date (org-global-prop-value "CREATED"))
 #+HUGO_CUSTOM_FRONT_MATTER: :hero ./cover.png
 #+HUGO_CUSTOM_FRONT_MATTER: :secret false
-#+HUGO_CUSTOM_FRONT_MATTER: :excerpt Groups in groups in groups
+#+HUGO_CUSTOM_FRONT_MATTER: :excerpt ROYGBV
 
 #+BEGIN_SRC emacs-lisp :exports none
   ;; All inline code blocks will be latex
