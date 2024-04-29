@@ -1,3 +1,12 @@
+### [1.3.56](https://github.com/cmrfrd/taoa/compare/v1.3.55...v1.3.56) (2024-04-29)
+
+
+### Bug Fixes
+
+* Add new post ([3b486b9](https://github.com/cmrfrd/taoa/commit/3b486b983c3f2309354a9882c27d533d69715c1d))
+* excerpt ([036471f](https://github.com/cmrfrd/taoa/commit/036471f388daf9c3b690acc2779cdfa71a473839))
+* fixes ([5f731b9](https://github.com/cmrfrd/taoa/commit/5f731b94faa32129e0bd150ed3459f4f0b3099f5))
+
 ### [1.3.55](https://github.com/cmrfrd/taoa/compare/v1.3.54...v1.3.55) (2024-02-13)
 
 
