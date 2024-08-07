@@ -1,3 +1,11 @@
+### [1.3.57](https://github.com/cmrfrd/taoa/compare/v1.3.56...v1.3.57) (2024-08-07)
+
+
+### Bug Fixes
+
+* add oes presentation ([ff6113f](https://github.com/cmrfrd/taoa/commit/ff6113f455679412411aa79a57cf375bad9f8a21))
+* add oes slides ([b9e35cf](https://github.com/cmrfrd/taoa/commit/b9e35cf4d5b9c45fb9eb349b40c15837328d6134))
+
 ### [1.3.56](https://github.com/cmrfrd/taoa/compare/v1.3.55...v1.3.56) (2024-04-29)
 
 
