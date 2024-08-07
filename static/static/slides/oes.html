@@ -23,8 +23,8 @@
 
 
 <section>
-<section id="slide-org1c79dd9">
-<h2 id="org1c79dd9">About me</h2>
+<section id="slide-org2db9c03">
+<h2 id="org2db9c03">About me</h2>
 <ul>
 <li>Work as an ML Engineer</li>
 <li>Wannabe researcher / solopreneur</li>
@@ -37,8 +37,8 @@
 </section>
 </section>
 <section>
-<section id="slide-orgde9e160">
-<h2 id="orgde9e160">What is this talk about</h2>
+<section id="slide-org7c730d9">
+<h2 id="org7c730d9">What is this talk about</h2>
 <ol>
 <li>The challenge with embeddings</li>
 <li>Omni Embedding Service (OES)</li>
@@ -50,8 +50,8 @@
 </section>
 </section>
 <section>
-<section id="slide-orgcc2e92a">
-<h2 id="orgcc2e92a">Problem backstory</h2>
+<section id="slide-org8f024a3">
+<h2 id="org8f024a3">Problem backstory</h2>
 <ul>
 <li>At a previous company, I had to make &gt;10m image embeddings.</li>
 <li>This required a bunch of data/ml engineering work.</li>
@@ -62,8 +62,8 @@
 </section>
 </section>
 <section>
-<section id="slide-orgf19057a">
-<h2 id="orgf19057a">The problem</h2>
+<section id="slide-orge65cea6">
+<h2 id="orge65cea6">The problem</h2>
 <ul>
 <li>Text embeddings for closed models are easy to get (via OpenAI, Cohere,
 Jina, &#x2026;) but make you dependent on a third party.</li>
@@ -76,8 +76,8 @@ as easy as a self-hostable API call.</li>
 </section>
 </section>
 <section>
-<section id="slide-org66485f0">
-<h2 id="org66485f0">My solution: Omni Embedding Service (OES)</h2>
+<section id="slide-orgaf0d4d7">
+<h2 id="orgaf0d4d7">My solution: Omni Embedding Service (OES)</h2>
 <p>
 An OpenAI API compatible embedding service for text, images, and audio
 (written in Rust).
@@ -90,8 +90,8 @@ An OpenAI API compatible embedding service for text, images, and audio
 </section>
 </section>
 <section>
-<section id="slide-org3c502d8">
-<h2 id="org3c502d8">What are embeddings used for</h2>
+<section id="slide-orge8abfe2">
+<h2 id="orge8abfe2">What are embeddings used for</h2>
 <ul>
 <li>Content-Based Image Retrieval</li>
 <li>Fraud detection</li>
@@ -104,8 +104,8 @@ An OpenAI API compatible embedding service for text, images, and audio
 </section>
 </section>
 <section>
-<section id="slide-orgccf038f">
-<h2 id="orgccf038f">Existing open solutions</h2>
+<section id="slide-org7110b66">
+<h2 id="org7110b66">Existing open solutions</h2>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -141,8 +141,8 @@ An OpenAI API compatible embedding service for text, images, and audio
 </section>
 </section>
 <section>
-<section id="slide-org54f5321">
-<h2 id="org54f5321">Text embeddings with python + OpenAI</h2>
+<section id="slide-org37e9112">
+<h2 id="org37e9112">Text embeddings with python + OpenAI</h2>
 <div class="org-src-container">
 
 <pre   ><code class="python" >from openai import OpenAI
@@ -164,8 +164,8 @@ print(response.data[0].embedding)
 </section>
 </section>
 <section>
-<section id="slide-org81bb591">
-<h2 id="org81bb591">Abstracting the OpenAI Embedding API</h2>
+<section id="slide-orgb5907b7">
+<h2 id="orgb5907b7">Abstracting the OpenAI Embedding API</h2>
 <ul>
 <li>The <i>CreateEmbeddingRequest</i> schema requires <i>input</i> to be a string (or list
 of strings).</li>
@@ -178,8 +178,8 @@ embedding models.</li>
 </section>
 </section>
 <section>
-<section id="slide-orge92b5a9">
-<h2 id="orge92b5a9">What are data URLs (rfc2397)</h2>
+<section id="slide-orgdb8ccdc">
+<h2 id="orgdb8ccdc">What are data URLs (rfc2397)</h2>
 <p>
 A URL scheme to embed files inline in documents.
 </p>
@@ -203,8 +203,8 @@ example:
 </section>
 </section>
 <section>
-<section id="slide-org58379d9">
-<h2 id="org58379d9">Audio embeddings with python + OES</h2>
+<section id="slide-org6bede22">
+<h2 id="org6bede22">Audio embeddings with python + OES</h2>
 <div class="org-src-container">
 
 <pre   ><code class="python" >import openai
@@ -225,8 +225,8 @@ print(response.data[0].embedding)
 </section>
 </section>
 <section>
-<section id="slide-org45e8db4">
-<h2 id="org45e8db4">Image embeddings with python + OES</h2>
+<section id="slide-org61777ff">
+<h2 id="org61777ff">Image embeddings with python + OES</h2>
 <div class="org-src-container">
 
 <pre   ><code class="python" >import openai
@@ -246,8 +246,8 @@ img_embed = oes_client.embeddings.create(
 </section>
 </section>
 <section>
-<section id="slide-orgc4d6f50">
-<h2 id="orgc4d6f50">OES implementation</h2>
+<section id="slide-orgf63b8ed">
+<h2 id="orgf63b8ed">OES implementation</h2>
 <ul>
 <li>Rust API (tokio + axum)</li>
 <li>Implements 2 endpoints:
@@ -263,10 +263,10 @@ img_embed = oes_client.embeddings.create(
 </section>
 </section>
 <section>
-<section id="slide-org0688a9e">
-<h2 id="org0688a9e">Architecture</h2>
+<section id="slide-orgfe3a3bd">
+<h2 id="orgfe3a3bd">Architecture</h2>
 
-<div id="org24d4f3c" class="figure">
+<div id="orgc843650" class="figure">
 <p><img src="./assets/arch.png" alt="arch.png" />
 </p>
 </div>
@@ -274,10 +274,10 @@ img_embed = oes_client.embeddings.create(
 </section>
 </section>
 <section>
-<section id="slide-org9155be8">
-<h2 id="org9155be8">Supported models</h2>
+<section id="slide-org76916cd">
+<h2 id="org76916cd">Supported models</h2>
 
-<div id="orgdcb6e34" class="figure">
+<div id="org3dc7364" class="figure">
 <p><img src="./assets/model_compat.png" alt="model_compat.png" />
 </p>
 </div>
@@ -285,8 +285,8 @@ img_embed = oes_client.embeddings.create(
 </section>
 </section>
 <section>
-<section id="slide-org7ac5662">
-<h2 id="org7ac5662">OES roadmap</h2>
+<section id="slide-org0f89c97">
+<h2 id="org0f89c97">OES roadmap</h2>
 <ol>
 <li>More supported models (ex: Imagebind)</li>
 <li>Performance benchmarks</li>
@@ -297,8 +297,8 @@ img_embed = oes_client.embeddings.create(
 </section>
 </section>
 <section>
-<section id="slide-org0d4fb0e">
-<h2 id="org0d4fb0e">Rust Learnings</h2>
+<section id="slide-org742ec58">
+<h2 id="org742ec58">Rust Learnings</h2>
 <ul>
 <li>Refactors suck, but are systematic.</li>
 <li>I write less tests.</li>
@@ -310,10 +310,10 @@ img_embed = oes_client.embeddings.create(
 </section>
 </section>
 <section>
-<section id="slide-orgf2c1e98">
-<h2 id="orgf2c1e98">Bonus slide on audio embeddings</h2>
+<section id="slide-org07bdbf0">
+<h2 id="org07bdbf0">Bonus slide on audio embeddings</h2>
 
-<div id="org5342ac0" class="figure">
+<div id="org7b4a134" class="figure">
 <p><img src="./assets/audio_embeds.png" alt="audio_embeds.png" />
 </p>
 </div>
@@ -321,8 +321,8 @@ img_embed = oes_client.embeddings.create(
 </section>
 </section>
 <section>
-<section id="slide-org6257d8a">
-<h2 id="org6257d8a">I&rsquo;m on the internet! 🌐</h2>
+<section id="slide-org5d71c46">
+<h2 id="org5d71c46">I&rsquo;m on the internet! 🌐</h2>
 <div style="text-align: left;width: 60%;margin: auto auto">
 <p><span style="float:left">🐙 Github:</span> <span style="float:right"><code>@cmrfrd</code></span></p>
 <br />
