@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Building a Multimedia Embedding Service in Rust</title>
+<meta name="author" content="Alex Comerford"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/moon.css" id="theme"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/lib/css/zenburn.css"/></head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><h2 class="title">Building a Multimedia Embedding Service in Rust</h2><p class="subtitle"></p>
+<h2 class="author">Alex Comerford</h2><h2 class="email"><a href="mailto:alex@taoa.io">alex@taoa.io</a></h2>
+</section>
+
+
+<section>
+<section id="slide-orgdaa0071">
+<h2 id="orgdaa0071">About me</h2>
+<ul>
+<li>Work as an ML Engineer</li>
+<li>Wannabe researcher / solopreneur</li>
+<li>💙 Infrastructure, ML, and Cryptography</li>
+<li>💙💙 Math</li>
+<li>💙💙💙 Juggling</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org6d87b53">
+<h2 id="org6d87b53">What is this talk about</h2>
+<ol>
+<li>The challenge with embeddings</li>
+<li>Omni Embedding Service (OES)</li>
+<li>Abstracting OpenAI&rsquo;s embedding API</li>
+<li>Rust Learnings</li>
+
+</ol>
+
+</section>
+</section>
+<section>
+<section id="slide-org1f13278">
+<h2 id="org1f13278">Problem backstory</h2>
+<ul>
+<li>At a previous company, I had to make &gt;10m image embeddings.</li>
+<li>This required a bunch of data/ml engineering work.</li>
+<li>I wanted an easier solution to produce embeddings.</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgb56362c">
+<h2 id="orgb56362c">The problem</h2>
+<ul>
+<li>Text embeddings for closed models are easy to get (via OpenAI, Cohere,
+Jina, &#x2026;) but make you dependent on a third party.</li>
+
+<li>Getting embeddings for any data format for any open source model should be
+as easy as a self-hostable API call.</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org1ffc525">
+<h2 id="org1ffc525">My solution: Omni Embedding Service (OES)</h2>
+<p>
+An OpenAI API compatible embedding service for text, images, and audio
+(written in Rust).
+</p>
+
+<p>
+<a href="https://github.com/cmrfrd/oes">https://github.com/cmrfrd/oes</a>
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-org398ab5b">
+<h2 id="org398ab5b">What are embeddings used for</h2>
+<ul>
+<li>Content-Based Image Retrieval</li>
+<li>Fraud detection</li>
+<li>Song recommendations</li>
+<li>Retrieval Augmented Generation (RAG)</li>
+<li>and more &#x2026;</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgc100c8d">
+<h2 id="orgc100c8d">Existing open solutions</h2>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Name</th>
+<th scope="col" class="org-left">Embedding Features</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">vllm-project/vllm</td>
+<td class="org-left">only one embedding model (v0.5.4)</td>
+</tr>
+
+<tr>
+<td class="org-left">Gage-Technologies/embedding-server</td>
+<td class="org-left">only sentence transformer embeddings</td>
+</tr>
+
+<tr>
+<td class="org-left">jina-ai/clip-as-service</td>
+<td class="org-left">only clip embeddings</td>
+</tr>
+</tbody>
+</table>
+
+</section>
+</section>
+<section>
+<section id="slide-orgd53a944">
+<h2 id="orgd53a944">Text embeddings with python + OpenAI</h2>
+<div class="org-src-container">
+
+<pre   ><code class="python" >from openai import OpenAI
+client = OpenAI()
+
+response = client.embeddings.create(
+    input="Your text string goes here",
+    model="text-embedding-3-small"
+)
+
+print(response.data[0].embedding)
+</code></pre>
+</div>
+
+<p>
+<a href="https://platform.openai.com/docs/guides/embeddings">https://platform.openai.com/docs/guides/embeddings</a>
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-org6e38c1e">
+<h2 id="org6e38c1e">Abstracting the OpenAI Embedding API</h2>
+<ul>
+<li>The <i>CreateEmbeddingRequest</i> schema requires <i>input</i> to be a string (or list
+of strings).</li>
+<li>What if we used Data URLs to encode different input formats for different
+embedding models.</li>
+<li>Benefit: No need to make a new API schema and new clients.</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgc161933">
+<h2 id="orgc161933">What are data URLs (rfc2397)</h2>
+<p>
+A URL scheme to embed files inline in documents.
+</p>
+
+<div class="org-src-container">
+
+<pre   ><code class="text" >data:[&lt;mediatype&gt;][;base64],&lt;data&gt;
+</code></pre>
+</div>
+
+<p>
+example:
+</p>
+
+<div class="org-src-container">
+
+<pre   ><code class="text" >data:text/plain;base64,SGVsbG8sIFdvcmxkIQ==
+</code></pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgf743b0f">
+<h2 id="orgf743b0f">Audio embeddings with python + OES</h2>
+<div class="org-src-container">
+
+<pre   ><code class="python" >import openai
+oes_client = OpenAI(base_url="http://localhost:8080/oai/")
+
+def wav_file_to_dataurl(file_path: str) -&gt; str:
+    ...
+
+response = oes_client.embeddings.create(
+    input=wav_file_to_dataurl("myfile.wav"),
+    model="openai/whisper-large-v2/audio"
+)
+
+print(response.data[0].embedding)
+</code></pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org6a49d54">
+<h2 id="org6a49d54">Image embeddings with python + OES</h2>
+<div class="org-src-container">
+
+<pre   ><code class="python" >import openai
+oes_client = OpenAI(base_url="http://localhost:8080/oai/")
+
+text_embed = oes_client.embeddings.create(
+    input="A real human person.",
+    model="openai/clip-vit-base-patch32/text"
+)
+img_embed = oes_client.embeddings.create(
+    input="https://thispersondoesnotexist.com/",
+    model="openai/clip-vit-base-patch32/image"
+)
+</code></pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org75790e4">
+<h2 id="org75790e4">OES implementation</h2>
+<ul>
+<li>Rust API (tokio + axum)</li>
+<li>Implements 2 endpoints:
+<ul>
+<li><code>GET: /models</code></li>
+<li><code>POST: /embeddings</code></li>
+
+</ul></li>
+<li><code>huggingface/candle</code> for serving models.</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgf0f691d">
+<h2 id="orgf0f691d">Architecture</h2>
+
+<div id="orgf8b62b8" class="figure">
+<p><img src="./assets/arch.png" alt="arch.png" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgdf163f6">
+<h2 id="orgdf163f6">Supported models</h2>
+
+<div id="org7d8be53" class="figure">
+<p><img src="./assets/model_compat.png" alt="model_compat.png" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgc0aa3a0">
+<h2 id="orgc0aa3a0">OES roadmap</h2>
+<ol>
+<li>More supported models (ex: Imagebind)</li>
+<li>Performance benchmarks</li>
+<li>Scalability &amp; Production deployments</li>
+
+</ol>
+
+</section>
+</section>
+<section>
+<section id="slide-orgeab0d81">
+<h2 id="orgeab0d81">Rust Learnings</h2>
+<ul>
+<li>Refactors suck, but are systematic.</li>
+<li>I write less tests.</li>
+<li>Easy knowledge transfer: async Python -&gt; async Rust.</li>
+<li>Forced to be more explicit about my programs.</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgef6b90f">
+<h2 id="orgef6b90f">Bonus slide on audio embeddings</h2>
+
+<div id="org51e05a4" class="figure">
+<p><img src="./assets/audio_embeds.png" alt="audio_embeds.png" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgbcc05de">
+<h2 id="orgbcc05de">I&rsquo;m on the internet! 🌐</h2>
+<div style="text-align: left;width: 60%;margin: auto auto">
+<p><span style="float:left">🐙 Github:</span> <span style="float:right"><code>@cmrfrd</code></span></p>
+<br />
+<p><span style="float:left">🐦 Twitter:</span> <span style="float:right"><code>@thecmrfrd</code></span></p>
+<br />
+<p><span style="float:left">📬 Email:</span> <span style="float:right"><code>alex@taoa.io</code></span></p>
+<br />
+<p><span style="float:left">📑 Blog:</span> <span style="float:right"><code>taoa.io</code></span></p>
+<br />
+</div>
+
+<p>
+<code>taoa.io/static/slides/oes</code>
+</p>
+</section>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+plugins: [RevealHighlight, RevealMarkdown],
+slideNumber:false
+});
+
+</script>
+</body>
+</html>

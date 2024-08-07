@@ -1,0 +1,222 @@
+:REVEAL_PROPERTIES:
+#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
+#+REVEAL_REVEAL_JS_VERSION: 4
+#+REVEAL_TRANS: slide
+#+REVEAL_THEME: moon
+#+REVEAL_PLUGINS: (highlight markdown)
+#+REVEAL_INIT_OPTIONS: slideNumber:false
+#+OPTIONS: toc:nil timestamp:nil num:nil
+:END:
+
+#+MACRO: color @@html:<font color="$1">$2</font>@@
+#+MACRO: imglink @@html:<img src="$1">@@
+
+#+Title: Building a Multimedia Embedding Service in Rust
+#+Author: Alex Comerford
+
+#+BEGIN_SRC emacs-lisp :exports none
+(require 'ox-reveal)
+(setq org-src-preserve-indentation nil)
+(setq org-toggle-with-inline-images t)
+(setq org-edit-src-content-indentation 0)
+(setq org-startup-with-inline-images t)
+(setq org-export-with-email t)
+(setq org-reveal-root "http://cdn.jsdelivr.net/npm/reveal.js")
+
+(defun* export-on-save (&key (enable nil))
+  (interactive)
+  (if (and (not enable) (memq 'org-reveal-export-to-html after-save-hook))
+      (progn
+        (remove-hook 'after-save-hook 'org-reveal-export-to-html t)
+        (message "Disabled export on save"))
+    (add-hook 'after-save-hook 'org-reveal-export-to-html nil t)
+    (message "Enabled export on save")))
+(export-on-save)
+#+END_SRC
+
+#+RESULTS:
+: Enabled export on save
+
+* About me
+
+  - Work as an ML Engineer
+  - Wannabe researcher / solopreneur
+  - 💙 Infrastructure, ML, and Cryptography
+  - 💙💙 Math
+  - 💙💙💙 Juggling
+
+* What is this talk about
+
+  1. The challenge with embeddings
+  2. Omni Embedding Service (OES)
+  3. Abstracting OpenAI's embedding API
+  4. Rust Learnings
+
+* Problem backstory
+
+  - At a previous company, I had to make >10m image embeddings.
+  - This required a bunch of data/ml engineering work.
+  - I wanted an easier solution to produce embeddings.
+
+* The problem
+
+  - Text embeddings for closed models are easy to get (via OpenAI, Cohere,
+    Jina, ...) but make you dependent on a third party.
+
+  - Getting embeddings for any data format for any open source model should be
+    as easy as a self-hostable API call.
+
+* My solution: Omni Embedding Service (OES)
+
+  An OpenAI API compatible embedding service for text, images, and audio
+  (written in Rust).
+
+  https://github.com/cmrfrd/oes
+
+* What are embeddings used for
+
+  - Content-Based Image Retrieval
+  - Fraud detection
+  - Song recommendations
+  - Retrieval Augmented Generation (RAG)
+  - and more ...
+
+* Existing open solutions
+
+    | Name                               | Embedding Features                   |
+    |------------------------------------+--------------------------------------|
+    | vllm-project/vllm                  | only one embedding model (v0.5.4)    |
+    | Gage-Technologies/embedding-server | only sentence transformer embeddings |
+    | jina-ai/clip-as-service            | only clip embeddings                 |
+
+* Text embeddings with python + OpenAI
+
+  #+begin_src python :noeval
+  from openai import OpenAI
+  client = OpenAI()
+
+  response = client.embeddings.create(
+      input="Your text string goes here",
+      model="text-embedding-3-small"
+  )
+
+  print(response.data[0].embedding)
+  #+end_src
+
+  https://platform.openai.com/docs/guides/embeddings
+
+* Abstracting the OpenAI Embedding API
+
+  - The /CreateEmbeddingRequest/ schema requires /input/ to be a string (or list
+    of strings).
+  - What if we used Data URLs to encode different input formats for different
+    embedding models.
+  - Benefit: No need to make a new API schema and new clients.
+
+* What are data URLs (rfc2397)
+
+  A URL scheme to embed files inline in documents.
+
+  #+begin_src text
+    data:[<mediatype>][;base64],<data>
+  #+end_src
+
+  example:
+
+  #+begin_src text
+    data:text/plain;base64,SGVsbG8sIFdvcmxkIQ==
+  #+end_src
+
+* Audio embeddings with python + OES
+
+  #+begin_src python :noeval
+  import openai
+  oes_client = OpenAI(base_url="http://localhost:8080/oai/")
+
+  def wav_file_to_dataurl(file_path: str) -> str:
+      ...
+
+  response = oes_client.embeddings.create(
+      input=wav_file_to_dataurl("myfile.wav"),
+      model="openai/whisper-large-v2/audio"
+  )
+
+  print(response.data[0].embedding)
+  #+end_src
+
+* Image embeddings with python + OES
+
+  #+begin_src python :noeval
+  import openai
+  oes_client = OpenAI(base_url="http://localhost:8080/oai/")
+
+  text_embed = oes_client.embeddings.create(
+      input="A real human person.",
+      model="openai/clip-vit-base-patch32/text"
+  )
+  img_embed = oes_client.embeddings.create(
+      input="https://thispersondoesnotexist.com/",
+      model="openai/clip-vit-base-patch32/image"
+  )
+  #+end_src
+
+* OES implementation
+
+  - Rust API (tokio + axum)
+  - Implements 2 endpoints:
+    - ~GET: /models~
+    - ~POST: /embeddings~
+  - ~huggingface/candle~ for serving models.
+
+* Architecture
+
+  #+begin_src mermaid :file ./assets/arch.png
+  graph LR
+    Requests[Requests] --> Validation
+    subgraph OES API
+        Validation --> PubSubBatcher
+        PubSubBatcher <--> Models
+    end
+  #+end_src
+
+  #+RESULTS:
+  [[file:./assets/arch.png]]
+
+* Supported models
+
+  [[file:./assets/model_compat.png]]
+
+* OES roadmap
+
+  1. More supported models (ex: Imagebind)
+  2. Performance benchmarks
+  3. Scalability & Production deployments
+
+* Rust Learnings
+
+  - Refactors suck, but are systematic.
+  - I write less tests.
+  - Easy knowledge transfer: async Python -> async Rust.
+  - Forced to be more explicit about my programs.
+
+* Bonus slide on audio embeddings
+
+  [[file:./assets/audio_embeds.png]]
+
+* I'm on the internet! 🌐
+
+  #+NAME: surround
+  #+begin_export html
+  <div style="text-align: left;width: 60%;margin: auto auto">
+  <p><span style="float:left">🐙 Github:</span> <span style="float:right"><code>@cmrfrd</code></span></p>
+  <br />
+  <p><span style="float:left">🐦 Twitter:</span> <span style="float:right"><code>@thecmrfrd</code></span></p>
+  <br />
+  <p><span style="float:left">📬 Email:</span> <span style="float:right"><code>alex@taoa.io</code></span></p>
+  <br />
+  <p><span style="float:left">📑 Blog:</span> <span style="float:right"><code>taoa.io</code></span></p>
+  <br />
+  </div>
+  #+end_export
+
+  ~taoa.io/static/slides/oes~
