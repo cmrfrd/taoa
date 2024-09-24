@@ -1,3 +1,10 @@
+### [1.3.60](https://github.com/cmrfrd/taoa/compare/v1.3.59...v1.3.60) (2024-09-24)
+
+
+### Bug Fixes
+
+* add llm_benchmarking slides ([e2e8802](https://github.com/cmrfrd/taoa/commit/e2e88024eb2c5e7039c4e814efdbcdcac974dbf5))
+
 ### [1.3.59](https://github.com/cmrfrd/taoa/compare/v1.3.58...v1.3.59) (2024-08-07)
 
 
