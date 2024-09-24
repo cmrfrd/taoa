@@ -1,0 +1,246 @@
+:REVEAL_PROPERTIES:
+#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
+#+REVEAL_REVEAL_JS_VERSION: 4
+#+REVEAL_TRANS: slide
+#+REVEAL_THEME: moon
+#+REVEAL_PLUGINS: (highlight markdown)
+#+REVEAL_INIT_OPTIONS: slideNumber:false
+#+OPTIONS: toc:nil timestamp:nil num:nil
+:END:
+
+#+MACRO: color @@html:<font color="$1">$2</font>@@
+#+MACRO: imglink @@html:<img src="$1">@@
+
+#+Title: Measuring and Benchmarking LLMs
+#+Author: Alex Comerford
+
+#+BEGIN_SRC emacs-lisp :exports none
+(require 'ox-reveal)
+(setq org-src-preserve-indentation nil)
+(setq org-toggle-with-inline-images t)
+(setq org-edit-src-content-indentation 0)
+(setq org-startup-with-inline-images t)
+(setq org-export-with-email t)
+(setq org-reveal-root "http://cdn.jsdelivr.net/npm/reveal.js")
+
+(defun* export-on-save (&key (enable nil))
+  (interactive)
+  (if (and (not enable) (memq 'org-reveal-export-to-html after-save-hook))
+      (progn
+        (remove-hook 'after-save-hook 'org-reveal-export-to-html t)
+        (message "Disabled export on save"))
+    (add-hook 'after-save-hook 'org-reveal-export-to-html nil t)
+    (message "Enabled export on save")))
+(export-on-save)
+#+END_SRC
+
+#+RESULTS:
+: Enabled export on save
+
+* About me
+
+  - Work as an ML Engineer
+  - Wannabe researcher / solopreneur
+  - 💙 Infrastructure, ML, and Cryptography
+  - 💙💙 Math
+  - 💙💙💙 Juggling & Fidget Toys
+
+* Outline
+
+  - What are benchmarks and why do we use them?
+  - A survey of LLM benchmarking techniques
+  - Guidelines on building your own
+
+* Goals of this presentation
+
+  - Share how the foundational model creators advertise / compare model capability
+  - Share the purposes of different benchmarks
+  - Get people interested in measuring model results
+
+* What is truth?
+
+* What is truth? (according to Epistemology)
+
+  - *Correspondence*: The relationship between observation and thought
+  - *Coherence*: Things that are true relate to other things that are true
+  - *Consensus*: Things are true because people say so
+  - *Pragmatic*: Truth is what works and is useful
+  - ...
+
+* Truth is messy
+* Humans need "the truth"™ to make decisions
+* If AI is giving us "truthy" outputs, we're making garbage decisions
+* How do we measure knowledge of "the truth"™ in our AI systems?
+* Benchmarks: the necessary evil
+* LLM Benchmark Barrage
+
+  [[file:./assets/benchmark_bs.png]]
+
+* The things no one talks about w.r.t LLM benchmarks
+
+  - The devil is in the implementation details
+  - All of them are reductive
+  - Some are useful
+  - Most are marketing
+
+* General knowledge
+* MMLU
+
+  - Massive Multitask Language Understanding
+  - From UC Berkeley
+  - Large multiple choice exam, ~~14k~ questions (test split)
+  - Many topics: abstract algebra, medicine, geography, ...
+
+  https://arxiv.org/pdf/2009.03300
+
+* MMLU sample (nutrition)
+
+  Which one of these organs has the lowest energy expenditure per unit of body
+  mass (kg)?
+
+  #+NAME: mmlu_nutrition_sample_answer
+  #+begin_export html
+  <div style="text-align: left;width: 60%;margin: auto auto">
+  <p><span style="float:left">A. Brain</span></p>
+  <br />
+  <p><span style="float:left">B. Kidney</span></p>
+  <br />
+  <p><span style="float:left">C. Liver</span></p>
+  <br />
+  <p><span style="float:left">D. Skelatal Muscle</span></p>
+  <br />
+  </div>
+  #+end_export
+
+* MMLU sample (nutrition) answer
+
+  Which one of these organs has the lowest energy expenditure per unit of body
+  mass (kg)?
+
+  #+NAME: mmlu_nutrition_sample_answer
+  #+begin_export html
+  <div style="text-align: left;width: 60%;margin: auto auto">
+  <p><span style="float:left">A. Brain</span></p>
+  <br />
+  <p><span style="float:left">B. Kidney</span></p>
+  <br />
+  <p><span style="float:left">C. Liver</span></p>
+  <br />
+  <p><span style="float:left">D. *** Skelatal Muscle ***</span></p>
+  <br />
+  </div>
+  #+end_export
+
+* Problems with MMLU
+
+  - Errors in some answers
+  - Miscategorization
+  - Clarity of question and answer
+
+* Answers have been (partially) memorized
+
+  | MMLU                  | Meta-Llama-3.1-8B-Instruct |
+  |-----------------------+----------------------------|
+  | Advertised (Meta)     |                      73.0% |
+  | Original choices (Me) |                      75.4% |
+  | Shuffled choices (Me) |                      68.9% |
+
+  similar results: https://arxiv.org/pdf/2402.01781
+
+
+* Specialized knowledge
+* GPQA
+
+  - Google Proof Questions & Answers
+  - From NYU, Cohere, and Anthropic
+  - Designed to be test the limit of human knowledge
+  - Written by people at the top of their field (STEM)
+  - ~~400~ multiple choice questions
+
+  https://arxiv.org/pdf/2311.12022
+
+* Problems with GPQA
+
+  - Labeled as a 'reasoning' benchmark (Meta)
+  - Needs a re-label to "highly specific domain expertise"
+
+* Programming
+* MBPP/HumanEval
+
+  - Mostly Basic Python Programs
+  - From Google / OpenAI
+  - Designed to test coding ability
+  - Entry level programming problems with tests
+
+  https://arxiv.org/pdf/2108.07732
+  https://arxiv.org/abs/2107.03374
+
+* Problems with MBPP/HumanEval
+
+  - Undertested (see HumanEval+)
+  - Limited scope
+
+* Math
+* GSM8K/MGSM
+
+  - General/Multilingual Grade School Math
+  - From OpenAI / Google
+  - Measures model capability to solve word based math problems
+
+* Problem(s) with GSM8K/MSGM
+
+  - Final answer bias
+
+* Elo-based benchmark
+* LMArena
+
+  https://lmarena.ai/, a "vibes" based benchmark
+
+  [[file:./assets/lmarena.png]]
+
+* BONUS: Machine translation
+
+  - *Goal:* translate a sentence in a source language to a different target
+    language
+  - One of the first use cases for Transformers!
+  - Common metrics: BLEU/SACREBLEU, METEOR, TER
+  - Common datasets: WMT, MLQA
+
+* Honorable Mentions
+
+  - Multimodal: VQA
+  - Abstract thinking: ARC
+  - Standardized tests: AGIEval
+  - Interaction: AgentBench
+
+* Further research areas of interest
+
+  - Synthetic benchmarks
+  - Token cost metrics
+  - Continual benchmarks (livebench)
+
+* Guidelines for building your own benchmark(s)
+
+  1. Size isn't the most important thing
+  2. Think like a hacker
+  3. Grow your benchmark from user feedback
+  4. Vibe checks
+
+* Happy benchmarking
+* I'm on the internet! 🌐
+
+  #+NAME: surround
+  #+begin_export html
+  <div style="text-align: left;width: 60%;margin: auto auto">
+  <p><span style="float:left">🐙 Github:</span> <span style="float:right"><code>@cmrfrd</code></span></p>
+  <br />
+  <p><span style="float:left">🐦 Twitter:</span> <span style="float:right"><code>@thecmrfrd</code></span></p>
+  <br />
+  <p><span style="float:left">📬 Email:</span> <span style="float:right"><code>alex@taoa.io</code></span></p>
+  <br />
+  <p><span style="float:left">📑 Blog:</span> <span style="float:right"><code>taoa.io</code></span></p>
+  <br />
+  </div>
+  #+end_export
+
+  ~taoa.io/static/slides/llm_benchmarking~
