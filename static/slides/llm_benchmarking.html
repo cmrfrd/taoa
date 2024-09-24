@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Measuring and Benchmarking LLMs</title>
+<meta name="author" content="Alex Comerford"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/moon.css" id="theme"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/lib/css/zenburn.css"/></head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><h2 class="title">Measuring and Benchmarking LLMs</h2><p class="subtitle"></p>
+<h2 class="author">Alex Comerford</h2><h2 class="email"><a href="mailto:alex@taoa.io">alex@taoa.io</a></h2>
+</section>
+
+
+<section>
+<section id="slide-orgdac0073">
+<h2 id="orgdac0073">About me</h2>
+<ul>
+<li>Work as an ML Engineer</li>
+<li>Wannabe researcher / solopreneur</li>
+<li>💙 Infrastructure, ML, and Cryptography</li>
+<li>💙💙 Math</li>
+<li>💙💙💙 Juggling &amp; Fidget Toys</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org5a909be">
+<h2 id="org5a909be">Outline</h2>
+<ul>
+<li>What are benchmarks and why do we use them?</li>
+<li>A survey of LLM benchmarking techniques</li>
+<li>Guidelines on building your own</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org14b538a">
+<h2 id="org14b538a">Goals of this presentation</h2>
+<ul>
+<li>Share how the foundational model creators advertise / compare model capability</li>
+<li>Share the purposes of different benchmarks</li>
+<li>Get people interested in measuring model results</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orga648d65">
+<h2 id="orga648d65">What is truth?</h2>
+
+</section>
+</section>
+<section>
+<section id="slide-org5072e39">
+<h2 id="org5072e39">What is truth? (according to Epistemology)</h2>
+<ul>
+<li><b>Correspondence</b>: The relationship between observation and thought</li>
+<li><b>Coherence</b>: Things that are true relate to other things that are true</li>
+<li><b>Consensus</b>: Things are true because people say so</li>
+<li><b>Pragmatic</b>: Truth is what works and is useful</li>
+<li>&#x2026;</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org4ba2323">
+<h2 id="org4ba2323">Truth is messy</h2>
+</section>
+</section>
+<section>
+<section id="slide-orgbe417db">
+<h2 id="orgbe417db">Humans need &ldquo;the truth&rdquo;™ to make decisions</h2>
+</section>
+</section>
+<section>
+<section id="slide-orgd34791a">
+<h2 id="orgd34791a">If AI is giving us &ldquo;truthy&rdquo; outputs, we&rsquo;re making garbage decisions</h2>
+</section>
+</section>
+<section>
+<section id="slide-org38da7fd">
+<h2 id="org38da7fd">How do we measure knowledge of &ldquo;the truth&rdquo;™ in our AI systems?</h2>
+</section>
+</section>
+<section>
+<section id="slide-orgf7d8e7d">
+<h2 id="orgf7d8e7d">Benchmarks: the necessary evil</h2>
+</section>
+</section>
+<section>
+<section id="slide-org683cf5f">
+<h2 id="org683cf5f">LLM Benchmark Barrage</h2>
+
+<div id="orgbb54f2d" class="figure">
+<p><img src="./assets/benchmark_bs.png" alt="benchmark_bs.png" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org13cdce3">
+<h2 id="org13cdce3">The things no one talks about w.r.t LLM benchmarks</h2>
+<ul>
+<li>The devil is in the implementation details</li>
+<li>All of them are reductive</li>
+<li>Some are useful</li>
+<li>Most are marketing</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org324af41">
+<h2 id="org324af41">General knowledge</h2>
+</section>
+</section>
+<section>
+<section id="slide-org2081b8f">
+<h2 id="org2081b8f">MMLU</h2>
+<ul>
+<li>Massive Multitask Language Understanding</li>
+<li>From UC Berkeley</li>
+<li>Large multiple choice exam, <code>~14k</code> questions (test split)</li>
+<li>Many topics: abstract algebra, medicine, geography, &#x2026;</li>
+
+</ul>
+
+<p>
+<a href="https://arxiv.org/pdf/2009.03300">https://arxiv.org/pdf/2009.03300</a>
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-orgaaa4d7b">
+<h2 id="orgaaa4d7b">MMLU sample (nutrition)</h2>
+<p>
+Which one of these organs has the lowest energy expenditure per unit of body
+mass (kg)?
+</p>
+
+<div style="text-align: left;width: 60%;margin: auto auto">
+<p><span style="float:left">A. Brain</span></p>
+<br />
+<p><span style="float:left">B. Kidney</span></p>
+<br />
+<p><span style="float:left">C. Liver</span></p>
+<br />
+<p><span style="float:left">D. Skelatal Muscle</span></p>
+<br />
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org2bbcd74">
+<h2 id="org2bbcd74">MMLU sample (nutrition) answer</h2>
+<p>
+Which one of these organs has the lowest energy expenditure per unit of body
+mass (kg)?
+</p>
+
+<div style="text-align: left;width: 60%;margin: auto auto">
+<p><span style="float:left">A. Brain</span></p>
+<br />
+<p><span style="float:left">B. Kidney</span></p>
+<br />
+<p><span style="float:left">C. Liver</span></p>
+<br />
+<p><span style="float:left">D. *** Skelatal Muscle ***</span></p>
+<br />
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org0f09474">
+<h2 id="org0f09474">Problems with MMLU</h2>
+<ul>
+<li>Errors in some answers</li>
+<li>Miscategorization</li>
+<li>Clarity of question and answer</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgea259d3">
+<h2 id="orgea259d3">Answers have been (partially) memorized</h2>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">MMLU</th>
+<th scope="col" class="org-right">Meta-Llama-3.1-8B-Instruct</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">Advertised (Meta)</td>
+<td class="org-right">73.0%</td>
+</tr>
+
+<tr>
+<td class="org-left">Original choices (Me)</td>
+<td class="org-right">75.4%</td>
+</tr>
+
+<tr>
+<td class="org-left">Shuffled choices (Me)</td>
+<td class="org-right">68.9%</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+similar results: <a href="https://arxiv.org/pdf/2402.01781">https://arxiv.org/pdf/2402.01781</a>
+</p>
+
+
+</section>
+</section>
+<section>
+<section id="slide-orga6b1ecd">
+<h2 id="orga6b1ecd">Specialized knowledge</h2>
+</section>
+</section>
+<section>
+<section id="slide-org39acb62">
+<h2 id="org39acb62">GPQA</h2>
+<ul>
+<li>Google Proof Questions &amp; Answers</li>
+<li>From NYU, Cohere, and Anthropic</li>
+<li>Designed to be test the limit of human knowledge</li>
+<li>Written by people at the top of their field (STEM)</li>
+<li><code>~400</code> multiple choice questions</li>
+
+</ul>
+
+<p>
+<a href="https://arxiv.org/pdf/2311.12022">https://arxiv.org/pdf/2311.12022</a>
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-org50f9759">
+<h2 id="org50f9759">Problems with GPQA</h2>
+<ul>
+<li>Labeled as a &rsquo;reasoning&rsquo; benchmark (Meta)</li>
+<li>Needs a re-label to &ldquo;highly specific domain expertise&rdquo;</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org40ff453">
+<h2 id="org40ff453">Programming</h2>
+</section>
+</section>
+<section>
+<section id="slide-orga8b3f17">
+<h2 id="orga8b3f17">MBPP/HumanEval</h2>
+<ul>
+<li>Mostly Basic Python Programs</li>
+<li>From Google / OpenAI</li>
+<li>Designed to test coding ability</li>
+<li>Entry level programming problems with tests</li>
+
+</ul>
+
+<p>
+<a href="https://arxiv.org/pdf/2108.07732">https://arxiv.org/pdf/2108.07732</a>
+<a href="https://arxiv.org/abs/2107.03374">https://arxiv.org/abs/2107.03374</a>
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-orgea59ebd">
+<h2 id="orgea59ebd">Problems with MBPP/HumanEval</h2>
+<ul>
+<li>Undertested (see HumanEval+)</li>
+<li>Limited scope</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgc6cff60">
+<h2 id="orgc6cff60">Math</h2>
+</section>
+</section>
+<section>
+<section id="slide-org4a61994">
+<h2 id="org4a61994">GSM8K/MGSM</h2>
+<ul>
+<li>General/Multilingual Grade School Math</li>
+<li>From OpenAI / Google</li>
+<li>Measures model capability to solve word based math problems</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org85da9d9">
+<h2 id="org85da9d9">Problem(s) with GSM8K/MSGM</h2>
+<ul>
+<li>Final answer bias</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgc4cc2cd">
+<h2 id="orgc4cc2cd">Elo-based benchmark</h2>
+</section>
+</section>
+<section>
+<section id="slide-org7ce2e66">
+<h2 id="org7ce2e66">LMArena</h2>
+<p>
+<a href="https://lmarena.ai/">https://lmarena.ai/</a>, a &ldquo;vibes&rdquo; based benchmark
+</p>
+
+
+<div id="orgf3af699" class="figure">
+<p><img src="./assets/lmarena.png" alt="lmarena.png" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org0b6e10e">
+<h2 id="org0b6e10e">BONUS: Machine translation</h2>
+<ul>
+<li><b>Goal:</b> translate a sentence in a source language to a different target
+language</li>
+<li>One of the first use cases for Transformers!</li>
+<li>Common metrics: BLEU/SACREBLEU, METEOR, TER</li>
+<li>Common datasets: WMT, MLQA</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgd350157">
+<h2 id="orgd350157">Honorable Mentions</h2>
+<ul>
+<li>Multimodal: VQA</li>
+<li>Abstract thinking: ARC</li>
+<li>Standardized tests: AGIEval</li>
+<li>Interaction: AgentBench</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgd016224">
+<h2 id="orgd016224">Further research areas of interest</h2>
+<ul>
+<li>Synthetic benchmarks</li>
+<li>Token cost metrics</li>
+<li>Continual benchmarks (livebench)</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgf713da8">
+<h2 id="orgf713da8">Guidelines for building your own benchmark(s)</h2>
+<ol>
+<li>Size isn&rsquo;t the most important thing</li>
+<li>Think like a hacker</li>
+<li>Grow your benchmark from user feedback</li>
+<li>Vibe checks</li>
+
+</ol>
+
+</section>
+</section>
+<section>
+<section id="slide-orgf433453">
+<h2 id="orgf433453">Happy benchmarking</h2>
+</section>
+</section>
+<section>
+<section id="slide-org0e5f5a0">
+<h2 id="org0e5f5a0">I&rsquo;m on the internet! 🌐</h2>
+<div style="text-align: left;width: 60%;margin: auto auto">
+<p><span style="float:left">🐙 Github:</span> <span style="float:right"><code>@cmrfrd</code></span></p>
+<br />
+<p><span style="float:left">🐦 Twitter:</span> <span style="float:right"><code>@thecmrfrd</code></span></p>
+<br />
+<p><span style="float:left">📬 Email:</span> <span style="float:right"><code>alex@taoa.io</code></span></p>
+<br />
+<p><span style="float:left">📑 Blog:</span> <span style="float:right"><code>taoa.io</code></span></p>
+<br />
+</div>
+
+<p>
+<code>taoa.io/static/slides/llm_benchmarking</code>
+</p>
+</section>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+plugins: [RevealHighlight, RevealMarkdown],
+slideNumber:false
+});
+
+</script>
+</body>
+</html>
