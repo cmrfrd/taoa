@@ -1,3 +1,10 @@
+### [1.3.61](https://github.com/cmrfrd/taoa/compare/v1.3.60...v1.3.61) (2024-10-22)
+
+
+### Bug Fixes
+
+* Add paramaterize prompt slides ([7ed32ad](https://github.com/cmrfrd/taoa/commit/7ed32ad3bafdb72c9996121f47a6c74046f74337))
+
 ### [1.3.60](https://github.com/cmrfrd/taoa/compare/v1.3.59...v1.3.60) (2024-09-24)
 
 
