@@ -41,7 +41,7 @@
 
   [[file:./assets/karpathy_tweet.png]]
 
-* Prompting ≃ Programming AI Models
+* Prompting ≃ AI Programming
 * Prompt development workflow
 
   1. Have a problem that a prompt based model can solve
@@ -89,15 +89,15 @@
 
 * Monsters
 
-  taoa.io/static/misc/slides/assets/prompted_monsters.webp
+  https://taoa.io/static/slides/assets/prompted_monsters.webp
 
 * People
 
-  taoa.io/static/misc/slides/assets/prompted_people.webp
+  https://taoa.io/static/slides/assets/prompted_people.webp
 
 * Anime
 
-  taoa.io/static/misc/slides/assets/prompted_anime.webp
+  https://taoa.io/static/slides/assets/prompted_anime.webp
 
 * I'm on the internet! 🌐
 
