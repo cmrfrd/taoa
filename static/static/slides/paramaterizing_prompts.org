@@ -1,0 +1,118 @@
+:REVEAL_PROPERTIES:
+#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
+#+REVEAL_REVEAL_JS_VERSION: 4
+#+REVEAL_TRANS: slide
+#+REVEAL_THEME: moon
+#+REVEAL_PLUGINS: (highlight markdown)
+#+REVEAL_INIT_OPTIONS: slideNumber:false
+#+OPTIONS: toc:nil timestamp:nil num:nil
+:END:
+
+#+MACRO: color @@html:<font color="$1">$2</font>@@
+#+MACRO: imglink @@html:<img src="$1">@@
+
+#+Title: Parameterizing Prompts
+#+Author: Alex Comerford
+
+#+BEGIN_SRC emacs-lisp :exports none
+(require 'ox-reveal)
+(setq org-src-preserve-indentation nil)
+(setq org-toggle-with-inline-images t)
+(setq org-edit-src-content-indentation 0)
+(setq org-startup-with-inline-images t)
+(setq org-export-with-email t)
+(setq org-reveal-root "http://cdn.jsdelivr.net/npm/reveal.js")
+
+(defun* export-on-save (&key (enable nil))
+  (interactive)
+  (if (and (not enable) (memq 'org-reveal-export-to-html after-save-hook))
+      (progn
+        (remove-hook 'after-save-hook 'org-reveal-export-to-html t)
+        (message "Disabled export on save"))
+    (add-hook 'after-save-hook 'org-reveal-export-to-html nil t)
+    (message "Enabled export on save")))
+(export-on-save)
+#+END_SRC
+
+#+RESULTS:
+: Enabled export on save
+
+* English is becoming the "AI interface"
+
+  [[file:./assets/karpathy_tweet.png]]
+
+* Prompting ≃ Programming AI Models
+* Prompt development workflow
+
+  1. Have a problem that a prompt based model can solve
+  2. Iterate on a prompt until it solves the problem
+  3. Use it
+     - Use it once and throw it out
+     - Use it many times by automating it
+
+* Automating prompts
+
+  To automate a prompt, you almost always want to parameterize it.
+
+* Prompt Parameterization
+
+  Let software inject data into your prompts (ex: RAG)
+
+* Example: No Parameterization
+
+  [[file:./assets/prompt_no_parameter.png]]
+
+* With Parameterization
+
+  [[file:./assets/prompt_parameter.png]]
+
+* Parameterization + Condition 😬
+
+  [[file:./assets/prompt_parameter_condition.png]]
+
+* Lesson
+
+  English may be an "AI Programming Language".
+
+  But that doesn't mean it's good.
+
+* Personal patterns for parameterizing prompts
+
+  1. Avoid branching behavior
+  2. Make it human readable
+  3. Separate it into logical 'blocks'
+  4. KISS
+
+* Bonus: Image prompting approach
+
+  [[file:./assets/whodis_monsters.png]]
+
+* Monsters
+
+  [[https://taoa.io/static/misc/slides/assets/prompted_monsters.webp]]
+
+* People
+
+  [[https://taoa.io/static/misc/slides/assets/prompted_people.webp]]
+
+* Anime
+
+  [[https://taoa.io/static/misc/slides/assets/prompted_anime.webp]]
+
+* I'm on the internet! 🌐
+
+  #+NAME: surround
+  #+begin_export html
+  <div style="text-align: left;width: 60%;margin: auto auto">
+  <p><span style="float:left">🐙 Github:</span> <span style="float:right"><code>@cmrfrd</code></span></p>
+  <br />
+  <p><span style="float:left">🐦 Twitter:</span> <span style="float:right"><code>@thecmrfrd</code></span></p>
+  <br />
+  <p><span style="float:left">📬 Email:</span> <span style="float:right"><code>alex@taoa.io</code></span></p>
+  <br />
+  <p><span style="float:left">📑 Blog:</span> <span style="float:right"><code>taoa.io</code></span></p>
+  <br />
+  </div>
+  #+end_export
+
+  ~taoa.io/static/slides/paramaterizing_prompts~
