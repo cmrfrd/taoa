@@ -1,3 +1,10 @@
+### [1.3.63](https://github.com/cmrfrd/taoa/compare/v1.3.62...v1.3.63) (2024-10-22)
+
+
+### Bug Fixes
+
+* image links ([39e16e0](https://github.com/cmrfrd/taoa/commit/39e16e07bafa7d9807c6c154ccc5f6e6a9f5a0bd))
+
 ### [1.3.62](https://github.com/cmrfrd/taoa/compare/v1.3.61...v1.3.62) (2024-10-22)
 
 
