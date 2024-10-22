@@ -89,15 +89,15 @@
 
 * Monsters
 
-  [[https://taoa.io/static/misc/slides/assets/prompted_monsters.webp]]
+  taoa.io/static/misc/slides/assets/prompted_monsters.webp
 
 * People
 
-  [[https://taoa.io/static/misc/slides/assets/prompted_people.webp]]
+  taoa.io/static/misc/slides/assets/prompted_people.webp
 
 * Anime
 
-  [[https://taoa.io/static/misc/slides/assets/prompted_anime.webp]]
+  taoa.io/static/misc/slides/assets/prompted_anime.webp
 
 * I'm on the internet! 🌐
 
