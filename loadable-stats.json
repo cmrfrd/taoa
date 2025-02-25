@@ -1,5 +1,5 @@
 {
-  "hash": "ffcb5af7a7766a62e9a4",
+  "hash": "d78073867bed9a94202b",
   "publicPath": "/",
   "outputPath": "/home/node/work/public",
   "assetsByChunkName": {
@@ -11,7 +11,7 @@
     {
       "type": "asset",
       "name": "render-page.js",
-      "size": 7319528,
+      "size": 7319484,
       "emitted": false,
       "comparedForEmit": false,
       "cached": true,
