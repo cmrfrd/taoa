@@ -1,3 +1,10 @@
+### [1.3.64](https://github.com/cmrfrd/taoa/compare/v1.3.63...v1.3.64) (2025-02-25)
+
+
+### Bug Fixes
+
+* update slides with payment channels slides ([f37041f](https://github.com/cmrfrd/taoa/commit/f37041f539827c3c98f73cdfc42c4076fbdc0bde))
+
 ### [1.3.63](https://github.com/cmrfrd/taoa/compare/v1.3.62...v1.3.63) (2024-10-22)
 
 
