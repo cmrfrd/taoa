@@ -50,19 +50,20 @@
 
 * Goal of this presentation
 
-  To share a potential future of AI agent payments
+  To share one potential future of AI agent payments
 
 * Outline
 
   1. LLMs and the "Outside World" (APIs)
-  2. How We Pay for APIs Today
-  3. Using Cryptocurrency for API Payments
+  2. How we pay for APIs today
+  3. Using cryptocurrency for API payments
      - Payment Channels
-  4. Example Prototype
+  4. Research prototype (pay-per-prompt)
 
 * The rocks can +type+ use the internet!
 
 	- LLM structured output has made it possible for LLMs to use "anything"
+  - This is the future of AI agent systems
 	- Examples:
 		- OpenAI operator mode or Claude computer use
 		- MCP Servers
@@ -98,7 +99,7 @@
 
 	- Demerits:
 		- Transactions are irreversible / no buyer protection
-		- Difficult on-boarding
+		- Difficult user on-boarding
 		- Uncertain regulatory outcome and tax implications
 
 * What are payment channels? (1/4)
@@ -106,6 +107,9 @@
 	A payment channel is a peer-to-peer network that enables participants to
 	perform numerous transactions among themselves and only submit the final
 	results of the processing and computation to the main blockchain.
+
+  Payment channels are commonly called a "layer two" scaling solution for
+  blockchains.
 
 * What are payment channels? (2/4)
 
@@ -121,9 +125,16 @@
 
 * Why Payment Channels?
 
-  - *Scalability:* Do many transactions now, settle on the blockchain later
-  - *Speed:* Near-instant “off-chain” transactions, enabling real-time payments
+  - *Cheap*: We only pay blockchain fees on opening and closing a channel.
+  - *Speed:* Near-instant “off-chain” transactions, enabling real-time payments.
+  - *Scalability:* Do many transactions now, settle on the blockchain later.
+  - *Longevity*: Do many transactions over a long period of time.
 
+* The prototype: Pay-Per-Prompt
+
+  Build a proof of concept where we can pay for LLM inference on a
+  "prompt-by-prompt" basis with cryptocurrency.
+  
 * What does this look like in code?
 
 	file:./assets/payment_channel_code_sample_1.png
@@ -140,6 +151,12 @@
 
 	file:./assets/payment_channel_code_sample_4.png
 
+* The bigger picture
+
+  AITP: Agent Interaction & Transaction Protocol
+
+  https://aitp.dev/
+  
 * I'm on the internet! 🌐
 
   #+NAME: surround
@@ -155,5 +172,7 @@
   <br />
   </div>
   #+end_export
+
+  ~https://github.com/nearai/pay-per-prompt~
 
   ~taoa.io/static/slides/llm_payment_channels~
