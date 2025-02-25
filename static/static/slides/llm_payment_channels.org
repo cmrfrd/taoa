@@ -1,0 +1,159 @@
+:REVEAL_PROPERTIES:
+#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
+#+REVEAL_REVEAL_JS_VERSION: 4
+#+REVEAL_TRANS: slide
+#+REVEAL_THEME: moon
+#+REVEAL_PLUGINS: (highlight markdown)
+#+REVEAL_INIT_OPTIONS: slideNumber:false
+#+OPTIONS: toc:nil timestamp:nil num:nil
+:END:
+
+#+MACRO: color @@html:<font color="$1">$2</font>@@
+#+MACRO: imglink @@html:<img src="$1">@@
+
+#+Title: Payments and LLMs
+#+Author: Alex Comerford
+
+#+BEGIN_SRC emacs-lisp :exports none
+(require 'ox-reveal)
+(setq org-src-preserve-indentation nil)
+(setq org-toggle-with-inline-images t)
+(setq org-edit-src-content-indentation 0)
+(setq org-startup-with-inline-images t)
+(setq org-export-with-email t)
+(setq org-reveal-root "http://cdn.jsdelivr.net/npm/reveal.js")
+
+(defun* export-on-save (&key (enable nil))
+  (interactive)
+  (if (and (not enable) (memq 'org-reveal-export-to-html after-save-hook))
+      (progn
+        (remove-hook 'after-save-hook 'org-reveal-export-to-html t)
+        (message "Disabled export on save"))
+    (add-hook 'after-save-hook 'org-reveal-export-to-html nil t)
+    (message "Enabled export on save")))
+(export-on-save)
+#+END_SRC
+
+#+RESULTS:
+: Enabled export on save
+
+* About me
+
+  - ML Engineer by trade
+  - Wannabe researcher / solopreneur
+  - 💙 Infrastructure, ML, and Cryptography
+  - 💙💙 Math
+  - 💙💙💙 Juggling & Fidget Toys
+
+* “The future is already here – it's just not evenly distributed.”
+	― William Gibson
+
+* Goal of this presentation
+
+  To share a potential future of AI agent payments
+
+* Outline
+
+  1. LLMs and the "Outside World" (APIs)
+  2. How We Pay for APIs Today
+  3. Using Cryptocurrency for API Payments
+     - Payment Channels
+  4. Example Prototype
+
+* The rocks can +type+ use the internet!
+
+	- LLM structured output has made it possible for LLMs to use "anything"
+	- Examples:
+		- OpenAI operator mode or Claude computer use
+		- MCP Servers
+
+* How we pay for APIs today
+
+	1. Make an account
+	2. Enter credit card details
+	3. Copy paste an API key
+	4. Use the API + API key
+	5. Pay at the end of the month
+
+* How do we make API payments as easy as possible for AI agents?
+
+* So what if?
+
+	1. +Make an account+
+	2. +Enter credit card details+
+	3. +Copy paste an API key+
+	4. Use the API (and pay as we go)
+	5. +Pay at the end of the month+
+
+* How?
+
+	With cryptocurrency payment channels
+
+* Merits and demerits of cryptocurrency payments
+
+	- Merits:
+		- Lower fees than traditional payment platforms
+		- High programmability
+		- Gas costs are relatively cheap
+
+	- Demerits:
+		- Transactions are irreversible / no buyer protection
+		- Difficult on-boarding
+		- Uncertain regulatory outcome and tax implications
+
+* What are payment channels? (1/4)
+
+	A payment channel is a peer-to-peer network that enables participants to
+	perform numerous transactions among themselves and only submit the final
+	results of the processing and computation to the main blockchain.
+
+* What are payment channels? (2/4)
+
+  [[file:./assets/payment_channel_diagram.png]]
+
+* What are payment channels? (3/4)
+
+  [[file:./assets/payment_channel_sequence_diagram.png]]
+
+* Payment channels abstracted
+
+  [[file:./assets/State_Channels_Hierarchy.png]]
+
+* Why Payment Channels?
+
+  - *Scalability:* Do many transactions now, settle on the blockchain later
+  - *Speed:* Near-instant “off-chain” transactions, enabling real-time payments
+
+* What does this look like in code?
+
+	file:./assets/payment_channel_code_sample_1.png
+
+* What does this look like in code?
+
+	file:./assets/payment_channel_code_sample_2.png
+
+* What does this look like in code?
+
+	file:./assets/payment_channel_code_sample_3.png
+
+* What does this look like in code?
+
+	file:./assets/payment_channel_code_sample_4.png
+
+* I'm on the internet! 🌐
+
+  #+NAME: surround
+  #+begin_export html
+  <div style="text-align: left;width: 60%;margin: auto auto">
+  <p><span style="float:left">🐙 Github:</span> <span style="float:right"><code>@cmrfrd</code></span></p>
+  <br />
+  <p><span style="float:left">🐦 Twitter:</span> <span style="float:right"><code>@thecmrfrd</code></span></p>
+  <br />
+  <p><span style="float:left">📬 Email:</span> <span style="float:right"><code>alex@taoa.io</code></span></p>
+  <br />
+  <p><span style="float:left">📑 Blog:</span> <span style="float:right"><code>taoa.io</code></span></p>
+  <br />
+  </div>
+  #+end_export
+
+  ~taoa.io/static/slides/llm_payment_channels~

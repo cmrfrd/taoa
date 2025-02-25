@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Payments and LLMs</title>
+<meta name="author" content="Alex Comerford"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/moon.css" id="theme"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/lib/css/zenburn.css"/></head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><h2 class="title">Payments and LLMs</h2><p class="subtitle"></p>
+<h2 class="author">Alex Comerford</h2><h2 class="email"><a href="mailto:alex@taoa.io">alex@taoa.io</a></h2>
+</section>
+
+
+<section>
+<section id="slide-org55274fc">
+<h2 id="org55274fc">About me</h2>
+<ul>
+<li>ML Engineer by trade</li>
+<li>Wannabe researcher / solopreneur</li>
+<li>💙 Infrastructure, ML, and Cryptography</li>
+<li>💙💙 Math</li>
+<li>💙💙💙 Juggling &amp; Fidget Toys</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org2489c49">
+<h2 id="org2489c49">“The future is already here – it's just not evenly distributed.”</h2>
+<p>
+― William Gibson
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-orge3c7e11">
+<h2 id="orge3c7e11">Goal of this presentation</h2>
+<p>
+To share a potential future of AI agent payments
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-org88d036e">
+<h2 id="org88d036e">Outline</h2>
+<ol>
+<li>LLMs and the "Outside World" (APIs)</li>
+<li>How We Pay for APIs Today</li>
+<li>Using Cryptocurrency for API Payments
+<ul>
+<li>Payment Channels</li>
+
+</ul></li>
+<li>Example Prototype</li>
+
+</ol>
+
+</section>
+</section>
+<section>
+<section id="slide-org8e34d4e">
+<h2 id="org8e34d4e">The rocks can <del>type</del> use the internet!</h2>
+<ul>
+<li>LLM structured output has made it possible for LLMs to use "anything"</li>
+<li>Examples:
+<ul>
+<li>OpenAI operator mode or Claude computer use</li>
+<li>MCP Servers</li>
+
+</ul></li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org4728021">
+<h2 id="org4728021">How we pay for APIs today</h2>
+<ol>
+<li>Make an account</li>
+<li>Enter credit card details</li>
+<li>Copy paste an API key</li>
+<li>Use the API + API key</li>
+<li>Pay at the end of the month</li>
+
+</ol>
+
+</section>
+</section>
+<section>
+<section id="slide-org68adf33">
+<h2 id="org68adf33">How do we make API payments as easy as possible for AI agents?</h2>
+
+</section>
+</section>
+<section>
+<section id="slide-org9ad85d3">
+<h2 id="org9ad85d3">So what if?</h2>
+<ol>
+<li><del>Make an account</del></li>
+<li><del>Enter credit card details</del></li>
+<li><del>Copy paste an API key</del></li>
+<li>Use the API (and pay as we go)</li>
+<li><del>Pay at the end of the month</del></li>
+
+</ol>
+
+</section>
+</section>
+<section>
+<section id="slide-orge96b99c">
+<h2 id="orge96b99c">How?</h2>
+<p>
+With cryptocurrency payment channels
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-org73b53d1">
+<h2 id="org73b53d1">Merits and demerits of cryptocurrency payments</h2>
+<ul>
+<li>Merits:
+<ul>
+<li>Lower fees than traditional payment platforms</li>
+<li>High programmability</li>
+<li>Gas costs are relatively cheap</li>
+
+</ul></li>
+
+<li>Demerits:
+<ul>
+<li>Transactions are irreversible / no buyer protection</li>
+<li>Difficult on-boarding</li>
+<li>Uncertain regulatory outcome and tax implications</li>
+
+</ul></li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org60de998">
+<h2 id="org60de998">What are payment channels? (1/4)</h2>
+<p>
+A payment channel is a peer-to-peer network that enables participants to
+perform numerous transactions among themselves and only submit the final
+results of the processing and computation to the main blockchain.
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-orgf0cb7f9">
+<h2 id="orgf0cb7f9">What are payment channels? (2/4)</h2>
+
+<div id="org43430f1" class="figure">
+<p><img src="./assets/payment_channel_diagram.png" alt="payment_channel_diagram.png" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org18183e6">
+<h2 id="org18183e6">What are payment channels? (3/4)</h2>
+
+<div id="orga8f3882" class="figure">
+<p><img src="./assets/payment_channel_sequence_diagram.png" alt="payment_channel_sequence_diagram.png" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orga3d5715">
+<h2 id="orga3d5715">Payment channels abstracted</h2>
+
+<div id="org3cb2501" class="figure">
+<p><img src="./assets/State_Channels_Hierarchy.png" alt="State_Channels_Hierarchy.png" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org7169ecc">
+<h2 id="org7169ecc">Why Payment Channels?</h2>
+<ul>
+<li><b>Scalability:</b> Do many transactions now, settle on the blockchain later</li>
+<li><b>Speed:</b> Near-instant “off-chain” transactions, enabling real-time payments</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orge09b230">
+<h2 id="orge09b230">What does this look like in code?</h2>
+
+<div id="org4f94df2" class="figure">
+<p><img src="./assets/payment_channel_code_sample_1.png" alt="payment_channel_code_sample_1.png" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgd8ad8e0">
+<h2 id="orgd8ad8e0">What does this look like in code?</h2>
+
+<div id="orgfd7e342" class="figure">
+<p><img src="./assets/payment_channel_code_sample_2.png" alt="payment_channel_code_sample_2.png" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org725fad0">
+<h2 id="org725fad0">What does this look like in code?</h2>
+
+<div id="org32b4bb1" class="figure">
+<p><img src="./assets/payment_channel_code_sample_3.png" alt="payment_channel_code_sample_3.png" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orga2b6816">
+<h2 id="orga2b6816">What does this look like in code?</h2>
+
+<div id="orgf11662c" class="figure">
+<p><img src="./assets/payment_channel_code_sample_4.png" alt="payment_channel_code_sample_4.png" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org73c5e0f">
+<h2 id="org73c5e0f">I'm on the internet! 🌐</h2>
+<div style="text-align: left;width: 60%;margin: auto auto">
+<p><span style="float:left">🐙 Github:</span> <span style="float:right"><code>@cmrfrd</code></span></p>
+<br />
+<p><span style="float:left">🐦 Twitter:</span> <span style="float:right"><code>@thecmrfrd</code></span></p>
+<br />
+<p><span style="float:left">📬 Email:</span> <span style="float:right"><code>alex@taoa.io</code></span></p>
+<br />
+<p><span style="float:left">📑 Blog:</span> <span style="float:right"><code>taoa.io</code></span></p>
+<br />
+</div>
+
+<p>
+<code>taoa.io/static/slides/llm_payment_channels</code>
+</p>
+</section>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+plugins: [RevealHighlight, RevealMarkdown],
+slideNumber:false
+});
+
+</script>
+</body>
+</html>
