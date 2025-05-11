@@ -1,3 +1,10 @@
+### [1.3.65](https://github.com/cmrfrd/taoa/compare/v1.3.64...v1.3.65) (2025-05-11)
+
+
+### Bug Fixes
+
+* redeploy ([ba1fe17](https://github.com/cmrfrd/taoa/commit/ba1fe178ae71ee824622f56ed55c63b228aa6d78))
+
 ### [1.3.64](https://github.com/cmrfrd/taoa/compare/v1.3.63...v1.3.64) (2025-02-25)
 
 
