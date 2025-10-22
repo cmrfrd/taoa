@@ -1,3 +1,10 @@
+### [1.3.66](https://github.com/cmrfrd/taoa/compare/v1.3.65...v1.3.66) (2025-10-22)
+
+
+### Bug Fixes
+
+* add slides ([42089ec](https://github.com/cmrfrd/taoa/commit/42089ecf5f9524ec0c56cd36502f5020130f7a90))
+
 ### [1.3.65](https://github.com/cmrfrd/taoa/compare/v1.3.64...v1.3.65) (2025-05-11)
 
 
