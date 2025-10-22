@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Integrate MCP Servers Into Your Agents</title>
+<meta name="author" content="Alex Comerford"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/dist/theme/moon.css" id="theme"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js/lib/css/zenburn.css"/></head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><h2 class="title">Integrate MCP Servers Into Your Agents</h2><p class="subtitle"></p>
+<h2 class="author">Alex Comerford</h2><h2 class="email"><a href="mailto:alex@taoa.io">alex@taoa.io</a></h2>
+</section>
+
+
+<section>
+<section id="slide-org62492f5">
+<h2 id="org62492f5">Follow along!</h2>
+
+<div id="org33c2d82" class="figure">
+<p><img src="assets/deepstation_repo.png" alt="deepstation_repo.png" />
+</p>
+</div>
+
+<p>
+<a href="https://github.com/deepstation/mcp-agent-example">https://github.com/deepstation/mcp-agent-example</a>
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-orgadd0252">
+<h2 id="orgadd0252">About me</h2>
+<ul>
+<li>ML Engineer by trade</li>
+<li>Based in Miami 🌴</li>
+<li>💙 Infrastructure, ML, and Cryptography</li>
+<li>💙💙 Math Puzzles</li>
+<li>💙💙💙 Juggling &amp; Fidget Toys</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgb191fdc">
+<h2 id="orgb191fdc">Goals of this presentation</h2>
+<ol>
+<li>What is MCP and why it matters</li>
+<li>Capabilities and caveats of using MCP servers</li>
+<li>Using MCP servers with agents (and demo!)</li>
+
+</ol>
+
+</section>
+</section>
+<section>
+<section id="slide-org0a11635">
+<h2 id="org0a11635">Software is eating the world</h2>
+<p>
+&#x2013; Marc Andreessen
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-orgbaac716">
+<h2 id="orgbaac716">Software <span class="underline">2.0</span> is eating Software <span class="underline">1.0</span></h2>
+<p>
+&#x2013; <i>not</i> (Marc Andreessen or Andrej Karpathy)
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-org43d8b7e">
+<h2 id="org43d8b7e">MCP is accelerating this process</h2>
+</section>
+</section>
+<section>
+<section id="slide-org9161a17">
+<h2 id="org9161a17">What is MCP? (official)</h2>
+<p>
+MCP (Model Context Procotol) is an open protocol that standardizes how applications provide context to
+LLMs (like USB-C)
+</p>
+
+<p>
+Released by Anthropic ~ October 2024
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-orgfdcbab7">
+<h2 id="orgfdcbab7">What is MCP? (unofficial)</h2>
+<p>
+A framework for LLM/agent add-ons
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-org91f5409">
+<h2 id="org91f5409">Why would you want to use MCP</h2>
+<ul>
+<li>You want an LLM to have access to information it wouldn&rsquo;t know</li>
+<li>You want an LLM to interact with another system</li>
+<li>You want to execute a structured process, from an ambiguous intent</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org8be2709">
+<h2 id="org8be2709">What does MCP come with?</h2>
+<ul>
+<li>Tools (executable functions)</li>
+<li>Resources (data access)</li>
+<li>Prompts</li>
+<li>Sampling (LLM completions)</li>
+<li>Roots (information narrowing)</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-org803d79b">
+<h2 id="org803d79b">Isn&rsquo;t this just tool calling?</h2>
+
+<div id="org7b94696" class="figure">
+<p><img src="assets/openai_api_tools.png" alt="openai_api_tools.png" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org030aa5a">
+<h2 id="org030aa5a">Yes!</h2>
+</section>
+</section>
+<section>
+<section id="slide-org6765da7">
+<h2 id="org6765da7">How is it different?</h2>
+<ul>
+<li>Instead of everyone re-implementing custom adapters for LLMs, we can now
+share a common adapter for LLMs as an MCP server</li>
+<li>Also knows as the &ldquo;NxM&rdquo; problem</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orga0418ed">
+<h2 id="orga0418ed">MCP architecture</h2>
+
+<div id="org02a1ad5" class="figure">
+<p><img src="./assets/mcp_architecture.png" alt="mcp_architecture.png" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgd8827af">
+<h2 id="orgd8827af">MCP Protocol (simplified)</h2>
+<ul>
+<li>Messages are based on the <a href="https://www.jsonrpc.org/specification">JSON-RPC</a> with predefined methods</li>
+<li>Transport is over stdio or SSE</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre   ><code class="json" >{ // request
+    jsonrpc: "2.0",
+    id: number | string,
+    method: string,
+    params?: object
+}
+</code></pre>
+</div>
+
+<div class="org-src-container">
+
+<pre   ><code class="json" >{ // response
+    jsonrpc: "2.0";
+    id: string | number;
+    result?: {
+        [key: string]: unknown;
+    }
+    error?: {
+        code: number;
+        message: string;
+        data?: unknown;
+    }
+}
+</code></pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org43a172f">
+<h2 id="org43a172f">MCP Protocol Example (init message)</h2>
+<div class="org-src-container">
+
+<pre   ><code class="json" >{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "initialize",
+    "params": {
+        "protocolVersion": "2024-11-05",
+        "capabilities": {
+            "roots": {
+                "listChanged": true
+            },
+            "sampling": {}
+        },
+        "clientInfo": {
+            "name": "ExampleClient",
+            "version": "1.0.0"
+        }
+    }
+}
+</code></pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org329eed6">
+<h2 id="org329eed6">The &rsquo;hello world&rsquo; of MCP</h2>
+<div class="org-src-container">
+
+<pre   ><code class="python" >from random import randint
+from mcp.server.fastmcp import FastMCP
+mcp = FastMCP("my-awesome-mcp-server")
+
+@mcp.tool()
+def flip_coin() -&gt; str:
+    """Flips a coin"""
+    return ["Heads", "Tails"][randint(0,1)]
+</code></pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgd1cbe35">
+<h2 id="orgd1cbe35">How MCP sees this tool</h2>
+<p>
+MCP Client Request
+</p>
+
+<div class="org-src-container">
+
+<pre   ><code class="json" >{
+    "method": "tools/list",
+    "params": {}
+}
+</code></pre>
+</div>
+
+<p>
+MCP Server Response
+</p>
+
+<div class="org-src-container">
+
+<pre   ><code class="json" >{
+    "tools": [
+        {
+            "name": "flip_coin",
+            "description": "Flips a coin",
+            "inputSchema": {
+                "type": "object",
+                "properties": {},
+                "title": "flip_coinArguments"
+            }
+        }
+    ]
+}
+</code></pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgfb4322d">
+<h2 id="orgfb4322d">How the LLM &ldquo;sees&rdquo; this tool</h2>
+<div class="org-src-container">
+
+<pre   ><code class="json" >...prompt...
+{
+    "name": "flip_coin",
+    "description": "Flips a coin",
+    "inputSchema": {
+        "properties": {},
+        "title": "flip_coinArguments",
+        "type": "object"
+    }
+}
+</code></pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org2545d70">
+<h2 id="org2545d70">MCP tool calling sequence</h2>
+
+<div id="orgaebd74b" class="figure">
+<p><img src="assets/mcp_tool_list_sequence.png" alt="mcp_tool_list_sequence.png" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org936743c">
+<h2 id="org936743c">Running + Configuring an MCP server</h2>
+<ul>
+<li>The semi-standard way MCP servers are configured/run is:</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre   ><code class="json" >{
+    "mcpServers": {
+        "my-awesome-mcp-server": {
+            "command": "uvx",
+            "args": ["my-awesome-mcp-server"]
+        },
+        "another-awesome-mcp-server": {
+            "command": "npx",
+            "args": ["another-awesome-mcp-server"],
+            "env": {
+                "API_KEY": "abcd..."
+            }
+        }
+    }
+}
+</code></pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-org883109f">
+<h2 id="org883109f">MCP Clients and Servers in the wild</h2>
+<ol>
+<li>There are <b>many</b> clients and servers (choose wisely)
+<ul>
+<li>10s of mature clients</li>
+<li>1000s of servers</li>
+
+</ul></li>
+<li>Most MCP clients don&rsquo;t implement the full MCP specification</li>
+<li>Most MCP servers wrap existing APIs</li>
+<li>Not all MCP servers are safe!</li>
+
+</ol>
+
+</section>
+</section>
+<section>
+<section id="slide-org916d7b4">
+<h2 id="org916d7b4">Security</h2>
+<p>
+source: <a href="https://github.com/ukend0464/pacman/issues/1">https://github.com/ukend0464/pacman/issues/1</a>
+</p>
+
+
+<div id="org5b3c2ae" class="figure">
+<p><img src="assets/github_mcp_exploit.png" alt="github_mcp_exploit.png" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgf67bfc1">
+<h2 id="orgf67bfc1">Further reading on MCP security</h2>
+<ul>
+<li><a href="https://elenacross7.medium.com/%EF%B8%8F-the-s-in-mcp-stands-for-security-91407b33ed6b">The &ldquo;S&rdquo; in MCP stands for security</a></li>
+<li><a href="https://invariantlabs.ai/blog/whatsapp-mcp-exploited">Exfiltrating your message history via MCP</a></li>
+<li><a href="https://equixly.com/blog/2025/03/29/mcp-server-new-security-nightmare/">MCP Servers: The New Security Nightmare</a></li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgb7b0108">
+<h2 id="orgb7b0108">How to use MCP servers in your agent</h2>
+
+</section>
+</section>
+<section>
+<section id="slide-org37ad2f8">
+<h2 id="org37ad2f8">Demo!</h2>
+
+</section>
+</section>
+<section>
+<section id="slide-org0032980">
+<h2 id="org0032980">Thank you!</h2>
+</section>
+</section>
+<section>
+<section id="slide-org50ae58c">
+<h2 id="org50ae58c">I&rsquo;m on the internet! 🌐</h2>
+<div style="text-align: left;width: 60%;margin: auto auto">
+<p><span style="float:left">🐙 Github:</span> <span style="float:right"><code>@cmrfrd</code></span></p>
+<br />
+<p><span style="float:left">𝕏:</span> <span style="float:right"><code>@thecmrfrd</code></span></p>
+<br />
+<p><span style="float:left">📬 Email:</span> <span style="float:right"><code>alex@taoa.io</code></span></p>
+<br />
+<p><span style="float:left">📑 Blog:</span> <span style="float:right"><code>taoa.io</code></span></p>
+<br />
+</div>
+
+<p>
+<code>github.com/deepstation/mcp-agent-example</code>
+</p>
+</section>
+</section>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/highlight/highlight.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js/plugin/markdown/markdown.js"></script>
+
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+plugins: [RevealHighlight, RevealMarkdown],
+slideNumber:false
+});
+
+</script>
+</body>
+</html>
